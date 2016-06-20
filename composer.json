@@ -3,5 +3,8 @@
     "description": "A CSV reader/writer for PHP (pronounced like \"svelte\")",
     "require": {
         "php": "^5.3.3 || ^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "5.4.*"
     }
 }
