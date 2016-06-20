@@ -1,24 +1,16 @@
 <?php namespace CSVelte;
 /**
- * CSVelte
- * A PHP CSV utility library (formerly PHP CSV Utilities).
+ * CSVelte\File
+ * Represents a csv file in-memory.
  *
  * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-
-use CSVelte\File;
-
-class CSVelte
+class File
 {
     public function __construct()
     {
 
-    }
-
-    public function import($filename)
-    {
-        return new File();
     }
 }
