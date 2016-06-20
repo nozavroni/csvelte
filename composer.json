@@ -1,6 +1,6 @@
 {
     "name": "deni-zen/csvelte",
-    "description": "A CSV reader/writer for PHP (pronounced like "svelte")",
+    "description": "A CSV reader/writer for PHP (pronounced like \"svelte\")",
     "require": {
         "php": "^5.3.3 || ^7.0",
     }
