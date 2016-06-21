@@ -19,4 +19,15 @@ class FlavorTest extends TestCase
     {
         $this->assertInstanceOf($expected = 'CSVelte\Flavor', new Flavor);
     }
+
+    public function testCSVelteFlavorDefaults()
+    {
+        $flavor = new Flavor;
+        $this->assertEquals($delimiter = ",", $flavor->delimiter);
+        $this->assertEquals($quoteChar = "\"", $flavor->quoteChar);
+        $this->assertEquals($escapeChar = "\\", $flavor->escapeChar);
+        $this->assertEquals($lineTerminator = "\n", $flavor->lineTerminator);
+        // @todo add this later (as it becomes needed)
+        // $this->assertEquals($quoting = 0, $flavor->quoting);
+    }
 }
