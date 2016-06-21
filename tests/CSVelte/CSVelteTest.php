@@ -30,8 +30,20 @@ class CSVelteTest extends TestCase
     public function testImportThrowsExceptionWhenFileDoesntExist()
     {
         $csv = new CSVelte();
-        $csv->import("./files/does-not-exist.csv");
+        $file = m::mock('CSVelte\File');
+        $file->shouldReceive(['exists' => false]);
+        $csv->import($file);
     }
+
+    /**
+     * Test that import method will throw an exception if file permissions don't
+     * allow read access
+     * @expectedException CSVelte\Exception\FileNotFoundException
+     */
+    // public function testImportThrowsExceptionWhenFileExistsButPermissionDenied()
+    // {
+    //
+    // }
 
     /**
      * Test that CSVelte returns an array when headers are requested

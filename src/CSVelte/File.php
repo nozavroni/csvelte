@@ -13,4 +13,8 @@ class File
     {
 
     }
+
+    public function size() {
+        
+    }
 }
