@@ -1,4 +1,7 @@
 <?php namespace CSVelte;
+
+use CSVelte\Exception\UnknownAttributeException;
+
 /**
  * CSVelte\Flavor
  * Represents a particular CSV format
@@ -24,12 +27,6 @@ class Flavor
     public function __get($attr)
     {
         if (array_key_exists($attr, $this->attributes)) return $this->attributes[$attr];
-        // $trace = debug_backtrace();
-        // trigger_error(
-        //     'Undefined property via __get(): ' . $name .
-        //     ' in ' . $trace[0]['file'] .
-        //     ' on line ' . $trace[0]['line'],
-        //     E_USER_NOTICE);
-        // return null;
+        throw new UnknownAttributeException("Unknown attribute: " . $attr);
     }
 }
