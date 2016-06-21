@@ -19,6 +19,11 @@ class CSVelte
 
     public function import($filename)
     {
-        return new File();
+
+    }
+
+    public function headers()
+    {
+        return [];
     }
 }

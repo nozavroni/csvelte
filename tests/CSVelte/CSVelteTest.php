@@ -1,27 +1,35 @@
 <?php
-
+/**
+ * CSVelteTest
+ *
+ * @package   CSVelte Unit Tests
+ * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
+ * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ */
 use PHPUnit\Framework\TestCase;
+use Mockery as m;
+use Mockery\Adapter\PHPUnit\MockeryPHPUnitIntegration;
 use CSVelte\CSVelte;
 
 class CSVelteTest extends TestCase
 {
+    use MockeryPHPUnitIntegration;
+
+    /**
+     * Just a simple test to get things started...
+     */
     public function testCSVelte()
     {
         $this->assertInstanceOf($expected = 'CSVelte\CSVelte', new CSVelte);
     }
 
-    public function testCSVelteImport()
+    /**
+     * Test that CSVelte can read a row
+     */
+    public function testCSVelteGetHeaders()
     {
         $csv = new CSVelte();
-        $file = $csv->import("./files/sample1.csv");
-        $this->assertInstanceOf($expected = 'CSVelte\File', $file);
+        $csv->import("./files/sample1.csv");
+        $this->assertInternalType('array', $csv->headers());
     }
-
-    // public function testCSVelteImportFileSize()
-    // {
-    //     $csv = new CSVelte();
-    //     $file = $csv->import("./files/sample1.csv");
-    //     $this->assertEquals($expected = 10, $file->size());
-    // }
 }
-?>
