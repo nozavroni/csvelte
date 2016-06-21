@@ -1,6 +1,7 @@
 <?php namespace CSVelte;
 
 use CSVelte\Exception\UnknownAttributeException;
+use CSVelte\Exception\ImmutableException;
 
 /**
  * CSVelte\Flavor
@@ -29,4 +30,10 @@ class Flavor
         if (array_key_exists($attr, $this->attributes)) return $this->attributes[$attr];
         throw new UnknownAttributeException("Unknown attribute: " . $attr);
     }
+
+    public function __set($attr, $val)
+    {
+        throw new ImmutableException("Cannot change attributes on an immutable object: " . self::class);
+    }
+
 }

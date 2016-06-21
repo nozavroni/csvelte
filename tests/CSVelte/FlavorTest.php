@@ -41,9 +41,20 @@ class FlavorTest extends TestCase
     /**
      * @expectedException CSVelte\Exception\UnknownAttributeException
      */
-    public function testCSVelteFlavorNonExistAttribute()
+    public function testCSVelteFlavorGetNonExistAttributeThrowsException()
     {
         $flavor = new Flavor;
         $foo = $flavor->foo;
+    }
+
+    /**
+     * These objects are immutable, so any attempt to set an attribute should
+     * result in an exception being thrown.
+     * @expectedException CSVelte\Exception\ImmutableException
+     */
+    public function testCSVelteFlavorSetAttributeThrowsImmutableException()
+    {
+        $flavor = new Flavor;
+        $flavor->foo = 'bar';
     }
 }
