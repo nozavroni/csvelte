@@ -20,15 +20,30 @@ class Flavor
         'lineTerminator' => "\n"
     ];
 
-    public function __construct()
+    public function __construct($attributes = null)
     {
+        if (!is_null($attributes)) {
+            if (!is_array($attributes)) {
+                // @todo throw exception?
+                return;
+            }
+            foreach ($attributes as $attr => $val) {
+                $this->assertValidAttribute($attr);
+                $this->attributes[$attr] = $val;
+            }
+        }
+    }
 
+    protected function assertValidAttribute($attr)
+    {
+        if (!array_key_exists($attr, $this->attributes))
+            throw new UnknownAttributeException("Unknown attribute: " . $attr);
     }
 
     public function __get($attr)
     {
-        if (array_key_exists($attr, $this->attributes)) return $this->attributes[$attr];
-        throw new UnknownAttributeException("Unknown attribute: " . $attr);
+        $this->assertValidAttribute($attr);
+        return $this->attributes[$attr];
     }
 
     public function __set($attr, $val)

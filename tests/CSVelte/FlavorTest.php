@@ -57,4 +57,22 @@ class FlavorTest extends TestCase
         $flavor = new Flavor;
         $flavor->foo = 'bar';
     }
+
+    /**
+     *
+     */
+    public function testInitializeFlavorUsingAssociativeArray()
+    {
+        $attribs = [
+            'delimiter' => "\t",
+            'quoteChar' => "'",
+            'escapeChar' => "'",
+            'lineTerminator' => "\r\n"
+        ];
+        $flavor = new Flavor($attribs);
+        $this->assertEquals($attribs['delimiter'], $flavor->delimiter);
+        $this->assertEquals($attribs['quoteChar'], $flavor->quoteChar);
+        $this->assertEquals($attribs['escapeChar'], $flavor->escapeChar);
+        $this->assertEquals($attribs['lineTerminator'], $flavor->lineTerminator);
+    }
 }
