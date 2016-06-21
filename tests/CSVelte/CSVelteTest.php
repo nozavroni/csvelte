@@ -24,12 +24,22 @@ class CSVelteTest extends TestCase
     }
 
     /**
-     * Test that CSVelte can read a row
+     * Test that import method will throw an exception if file doesn't exist
+     * @expectedException CSVelte\Exception\FileNotFoundException
+     */
+    public function testImportThrowsExceptionWhenFileDoesntExist()
+    {
+        $csv = new CSVelte();
+        $csv->import("./files/does-not-exist.csv");
+    }
+
+    /**
+     * Test that CSVelte returns an array when headers are requested
      */
     public function testCSVelteGetHeaders()
     {
         $csv = new CSVelte();
-        $csv->import("./files/sample1.csv");
+        // $csv->import("./files/sample1.csv");
         $this->assertInternalType('array', $csv->headers());
     }
 }
