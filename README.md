@@ -1,6 +1,8 @@
 # CSVelte
 A CSV reader/writer for PHP (pronounced like "svelte")
 
+This is the official successor to my old Google Code project, [php-csv-utils](https://code.google.com/archive/p/php-csv-utils/).
+
 ## Documentation/Home Page Coming Soon!
 There will be a dedicated home page for my various projects at [luke.visinoni.net](http://luke.visinoni.net/) as soon as I get the time to throw it together...
 
