@@ -17,7 +17,7 @@ class Flavor
         'delimiter' => ',',
         'quoteChar' => '"',
         'escapeChar' => '\\',
-        'lineTerminator' => "\n"
+        'lineTerminator' => "\r\n"
     ];
 
     public function __construct($attributes = null)

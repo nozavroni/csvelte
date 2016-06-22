@@ -1,6 +1,5 @@
 <?php namespace CSVelte;
 
-use CSVelte\File;
 // use CSVelte\Exception\FileNotFoundException;
 
 /**

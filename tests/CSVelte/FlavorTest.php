@@ -33,7 +33,7 @@ class FlavorTest extends TestCase
         $this->assertEquals($delimiter = ",", $flavor->delimiter);
         $this->assertEquals($quoteChar = "\"", $flavor->quoteChar);
         $this->assertEquals($escapeChar = "\\", $flavor->escapeChar);
-        $this->assertEquals($lineTerminator = "\n", $flavor->lineTerminator);
+        $this->assertEquals($lineTerminator = "\r\n", $flavor->lineTerminator);
         // @todo add this later (as it becomes needed)
         // $this->assertEquals($quoting = 0, $flavor->quoting);
     }
