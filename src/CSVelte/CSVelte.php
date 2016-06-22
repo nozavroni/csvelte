@@ -27,6 +27,7 @@ class CSVelte
      * @var string The name of the file you wish to import
      * @return boolean True if import was successful
      * @todo Should this maybe return the number of lines imported on success?
+     * @todo Move all the file assertion code into CSVelte\File
      */
     public function import($file)
     {

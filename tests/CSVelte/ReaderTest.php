@@ -9,7 +9,8 @@
 use PHPUnit\Framework\TestCase;
 use Mockery as m;
 use Mockery\Adapter\PHPUnit\MockeryPHPUnitIntegration;
-use CSVelte\Reader;
+use CSVelte\Reader as CSVReader;
+use CSVelte\File as CSVFile;
 
 class ReaderTest extends TestCase
 {
@@ -20,6 +21,23 @@ class ReaderTest extends TestCase
      */
     public function testCSVelteReader()
     {
-        $this->assertInstanceOf($expected = 'CSVelte\Reader', new CSVelte\Reader);
+        $file = m::mock(CSVFile::class);
+        $file->shouldReceive(['exists' => true]);
+        $this->assertInstanceOf($expected = CSVReader::class, new CSVReader($file));
     }
+
+    public function testReaderAcceptsFile()
+    {
+        $file = m::mock(CSVFile::class);
+        $file->shouldReceive(['exists' => true]);
+        $reader = new CSVReader($file);
+        $this->assertInstanceOf(CSVFile::class, $reader->file());
+    }
+
+    // public function testReaderCountsRows()
+    // {
+    //     $reader = new Reader('../files/sample.csv');
+    //     $this->assertEquals($expected = 100, $reader->count());
+    //     $this->assertEquals($expected, count($reader));
+    // }
 }

@@ -1,6 +1,6 @@
 <?php namespace CSVelte;
 
-// use CSVelte\File;
+use CSVelte\File;
 // use CSVelte\Exception\FileNotFoundException;
 
 /**
@@ -13,11 +13,18 @@
  */
 class Reader
 {
+    protected $file;
     /**
      * Class constructor
+     * @todo Replace CSVelte\File hint with CSVelte\FileInterface
      */
-    public function __construct()
+    public function __construct(File $file)
     {
+        $this->file = $file;
+    }
 
+    public function file()
+    {
+        return $this->file;
     }
 }
