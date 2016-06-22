@@ -16,28 +16,34 @@ class ReaderTest extends TestCase
 {
     use MockeryPHPUnitIntegration;
 
+    protected function getFileMock($filename = '../files/sample.csv')
+    {
+        $file = m::mock(CSVFile::class);
+        $file->shouldReceive(['exists' => true, 'filename' => $filename]);
+        return $file;
+    }
+
     /**
      * Just a simple test to get things started...
      */
     public function testCSVelteReader()
     {
-        $file = m::mock(CSVFile::class);
-        $file->shouldReceive(['exists' => true]);
+        $file = $this->getFileMock('../files/sample.csv');
         $this->assertInstanceOf($expected = CSVReader::class, new CSVReader($file));
     }
 
     public function testReaderAcceptsFile()
     {
-        $file = m::mock(CSVFile::class);
-        $file->shouldReceive(['exists' => true]);
+        $file = $this->getFileMock('../files/sample.csv');
         $reader = new CSVReader($file);
         $this->assertInstanceOf(CSVFile::class, $reader->file());
     }
 
-    // public function testReaderCountsRows()
-    // {
-    //     $reader = new Reader('../files/sample.csv');
-    //     $this->assertEquals($expected = 100, $reader->count());
-    //     $this->assertEquals($expected, count($reader));
-    // }
+    public function testReaderCountsRows()
+    {
+        $file = $this->getFileMock('../files/sample.csv');
+        $reader = new CSVReader($file);
+        $this->assertEquals($expected = 100, $reader->count());
+        $this->assertEquals($expected, count($reader));
+    }
 }
