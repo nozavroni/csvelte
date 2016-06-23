@@ -30,6 +30,13 @@ class TasterTest extends TestCase
         $this->assertInstanceOf(Flavor::class, $taster->taste());
     }
 
+    public function testGuessLineTerminator()
+    {
+        $input = $this->prepareInputMock();
+        $taster = new Taster($input);
+        $this->assertEquals("\n", $taster->guessLineTerminator());
+    }
+
     /**
      * Just a simple test to get things started...
     public function testTasterDetectLineTerminator()
