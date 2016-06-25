@@ -14,6 +14,13 @@ use CSVelte\Input\InputInterface;
  */
 class Taster
 {
+    const EOL_UNIX    = 'lf';
+    const EOL_TRS80   = 'cr';
+    const EOL_WINDOWS = 'crlf';
+
+    const LINE_FEED = 10;
+    const CARRIAGE_RETURN = 13;
+
     /**
      * @var CSVelte\InputInterface
      */
@@ -33,8 +40,29 @@ class Taster
         return new Flavor;
     }
 
-    public function guessLineTerminator()
+    protected function removeQuotedStrings($data)
     {
-        return "\n";
+        return preg_replace($pattern = '/(["\'])(?:(?=(\\\\?))\2.)*?\1/sm', $replace = '', $data);
+    }
+
+    public function guessLineEndings()
+    {
+        $str = $this->removeQuotedStrings($this->input->read(2500));
+        $eols = [
+            self::EOL_WINDOWS => "\r\n",  // 0x0D - 0x0A - Windows, DOS OS/2
+            self::EOL_UNIX    => "\n",    // 0x0A -      - Unix, OSX
+            self::EOL_TRS80   => "\r",    // 0x0D -      - Apple ][, TRS80
+        ];
+
+        $key = "";
+        $curCount = 0;
+        $curEol = '';
+        foreach($eols as $k => $eol) {
+            if( ($count = substr_count($str, $eol)) > $curCount) {
+                $curCount = $count;
+                $curEol = $eol;
+            }
+        }
+        return $curEol;
     }
 }
