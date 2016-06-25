@@ -1,6 +1,7 @@
 <?php namespace CSVelte;
 
 use CSVelte\Input\InputInterface;
+use CSVelte\Utils;
 
 /**
  * CSVelte\Taster
@@ -195,8 +196,8 @@ class Taster
             }
             $start++;
         }
-        $averages = array_average($charFrequency);
-        $modes = array_mode($charFrequency);
+        $averages = Utils::array_average($charFrequency);
+        $modes = Utils::array_mode($charFrequency);
         $consistencies = array();
         foreach ($averages as $achar => $avg) {
             foreach ($modes as $mchar => $mode) {
