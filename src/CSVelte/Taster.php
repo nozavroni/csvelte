@@ -104,4 +104,113 @@ class Taster
         }
         return array($quote, $delim);
     }
+
+    /**
+     * The delimiter /should/ occur the same number of times on
+     * each row. However, due to malformed data, it may not. We don't want
+     * an all or nothing approach, so we allow for small variations in this
+     * number.
+     *   1) build a table of the frequency of each character on every line.
+     *   2) build a table of frequencies of this frequency (meta-frequency?),
+     *      e.g.  'x occurred 5 times in 10 rows, 6 times in 1000 rows,
+     *      7 times in 2 rows'
+     *   3) use the mode of the meta-frequency to determine the /expected/
+     *      frequency for that character
+     *   4) find out how often the character actually meets that goal
+     *   5) the character that best meets its goal is the delimiter
+     * For performance reasons, the data is evaluated in chunks, so it can
+     * try and evaluate the smallest portion of the data possible, evaluating
+     * additional chunks as necessary.
+     */
+    // public function lickDelimiter($data, $eol, $delimiters = null)
+    // {
+    //     $lines = explode($eol, $data);
+    //
+    //     $ascii = array();
+    //     foreach (range(1, 127) as $c) $ascii[] = chr($c);
+    //
+    //     // build frequency tables
+    //     $chunkLength = min(10, count($lines));
+    //     $i = 0;
+    //     $charFrequency = array();
+    //     $modes = array();
+    //     $delims = array();
+    //     $start = 0;
+    //     // @todo this doesn't make sense, why not just assign chunkLength?
+    //     $end = min($chunkLength, count($lines));
+    //     while ($start < count($lines)) {
+    //         $i++;
+    //         foreach ($lines as $line) {
+    //             foreach ($ascii as $char) {
+    //                 $metaFrequency = array_get($charFrequency, $char, array());
+    //                 // must count even if frequency is 0
+    //                 $freq = substr_count($line, $char);
+    //                 // value is the mode
+    //                 $metaFrequency[$freq] = array_get($metaFrequency, $freq, 0) + 1;
+    //                 $charFrequency[$char] = $metaFrequency;
+    //             }
+    //         }
+    //
+    //         foreach (array_keys($charFrequency) as $char) {
+    //             $items = array_items($charFrequency[$char]);
+    //             if (count($items) == 1 && $items[0][0] == 0) continue;
+    //             // get the mode of the frequencies
+    //             if (count($items) > 1) {
+    //                 $modes[$char] = array_reduce($items, function($a, $b) {
+    //                     return ($a[1] > $b[1] && ($a || $b));
+    //                 });
+    //                 // adjust the mode - subtract the sum of all other frequencies
+    //                 //array_remove($items, $modes[$char]);
+    //                 $r = array_reduce($items, function($a, $b){ return array(0, $a[1] + $b[1]); });
+    //                 $modes[$char] = array($modes[$char][0], $modes[$char][1] - $r[1]);
+    //             } else {
+    //                 $modes[$char] = $items[0];
+    //             }
+    //         }
+    //
+    //         // dd($modes);
+    //
+    //         // build a list of possible delimiters
+    //     }
+    // }
+
+    /**
+     * Take a list of likely delimiter characters and fine the one that occurs
+     * the most consistent amount of times in the data.
+     */
+    public function lickDelimiter($data, $eol, $delimiters)
+    {
+        $lines = explode($eol, $this->removeQuotedStrings($data));
+        $lines[] = 'Nort;h; ; Mi|lwaukee State :Ba:nk,Milwaukee,WI,20364,First-Citizens Bank & Trust Company,11-Mar-16';
+        $modes = array();
+        $start = 0;
+        $charFrequency = array();
+        while ($start < count($lines)) {
+            foreach ($lines as $key => $line) {
+                if (!trim($line)) continue;
+                foreach ($delimiters as $char) {
+                    $freq = substr_count($line, $char);
+                    $charFrequency[$char][$key] = $freq;
+                }
+            }
+            $start++;
+        }
+        $averages = array_average($charFrequency);
+        $modes = array_mode($charFrequency);
+        $consistencies = array();
+        foreach ($averages as $achar => $avg) {
+            foreach ($modes as $mchar => $mode) {
+                if ($achar == $mchar) {
+                    if ($mode) {
+                        $consistencies[$achar] = $avg / $mode;
+                    } else {
+                        $consistencies[$achar] = 0;
+                    }
+                    break;
+                }
+            }
+        }
+        arsort($consistencies);
+        return key($consistencies);
+    }
 }
