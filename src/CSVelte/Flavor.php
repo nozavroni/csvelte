@@ -21,6 +21,12 @@ use CSVelte\Exception\ImmutableException;
  *             - _name: This is a label for descendants of this class to diff=
  *               erentiate them from each other
  *             - _valid: I think this is some internal legacy python inheritance class thing...
+ *             - skipblank - I don't know where this one came from but it might
+ *               be a decent idea to include it. Self explanatory
+ *             - hasHeader - I'm not sure if the flavor should include this or
+ *               not. The python module doesnt include it in its "dialect" class
+ *               but I always kind of wondered why... maybe play around with the
+ *               library once you have it flushed out a little and see what u think
  */
 class Flavor
 {
