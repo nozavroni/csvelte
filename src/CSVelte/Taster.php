@@ -2,6 +2,8 @@
 
 use Carbon\Carbon;
 use CSVelte\Input\InputInterface;
+use CSVelte\Exception\TasteQuoteAndDelimException;
+use CSVelte\Exception\TasteDelimiterException;
 
 /**
  * CSVelte\Taster
@@ -103,12 +105,23 @@ class Taster
      *
      * @return CSVelte\Flavor The metadata that the CSV format doesn't provide
      * @access public
-     * @todo Implement this, doofus.
+     * @todo Implement a lickQuote method for when lickQuoteAndDelim method fails
+     * @todo Should there bea lickEscapeChar method? the python module that inspired
+     *     this library doesn't include one...
      */
     public function lick()
     {
-        
-        return new Flavor;
+        $data = $this->input->read(2500);
+        try {
+            list($quoteChar, $delimiter) = $this->lickQuoteAndDelim();
+        } catch (TasteQuoteAndDelimException $e) {
+            $quoteChar = '"';
+            $delimiter = $this->lickDelimiter();
+        }
+        $escapeChar = '\\';
+        $lineTerminator = $this->lickLineEndings();
+        $quoteStyle = $this->lickQuotingStyle($data, $quoteChar, $delimiter, $lineTerminator);
+        return new Flavor(compact('quoteChar', 'escapeChar', 'delimiter', 'lineTerminator', 'quoteStyle'));
     }
 
     /**
@@ -134,10 +147,14 @@ class Taster
      *
      * @return char The end-of-line char for the input data
      * @access public
+     * @credit pulled from stackoverflow thread *tips hat to username "Harm"*
      * @todo make protected
      * @todo This should throw an exception if it cannot determine the line ending
      * @todo I probably will make this method protected when I'm done with testing...
-     * @credit pulled from stackoverflow thread *tips hat to username "Harm"*
+     * @todo If there is any way for this method to fail (for instance if a file )
+     *       is totally empty or contains no line breaks), then it needs to throw
+     *       a relevant TasterException
+     * @todo Use replaceQuotedSpecialChars rather than removeQuotedStrings()
      */
     public function lickLineEndings()
     {
@@ -184,20 +201,19 @@ class Taster
         foreach ($patterns as $pattern) {
             if (preg_match_all($pattern, $data, $matches) && $matches) break;
         }
-        if (!$matches) return array("", null); // couldn't guess quote or delim
-        $quotes = array_count_values($matches[2]);
-        arsort($quotes);
-        $quotes = array_flip($quotes);
-        if ($quote = array_shift($quotes)) {
-            $delims = array_count_values($matches[1]);
-            arsort($delims);
-            $delims = array_flip($delims);
-            $delim = array_shift($delims);
-        } else {
-            $quote = "";
-            $delim = null;
+        if ($matches) {
+            $quotes = array_count_values($matches[2]);
+            arsort($quotes);
+            $quotes = array_flip($quotes);
+            if ($quote = array_shift($quotes)) {
+                $delims = array_count_values($matches[1]);
+                arsort($delims);
+                $delims = array_flip($delims);
+                $delim = array_shift($delims);
+                return array($quote, $delim);
+            }
         }
-        return array($quote, $delim);
+        throw new TasteQuoteAndDelimException("quoteChar and delimiter cannot be determined");
     }
 
      /**
@@ -215,6 +231,7 @@ class Taster
       *     variety of CSV data to be sure it works reliably. And I'm sure there
       *     are many performance and logic improvements that could be made. This
       *     is essentially a first draft.
+      * @todo Use replaceQuotedSpecialChars rather than removeQuotedStrings
       */
     public function lickDelimiter($data, $eol, $delimiters)
     {
@@ -246,6 +263,9 @@ class Taster
                     break;
                 }
             }
+        }
+        if (empty($consistencies)) {
+            throw new TasteDelimiterException('Cannot determine delimiter character');
         }
         arsort($consistencies);
         return key($consistencies);

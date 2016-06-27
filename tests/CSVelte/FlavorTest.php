@@ -67,12 +67,14 @@ class FlavorTest extends TestCase
             'delimiter' => "\t",
             'quoteChar' => "'",
             'escapeChar' => "'",
-            'lineTerminator' => "\r\n"
+            'lineTerminator' => "\r\n",
+            'quoteStyle' => Flavor::QUOTE_MINIMAL
         ];
         $flavor = new Flavor($attribs);
         $this->assertEquals($attribs['delimiter'], $flavor->delimiter);
         $this->assertEquals($attribs['quoteChar'], $flavor->quoteChar);
         $this->assertEquals($attribs['escapeChar'], $flavor->escapeChar);
         $this->assertEquals($attribs['lineTerminator'], $flavor->lineTerminator);
+        $this->assertEquals($attribs['quoteStyle'], $flavor->quoteStyle);
     }
 }

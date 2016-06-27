@@ -49,11 +49,16 @@ class TasterTest extends TestCase
                     $mock->shouldReceive('read', [2500])
                         ->andReturn($this->testData, $this->testQuoteNonnumeric);
                 });
-            case 'TasterTest::testLick':
+            case 'TasterTest::testLickTestData':
                 return $input = m::mock('CSVelte\Input\InputInterface', function($mock) {
                     $mock->shouldReceive('read', [2500])
-                        ->andReturn($this->testData, $this->testTabSingleData);
+                        ->andReturn($this->testData);
                 });
+            case 'TasterTest::testLickTestTabSingleData':
+            return $input = m::mock('CSVelte\Input\InputInterface', function($mock) {
+                $mock->shouldReceive('read', [2500])
+                    ->andReturn($this->testTabSingleData);
+            });
             case 'TasterTest::testLickDelimiter':
             case 'TasterTest::testLickQuoteAndDelim':
             default:
@@ -96,12 +101,14 @@ class TasterTest extends TestCase
 
     /**
      * If no columns are quoted, the lick quote and delim method should not work
+     * @expectedException CSVelte\Exception\TasteQuoteAndDelimException
      */
     public function testLickQuoteAndDelimFailsWithNoQuoteColumns()
     {
         $input = $this->prepareInputMock(__METHOD__);
         $taster = new Taster($input);
-        $this->assertEquals(array("", null), $taster->lickQuoteAndDelim());
+        $taster->lickQuoteAndDelim();
+        // $this->assertEquals(array("", null), $taster->lickQuoteAndDelim());
     }
 
     public function testLickDelimiter()
@@ -134,7 +141,7 @@ class TasterTest extends TestCase
         $this->assertEquals(false, $taster->lickHeader($this->testQuoteAll, '"', ',', "\n"));
     }
 
-    public function testLick()
+    public function testLickTestData()
     {
         $input = $this->prepareInputMock(__METHOD__);
         $taster = new Taster($input);
@@ -142,16 +149,22 @@ class TasterTest extends TestCase
             'delimiter' => ',',
             'quoteChar' => '"',
             'escapeChar' => '\\',
-            'lineTerminator' => "\n"
+            'lineTerminator' => "\n",
+            'quoteStyle' => Flavor::QUOTE_MINIMAL
         ));
         $this->assertEquals($expected_flavor, $taster->lick());
+    }
 
+    public function testLickTestTabSingleData()
+    {
+        $input = $this->prepareInputMock(__METHOD__);
         $taster = new Taster($input);
         $expected_flavor = new Flavor(array(
             'delimiter' => "\t",
             'quoteChar' => "'",
             'escapeChar' => '\\',
-            'lineTerminator' => "\n"
+            'lineTerminator' => "\n",
+            'quoteStyle' => Flavor::QUOTE_MINIMAL
         ));
         $this->assertEquals($expected_flavor, $taster->lick());
     }
