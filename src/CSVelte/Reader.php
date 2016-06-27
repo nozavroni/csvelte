@@ -1,6 +1,6 @@
 <?php namespace CSVelte;
 
-// use CSVelte\Exception\FileNotFoundException;
+use CSVelte\Input\InputInterface;
 
 /**
  * CSVelte
@@ -10,26 +10,17 @@
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-class Reader implements \Countable
+class Reader /*implements \Countable*/
 {
-    protected $file;
+    protected $source;
     /**
      * Class constructor
      * @todo Replace CSVelte\File hint with CSVelte\InputInterface so that reader
      *       can accept streams and any other type of input object you can cook up
      */
-    public function __construct(File $file)
+    public function __construct(InputInterface $input)
     {
-        $this->file = $file;
+        $this->source = $input;
     }
 
-    public function file()
-    {
-        return $this->file;
-    }
-
-    public function count()
-    {
-        return 100;
-    }
 }
