@@ -49,6 +49,11 @@ class TasterTest extends TestCase
                     $mock->shouldReceive('read', [2500])
                         ->andReturn($this->testData, $this->testQuoteNonnumeric);
                 });
+            case 'TasterTest::testLick':
+                return $input = m::mock('CSVelte\Input\InputInterface', function($mock) {
+                    $mock->shouldReceive('read', [2500])
+                        ->andReturn($this->testData, $this->testTabSingleData);
+                });
             case 'TasterTest::testLickDelimiter':
             case 'TasterTest::testLickQuoteAndDelim':
             default:
@@ -127,6 +132,28 @@ class TasterTest extends TestCase
         $taster = new Taster($input);
         $this->assertEquals(true, $taster->lickHeader($this->testData, '"', ',', "\n"));
         $this->assertEquals(false, $taster->lickHeader($this->testQuoteAll, '"', ',', "\n"));
+    }
+
+    public function testLick()
+    {
+        $input = $this->prepareInputMock(__METHOD__);
+        $taster = new Taster($input);
+        $expected_flavor = new Flavor(array(
+            'delimiter' => ',',
+            'quoteChar' => '"',
+            'escapeChar' => '\\',
+            'lineTerminator' => "\n"
+        ));
+        $this->assertEquals($expected_flavor, $taster->lick());
+
+        $taster = new Taster($input);
+        $expected_flavor = new Flavor(array(
+            'delimiter' => "\t",
+            'quoteChar' => "'",
+            'escapeChar' => '\\',
+            'lineTerminator' => "\n"
+        ));
+        $this->assertEquals($expected_flavor, $taster->lick());
     }
 
 }

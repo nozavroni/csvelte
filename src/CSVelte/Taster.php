@@ -12,6 +12,16 @@ use CSVelte\Input\InputInterface;
  * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo      There are a ton of improvements that could be made to this class.
+ *            I'll do a refactor on this fella once I get at least one test
+ *            passing for each of its public methods.
+ * @todo      Should I have a lickEscapeChar method? The python version doesn't
+ *            have one. But then why does it even bother including one in its
+ *            flavor class?
+ * @todo      Examine each of the public methods in this class and determine
+ *            whether it makes sense to ask for the data as a param rather than
+ *            just pulling it from source. I don't think it makes sense... it
+ *            was just easier to write the methods that way during testing.
  */
 class Taster
 {
@@ -68,7 +78,7 @@ class Taster
 
     /**
      * @var CSVelte\InputInterface The source of data to examine
-     * @access protected 
+     * @access protected
      */
     protected $input;
 
@@ -97,6 +107,7 @@ class Taster
      */
     public function lick()
     {
+        
         return new Flavor;
     }
 
