@@ -34,9 +34,16 @@ class Reader
     protected $flavor;
 
     /**
+     * @var boolean True if it was determined that the source data has a header
+     */
+    protected $hasHeader;
+
+    /**
      * Class constructor
-     * @todo Replace CSVelte\File hint with CSVelte\InputInterface so that reader
-     *       can accept streams and any other type of input object you can cook up
+     * @param CSVelte\Input\InputInterface The source of our CSV data
+     * @param CSVelte\Flavor The "flavor" or format specification object
+     * @return void
+     * @access public
      */
     public function __construct(InputInterface $input, Flavor $flavor = null)
     {
@@ -50,6 +57,7 @@ class Reader
     /**
      * Retreive the "flavor" object being used by the reader
      * @return CSVelte\Flavor
+     * @access public
      */
     public function getFlavor()
     {
@@ -59,6 +67,8 @@ class Reader
     /**
      * This method is both a factory AND an accessor for the CSVelte\Taster object
      * @return CSVelte\Taster
+     * @access protected
+     * @uses CSVelte\Taster
      */
     protected function getTaster()
     {
@@ -82,6 +92,10 @@ class Reader
      * @todo This method is ugly and unnecessary. If the Flavor class had a
      *     "hasHeader" attribute or even a hasHeader method, I could simply call
      *     that and be done with it...
+     * @todo But then again, as I said, the lickHeader method is considerably
+     *     expensive. You notice it being called (by the time it takes). Perhaps
+     *     it isn't a bad idea to keep it seperate and to only call it if the
+     *     end-user specifically requests it... something to think about...
      * @todo Standardize the amount of data that is passed to taster's methods
      *     to determine whatever. Assign a class constant like TESTDATA_LEN and
      *     make it like 1500 or 2500. Either that or read in a certain amount of
@@ -90,7 +104,10 @@ class Reader
      */
     public function hasHeader()
     {
-        $flavor = $this->getFlavor();
-        return $this->getTaster()->lickHeader($this->source->read(2500), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator);
+        if (is_null($this->hasHeader)) {
+            $flavor = $this->getFlavor();
+            $this->hasHeader = $this->getTaster()->lickHeader($this->source->read(2500), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator);
+        }
+        return $this->hasHeader;
     }
 }
