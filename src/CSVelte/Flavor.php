@@ -13,6 +13,11 @@ use CSVelte\Exception\ImmutableException;
  */
 class Flavor
 {
+    const QUOTE_ALL = 'quote_all';
+    const QUOTE_NONE = 'quote_none';
+    const QUOTE_MINIMAL = 'quote_minimal';
+    const QUOTE_NONNUMERIC = 'quote_nonnumeric';
+
     protected $attributes = [
         'delimiter' => ',',
         'quoteChar' => '"',

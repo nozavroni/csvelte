@@ -1,7 +1,7 @@
 <?php namespace CSVelte;
 
 use CSVelte\Input\InputInterface;
-use CSVelte\Utils;
+// use CSVelte\Utils;
 
 /**
  * CSVelte\Taster
@@ -23,6 +23,13 @@ class Taster
     const CARRIAGE_RETURN = 13;
 
     const SPACE = 32;
+
+    const DATA_NONNUMERIC = 'nonnumeric';
+    const DATA_SPECIAL = 'special';
+    const DATA_UNKNOWN = 'unknown';
+
+    const PLACEHOLDER_NEWLINE = '[__NEWLINE__]';
+    const PLACEHOLDER_DELIM = '[__DELIM__]';
 
     /**
      * @var CSVelte\InputInterface
@@ -107,82 +114,12 @@ class Taster
     }
 
     /**
-     * The delimiter /should/ occur the same number of times on
-     * each row. However, due to malformed data, it may not. We don't want
-     * an all or nothing approach, so we allow for small variations in this
-     * number.
-     *   1) build a table of the frequency of each character on every line.
-     *   2) build a table of frequencies of this frequency (meta-frequency?),
-     *      e.g.  'x occurred 5 times in 10 rows, 6 times in 1000 rows,
-     *      7 times in 2 rows'
-     *   3) use the mode of the meta-frequency to determine the /expected/
-     *      frequency for that character
-     *   4) find out how often the character actually meets that goal
-     *   5) the character that best meets its goal is the delimiter
-     * For performance reasons, the data is evaluated in chunks, so it can
-     * try and evaluate the smallest portion of the data possible, evaluating
-     * additional chunks as necessary.
-     */
-    // public function lickDelimiter($data, $eol, $delimiters = null)
-    // {
-    //     $lines = explode($eol, $data);
-    //
-    //     $ascii = array();
-    //     foreach (range(1, 127) as $c) $ascii[] = chr($c);
-    //
-    //     // build frequency tables
-    //     $chunkLength = min(10, count($lines));
-    //     $i = 0;
-    //     $charFrequency = array();
-    //     $modes = array();
-    //     $delims = array();
-    //     $start = 0;
-    //     // @todo this doesn't make sense, why not just assign chunkLength?
-    //     $end = min($chunkLength, count($lines));
-    //     while ($start < count($lines)) {
-    //         $i++;
-    //         foreach ($lines as $line) {
-    //             foreach ($ascii as $char) {
-    //                 $metaFrequency = array_get($charFrequency, $char, array());
-    //                 // must count even if frequency is 0
-    //                 $freq = substr_count($line, $char);
-    //                 // value is the mode
-    //                 $metaFrequency[$freq] = array_get($metaFrequency, $freq, 0) + 1;
-    //                 $charFrequency[$char] = $metaFrequency;
-    //             }
-    //         }
-    //
-    //         foreach (array_keys($charFrequency) as $char) {
-    //             $items = array_items($charFrequency[$char]);
-    //             if (count($items) == 1 && $items[0][0] == 0) continue;
-    //             // get the mode of the frequencies
-    //             if (count($items) > 1) {
-    //                 $modes[$char] = array_reduce($items, function($a, $b) {
-    //                     return ($a[1] > $b[1] && ($a || $b));
-    //                 });
-    //                 // adjust the mode - subtract the sum of all other frequencies
-    //                 //array_remove($items, $modes[$char]);
-    //                 $r = array_reduce($items, function($a, $b){ return array(0, $a[1] + $b[1]); });
-    //                 $modes[$char] = array($modes[$char][0], $modes[$char][1] - $r[1]);
-    //             } else {
-    //                 $modes[$char] = $items[0];
-    //             }
-    //         }
-    //
-    //         // dd($modes);
-    //
-    //         // build a list of possible delimiters
-    //     }
-    // }
-
-    /**
      * Take a list of likely delimiter characters and fine the one that occurs
      * the most consistent amount of times in the data.
      */
     public function lickDelimiter($data, $eol, $delimiters)
     {
         $lines = explode($eol, $this->removeQuotedStrings($data));
-        $lines[] = 'Nort;h; ; Mi|lwaukee State :Ba:nk,Milwaukee,WI,20364,First-Citizens Bank & Trust Company,11-Mar-16';
         $modes = array();
         $start = 0;
         $charFrequency = array();
@@ -213,5 +150,115 @@ class Taster
         }
         arsort($consistencies);
         return key($consistencies);
+    }
+
+    public function lickQuotingStyle($data, $quote, $delim, $eol)
+    {
+        $data = preg_replace_callback('/([\'"])(.*)\1/imsU', function($matches) use ($delim) {
+            $ret = preg_replace("/([\r\n])/", self::PLACEHOLDER_NEWLINE, $matches[0]);
+            $ret = str_replace($delim, self::PLACEHOLDER_DELIM, $ret);
+            return $ret;
+        }, $data);
+
+        $quoting_styles = array(
+            Flavor::QUOTE_ALL => 0,
+            Flavor::QUOTE_NONE => 0,
+            Flavor::QUOTE_MINIMAL => 0,
+            Flavor::QUOTE_NONNUMERIC => 0,
+        );
+
+        $lines = explode($eol, $data);
+        $freq = array(
+            'quoted' => array(),
+            'unquoted' => array()
+        );
+
+        foreach ($lines as $key => $line) {
+            // now we can sub back in the correct newlines
+            $line = str_replace(self::PLACEHOLDER_NEWLINE, $eol, $line);
+            $cols = explode($delim, $line);
+            foreach ($cols as $colkey => $col) {
+                // now we can sub back in the correct delim characters
+                $col = str_replace(self::PLACEHOLDER_DELIM, $delim, $col);
+                if ($isQuoted = $this->isQuoted($col)) {
+                    $col = $this->unQuote($col);
+                    $type = $this->lickDataType($col);
+                    // we can remove this guy all together since at lease one column is quoted
+                    unset($quoting_styles[Flavor::QUOTE_NONE]);
+                    $freq['quoted'][] = $type;
+                } else {
+                    $type = $this->lickDataType($col);
+                    // we can remove this guy all together since at lease one column is unquoted
+                    unset($quoting_styles[Flavor::QUOTE_ALL]);
+                    $freq['unquoted'][] = $type;
+                }
+            }
+        }
+        $types = array_unique($freq['quoted']);
+        // if quoting_styles still has QUOTE_ALL or QUOTE_NONE, then that's the one to return
+        if (array_key_exists(Flavor::QUOTE_ALL, $quoting_styles)) return Flavor::QUOTE_ALL;
+        if (array_key_exists(Flavor::QUOTE_NONE, $quoting_styles)) return Flavor::QUOTE_NONE;
+        if (count($types) == 1) {
+            if (current($types) == self::DATA_SPECIAL) return Flavor::QUOTE_MINIMAL;
+            elseif (current($types) == self::DATA_NONNUMERIC) return Flavor::QUOTE_NONNUMERIC;
+        } else {
+            if (array_key_exists(self::DATA_NONNUMERIC, array_flip($types))) {
+                // allow for a SMALL amount of error here
+                $counts = array(self::DATA_SPECIAL => 0, self::DATA_NONNUMERIC => 0);
+                array_walk($freq['quoted'], function ($val, $key) use (&$counts) {
+                    $counts[$val]++;
+                });
+                arsort($counts);
+                $most = current($counts);
+                $least = end($counts);
+                $err_margin = $least / $most;
+                if ($err_margin < 1) return Flavor::QUOTE_NONNUMERIC;
+            }
+        }
+        return Flavor::QUOTE_MINIMAL;
+    }
+
+    protected function unQuote($data)
+    {
+        return preg_replace('/^(["\'])(.*)\1$/', '\2', $data);
+    }
+
+    protected function isQuoted($data)
+    {
+        return preg_match('/^([\'"])[^\1]*\1$/', $data);
+    }
+
+    /**
+     * Determine what type of data is contained within a variable
+     * Possible types:
+     *     - alpha - only letters
+     *     - alphanumeric - letters and numbers
+     *     - numeric - only numbers
+     *     - special - contains characters that could potentially need to be quoted (possible delimiter characters)
+     *     - quotes - contains quote characters
+     */
+    protected function lickDataType($data)
+    {
+        // @todo make this check for only the quote and delim that are actually being used
+        // that will make the guess more accurate
+        if (preg_match('/[\'",\t\|:;-]/', $data)) {
+            return self::DATA_SPECIAL;
+        } elseif (preg_match('/[^0-9]/', $data)) {
+            return self::DATA_NONNUMERIC;
+        }
+        return self::DATA_UNKNOWN;
+    }
+
+    public function  lickHeader()
+    {
+        # Creates a dictionary of types of data in each column. If any
+        # column is of a single type (say, integers), *except* for the first
+        # row, then the first row is presumed to be labels. If the type
+        # can't be determined, it is assumed to be a string in which case
+        # the length of the string is the determining factor: if all of the
+        # rows except for the first are the same length, it's a header.
+        # Finally, a 'vote' is taken at the end for each column, adding or
+        # subtracting from the likelihood of the first row being a header.
+
     }
 }
