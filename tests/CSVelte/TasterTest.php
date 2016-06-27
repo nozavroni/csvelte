@@ -13,6 +13,7 @@ use CSVelte\CSVelte;
 use CSVelte\Flavor;
 use CSVelte\Taster;
 use CSVelte\Input\InputInterface;
+use Carbon\Carbon;
 
 class TasterTest extends TestCase
 {
@@ -118,6 +119,14 @@ class TasterTest extends TestCase
         $this->assertEquals(Flavor::QUOTE_NONNUMERIC, $taster->lickQuotingStyle($this->testQuoteNonnumeric, '"', ',', "\n"));
         $this->assertEquals(Flavor::QUOTE_NONE, $taster->lickQuotingStyle($this->testNoQuoteComma, '"', ',', "\n"));
         $this->assertEquals(Flavor::QUOTE_ALL, $taster->lickQuotingStyle($this->testQuoteAll, '"', ',', "\n"));
+    }
+
+    public function testLickHeader()
+    {
+        $input = $this->prepareInputMock(__METHOD__);
+        $taster = new Taster($input);
+        $this->assertEquals(true, $taster->lickHeader($this->testData, '"', ',', "\n"));
+        $this->assertEquals(false, $taster->lickHeader($this->testQuoteAll, '"', ',', "\n"));
     }
 
 }
