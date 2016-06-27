@@ -15,21 +15,40 @@ use CSVelte\Input\InputInterface;
  */
 class Taster
 {
+    /**
+     * End-of-line constants
+     */
     const EOL_UNIX    = 'lf';
     const EOL_TRS80   = 'cr';
     const EOL_WINDOWS = 'crlf';
 
+    /**
+     * ASCII character codes for "invisibles"
+     */
+    const HORIZONTAL_TAB = 9;
     const LINE_FEED = 10;
     const CARRIAGE_RETURN = 13;
     const SPACE = 32;
 
+    /**
+     * Data types -- Used within the lickQuotingStyle method
+     */
     const DATA_NONNUMERIC = 'nonnumeric';
     const DATA_SPECIAL = 'special';
     const DATA_UNKNOWN = 'unknown';
 
+    /**
+     * Placeholder strings -- hold the place of newlines and delimiters contained
+     * within quoted text so that the explode method doesn't split incorrectly
+     */
     const PLACEHOLDER_NEWLINE = '[__NEWLINE__]';
     const PLACEHOLDER_DELIM = '[__DELIM__]';
 
+    /**
+     * Column data types -- used within the lickHeader method to determine
+     * whether the first row contains different types of data than the rest of
+     * the rows (and thus, is likely a header row)
+     */
     // +-987
     const TYPE_NUMBER = 'number';
     // +-12.387
@@ -48,31 +67,67 @@ class Taster
     const TYPE_ALPHA = 'alpha';
 
     /**
-     * @var CSVelte\InputInterface
+     * @var CSVelte\InputInterface The source of data to examine
+     * @access protected 
      */
     protected $input;
 
     /**
-     * Class constructor
-     * accepts a CSV input source
+     * Class constructor--accepts a CSV input source
+     *
+     * @param CSVelte\Input\InputInterface The source of CSV data
+     * @return void
+     * @access public
      */
     public function __construct(InputInterface $input)
     {
         $this->input = $input;
     }
 
+    /**
+     * Examine the input source and determine what "Flavor" of CSV it contains.
+     * The CSV format, while having an RFC (https://tools.ietf.org/html/rfc4180),
+     * doesn't necessarily always conform to it. And it doesn't provide meta such as the delimiting character, quote character, or what types of data are quoted.
+     * such as the delimiting character, quote character, or what types of data are quoted.
+     * are quoted.
+     *
+     * @return CSVelte\Flavor The metadata that the CSV format doesn't provide
+     * @access public
+     * @todo Implement this, doofus.
+     */
     public function lick()
     {
         return new Flavor;
     }
 
+    /**
+     * Replaces all quoted columns with a blank string. I was using this method
+     * to prevent explode() from incorrectly splitting at delimiters and newlines
+     * within quotes when parsing a file. But this was before I wrote the
+     * replaceQuotedSpecialChars method which (at least to me) makes more sense.
+     *
+     * @param string The string to replace quoted strings within
+     * @return string The input string with quoted strings removed
+     * @access protected
+     * @todo Replace code that uses this method with the replaceQuotedSpecialChars
+     *     method instead. I think it's cleaner.
+     */
     protected function removeQuotedStrings($data)
     {
         return preg_replace($pattern = '/(["\'])(?:(?=(\\\\?))\2.)*?\1/sm', $replace = '', $data);
     }
 
-    // pulled from stackoverflow thread *tips hat to username "Harm"*
-    // @todo I probably will make this method protected when I'm done with testing...
+    /**
+     * Examine the input source to determine which character(s) are being used
+     * as the end-of-line character
+     *
+     * @return char The end-of-line char for the input data
+     * @access public
+     * @todo make protected
+     * @todo This should throw an exception if it cannot determine the line ending
+     * @todo I probably will make this method protected when I'm done with testing...
+     * @credit pulled from stackoverflow thread *tips hat to username "Harm"*
+     */
     public function lickLineEndings()
     {
         $str = $this->removeQuotedStrings($this->input->read(2500));
@@ -97,8 +152,13 @@ class Taster
      * The best way to determine quote and delimiter characters is when columns
      * are quoted, often you can seek out a pattern of delim, quote, stuff, quote, delim
      * but this only works if you have quoted columns. If you don't you have to
-     * determine these characters some other way...
+     * determine these characters some other way... (see lickDelimiter)
+     *
+     * @return array A two-row array containing quotechar, delimchar
+     * @access public
      * @todo make protected
+     * @todo This should throw an exception if it cannot determine the delimiter
+     *     this way.
      */
     public function lickQuoteAndDelim()
     {
@@ -129,10 +189,22 @@ class Taster
         return array($quote, $delim);
     }
 
-    /**
-     * Take a list of likely delimiter characters and fine the one that occurs
-     * the most consistent amount of times in the data.
-     */
+     /**
+      * Take a list of likely delimiter characters and find the one that occurs
+      * the most consistent amount of times within the provided data.
+      *
+      * @param string The data to examime for "quoting style"
+      * @param char The type of quote character being used (single or double)
+      * @param char The character used as the column delimiter
+      * @param char The character used for newlines
+      * @return string One of four "QUOTING_" constants defined above--see this
+      *     method's description for more info.
+      * @access public
+      * @todo Refactor this method--It needs more thorough testing against a wider
+      *     variety of CSV data to be sure it works reliably. And I'm sure there
+      *     are many performance and logic improvements that could be made. This
+      *     is essentially a first draft.
+      */
     public function lickDelimiter($data, $eol, $delimiters)
     {
         $lines = explode($eol, $this->removeQuotedStrings($data));
@@ -168,6 +240,31 @@ class Taster
         return key($consistencies);
     }
 
+    /**
+     * Determine the "style" of data quoting. The CSV format, while having an RFC
+     * (https://tools.ietf.org/html/rfc4180), doesn't necessarily always conform
+     * to it. And it doesn't provide metadata such as the delimiting character,
+     * quote character, or what types of data are quoted. So this method makes a
+     * logical guess by finding which columns have been quoted (if any) and
+     * examining their data type. Most often, CSV files will only use quotes
+     * around columns that contain special characters such as the dilimiter,
+     * the quoting character, newlines, etc. (we refer to this style as )
+     * QUOTE_MINIMAL), but some quote all columns that contain nonnumeric data
+     * (QUOTE_NONNUMERIC). Then there are CSV files that quote all columns
+     * (QUOTE_ALL) and those that quote none (QUOTE_NONE).
+     *
+     * @param string The data to examime for "quoting style"
+     * @param char The type of quote character being used (single or double)
+     * @param char The character used as the column delimiter
+     * @param char The character used for newlines
+     * @return string One of four "QUOTING_" constants defined above--see this
+     *     method's description for more info.
+     * @access public
+     * @todo Refactor this method--It needs more thorough testing against a wider
+     *     variety of CSV data to be sure it works reliably. And I'm sure there
+     *     are many performance and logic improvements that could be made. This
+     *     is essentially a first draft.
+     */
     public function lickQuotingStyle($data, $quote, $delim, $eol)
     {
         $data = $this->replaceQuotedSpecialChars($data, $delim);
@@ -230,11 +327,25 @@ class Taster
         return Flavor::QUOTE_MINIMAL;
     }
 
+    /**
+     * Remove quotes around a piece of text (if there are any)
+     *
+     * @param string The data to "unquote"
+     * @return string The data passed in, only with quotes stripped (off the edges)
+     * @access protected
+     */
     protected function unQuote($data)
     {
         return preg_replace('/^(["\'])(.*)\1$/', '\2', $data);
     }
 
+    /**
+     * Determine whether a particular string of data has quotes around it.
+     *
+     * @param string The data to check
+     * @return boolean Whether the data is quoted or not
+     * @access protected
+     */
     protected function isQuoted($data)
     {
         return preg_match('/^([\'"])[^\1]*\1$/', $data);
@@ -246,6 +357,18 @@ class Taster
      *     - nonnumeric - only numbers
      *     - special - contains characters that could potentially need to be quoted (possible delimiter characters)
      *     - unknown - everything else
+     * This method is really only used within the "lickQuotingStyle" method to
+     * help determine whether a particular column has been quoted due to it being
+     * nonnumeric or because it has some special character in it such as a delimiter
+     * or newline or quote.
+     *
+     * @param string The data to determine the type of
+     * @return string The type of data (one of the "DATA_" constants above)
+     * @access protected
+     * @todo I could probably eliminate this method and use an anonymous function
+     *     instead. It isn't used anywhere else and its name could be misleading.
+     *     Especially since I also have a lickType method that is used within the
+     *     lickHeader method.
      */
     protected function lickDataType($data)
     {
@@ -259,6 +382,22 @@ class Taster
         return self::DATA_UNKNOWN;
     }
 
+    /**
+     * Replace all instances of newlines and whatever character you specify (as
+     * the delimiter) that are contained within quoted text. The replacements are
+     * simply a special placeholder string. This is done so that I can use the
+     * very unsmart "explode" function and not have to worry about it exploding
+     * on delimiters or newlines within quotes. Once I have exploded, I typically
+     * sub back in the real characters before doing anything else. Although
+     * currently there is no dedicated method for doing so I just use str_replace
+     *
+     * @param string The string to do the replacements on
+     * @param char The delimiter character to replace
+     * @return string The data with replacements performed
+     * @access protected
+     * @todo I could probably pass in (maybe optionally) the newline character I
+     *     want to replace as well. I'll do that if I need to.
+     */
     protected function replaceQuotedSpecialChars($data, $delim)
     {
         return preg_replace_callback('/([\'"])(.*)\1/imsU', function($matches) use ($delim) {
@@ -281,6 +420,7 @@ class Taster
      *
      * @param string The string of data to check the type of
      * @return string One of the TYPE_ string constants above
+     * @access protected
      * @uses Carbon/Carbon date/time ilbrary/class
      */
     protected function lickType($data)
@@ -323,19 +463,33 @@ class Taster
         return self::TYPE_STRING;
     }
 
+    /**
+     * Examines the contents of the CSV data to make a determination of whether
+     * or not it contains a header row. To make this determination, it creates
+     * an array of each column's (in each row)'s data type and length and then
+     * compares them. If all of the rows except the header look similar, it will
+     * return true. This is only a guess though. There is no programmatic way to
+     * determine 100% whether a CSV file has a header. The format does not
+     * provide metadata such as that.
+     *
+     * @param string The CSV data to examine (only 20 rows will be examined so )
+     *     there is no need to provide any more data than that)
+     * @param char The CSV data's quoting char (either double or single quote)
+     * @param char The CSV data's delimiting char (can be a variety of chars but)
+     *     typically is either a comma or a tab, sometimes a pipe)
+     * @param char The CSV data's end-of-line char(s) (\n \r or \r\n)
+     * @return boolean True if the data (most likely) contains a header row
+     * @access public
+     * @todo This method needs a total refactor. It's not necessary to loop twice
+     *     You could get away with one loop and that would allow for me to do
+     *     something like only examining enough rows to get to a particular
+     *     "hasHeader" score (+-100 for instance) & then just return true|false
+     * @todo Also, break out of the first loop after a certain (perhaps even a
+     *     configurable) amount of lines (you only need to examine so much data )
+     *     to reliably make a determination and this is an expensive method)
+     */
     public function  lickHeader($data, $quote, $delim, $eol)
     {
-        # Creates an array of types of data in each column. If any
-        # column is of a single type (say, integers), *except* for the first
-        # row, then the first row is presumed to be labels. If the type
-        # can't be determined, it is assumed to be a string in which case
-        # the length of the string is the determining factor: if all of the
-        # rows except for the first are the same length, it's a header.
-        # Finally, a 'vote' is taken at the end for each column, adding or
-        # subtracting from the likelihood of the first row being a header.
-        # NOTE: Maybe I should assign two points for same data type and one
-        # point for same length... then maybe three points for same type AND
-        # same length... ?
         $data = $this->replaceQuotedSpecialChars($data, $delim);
         $lines = explode($eol, $data);
         $types = array();
@@ -372,6 +526,12 @@ class Taster
         }
 
         return $hasHeader > 0;
+
+        /**
+         * This is just legacy code... it was something I tried that didn't pan
+         * out. I just want to test the above code a little more thoroughly
+         * before completely removing this...
+         */
 
         // $potential_header = array_shift($types);
         // $potential_header_count = count($potential_header);
