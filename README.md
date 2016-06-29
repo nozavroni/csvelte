@@ -1,5 +1,5 @@
 # CSVelte
-A CSV reader/writer for PHP (pronounced like "svelte")
+A CSV reader/writer for PHP (pronounced like "svelte") with automatic format detection (tabs or commas? \n or \r\n? double or single quote? quote all fields or just the ones with special characters? etc.)
 
 This is the official successor to my old Google Code project, [php-csv-utils](https://code.google.com/archive/p/php-csv-utils/).
 
