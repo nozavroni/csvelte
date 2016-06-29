@@ -169,4 +169,13 @@ class TasterTest extends TestCase
         $this->assertEquals($expected_flavor, $taster->lick());
     }
 
+    public function testTasterFactoryAllowsMeToMockForEasierTestingOrForChaining()
+    {
+        $input = $this->createMock('CSVelte\Input\InputInterface');
+        $input->method('read')
+            ->willReturn($this->testData);
+        $taster = Taster::create($input);
+        $this->assertInstanceOf($tasterClass = Taster::class, $taster);
+    }
+
 }

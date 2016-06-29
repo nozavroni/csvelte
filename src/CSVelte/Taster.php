@@ -96,6 +96,11 @@ class Taster
         $this->input = $input;
     }
 
+    public static function create(InputInterface $input)
+    {
+        return new Taster($input);
+    }
+
     /**
      * Examine the input source and determine what "Flavor" of CSV it contains.
      * The CSV format, while having an RFC (https://tools.ietf.org/html/rfc4180),
