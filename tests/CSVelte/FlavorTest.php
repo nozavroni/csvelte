@@ -77,4 +77,14 @@ class FlavorTest extends TestCase
         $this->assertEquals($attribs['lineTerminator'], $flavor->lineTerminator);
         $this->assertEquals($attribs['quoteStyle'], $flavor->quoteStyle);
     }
+
+    public function testInitializeFlavorWithProperties()
+    {
+        $flavor = new Flavor(null, array(
+            'hasHeader' => true
+        ));
+        $this->assertTrue($flavor->getProperty('hasHeader'));
+        $flavor->setProperty('hasHeader', false);
+        $this->assertFalse($flavor->getProperty('hasHeader'));
+    }
 }

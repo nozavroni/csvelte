@@ -27,6 +27,17 @@ use CSVelte\Exception\ImmutableException;
  *               not. The python module doesnt include it in its "dialect" class
  *               but I always kind of wondered why... maybe play around with the
  *               library once you have it flushed out a little and see what u think
+ *               After thinking about it a bit, I realized why the csv module doesn't
+ *               include it in the Dialiect. This is because they want to be able
+ *               to include various concrete implementations of Dialect for "excel-tab",
+ *               "standard-csv", "standard-tsv", etc. They cannot include things
+ *               such as hasHeader and characterEncoding because then they would
+ *               need to create concrete implementations of each of these variations
+ *               of their concrete dialects "excel-tab-header", "excel-tab-noheader",
+ *               "excel-tab-utf8", "excel-tab-utf8-header", etc. This would quickly
+ *               get out of hand. So, what's the solution? Add a second set of
+ *               attributes to flavor that is both optional AND mutable (unlike )
+ *               attributes which are all required and totally immutable)
  */
 class Flavor
 {
@@ -52,17 +63,28 @@ class Flavor
     const QUOTE_NONNUMERIC = 'quote_nonnumeric';
 
     /**
+     * @var array These are any configuration parameters that would not be part
+     *     of a concrete implementation of this class. For instance, whether or
+     *     not a file has a header, what its character encoding is, etc. These
+     *     values, unlike attributes, are mutable and may be changed at any time.
+     */
+    protected $properties = array(
+        'encoding' => null, // @todo implement this...
+        'hasHeader' => null
+    );
+
+    /**
      * @var array Describes a particular CSV file's "flavor" or format. These
      *     attributes are immutable. They cannot be changed after constructing
      *     a flavor object
      */
-    protected $attributes = [
+    protected $attributes = array(
         'delimiter' => ',',
         'quoteChar' => '"',
         'quoteStyle' => self::QUOTE_MINIMAL,
         'escapeChar' => '\\',
         'lineTerminator' => "\r\n"
-    ];
+    );
 
     /**
      * Class constructor
@@ -72,7 +94,7 @@ class Flavor
      * @return void
      * @todo Should this throw an exception when attributes are invalid? I think so...
      */
-    public function __construct($attributes = null)
+    public function __construct($attributes = null, $properties = array())
     {
         if (!is_null($attributes)) {
             if (!is_array($attributes)) {
@@ -84,6 +106,21 @@ class Flavor
                 $this->attributes[$attr] = $val;
             }
         }
+        // @todo should this silently ignore unknown properties or should it thrown an exception
+        foreach ($this->properties as $name => $value) {
+            $this->properties[$name] = Utils::array_get($properties, $name, null);
+        }
+    }
+
+    public function setProperty($name, $value)
+    {
+        $this->properties[$name] = $value;
+    }
+
+    public function getProperty($name)
+    {
+        // @todo do some checking to make sure valid property name
+        return $this->properties[$name];
     }
 
     /**
