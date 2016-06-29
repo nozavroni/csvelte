@@ -45,7 +45,7 @@ class Reader
      * @return void
      * @access public
      */
-    public function __construct(InputInterface $input, Flavor $flavor = null)
+    public function __construct(InputInterface $input, Flavor $flavor = null, Taster $taster = null)
     {
         $this->source = $input;
         if (is_null($flavor)) {

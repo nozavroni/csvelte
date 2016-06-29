@@ -523,8 +523,12 @@ class Taster
      * @todo Also, break out of the first loop after a certain (perhaps even a
      *     configurable) amount of lines (you only need to examine so much data )
      *     to reliably make a determination and this is an expensive method)
+     * @todo Because the header isn't actually part of the "flavor",
+     *     I could remove the need for quote, delim, and eol by "licking" the
+     *     data sample provided in the first argument. Also, I could actually
+     *     create a Reader object to read the data here.
      */
-    public function  lickHeader($data, $quote, $delim, $eol)
+    public function lickHeader($data, $quote, $delim, $eol)
     {
         $data = $this->replaceQuotedSpecialChars($data, $delim);
         $lines = explode($eol, $data);
@@ -543,7 +547,6 @@ class Taster
                 );
             }
         }
-
         $hasHeader = 0;
         $potential_header = array_shift($types);
         foreach ($types as $line_no => $cols) {
@@ -560,51 +563,6 @@ class Taster
                 }
             }
         }
-
         return $hasHeader > 0;
-
-        /**
-         * This is just legacy code... it was something I tried that didn't pan
-         * out. I just want to test the above code a little more thoroughly
-         * before completely removing this...
-         */
-
-        // $potential_header = array_shift($types);
-        // $potential_header_count = count($potential_header);
-        // $scoresheet = array_pad(array(), $potential_header_count, array());
-        // foreach ($types as $line_no => $cols) {
-        //     $line_cols_count = count($cols);
-        //     $col_count_match = ($potential_header_count == $line_cols_count);
-        //     foreach ($cols as $col => $info) {
-        //         extract($info);
-        //         $header_type = $potential_header[$col]['type'];
-        //         $header_length = $potential_header[$col]['length'];
-        //         if ($header_type == self::TYPE_STRING) {
-        //             // if the header column is a string, then its type couldn't
-        //             // be determined beyond that it's a string of characters, so
-        //             // use its length as a barometer rather than its type
-        //             if ($header_length == $length) {
-        //                 $scoresheet[$col] []= 1;
-        //             }
-        //         } else {
-        //             if ($header_type == $type) {
-        //                 if ($header_length == $length) {
-        //                     $scoresheet[$col] []= 3;
-        //                 } else {
-        //                     $scoresheet[$col] []= 2;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-        //
-        // $final_scores = array();
-        // array_walk($scoresheet, function($scores, $col) use (&$final_scores) {
-        //     $final_scores[$col] = array_sum($scores);
-        // });
-        //
-        // $total_rows = count($lines);
-        // dd($total_rows);
-        // dd($final_scores);
     }
 }
