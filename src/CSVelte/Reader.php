@@ -215,7 +215,9 @@ class Reader
 
     public function rewind()
     {
-        // $this->line = 0;
-        // $this->source->rewind();
+        $this->line = 0;
+        $this->source->rewind();
+        $this->current = null;
+        $this->load();
     }
 }

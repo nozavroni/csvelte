@@ -129,17 +129,17 @@ class ReaderTest extends TestCase
         $this->assertFalse($reader->valid());
     }
 
-    // public function testReaderCanBeRewound()
-    // {
-    //     $flavor = new Flavor(null, array('hasHeader' => false));
-    //     $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
-    //     $reader->next(); // move to line 2
-    //     $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->current()->toArray());
-    //     $reader->next(); // move to ilne 3
-    //     $reader->next(); // move to line 4
-    //     $this->assertEquals($expected = 4, $reader->key());
-    //     $reader->rewind();
-    //     $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
-    //     $this->assertEquals($expected = 1, $reader->key());
-    // }
+    public function testReaderCanBeRewound()
+    {
+        $flavor = new Flavor(null, array('hasHeader' => false));
+        $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
+        $reader->next(); // move to line 2
+        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->current()->toArray());
+        $reader->next(); // move to ilne 3
+        $reader->next(); // move to line 4
+        $this->assertEquals($expected = 4, $reader->key());
+        $reader->rewind();
+        $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
+        $this->assertEquals($expected = 1, $reader->key());
+    }
 }
