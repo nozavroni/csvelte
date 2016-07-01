@@ -73,4 +73,15 @@ class Row implements \Countable
     {
         return key($this->columns);
     }
+
+    /**
+     * Get the next column
+     *
+     * @return string The "next" column
+     * @access public
+     */
+    public function next()
+    {
+        return next($this->columns);
+    }
 }
