@@ -62,4 +62,11 @@ class ReaderTest extends TestCase
         $reader = new Reader(new Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
         $this->assertTrue($reader->hasHeader());
     }
+
+    // public function testReaderCurrent()
+    // {
+    //     $flavor = new Flavor(null, array('hasHeader' => false));
+    //     $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv'))), $flavor);
+    //     $this->assertInstanceOf($expected = Reader\Row::class, $reader->current());
+    // }
 }
