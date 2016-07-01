@@ -15,6 +15,11 @@ class Stream implements InputInterface
     protected $source;
 
     /**
+     * @var array An array of meta data about the source stream
+     */
+    protected $info;
+
+    /**
      * Class constructor
      *
      * @param string The path and filename of the input file to read from
@@ -23,11 +28,35 @@ class Stream implements InputInterface
      */
     public function __construct($stream)
     {
-        if (false === ($this->source = @fopen($stream, 'r'))) {
-            // throw exception
+        list($scheme, $path, $name) = $this->parseStreamName($stream);
+        if (false === ($this->source = @fopen($path . DIRECTORY_SEPARATOR . $name, 'r'))) {
+            // @todo custom exception
             throw new \Exception('Cannot open ' . $this->name());
         }
         $this->updateInfo();
+    }
+
+    /**
+     * Parse stream name and extract pertinant information
+     *
+     * @param string The name of the stream to parse
+     * @return array(scheme, dir, name)
+     * @todo Streams can contain multiple instances of :// so make sure you
+     *     account for that when writing this method (and for the whole class)
+     */
+    protected function parseStreamName($stream)
+    {
+        $uri = explode('://', $stream);
+        if (count($uri) < 2) {
+            // @todo custom exception
+            throw new \Exception('Invalid stream name: ' . $stream);
+        }
+        if (!$path = realpath($dirname = dirname($uri[1]))) {
+            // @todo custom exception
+            throw new \Exception('Unable to resolve specified path: ' . $dir);
+        }
+        return array($uri[0], $path, basename($uri[1]));
+
     }
 
     protected function updateInfo()
@@ -44,13 +73,18 @@ class Stream implements InputInterface
         return basename($this->info['uri']);
     }
 
+    public function path()
+    {
+        return dirname($this->info['uri']);
+    }
+
     /**
      * @inheritDoc
      */
     public function read($length)
     {
         if (false === ($data = fread($this->source, $length))) {
-            // throw exception
+            // @todo custom exception
             throw new \Exception('Cannot read from ' . $this->name());
         }
         $this->updateInfo();

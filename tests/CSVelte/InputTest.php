@@ -15,17 +15,25 @@ class InputTest extends TestCase
 {
     public function testCreateNewFile()
     {
-        $file = new File(__DIR__ . '/../files/banklist.csv');
-        $this->assertEquals($expectedFilename = 'banklist.csv', $file->name());
+        //$file = new File(__DIR__ . '/../files/banklist.csv');
+        //$this->assertEquals($expectedFilename = 'banklist.csv', $file->name());
+    }
+
+    public function testStreamInfoMethods()
+    {
+        $banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');
+        $stream = new Stream('file://' . __DIR__ . '/../files/banklist.csv');
+        $this->assertEquals($expectedName = 'banklist.csv', $stream->name());
+        $this->assertEquals($expectedPath = realpath(__DIR__ . '/../files'), $stream->path());
+
     }
 
     public function testStreamReadSpecifiedNumberOfCharacters()
     {
-        $denizengarden = file_get_contents(__DIR__ . '/../files/banklist.csv');
+        $banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');
         $stream = new Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv'));
-        $this->assertEquals($expectedName = 'banklist.csv', $stream->name());
-        $this->assertEquals($expectedFirst100 = substr($denizengarden, 0, 100), $stream->read(100));
+        $this->assertEquals($expectedFirst100 = substr($banklist, 0, 100), $stream->read(100));
         // now make sure it picks up from where it left off...
-        $this->assertEquals($expectedNext50 = substr($denizengarden, 100, 50), $stream->read(50));
+        $this->assertEquals($expectedNext50 = substr($banklist, 100, 50), $stream->read(50));
     }
 }
