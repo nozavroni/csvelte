@@ -84,4 +84,15 @@ class Row implements \Countable
     {
         return next($this->columns);
     }
+
+    /**
+     * Rewind back to the beginning...
+     *
+     * @return void
+     * @access public
+     */
+    public function rewind()
+    {
+        return reset($this->columns);
+    }
 }
