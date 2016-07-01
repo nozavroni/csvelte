@@ -117,4 +117,15 @@ class Row implements \Iterator, \Countable
     {
         return array_key_exists($this->position, $this->columns);
     }
+
+    /**
+     * Join columns together using specified delimiter
+     *
+     * @return boolean
+     * @access public
+     */
+    public function join($delimiter = "")
+    {
+        return implode($delimiter, $this->columns);
+    }
 }

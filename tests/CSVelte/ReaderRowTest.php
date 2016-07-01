@@ -74,4 +74,10 @@ class ReaderRowTest extends TestCase
             $row->next();
         }
     }
+
+    public function testJoinRow()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        $this->assertEquals(implode(",", $expected), $row->join(","));
+    }
 }
