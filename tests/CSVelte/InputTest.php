@@ -23,8 +23,8 @@ class InputTest extends TestCase
 
     public function testCreateNewFile()
     {
-        //$file = new File(__DIR__ . '/../files/banklist.csv');
-        //$this->assertEquals($expectedFilename = 'banklist.csv', $file->name());
+        $file = new File(__DIR__ . '/../files/banklist.csv');
+        $this->assertEquals($expectedFilename = 'banklist.csv', $file->name());
     }
 
     public function testStreamInfoMethods()

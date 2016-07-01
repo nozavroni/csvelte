@@ -48,11 +48,23 @@ class Stream implements Readable
         $this->updateInfo();
     }
 
+    /**
+     * Get the current position of the pointer
+     *
+     * @return integer Position of pointer within source
+     * @access public
+     */
     public function position()
     {
         return $this->position;
     }
 
+    /**
+     * Get the current position of the pointer
+     *
+     * @return integer|false Position of pointer within source or false on failure
+     * @access protected
+     */
     protected function updateInfo()
     {
         $this->info = stream_get_meta_data($this->source);
@@ -60,7 +72,12 @@ class Stream implements Readable
     }
 
     /**
-     * @inheritDoc
+     * Retrieve the name of this stream. If stream is a file, it will return the
+     * file's name. If it's some other type of stream, it's hard to say what,
+     * exactly, the name will be.
+     *
+     * @return string The name of the stream resource
+     * @access public
      */
     public function name()
     {
@@ -76,7 +93,8 @@ class Stream implements Readable
      *     streams such as php://filter/read=string.toupper/resource=file:///var/www/foo.csv
      *     I'm not sure whether I should parse the stream name and return the
      *     dirname(realpath()) of /var/www/foo.csv or if the rest of it actually
-     *     is techinally part of the dirname... I'm going ot leave it as is for now
+     *     is techinally part of the dirname... I'm going to leave it as is for
+     *     now because I'm leaning towards "It doesn't matter"
      */
     public function path()
     {
