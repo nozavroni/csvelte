@@ -79,4 +79,12 @@ class ReaderTest extends TestCase
         $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->next()->toArray());
         $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->current()->toArray());
     }
+
+    // public function testReaderValid()
+    // {
+    //     $flavor = new Flavor(null, array('hasHeader' => false));
+    //     $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
+    //     $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
+    //     $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->next()->toArray());
+    // }
 }

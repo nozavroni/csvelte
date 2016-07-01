@@ -191,4 +191,19 @@ class Reader
         $this->load();
         return $this->current;
     }
+
+    public function valid()
+    {
+        
+    }
+
+    public function key()
+    {
+
+    }
+
+    public function rewind()
+    {
+
+    }
 }

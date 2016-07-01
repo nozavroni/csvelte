@@ -27,4 +27,9 @@ interface Readable
      * @access public
      */
     public function readLine();
+
+    /**
+     * Determine whether the end of the readable resource has been reached
+     */
+    public function isEof();
 }

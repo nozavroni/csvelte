@@ -84,6 +84,24 @@ class InputTest extends TestCase
         $this->assertEquals($expected = "City,ST,CERT,Acquiring In", with(new SeekableStream('file://' . __DIR__ . '/../files/banklist.csv'))->seek(10)->read(25));
     }
 
+    public function testIsEof()
+    {
+        $filename = realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv');
+        $size = filesize($filename);
+        $stream = new SeekableStream('file://' . $filename);
+        $this->assertFalse($stream->isEof());
+        $read = $stream->read($size+1);
+        $this->assertTrue($stream->isEof());
+        $stream->seek(0);
+        $this->assertFalse($stream->isEof());
+        $stream->seek(25);
+        $this->assertFalse($stream->isEof());
+        $stream->read(100);
+        $this->assertFalse($stream->isEof());
+        $stream->read($size);
+        $this->assertTrue($stream->isEof());
+    }
+
     // public function testPopLineForPoppingHeaderMethodOrignoringLines()
     // {
     //     // the idea here is to hide a line from the reader

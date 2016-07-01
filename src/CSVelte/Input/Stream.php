@@ -126,4 +126,15 @@ class Stream implements Readable
         $this->updateInfo();
         return $line;
     }
+
+    /**
+     * Have we reached the EOF (end of file/stream)?
+     *
+     * @return boolean
+     * @access public
+     */
+    public function isEof()
+    {
+        return feof($this->source);
+    }
 }
