@@ -10,6 +10,7 @@ use CSVelte\Contract\Seekable;
  * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo      Should I imlpement this as a "trait"?
  */
 class SeekableStream extends Stream implements Seekable
 {
