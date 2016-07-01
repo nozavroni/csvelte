@@ -15,6 +15,8 @@ class SeekableStream extends Stream implements Seekable
 {
     public function seek($pos)
     {
-        
+        $this->position = $pos;
+        fseek($this->source, $this->position);
+        $this->updateInfo();
     }
 }
