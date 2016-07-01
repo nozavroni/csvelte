@@ -64,4 +64,14 @@ class ReaderRowTest extends TestCase
             next($expected);
         }
     }
+
+    public function testIteratorWhileLoop()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        while ($row->valid()) {
+            $this->assertEquals(current($expected), $row->current());
+            next($expected);
+            $row->next();
+        }
+    }
 }
