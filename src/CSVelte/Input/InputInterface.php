@@ -10,6 +10,14 @@
 interface InputInterface
 {
     /**
+     * Retrieve the name of the input source
+     *
+     * @return string The name of the input source
+     * @access public
+     */
+    public function name();
+    
+    /**
      * Read in the specified amount of characters from the input source
      *
      * @param integer Amount of characters to read from input source
@@ -23,7 +31,7 @@ interface InputInterface
      * the beginning of the next line)
      *
      * @return string The next line from the input source
-     * @access public 
+     * @access public
      */
     public function readLine();
 }

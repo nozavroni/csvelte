@@ -9,8 +9,8 @@
  */
 require __DIR__ . '/../vendor/autoload.php';
 
-function dd($input)
+function dd($input, $exit = true)
 {
     var_dump($input);
-    exit;
+    if ($exit) exit;
 }
