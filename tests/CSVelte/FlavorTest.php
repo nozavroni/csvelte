@@ -87,4 +87,27 @@ class FlavorTest extends TestCase
         $flavor->setProperty('hasHeader', false);
         $this->assertFalse($flavor->getProperty('hasHeader'));
     }
+
+    public function testSettingNonExistentPropertyIsAllowed()
+    {
+        // I'm thinking I might allow "creating" properties that don't already
+        // exist within the Flavor class on-the-fly. This would allow for end-users
+        // to provide their own properties. Until I find a reason not to, I'll
+        // allow it...
+        $flavor = new Flavor(null, array('foo' => 'bar'));
+        $this->assertEquals($expected = "bar", $flavor->getProperty('foo'));
+        $flavor->setProperty('foo', 'baz');
+        $flavor->setProperty('bar', 'foobar');
+        $this->assertEquals($expected = "baz", $flavor->getProperty('foo'));
+        $this->assertEquals($expected = "foobar", $flavor->getProperty('bar'));
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     */
+    public function testGetNonExistentPropertyThrowsException()
+    {
+        $flavor = new Flavor();
+        $flavor->getProperty('poopoo');
+    }
 }

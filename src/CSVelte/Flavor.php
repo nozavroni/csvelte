@@ -107,9 +107,10 @@ class Flavor
             }
         }
         // @todo should this silently ignore unknown properties or should it thrown an exception
-        foreach ($this->properties as $name => $value) {
-            $this->properties[$name] = Utils::array_get($properties, $name, null);
-        }
+        // foreach ($this->properties as $name => $value) {
+        //     $this->properties[$name] = Utils::array_get($properties, $name, null);
+        // }
+        $this->properties = array_merge($this->properties, $properties);
     }
 
     public function setProperty($name, $value)
@@ -119,7 +120,7 @@ class Flavor
 
     public function getProperty($name)
     {
-        // @todo do some checking to make sure valid property name
+        if (!array_key_exists($name, $this->properties)) throw new \OutOfBoundsException('Attempting to access nonexistant property: ' . $name);
         return $this->properties[$name];
     }
 
