@@ -38,6 +38,11 @@ class Reader
     protected $current;
 
     /**
+     * @var integer The current line being read (from input source)
+     */
+    protected $line = 0;
+
+    /**
      * Class constructor
      * @param CSVelte\Contract\Readable The source of our CSV data
      * @param CSVelte\Flavor The "flavor" or format specification object
@@ -82,6 +87,7 @@ class Reader
         if (is_null($this->current)) {
             try {
                 $line = $this->source->readLine(null, $this->getFlavor()->lineTerminator);
+                $this->line++;
                 $this->current = new Row($this->parse($line));
             } catch (EndOfFileException $e) {
                 $this->current = false;
@@ -204,7 +210,7 @@ class Reader
 
     public function key()
     {
-
+        return $this->line;
     }
 
     public function rewind()
