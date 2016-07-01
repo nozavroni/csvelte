@@ -55,4 +55,13 @@ class ReaderRowTest extends TestCase
         $row = new Row($expected = array('foo', 'bar', 'baz'));
         $this->assertSame(true, $row->valid());
     }
+
+    public function testIteratorImplementationIsWorking()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        foreach($row as $col) {
+            $this->assertEquals(current($expected), $col);
+            next($expected);
+        }
+    }
 }

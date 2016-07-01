@@ -15,7 +15,12 @@ class Row implements \Iterator, \Countable
     /**
      * @var array The columns within the row
      */
-     protected $columns;
+    protected $columns;
+
+    /**
+     * @var integer The current position within $columns
+     */
+    protected $position;
 
     /**
      * Class constructor
@@ -27,7 +32,8 @@ class Row implements \Iterator, \Countable
      */
     public function __construct(array $columns)
     {
-        $this->columns = $columns;
+        $this->columns = array_values($columns);
+        $this->rewind();
     }
 
     /**
@@ -60,7 +66,10 @@ class Row implements \Iterator, \Countable
      */
     public function current()
     {
-        return current($this->columns);
+        if (!array_key_exists($this->position, $this->columns)) {
+            throw new \OutOfBoundsException("Undefined index: " . $this->position);
+        }
+        return $this->columns[$this->position];
     }
 
     /**
@@ -71,7 +80,7 @@ class Row implements \Iterator, \Countable
      */
     public function key()
     {
-        return key($this->columns);
+        return $this->position;
     }
 
     /**
@@ -82,7 +91,8 @@ class Row implements \Iterator, \Countable
      */
     public function next()
     {
-        return next($this->columns);
+        $this->position++;
+        if ($this->valid()) return $this->current();
     }
 
     /**
@@ -93,7 +103,8 @@ class Row implements \Iterator, \Countable
      */
     public function rewind()
     {
-        return reset($this->columns);
+        $this->position = 0;
+        if ($this->valid()) return $this->current();
     }
 
     /**
@@ -104,6 +115,6 @@ class Row implements \Iterator, \Countable
      */
     public function valid()
     {
-        return true;
+        return array_key_exists($this->position, $this->columns);
     }
 }
