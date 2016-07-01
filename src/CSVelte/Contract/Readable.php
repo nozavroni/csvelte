@@ -30,6 +30,17 @@ interface Readable
 
     /**
      * Determine whether the end of the readable resource has been reached
+     *
+     * @return boolean
+     * @access public
      */
     public function isEof();
+
+    /**
+     * File must be able to be rewound when the end is reached
+     *
+     * @return void
+     * @access public 
+     */
+    public function rewind();
 }

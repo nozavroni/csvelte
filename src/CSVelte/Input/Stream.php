@@ -146,4 +146,16 @@ class Stream implements Readable
     {
         return feof($this->source);
     }
+
+    /**
+     * File must be able to be rewound when the end is reached
+     *
+     * @return void
+     * @access public
+     */
+    public function rewind()
+    {
+        rewind($this->source);
+        $this->updateInfo();
+    }
 }

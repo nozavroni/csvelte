@@ -102,6 +102,17 @@ class InputTest extends TestCase
         $this->assertTrue($stream->isEof());
     }
 
+    public function testRewind()
+    {
+        $filename = realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv');
+        $stream = new Stream($filename);
+        $first150 = $stream->read(150);
+        $this->assertEquals($expected = "c", $stream->read(1));
+        $stream->rewind();
+        $this->assertEquals($expected = 0, $stream->position());
+        $this->assertEquals($first150, $stream->read(150));
+    }
+
     // public function testPopLineForPoppingHeaderMethodOrignoringLines()
     // {
     //     // the idea here is to hide a line from the reader
