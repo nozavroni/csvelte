@@ -14,7 +14,7 @@ use CSVelte\Exception\EndOfFileException;
  * @todo      Use SPL interfaces such as Iterator, SeekableIterator, Countable,
  *     etc. to make the reader as easy as possible to work with
  */
-class Reader
+class Reader implements \Iterator
 {
     const PLACEHOLDER_DELIM = '[=[__DELIM__]=]';
     const PLACEHOLDER_NEWLINE = '[=[__NEWLINE__]=]';

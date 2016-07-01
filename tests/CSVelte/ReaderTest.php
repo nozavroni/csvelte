@@ -4,6 +4,7 @@ use PHPUnit\Framework\TestCase;
 use Mockery as m;
 use Mockery\Adapter\PHPUnit\MockeryPHPUnitIntegration;
 use CSVelte\Reader;
+use CSVelte\Reader\Row;
 use CSVelte\Flavor;
 use CSVelte\Contract\Readable;
 use CSVelte\Input\Stream;
@@ -141,5 +142,28 @@ class ReaderTest extends TestCase
         $reader->rewind();
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
         $this->assertEquals($expected = 1, $reader->key());
+    }
+
+    public function testReaderCanBeIterated()
+    {
+        $flavor = new Flavor(null, array('hasHeader' => false));
+        $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
+        $expected_line = 0;
+        $first = $reader->current();
+        foreach ($reader as $line => $row) {
+            $this->assertEquals(++$expected_line, $line);
+            $this->assertInstanceOf(Row::class, $row);
+        }
+        // does it rewind itself to be looped through again?
+        $expected_line = 0;
+        foreach ($reader as $line => $row) {
+            $this->assertEquals(++$expected_line, $line);
+            $this->assertInstanceOf(Row::class, $row);
+        }
+        // now, since the loop iterated to the end of the file, current should contain nothing...
+        $this->assertFalse($reader->current());
+        // not to worry, we can rewind that sucker!
+        $reader->rewind();
+        $this->assertEquals($first, $reader->current());
     }
 }
