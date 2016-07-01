@@ -37,9 +37,10 @@ class InputTest extends TestCase
         $this->assertEquals($expectedNext50 = substr($banklist, 100, 50), $stream->read(50));
     }
 
-    // public function testStreamSupportsComplexStreamNames()
-    // {
-    //     $upper = fopen($streamName = 'php://filter/read=string.toupper/resource=file://' . realpath(__DIR__ . '/../files/banklist.csv'), 'r+');
-    //     $stream = new Stream($streamName);
-    // }
+    public function testStreamSupportsComplexStreamNames()
+    {
+        $upper = fopen($streamName = 'php://filter/read=string.toupper/resource=file://' . realpath(__DIR__ . '/../files/banklist.csv'), 'r+');
+        $stream = new Stream($streamName);
+        $this->assertEquals($expected = fread($upper, 100), $stream->read(100));
+    }
 }
