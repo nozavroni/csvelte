@@ -22,10 +22,10 @@ class InputTest extends TestCase
     public function testStreamInfoMethods()
     {
         $banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');
-        $stream = new Stream('file://' . __DIR__ . '/../files/banklist.csv');
+        $stream = new Stream($path = 'file://' . __DIR__ . '/../files/banklist.csv');
         $this->assertEquals($expectedName = 'banklist.csv', $stream->name());
-        $this->assertEquals($expectedPath = realpath(__DIR__ . '/../files'), $stream->path());
-
+        // $this->assertEquals($expectedPath = realpath(__DIR__ . '/../files'), $stream->path());
+        $this->assertEquals($expectedPath = dirname($path), $stream->path());
     }
 
     public function testStreamReadSpecifiedNumberOfCharacters()
@@ -36,4 +36,10 @@ class InputTest extends TestCase
         // now make sure it picks up from where it left off...
         $this->assertEquals($expectedNext50 = substr($banklist, 100, 50), $stream->read(50));
     }
+
+    // public function testStreamSupportsComplexStreamNames()
+    // {
+    //     $upper = fopen($streamName = 'php://filter/read=string.toupper/resource=file://' . realpath(__DIR__ . '/../files/banklist.csv'), 'r+');
+    //     $stream = new Stream($streamName);
+    // }
 }

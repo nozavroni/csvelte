@@ -26,37 +26,13 @@ class Stream implements InputInterface
      * @return void
      * @access public
      */
-    public function __construct($stream)
+    public function __construct($name)
     {
-        list($scheme, $path, $name) = $this->parseStreamName($stream);
-        if (false === ($this->source = @fopen($path . DIRECTORY_SEPARATOR . $name, 'r'))) {
+        if (false === ($this->source = @fopen($name, 'r'))) {
             // @todo custom exception
-            throw new \Exception('Cannot open ' . $this->name());
+            throw new \Exception('Cannot open stream: ' . $name);
         }
         $this->updateInfo();
-    }
-
-    /**
-     * Parse stream name and extract pertinant information
-     *
-     * @param string The name of the stream to parse
-     * @return array(scheme, dir, name)
-     * @todo Streams can contain multiple instances of :// so make sure you
-     *     account for that when writing this method (and for the whole class)
-     */
-    protected function parseStreamName($stream)
-    {
-        $uri = explode('://', $stream);
-        if (count($uri) < 2) {
-            // @todo custom exception
-            throw new \Exception('Invalid stream name: ' . $stream);
-        }
-        if (!$path = realpath($dirname = dirname($uri[1]))) {
-            // @todo custom exception
-            throw new \Exception('Unable to resolve specified path: ' . $dir);
-        }
-        return array($uri[0], $path, basename($uri[1]));
-
     }
 
     protected function updateInfo()
@@ -73,6 +49,17 @@ class Stream implements InputInterface
         return basename($this->info['uri']);
     }
 
+    /**
+     * Retrieve the dirname part of the stream name
+     *
+     * @return string The dirname of this stream's path
+     * @access public
+     * @todo I'm not sure this method is actually relevant when dealing with
+     *     streams such as php://filter/read=string.toupper/resource=file:///var/www/foo.csv
+     *     I'm not sure whether I should parse the stream name and return the
+     *     dirname(realpath()) of /var/www/foo.csv or if the rest of it actually
+     *     is techinally part of the dirname... I'm going ot leave it as is for now
+     */
     public function path()
     {
         return dirname($this->info['uri']);
