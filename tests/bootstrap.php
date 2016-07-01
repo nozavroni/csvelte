@@ -14,3 +14,5 @@ function dd($input, $exit = true)
     var_dump($input);
     if ($exit) exit;
 }
+
+function with($obj) { return $obj; }

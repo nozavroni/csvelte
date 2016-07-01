@@ -69,7 +69,7 @@ class InputTest extends TestCase
         $this->assertEquals($line1oftherest, $stream->readLine(null, "\r"));
     }
 
-    public function testMovePointer()
+    public function testSeekToPosition()
     {
         $stream = new SeekableStream('file://' . __DIR__ . '/../files/banklist.csv');
         $stream->read(125);
@@ -77,6 +77,11 @@ class InputTest extends TestCase
         $stream->seek(10);
         $this->assertEquals($expected = 10, $stream->position());
         $this->assertEquals($expected = "City,ST,CERT,Acquiring In", $stream->read(25));
+    }
+
+    public function testChainingMethods()
+    {
+        $this->assertEquals($expected = "City,ST,CERT,Acquiring In", with(new SeekableStream('file://' . __DIR__ . '/../files/banklist.csv'))->seek(10)->read(25));
     }
 
     // public function testPopLineForPoppingHeaderMethodOrignoringLines()
