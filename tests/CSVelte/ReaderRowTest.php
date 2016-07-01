@@ -25,4 +25,10 @@ class ReaderRowTest extends TestCase
         $this->assertEquals(count($expected), $row->count());
         $this->assertEquals(count($expected), count($row));
     }
+
+    public function testRowGetCurrentColumn()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        $this->assertEquals($expected[0], $row->current());
+    }
 }
