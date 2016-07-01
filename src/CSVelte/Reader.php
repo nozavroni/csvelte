@@ -2,6 +2,7 @@
 
 use CSVelte\Contract\Readable;
 use CSVelte\Reader\Row;
+use CSVelte\Exception\EndOfFileException;
 
 /**
  * CSVelte
@@ -79,8 +80,12 @@ class Reader
     protected function load()
     {
         if (is_null($this->current)) {
-            $line = $this->source->readLine(null, $this->getFlavor()->lineTerminator);
-            $this->current = new Row($this->parse($line));
+            try {
+                $line = $this->source->readLine(null, $this->getFlavor()->lineTerminator);
+                $this->current = new Row($this->parse($line));
+            } catch (EndOfFileException $e) {
+                $this->current = false;
+            }
         }
     }
 
@@ -194,7 +199,7 @@ class Reader
 
     public function valid()
     {
-        
+        return (bool) $this->current;
     }
 
     public function key()

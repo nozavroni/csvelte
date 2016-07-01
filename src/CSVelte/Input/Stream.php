@@ -1,6 +1,7 @@
 <?php namespace CSVelte\Input;
 
 use CSVelte\Contract\Readable;
+use CSVelte\Exception\EndOfFileException;
 
 /**
  * CSVelte\Input\Stream
@@ -107,8 +108,12 @@ class Stream implements Readable
     public function read($length)
     {
         if (false === ($data = fread($this->source, $length))) {
-            // @todo custom exception
-            throw new \Exception('Cannot read from ' . $this->name());
+            if ($this->isEof()) {
+                throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
+            } else {
+                // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
+                throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
+            }
         }
         $this->updateInfo();
         return $data;
@@ -120,8 +125,12 @@ class Stream implements Readable
     public function readLine($max = null, $eol = "\n")
     {
         if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {
-            // @todo custom exception
-            throw new \Exception('Cannot read line from ' . $this->name());
+            if ($this->isEof()) {
+                throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
+            } else {
+                // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
+                throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
+            }
         }
         $this->updateInfo();
         return $line;
