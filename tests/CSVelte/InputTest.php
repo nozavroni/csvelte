@@ -27,6 +27,14 @@ class InputTest extends TestCase
         $this->assertEquals($expectedFilename = 'banklist.csv', $file->name());
     }
 
+    /**
+     * @expectedException CSVelte\Exception\InvalidStreamUriException
+     */
+    public function testInvalidStreamUriThrowsException()
+    {
+        $stream = new Stream('pickles://iloveham.poo');
+    }
+
     public function testStreamInfoMethods()
     {
         $banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');

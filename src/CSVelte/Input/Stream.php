@@ -2,6 +2,7 @@
 
 use CSVelte\Contract\Readable;
 use CSVelte\Exception\EndOfFileException;
+use CSVelte\Exception\InvalidStreamUriException;
 
 /**
  * CSVelte\Input\Stream
@@ -44,7 +45,7 @@ class Stream implements Readable
     {
         if (false === ($this->source = @fopen($name, 'r'))) {
             // @todo custom exception
-            throw new \Exception('Cannot open stream: ' . $name);
+            throw new InvalidStreamUriException('Cannot open stream: ' . $name);
         }
         $this->updateInfo();
     }
