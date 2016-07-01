@@ -166,4 +166,11 @@ class ReaderTest extends TestCase
         $reader->rewind();
         $this->assertEquals($first, $reader->current());
     }
+
+    public function testReaderImplementsOuterIterator()
+    {
+        $flavor = new Flavor(null, array('hasHeader' => false));
+        $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
+        $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->getInnerIterator()->toArray());
+    }
 }

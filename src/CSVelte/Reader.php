@@ -14,7 +14,7 @@ use CSVelte\Exception\EndOfFileException;
  * @todo      Use SPL interfaces such as Iterator, SeekableIterator, Countable,
  *     etc. to make the reader as easy as possible to work with
  */
-class Reader implements \Iterator
+class Reader implements \OuterIterator
 {
     const PLACEHOLDER_DELIM = '[=[__DELIM__]=]';
     const PLACEHOLDER_NEWLINE = '[=[__NEWLINE__]=]';
@@ -219,5 +219,10 @@ class Reader implements \Iterator
         $this->source->rewind();
         $this->current = null;
         $this->load();
+    }
+
+    public function getInnerIterator()
+    {
+        return $this->current();
     }
 }
