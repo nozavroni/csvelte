@@ -120,12 +120,4 @@ class InputTest extends TestCase
         $this->assertEquals($expected = 0, $stream->position());
         $this->assertEquals($first150, $stream->read(150));
     }
-
-    // public function testPopLineForPoppingHeaderMethodOrignoringLines()
-    // {
-    //     // the idea here is to hide a line from the reader
-    //     $stream = new Stream('file://' . __DIR__ '/../files/banklist.csv');
-    //     $line1 = $stream->popLine();
-    //
-    // }
 }

@@ -173,4 +173,14 @@ class ReaderTest extends TestCase
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->getInnerIterator()->toArray());
     }
+
+    public function testReaderCanPopFirstLineAsHeader()
+    {
+        $flavor = new Flavor(null, array('hasHeader' => true));
+        $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
+        $this->assertEquals(
+            $expectedHeader = array('Bank Name','City','ST','CERT','Acquiring Institution','Closing Date','Updated Date'), 
+            $reader->header()->toArray()
+        );
+    }
 }

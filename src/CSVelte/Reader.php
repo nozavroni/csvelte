@@ -2,6 +2,7 @@
 
 use CSVelte\Contract\Readable;
 use CSVelte\Reader\Row;
+use CSVelte\Reader\HeaderRow;
 use CSVelte\Exception\EndOfFileException;
 
 /**
@@ -43,6 +44,11 @@ class Reader implements \OuterIterator
     protected $line = 0;
 
     /**
+     * @var CSVelte\Reader\HeaderRow The header row (if any)
+     */
+    protected $header;
+
+    /**
      * Class constructor
      * @param CSVelte\Contract\Readable The source of our CSV data
      * @param CSVelte\Flavor The "flavor" or format specification object
@@ -73,7 +79,8 @@ class Reader implements \OuterIterator
             }
         }
         $this->flavor = $flavor;
-        $this->load();
+        // $this->load();
+        $this->rewind();
     }
 
     /**
@@ -88,7 +95,12 @@ class Reader implements \OuterIterator
             try {
                 $line = $this->source->readLine(null, $this->getFlavor()->lineTerminator);
                 $this->line++;
-                $this->current = new Row($this->parse($line));
+                $parsed = $this->parse($line);
+                if ($this->hasHeader() && $this->line === 1) {
+                    $this->header = new HeaderRow($parsed);
+                } else {
+                    $this->current = new Row($parsed);
+                }
             } catch (EndOfFileException $e) {
                 $this->current = false;
             }
@@ -219,10 +231,20 @@ class Reader implements \OuterIterator
         $this->source->rewind();
         $this->current = null;
         $this->load();
+        if ($this->hasHeader()) {
+            $this->line++;
+            $this->next();
+        }
+        return $this->current();
     }
 
     public function getInnerIterator()
     {
         return $this->current();
+    }
+
+    public function header()
+    {
+        return $this->header;
     }
 }
