@@ -184,4 +184,11 @@ class Reader
     {
         return $this->current;
     }
+
+    public function next()
+    {
+        $this->current = null;
+        $this->load();
+        return $this->current;
+    }
 }
