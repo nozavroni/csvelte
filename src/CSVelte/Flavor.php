@@ -113,11 +113,28 @@ class Flavor
         $this->properties = array_merge($this->properties, $properties);
     }
 
+    /**
+     * Set/create a property
+     *
+     * @param string The property to set
+     * @param string The propery's value
+     * @return $this
+     * @access public
+     */
     public function setProperty($name, $value)
     {
         $this->properties[$name] = $value;
+        return $this;
     }
 
+    /**
+     * Retrieve the value of specified property
+     *
+     * @param string The property to retrieve
+     * @return mixed The value of property
+     * @access public
+     * @throws OutOfBoundsException
+     */
     public function getProperty($name)
     {
         if (!array_key_exists($name, $this->properties)) throw new \OutOfBoundsException('Attempting to access nonexistant property: ' . $name);
