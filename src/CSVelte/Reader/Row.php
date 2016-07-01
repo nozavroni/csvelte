@@ -10,7 +10,7 @@ use CSVelte\Reader;
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-class Row // implements Countable
+class Row implements \Countable
 {
     /**
      * @var array The columns within the row
@@ -39,5 +39,16 @@ class Row // implements Countable
     public function toArray()
     {
         return $this->columns;
+    }
+
+    /**
+     * Count columns within the row
+     *
+     * @return integer The amount of columns
+     * @access public
+     */
+    public function count()
+    {
+        return count($this->columns);
     }
 }

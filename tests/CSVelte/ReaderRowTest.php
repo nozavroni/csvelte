@@ -18,4 +18,11 @@ class ReaderRowTest extends TestCase
         $row = new Row($expected = array(1, 'foo', 'bar', 'baz', 'biz', 25));
         $this->assertEquals($expected, $row->toArray());
     }
+
+    public function testRowIsCountable()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        $this->assertEquals(count($expected), $row->count());
+        $this->assertEquals(count($expected), count($row));
+    }
 }
