@@ -12,7 +12,7 @@ use Mockery\Adapter\PHPUnit\MockeryPHPUnitIntegration;
 use CSVelte\CSVelte;
 use CSVelte\Flavor;
 use CSVelte\Taster;
-use CSVelte\Input\InputInterface;
+use CSVelte\Contract\Readable;
 use Carbon\Carbon;
 
 class TasterTest extends TestCase
@@ -33,36 +33,36 @@ class TasterTest extends TestCase
     {
         switch ($for) {
             case 'TasterTest::testGuessLineTerminator':
-                return $input = m::mock('CSVelte\Input\InputInterface', function($mock) {
+                return $input = m::mock('CSVelte\Contract\Readable', function($mock) {
                     $crdata = str_replace(chr(Taster::LINE_FEED), chr(Taster::CARRIAGE_RETURN), $this->testData);
                     $crlfdata = str_replace(chr(Taster::LINE_FEED), chr(Taster::CARRIAGE_RETURN).chr(Taster::LINE_FEED), $this->testData);
                     $mock->shouldReceive('read', [2500])
                         ->andReturn($this->testData, $crdata, $crlfdata);
                 });
             case 'TasterTest::testLickQuoteAndDelimFailsWithNoQuoteColumns':
-                return $input = m::mock('CSVelte\Input\InputInterface', function($mock) {
+                return $input = m::mock('CSVelte\Contract\Readable', function($mock) {
                     $mock->shouldReceive('read', [2500])
                         ->andReturn($this->testNoQuoteComma);
                 });
             case 'TasterTest::testLickQuotingStyle':
-                return $input = m::mock('CSVelte\Input\InputInterface', function($mock) {
+                return $input = m::mock('CSVelte\Contract\Readable', function($mock) {
                     $mock->shouldReceive('read', [2500])
                         ->andReturn($this->testData, $this->testQuoteNonnumeric);
                 });
             case 'TasterTest::testLickTestData':
-                return $input = m::mock('CSVelte\Input\InputInterface', function($mock) {
+                return $input = m::mock('CSVelte\Contract\Readable', function($mock) {
                     $mock->shouldReceive('read', [2500])
                         ->andReturn($this->testData);
                 });
             case 'TasterTest::testLickTestTabSingleData':
-            return $input = m::mock('CSVelte\Input\InputInterface', function($mock) {
+            return $input = m::mock('CSVelte\Contract\Readable', function($mock) {
                 $mock->shouldReceive('read', [2500])
                     ->andReturn($this->testTabSingleData);
             });
             case 'TasterTest::testLickDelimiter':
             case 'TasterTest::testLickQuoteAndDelim':
             default:
-                return $input = m::mock('CSVelte\Input\InputInterface', function($mock) {
+                return $input = m::mock('CSVelte\Contract\Readable', function($mock) {
                     $mock->shouldReceive('read', [2500])
                         ->andReturn($this->testData, $this->testTabSingleData);
                 });
@@ -171,7 +171,7 @@ class TasterTest extends TestCase
 
     public function testTasterFactoryAllowsMeToMockForEasierTestingOrForChaining()
     {
-        // $input = $this->createMock('CSVelte\Input\InputInterface');
+        // $input = $this->createMock('CSVelte\Contract\Readable');
         // $input->method('read')
         //     ->willReturn($this->testData);
         // $taster = Taster::create($input);

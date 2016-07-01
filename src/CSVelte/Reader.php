@@ -1,8 +1,6 @@
 <?php namespace CSVelte;
 
-use CSVelte\Taster;
-use CSVelte\Flavor;
-use CSVelte\Input\InputInterface;
+use CSVelte\Contract\Readable;
 
 /**
  * CSVelte
@@ -19,7 +17,7 @@ class Reader
     /**
      * This class supports any sources of input that implements this interface.
      * This way I can read from local files, streams, FTP, you name it.
-     * @var CSVelte\Input\InputInterface
+     * @var CSVelte\Contract\Readable
      */
     protected $source;
 
@@ -40,12 +38,12 @@ class Reader
 
     /**
      * Class constructor
-     * @param CSVelte\Input\InputInterface The source of our CSV data
+     * @param CSVelte\Contract\Readable The source of our CSV data
      * @param CSVelte\Flavor The "flavor" or format specification object
      * @return void
      * @access public
      */
-    public function __construct(InputInterface $input, Flavor $flavor = null, Taster $taster = null)
+    public function __construct(Readable $input, Flavor $flavor = null, Taster $taster = null)
     {
         $this->source = $input;
         if (is_null($flavor)) {

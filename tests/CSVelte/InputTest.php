@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use CSVelte\Input\File;
 use CSVelte\Input\Stream;
+use CSVelte\Input\SeekableStream;
 
 /**
  * CSVelte\Input Tests
@@ -67,4 +68,19 @@ class InputTest extends TestCase
         // set line ending
         $this->assertEquals($line1oftherest, $stream->readLine(null, "\r"));
     }
+
+    public function testMovePointer()
+    {
+        $stream = new SeekableStream('file://' . __DIR__ . '/../files/banklist.csv');
+        $stream->read(125);
+        //$this->assertTrue();
+    }
+
+    // public function testPopLineForPoppingHeaderMethodOrignoringLines()
+    // {
+    //     // the idea here is to hide a line from the reader
+    //     $stream = new Stream('file://' . __DIR__ '/../files/banklist.csv');
+    //     $line1 = $stream->popLine();
+    //
+    // }
 }

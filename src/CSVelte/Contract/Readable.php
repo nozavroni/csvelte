@@ -1,22 +1,15 @@
-<?php namespace CSVelte\Input;
+<?php namespace CSVelte\Contract;
 /**
- * InputInterface
- * Implement this interface to provide a source of input for CSVelte\Reader
+ * Readable Interface
+ * Implement this interface to be "readable". This means that the CSVelte\Reader
+ * class can read you (use you as a source of CSV data).
  *
- * @package   CSVelte\Input
+ * @package   CSVelte\Contract
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-interface InputInterface
+interface Readable
 {
-    /**
-     * Retrieve the name of the input source
-     *
-     * @return string The name of the input source
-     * @access public
-     */
-    public function name();
-    
     /**
      * Read in the specified amount of characters from the input source
      *

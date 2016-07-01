@@ -5,7 +5,7 @@ use Mockery as m;
 use Mockery\Adapter\PHPUnit\MockeryPHPUnitIntegration;
 use CSVelte\Reader;
 use CSVelte\Flavor;
-use CSVelte\Input\InputInterface;
+use CSVelte\Contract\Readable;
 
 /**
  * CSVelte\Reader Tests
@@ -20,7 +20,7 @@ class ReaderTest extends TestCase
 
     public function testReaderWillAutomaticallyDetectFlavorIfNoneProvided()
     {
-        $stub = $this->createMock(InputInterface::class);
+        $stub = $this->createMock(Readable::class);
         $stub->method('read')
              ->willReturn(file_get_contents(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')));
         $reader = new Reader($stub);
@@ -42,13 +42,13 @@ class ReaderTest extends TestCase
     // has to be (when input source changes or something)
     public function testReaderHasHeader()
     {
-        $no_header_stub = $this->createMock(InputInterface::class);
+        $no_header_stub = $this->createMock(Readable::class);
         $no_header_stub->method('read')
              ->willReturn(file_get_contents(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')));
         $no_header_reader = new Reader($no_header_stub);
         $this->assertEquals(false, $no_header_reader->hasHeader());
 
-        $header_stub = $this->createMock(InputInterface::class);
+        $header_stub = $this->createMock(Readable::class);
         $header_stub->method('read')
              ->willReturn(substr(file_get_contents(realpath(__DIR__ . '/../files/banklist.csv')), 0, 2500));
         $header_reader = new Reader($header_stub);

@@ -1,7 +1,7 @@
 <?php namespace CSVelte;
 
 use Carbon\Carbon;
-use CSVelte\Input\InputInterface;
+use CSVelte\Contract\Readable;
 use CSVelte\Exception\TasteQuoteAndDelimException;
 use CSVelte\Exception\TasteDelimiterException;
 
@@ -79,7 +79,7 @@ class Taster
     const TYPE_ALPHA = 'alpha';
 
     /**
-     * @var CSVelte\InputInterface The source of data to examine
+     * @var CSVelte\Contract\Readable The source of data to examine
      * @access protected
      */
     protected $input;
@@ -87,16 +87,16 @@ class Taster
     /**
      * Class constructor--accepts a CSV input source
      *
-     * @param CSVelte\Input\InputInterface The source of CSV data
+     * @param CSVelte\Contract\Readable The source of CSV data
      * @return void
      * @access public
      */
-    public function __construct(InputInterface $input)
+    public function __construct(Readable $input)
     {
         $this->input = $input;
     }
 
-    public static function create(InputInterface $input)
+    public static function create(Readable $input)
     {
         return new Taster($input);
     }

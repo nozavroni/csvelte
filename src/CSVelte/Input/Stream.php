@@ -1,4 +1,7 @@
 <?php namespace CSVelte\Input;
+
+use CSVelte\Contract\Readable;
+
 /**
  * CSVelte\Input\Stream
  * Represents a stream source for CSV data
@@ -7,7 +10,7 @@
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-class Stream implements InputInterface
+class Stream implements Readable
 {
     /**
      * @const integer
@@ -23,6 +26,11 @@ class Stream implements InputInterface
      * @var array An array of meta data about the source stream
      */
     protected $info;
+
+    /**
+     * @var integer The position of the pointer within the stream resource
+     */
+    protected $position;
 
     /**
      * Class constructor
