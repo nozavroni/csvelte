@@ -62,4 +62,15 @@ class Row implements \Countable
     {
         return current($this->columns);
     }
+
+    /**
+     * Get the current key
+     *
+     * @return string The "current" key
+     * @access public
+     */
+    public function key()
+    {
+        return key($this->columns);
+    }
 }

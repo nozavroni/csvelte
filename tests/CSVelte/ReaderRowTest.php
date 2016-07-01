@@ -31,4 +31,10 @@ class ReaderRowTest extends TestCase
         $row = new Row($expected = array('foo', 'bar', 'baz'));
         $this->assertEquals($expected[0], $row->current());
     }
+
+    public function testRowGetKey()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        $this->assertSame(0, $row->key());
+    }
 }
