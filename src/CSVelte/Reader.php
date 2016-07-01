@@ -16,25 +16,16 @@ class Reader
 {
     /**
      * This class supports any sources of input that implements this interface.
-     * This way I can read from local files, streams, FTP, you name it.
+     * This way I can read from local files, streams, FTP, any class that implements
+     * the "Readable" interface
      * @var CSVelte\Contract\Readable
      */
     protected $source;
 
     /**
-     * @var CSVelte\Taster Used to determine "flavor" and "hasHeader"
-     */
-    protected $taster;
-
-    /**
      * @var CSVelte\Flavor The "flavor" or format of the CSV being read
      */
     protected $flavor;
-
-    /**
-     * @var boolean True if it was determined that the source data has a header
-     */
-    protected $hasHeader;
 
     /**
      * Class constructor
@@ -43,17 +34,20 @@ class Reader
      * @return void
      * @access public
      */
-    public function __construct(Readable $input, Flavor $flavor = null, Taster $taster = null)
+    public function __construct(Readable $input, Flavor $flavor = null)
     {
         $this->source = $input;
         if (is_null($flavor)) {
-            $flavor = $this->getTaster()->lick();
+            $taster = new Taster($this->source);
+            $flavor = $taster->lick();
+            $flavor->setProperty('hasHeader', $taster->lickHeader($this->source->read(Taster::SAMPLE_SIZE), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator));
         }
         $this->flavor = $flavor;
     }
 
     /**
      * Retreive the "flavor" object being used by the reader
+     *
      * @return CSVelte\Flavor
      * @access public
      */
@@ -63,49 +57,23 @@ class Reader
     }
 
     /**
-     * This method is both a factory AND an accessor for the CSVelte\Taster object
-     * @return CSVelte\Taster
-     * @access protected
-     * @uses CSVelte\Taster
-     */
-    protected function getTaster()
-    {
-        if (is_null($this->taster)) $this->taster = new Taster($this->source);
-        return $this->taster;
-    }
-
-    /**
      * Determine whether or not the input source's CSV data contains a header
-     * row or not. This method is a logical best guess. The CSV format does not
+     * row or not. Unless you explicitly specify so within your Flavor object,
+     * this method is a logical best guess. The CSV format does not
      * provide metadata of any kind and therefor does not provide this info.
      *
-     * This is simply a proxy to the Taster method's tasteHeader method with the
-     * addition of a sort of cache that allows you to call hasHeader() as many
-     * times as you want without actually calling the expensive lickHeader()
-     * again and again.
-     *
-     * @return boolean True if the input source MOST LIKELY has a header row
-     * @uses CSVelte\Taster::lickHeader
+     * @return boolean True if the input source has a header row (or, to be more )
+     *     accurate, if the flavor SAYS it has a header row)
      * @access public
-     * @todo This method is ugly and unnecessary. If the Flavor class had a
-     *     "hasHeader" attribute or even a hasHeader method, I could simply call
-     *     that and be done with it...
-     * @todo But then again, as I said, the lickHeader method is considerably
-     *     expensive. You notice it being called (by the time it takes). Perhaps
-     *     it isn't a bad idea to keep it seperate and to only call it if the
-     *     end-user specifically requests it... something to think about...
-     * @todo Standardize the amount of data that is passed to taster's methods
-     *     to determine whatever. Assign a class constant like TESTDATA_LEN and
-     *     make it like 1500 or 2500. Either that or read in a certain amount of
-     *     lines or be even smarter and only read in ten lines at a time until
+     * @todo Rather than always reading in Taster::SAMPLE_SIZE, read in ten lines at a time until
      *     whatever method it is has enough data to make a reliable decision/guess
      */
     public function hasHeader()
     {
-        if (is_null($this->hasHeader)) {
-            $flavor = $this->getFlavor();
-            $this->hasHeader = $this->getTaster()->lickHeader($this->source->read(2500), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator);
+        try {
+            return $this->getFlavor()->getProperty('hasHeader');
+        } catch (\OutOfBoundsException $e) {
+            return false;
         }
-        return $this->hasHeader;
     }
 }

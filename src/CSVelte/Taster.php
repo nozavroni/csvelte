@@ -57,6 +57,11 @@ class Taster
     const PLACEHOLDER_DELIM = '[__DELIM__]';
 
     /**
+     * Recommended data sample size
+     */
+    const SAMPLE_SIZE = 2500;
+
+    /**
      * Column data types -- used within the lickHeader method to determine
      * whether the first row contains different types of data than the rest of
      * the rows (and thus, is likely a header row)
