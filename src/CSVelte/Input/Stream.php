@@ -10,6 +10,11 @@
 class Stream implements InputInterface
 {
     /**
+     * @const integer
+     */
+    const MAX_LINE_LENGTH = 4096;
+
+    /**
      * @var resource The stream resource to input file
      */
     protected $source;
@@ -81,8 +86,13 @@ class Stream implements InputInterface
     /**
      * @inheritDoc
      */
-    public function readLine()
+    public function readLine($max = null, $eol = "\n")
     {
-
+        if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {
+            // @todo custom exception
+            throw new \Exception('Cannot read line from ' . $this->name());
+        }
+        $this->updateInfo();
+        return $line;
     }
 }

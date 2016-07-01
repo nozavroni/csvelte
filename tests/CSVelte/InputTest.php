@@ -13,6 +13,13 @@ use CSVelte\Input\Stream;
  */
 class InputTest extends TestCase
 {
+    protected $banklist;
+
+    public function setUp()
+    {
+        $this->banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');
+    }
+
     public function testCreateNewFile()
     {
         //$file = new File(__DIR__ . '/../files/banklist.csv');
@@ -42,5 +49,22 @@ class InputTest extends TestCase
         $upper = fopen($streamName = 'php://filter/read=string.toupper/resource=file://' . realpath(__DIR__ . '/../files/banklist.csv'), 'r+');
         $stream = new Stream($streamName);
         $this->assertEquals($expected = fread($upper, 100), $stream->read(100));
+    }
+
+    public function testReadLineReturnsNextLineAndAdvancesPositionToBeginningOfNextLine()
+    {
+        list($line1, $line2, $line3, $therest) = explode($eol = "\n", $this->banklist, 4);
+        $therest = str_replace("\n", "\r", $therest);
+        list($line1oftherest, $therestoftherest) = explode("\r", $therest);
+        $stream = new Stream('file://' . __DIR__ . '/../files/banklist.csv');
+        $this->assertEquals($line1, $stream->readLine());
+        // next call should pull line 2
+        $this->assertEquals($line2, $stream->readLine());
+        // set maximum line length
+        $this->assertEquals(substr($line3, 0, 25), $stream->readLine(25));
+        // now read the rest of the line
+        $this->assertEquals(substr($line3, 25), $stream->readLine());
+        // set line ending
+        $this->assertEquals($line1oftherest, $stream->readLine(null, "\r"));
     }
 }
