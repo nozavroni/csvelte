@@ -73,7 +73,7 @@ class InputTest extends TestCase
     {
         $stream = new SeekableStream('file://' . __DIR__ . '/../files/banklist.csv');
         $stream->read(125);
-        //$this->assertTrue();
+        $this->assertEquals($expected = 125, $stream->position());
     }
 
     // public function testPopLineForPoppingHeaderMethodOrignoringLines()

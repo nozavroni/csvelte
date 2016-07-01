@@ -48,6 +48,11 @@ class Stream implements Readable
         $this->updateInfo();
     }
 
+    public function position()
+    {
+        return $this->position;
+    }
+
     protected function updateInfo()
     {
         $this->info = stream_get_meta_data($this->source);
