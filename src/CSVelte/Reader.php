@@ -33,14 +33,29 @@ class Reader
      * @param CSVelte\Flavor The "flavor" or format specification object
      * @return void
      * @access public
+     * @todo Taster is kind of a mess. It's not particularly easy to work with.
+     *     Look at all this code I needed just to use it. Stupid. Time for a
+     *     refactor... Maybe pass an argument to the lick() method to have it
+     *     run lickHeader and set that value within the returned flavor's
+     *     properties rather than all this silliness. Not to mention the oddness
+     *     of setting a source in its constructor and then, inexplicably, still
+     *     asking for a data sample in lickHeader. Very poor design. SMH at myself.
      */
     public function __construct(Readable $input, Flavor $flavor = null)
     {
         $this->source = $input;
+        $taster = new Taster($this->source);
         if (is_null($flavor)) {
-            $taster = new Taster($this->source);
             $flavor = $taster->lick();
-            $flavor->setProperty('hasHeader', $taster->lickHeader($this->source->read(Taster::SAMPLE_SIZE), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator));
+        }
+        try {
+            $hasHeader = $flavor->getProperty('hasHeader');
+        } catch (\OutOfBoundsException $e) {
+            $hasHeader = null;
+        } finally {
+            if (is_null($hasHeader)) {
+                $flavor->setProperty('hasHeader', $taster->lickHeader($this->source->read(Taster::SAMPLE_SIZE), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator));
+            }
         }
         $this->flavor = $flavor;
     }

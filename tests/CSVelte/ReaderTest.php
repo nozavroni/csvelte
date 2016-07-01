@@ -6,6 +6,7 @@ use Mockery\Adapter\PHPUnit\MockeryPHPUnitIntegration;
 use CSVelte\Reader;
 use CSVelte\Flavor;
 use CSVelte\Contract\Readable;
+use CSVelte\Input\Stream;
 
 /**
  * CSVelte\Reader Tests
@@ -53,5 +54,12 @@ class ReaderTest extends TestCase
              ->willReturn(substr(file_get_contents(realpath(__DIR__ . '/../files/banklist.csv')), 0, 2500));
         $header_reader = new Reader($header_stub);
         $this->assertEquals(true, $header_reader->hasHeader());
+    }
+
+    public function testReaderStillRunsLickHeaderIfFlavorWasPassedInWithNullHasHeaderProperty()
+    {
+        $flavor = new Flavor();
+        $reader = new Reader(new Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
+        $this->assertTrue($reader->hasHeader());
     }
 }
