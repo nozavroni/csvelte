@@ -10,7 +10,7 @@ use CSVelte\Reader;
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-class Row implements \Countable
+class Row implements \Iterator, \Countable
 {
     /**
      * @var array The columns within the row
@@ -94,5 +94,16 @@ class Row implements \Countable
     public function rewind()
     {
         return reset($this->columns);
+    }
+
+    /**
+     * Is the current position valid?
+     *
+     * @return boolean
+     * @access public
+     */
+    public function valid()
+    {
+        return true;
     }
 }

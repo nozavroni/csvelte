@@ -41,6 +41,18 @@ class ReaderRowTest extends TestCase
     public function testRowNextReturnsNextAndMovesToNextColumn()
     {
         $row = new Row($expected = array('foo', 'bar', 'baz'));
+        $this->assertSame($expected[1], $row->next());
+    }
+
+    public function testRowRewindResetsPointerToBeginningAndReturnsValue()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
         $this->assertSame($expected[0], $row->rewind());
+    }
+
+    public function testRowValidChecksWhetherCurrentIsValid()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        $this->assertSame(true, $row->valid());
     }
 }
