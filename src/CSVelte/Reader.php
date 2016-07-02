@@ -21,6 +21,9 @@ use CSVelte\Exception\EndOfFileException;
  *     interface for eliminating the header row from being iterated.
  * @todo Also, is there any way to do some kind of caching or something? Probably
  *     not but if you could that would be a cool feature...
+ * @todo Check out http://php.net/manual/en/class.splfileobject.php and see what info
+ *     you might be able to gleen from that. Apparently it has some CSV methods. Can
+ *     I use that class/object or can anything be learned from it?
  */
 class Reader implements \OuterIterator
 {

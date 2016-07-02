@@ -11,6 +11,7 @@ use CSVelte\Exception\InvalidStreamUriException;
  * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo      Look at the ArrayObject class and see if it can be used 
  */
 class Stream implements Readable
 {
@@ -66,6 +67,8 @@ class Stream implements Readable
      *
      * @return integer|false Position of pointer within source or false on failure
      * @access protected
+     * @todo Look through all the parameters returned by fstat() and see if any
+     *     of it might be useful for this class or for File class.
      */
     protected function updateInfo()
     {
