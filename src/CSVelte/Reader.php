@@ -89,7 +89,6 @@ class Reader implements \OuterIterator
             }
         }
         $this->flavor = $flavor;
-        // $this->load();
         $this->rewind();
     }
 

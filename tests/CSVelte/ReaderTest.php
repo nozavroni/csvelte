@@ -212,4 +212,47 @@ class ReaderTest extends TestCase
         $this->assertEquals($line[5], $line['Closing Date']);
         $this->assertEquals($line[6], $line['Updated Date']);
     }
+
+    // @todo This little nugget causes a very funkadelic little bug to pop up... come back to it.
+    // public function testIterateOverRowsThenIterateOverColumns()
+    // {
+    //     $input = new Stream(realpath(__DIR__ . '/../files/banklist.csv'));
+    //     $reader = new Reader($input);
+    //
+    //     $expectedLine = 0;
+    //     foreach ($reader as $line_no => $row) {
+    //         $this->assertEquals(++$expectedLine, $line_no);
+    //         foreach ($row as $col_no => $val) {
+    //             dd($col_no);
+    //         }
+    //     }
+    // }
+
+    /**
+     * Default behavior when looping over columns is to provide column number
+     * (indexed from 0) as key and column value as value. But I would like to
+     * provide some sort of mechanism to change this so that you would get
+     * header => value and/or possibly even header => valueObj where valueObj is
+     * a special object representation of whatever data-type is contained in the
+     * datum. For instance, if it's a date, you may get a CSVelte\DataType\DateTime
+     * object or if it's a unit of currency you might get a DataType\Currency\Dollar
+     * object. But this is definitely a nice-to-have, possibly not even useful
+     * feature so I'm not worried about it just yet..
+     */
+    public function testIterateOverRowsThenIterateOverColumns()
+    {
+        $flavor = new Flavor(null, array('hasHeader' => true));
+        $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
+
+        $expectedLine = 1;
+        foreach ($reader as $line_no => $row) {
+            $expectedCol = 0;
+            $this->assertEquals(++$expectedLine, $line_no);
+            foreach ($row as $col_no => $val) {
+                $this->assertEquals($expectedCol++, $col_no);
+
+            }
+            if ($expectedLine > 2) break;
+        }
+    }
 }
