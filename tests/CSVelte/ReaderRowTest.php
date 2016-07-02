@@ -169,6 +169,15 @@ class ReaderRowTest extends TestCase
         $row[0] = 'boo';
     }
 
+    /**
+     * @expectedException CSVelte\Exception\InvalidHeaderException
+     */
+    public function testIncorrectHeaderCountThrowsException()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        $row->setHeaderRow(new HeaderRow(array('poop')));
+    }
+
     // public function testRowsCanBeIndexedByBothOffsetAndColumnHeaderName()
     // {
     //     $header = new HeaderRow($headers = array('first name', 'last name', 'address1', '2nd address line', 'city', 'state', 'zipcode', 'phone', 'email', 'state', 'startdate', 'enddate'));

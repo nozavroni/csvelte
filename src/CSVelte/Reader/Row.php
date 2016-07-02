@@ -2,6 +2,7 @@
 
 use CSVelte\Reader;
 use CSVelte\Utils;
+use CSVelte\Exception\InvalidHeaderException;
 
 /**
  * Reader row class
@@ -28,6 +29,9 @@ class Row extends RowBase
      */
     public function setHeaderRow(HeaderRow $headers)
     {
+        if (count($headers) !== count($this)) {
+            throw new InvalidHeaderException("Header count ({$headers->count()}) does not match column count ({$this->count()}).");
+        }
         $this->headers = $headers;
         $this->assocCols = array_combine($headers->toArray(), $this->columns);
     }
