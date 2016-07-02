@@ -188,23 +188,22 @@ class ReaderRowTest extends TestCase
     // }
 
     // @todo handle duplicate header names
-    // public function testRowsCanBeIndexedByBothOffsetAndColumnHeaderName()
-    // {
-    //     $header = new HeaderRow($headers = array('first name', 'last name', 'address1', '2nd address line', 'city', 'state', 'zipcode', 'phone', 'email', 'id', 'start-date', 'end [date]'));
-    //     $row = new Row($values = array('Luke', 'Visinoni', '1424 Some St.', 'Apt. #26', 'Chico', 'CA', '95926', '(530) 413-1234', 'luke.visinoni@gmail.com', '423', '12-28-2015', '04-21-2016'));
-    //     $row->setHeaderRow($header);
-    //     $this->assertEquals('Luke', $row['first name']);
-    //     $this->assertEquals('Visinoni', $row['last name']);
-    //     $this->assertEquals('Visinoni', $row['address1']);
-    //     $this->assertEquals('Apt. #26', $row['2nd address line']);
-    //     $this->assertEquals('Chico', $row['city']);
-    //     $this->assertEquals('CA', $row['state']);
-    //     $this->assertEquals('95926', $row['zipcode']);
-    //     $this->assertEquals('(530) 413-1234', $row['phone']);
-    //     $this->assertEquals('luke.visinoni@gmail.com', $row['email']);
-    //     $this->assertEquals('423', $row['id']);
-    //     $this->assertEquals('12-28-2015', $row['start-date']);
-    //     $this->assertEquals('04-21-2016', $row['end [date]']);
-    //     $this->assertEquals('423', $row->state10);
-    // }
+    public function testRowsCanBeIndexedByBothOffsetAndColumnHeaderName()
+    {
+        $header = new HeaderRow($headers = array('first name', 'last name', 'address1', '2nd address line', 'city', 'state', 'zipcode', 'phone', 'email', 'id', 'start-date', 'end [date]'));
+        $row = new Row($values = array('Luke', 'Visinoni', '1424 Some St.', 'Apt. #26', 'Chico', 'CA', '95926', '(530) 413-1234', 'luke.visinoni@gmail.com', '423', '12-28-2015', '04-21-2016'));
+        $row->setHeaderRow($header);
+        $this->assertEquals('Luke', $row['first name']);
+        $this->assertEquals('Visinoni', $row['last name']);
+        $this->assertEquals('1424 Some St.', $row['address1']);
+        $this->assertEquals('Apt. #26', $row['2nd address line']);
+        $this->assertEquals('Chico', $row['city']);
+        $this->assertEquals('CA', $row['state']);
+        $this->assertEquals('95926', $row['zipcode']);
+        $this->assertEquals('(530) 413-1234', $row['phone']);
+        $this->assertEquals('luke.visinoni@gmail.com', $row['email']);
+        $this->assertEquals('423', $row['id']);
+        $this->assertEquals('12-28-2015', $row['start-date']);
+        $this->assertEquals('04-21-2016', $row['end [date]']);
+    }
 }

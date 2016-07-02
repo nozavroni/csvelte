@@ -67,7 +67,7 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
      */
     public function toArray()
     {
-        return $this->columns;
+        return iterator_to_array($this);
     }
 
     /** Countable Method **/
