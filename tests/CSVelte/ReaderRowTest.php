@@ -141,6 +141,34 @@ class ReaderRowTest extends TestCase
         $row->offsetUnset(3);
     }
 
+    public function testReaderRowIsAccessableAsArray()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        $this->assertEquals($expected[0], $row[0]);
+        $this->assertEquals($expected[1], $row[1]);
+        $this->assertEquals($expected[2], $row[2]);
+    }
+
+    public function testRowDoesntAllowAssociativeIndexesAndReIndexesNumericallyIfYouAttemptToUseThem()
+    {
+        $row = new Row($expected = array('foo' => 'bar', 'bar' => 'baz', 'baz' => 'foo'));
+        $this->assertFalse($row->offsetExists('foo'));
+        $this->assertFalse($row->offsetExists('bar'));
+        $this->assertFalse($row->offsetExists('baz'));
+        $this->assertEquals($expected['foo'], $row[0]);
+        $this->assertEquals($expected['bar'], $row[1]);
+        $this->assertEquals($expected['baz'], $row[2]);
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     */
+    public function testOffsetSetThrowsExceptionIfNonnumericIndex()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        $row->offsetUnset(3);
+    }
+
     // public function testRowsCanBeIndexedByBothOffsetAndColumnHeaderName()
     // {
     //     $header = new HeaderRow($headers = array('first name', 'last name', 'address1', '2nd address line', 'city', 'state', 'zipcode', 'phone', 'email', 'state', 'startdate', 'enddate'));

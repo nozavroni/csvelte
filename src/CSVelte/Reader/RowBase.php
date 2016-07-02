@@ -10,8 +10,13 @@ use CSVelte\Utils;
  * @package   CSVelte\Reader
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo      The column values in this class should be immutable. Once you create
+ *     the object, there should be no way to then modify its columns. You can't
+ *     add new indexes, remove existing ones, none of that. So that would mean
+ *     that although it implements ArrayAccess, it needs to be throwing exceptions
+ *     on any method that isn't read-only (offsetSet/offsetUnset)
  */
-abstract class RowBase implements \Iterator, \Countable //, ArrayAccess
+abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
 {
     /**
      * @var array The columns within the row
