@@ -8,6 +8,10 @@
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @todo      Make all of these available as global functions via a utils.php file
  *            file (just create aliases)
+ * @todo Rather than what I mentioned above, maybe just implement a collection class
+ *     that has all of these array methods. This way you could simply call
+ *     $array->get($key, $default, $throwException = true) or
+ *     $array->items() or $array->remove($item) or $array->average(), etc. See issue #14
  */
 class Utils
 {
