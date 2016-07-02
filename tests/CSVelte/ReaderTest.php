@@ -174,13 +174,33 @@ class ReaderTest extends TestCase
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->getInnerIterator()->toArray());
     }
 
-    public function testReaderCanPopFirstLineAsHeader()
+    public function testReaderCanSkipFirstLineAsHeader()
     {
         $flavor = new Flavor(null, array('hasHeader' => true));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
         $this->assertEquals(
-            $expectedHeader = array('Bank Name','City','ST','CERT','Acquiring Institution','Closing Date','Updated Date'), 
+            $expectedHeader = array('Bank Name','City','ST','CERT','Acquiring Institution','Closing Date','Updated Date'),
             $reader->header()->toArray()
         );
     }
+
+    public function testHeaderRowIsAlwaysSkippedWhenWorkingWithReader()
+    {
+        $flavor = new Flavor(null, array('hasHeader' => true));
+        $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
+        // make sure that directly after instantiation, current() returns row #2
+        $this->assertEquals($expectedFirstRow = array('First CornerStone Bank','King of Prussia','PA','35312','First-Citizens Bank & Trust Company','6-May-16','25-May-16'), $reader->current()->toArray());
+        $this->assertEquals($expectedHeader = array('Bank Name','City','ST','CERT','Acquiring Institution','Closing Date','Updated Date'), $reader->header()->toArray());
+        // make sure that running through foreach starts with row #2
+        foreach ($reader as $line_no => $row) {
+            $this->assertEquals(2, $line_no);
+            $this->assertEquals($expectedFirstRow = array('First CornerStone Bank','King of Prussia','PA','35312','First-Citizens Bank & Trust Company','6-May-16','25-May-16'), $row->toArray());
+            break;
+        }
+    }
+
+    // public function testBodyRowsAreIndexedByHeaderValues()
+    // {
+    //
+    // }
 }
