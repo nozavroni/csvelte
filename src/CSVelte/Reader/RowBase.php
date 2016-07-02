@@ -135,6 +135,14 @@ abstract class RowBase implements \Iterator, \Countable //, ArrayAccess
         return true;
     }
 
+    public function offsetGet($offset)
+    {
+        if (!$this->offsetExists($offset)) {
+            throw new \OutOfBoundsException("Undefined offset: " . $offset);
+        }
+        return $this->columns[$offset];
+    }
+
     /**
      * Join columns together using specified delimiter
      *
