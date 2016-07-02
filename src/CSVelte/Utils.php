@@ -11,9 +11,17 @@
  */
 class Utils
 {
-    public static function array_get($arr, $key, $default)
+    public static function array_get($arr, $key, $default = null, $throwException = false)
     {
-        return array_key_exists($key, $arr) ? $arr[$key] : $default;
+        if (array_key_exists($key, $arr)) {
+            return $arr[$key];
+        } else {
+            if ($throwException) {
+                // @todo is this the correct exception to throw?
+                throw new \OutOfBoundsException('Unknown array index: ' . $key);
+            }
+        }
+        return $default;
     }
 
     public static function array_items($arr)
