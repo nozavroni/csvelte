@@ -49,6 +49,17 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
+     * Join columns together using specified delimiter
+     *
+     * @return boolean
+     * @access public
+     */
+    public function join($delimiter = "")
+    {
+        return implode($delimiter, $this->columns);
+    }
+
+    /**
      * Convert object to an array
      *
      * @return array
@@ -58,6 +69,8 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
     {
         return $this->columns;
     }
+
+    /** Countable Method **/
 
     /**
      * Count columns within the row
@@ -69,6 +82,8 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
     {
         return count($this->columns);
     }
+
+    /** Iterator Methods **/
 
     /**
      * Get the current column
@@ -130,6 +145,15 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
         return array_key_exists($this->position, $this->columns);
     }
 
+    /** ArrayAccess Methods **/
+
+    /**
+     * Is there an offset at specified position
+     *
+     * @param integer Offset
+     * @return boolean
+     * @access public
+     */
     public function offsetExists($offset)
     {
         try {
@@ -141,12 +165,28 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
         return true;
     }
 
+    /**
+     * Retrieve offset at specified position
+     *
+     * @param integer Offset
+     * @return any
+     * @access public
+     */
     public function offsetGet($offset)
     {
         $this->assertOffsetExists($offset);
         return $this->columns[$offset];
     }
 
+    /**
+     * Set offset at specified position
+     *
+     * @param integer Offset
+     * @param any Value
+     * @return void
+     * @access public
+     * @throws CSVelte\Exception\ImmutableException
+     */
     public function offsetSet($offset, $value)
     {
         // $this->columns[$offset] = $value;
@@ -154,6 +194,14 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
         $this->raiseImmutableException();
     }
 
+    /**
+     * Unset offset at specified position
+     *
+     * @param integer Offset
+     * @return void
+     * @access public
+     * @throws CSVelte\Exception\ImmutableException
+     */
     public function offsetUnset($offset)
     {
         // $this->assertOffsetExists($offset);
@@ -161,6 +209,14 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
         $this->raiseImmutableException();
     }
 
+    /**
+     * Throw exception unless offset exists
+     *
+     * @param integer Offset
+     * @return void
+     * @access protected
+     * @throws \OutOfBoundsException
+     */
     protected function assertOffsetExists($offset)
     {
         if (!$this->offsetExists($offset)) {
@@ -168,21 +224,17 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
         }
     }
 
+    /**
+     * Raise (throw) immutable exception
+     *
+     * @param string Message
+     * @return void
+     * @access protected
+     * @throws CSVelte\Exception\ImmutableException
+     */
     protected function raiseImmutableException($msg = null)
     {
         // columns are immutable, cannot be set
         throw new ImmutableException($msg ?: 'Cannot change immutable column data');
     }
-
-    /**
-     * Join columns together using specified delimiter
-     *
-     * @return boolean
-     * @access public
-     */
-    public function join($delimiter = "")
-    {
-        return implode($delimiter, $this->columns);
-    }
-
 }
