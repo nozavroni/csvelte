@@ -2,6 +2,7 @@
 
 use CSVelte\Reader;
 use CSVelte\Utils;
+use CSVelte\Exception\ImmutableException;
 
 /**
  * Reader row abstract base class
@@ -148,13 +149,16 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
 
     public function offsetSet($offset, $value)
     {
-        $this->columns[$offset] = $value;
+        // $this->columns[$offset] = $value;
+        // columns are immutable, cannot be set
+        $this->raiseImmutableException();
     }
 
     public function offsetUnset($offset)
     {
-        $this->assertOffsetExists($offset);
-        unset($this->columns[$offset]);
+        // $this->assertOffsetExists($offset);
+        // unset($this->columns[$offset]);
+        $this->raiseImmutableException();
     }
 
     protected function assertOffsetExists($offset)
@@ -162,6 +166,12 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
         if (!$this->offsetExists($offset)) {
             throw new \OutOfBoundsException("Undefined offset: " . $offset);
         }
+    }
+
+    protected function raiseImmutableException($msg = null)
+    {
+        // columns are immutable, cannot be set
+        throw new ImmutableException($msg ?: 'Cannot change immutable column data');
     }
 
     /**

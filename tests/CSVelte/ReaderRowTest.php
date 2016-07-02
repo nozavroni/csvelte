@@ -4,6 +4,7 @@ use PHPUnit\Framework\TestCase;
 use CSVelte\Reader;
 use CSVelte\Reader\Row;
 use CSVelte\Reader\HeaderRow;
+use CSVelte\Exception\ImmutableException;
 
 /**
  * CSVelte\Reader\Row Tests
@@ -108,37 +109,36 @@ class ReaderRowTest extends TestCase
         $row->offsetGet(3);
     }
 
-    public function testOffsetSet()
+    /**
+     * @expectedException CSVelte\Exception\ImmutableException
+     */
+    public function testOffsetSetThrowsImmutableException()
     {
         $row = new Row($expected = array('foo', 'bar', 'baz'));
-        $this->assertFalse($row->offsetExists(3));
-        // create new offset
-        $row->offsetSet(3, 'beez');
-        $this->assertTrue($row->offsetExists(3));
-        $this->assertEquals($expected = 'beez', $row->offsetGet(3));
-        // overwrite existing offset
-        $row->offsetSet(1, 'eats you');
-        $this->assertEquals($row->offsetGet(1), 'eats you');
-    }
-
-    public function testOffsetUnset()
-    {
-        $row = new Row($expected = array('foo', 'bar', 'baz'));
-        $this->assertTrue($row->offsetExists(1));
-        $row->offsetUnset(1);
-        $this->assertFalse($row->offsetExists(1));
-        $this->assertTrue($row->offsetExists(0));
-        $row->offsetUnset(0);
-        $this->assertFalse($row->offsetExists(0));
+        $row->offsetSet(0, 'cannotchangeme!');
+        // $this->assertFalse($row->offsetExists(3));
+        // // create new offset
+        // $row->offsetSet(3, 'beez');
+        // $this->assertTrue($row->offsetExists(3));
+        // $this->assertEquals($expected = 'beez', $row->offsetGet(3));
+        // // overwrite existing offset
+        // $row->offsetSet(1, 'eats you');
+        // $this->assertEquals($row->offsetGet(1), 'eats you');
     }
 
     /**
-     * @expectedException \OutOfBoundsException
+     * @expectedException CSVelte\Exception\ImmutableException
      */
-    public function testOffsetUnsetThrowsExceptionOnUnknownOffset()
+    public function testOffsetUnsetThrowsImmutableException()
     {
         $row = new Row($expected = array('foo', 'bar', 'baz'));
-        $row->offsetUnset(3);
+        $row->offsetUnset(0);
+        // $this->assertTrue($row->offsetExists(1));
+        // $row->offsetUnset(1);
+        // $this->assertFalse($row->offsetExists(1));
+        // $this->assertTrue($row->offsetExists(0));
+        // $row->offsetUnset(0);
+        // $this->assertFalse($row->offsetExists(0));
     }
 
     public function testReaderRowIsAccessableAsArray()
@@ -161,12 +161,12 @@ class ReaderRowTest extends TestCase
     }
 
     /**
-     * @expectedException \OutOfBoundsException
+     * @expectedException CSVelte\Exception\ImmutableException
      */
-    public function testOffsetSetThrowsExceptionIfNonnumericIndex()
+    public function testRowValuesAreImmutable()
     {
         $row = new Row($expected = array('foo', 'bar', 'baz'));
-        $row->offsetUnset(3);
+        $row[0] = 'boo';
     }
 
     // public function testRowsCanBeIndexedByBothOffsetAndColumnHeaderName()
