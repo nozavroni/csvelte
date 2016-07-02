@@ -108,6 +108,19 @@ class ReaderRowTest extends TestCase
         $row->offsetGet(3);
     }
 
+    public function testOffsetSet()
+    {
+        $row = new Row($expected = array('foo', 'bar', 'baz'));
+        $this->assertFalse($row->offsetExists(3));
+        // create new offset
+        $row->offsetSet(3, 'beez');
+        $this->assertTrue($row->offsetExists(3));
+        $this->assertEquals($expected = 'beez', $row->offsetGet(3));
+        // overwrite existing offset
+        $row->offsetSet(1, 'eats you');
+        $this->assertEquals($row->offsetGet(1), 'eats you');
+    }
+
     // public function testRowsCanBeIndexedByBothOffsetAndColumnHeaderName()
     // {
     //     $header = new HeaderRow($headers = array('first name', 'last name', 'address1', '2nd address line', 'city', 'state', 'zipcode', 'phone', 'email', 'state', 'startdate', 'enddate'));

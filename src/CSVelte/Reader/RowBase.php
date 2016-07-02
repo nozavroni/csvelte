@@ -143,6 +143,11 @@ abstract class RowBase implements \Iterator, \Countable //, ArrayAccess
         return $this->columns[$offset];
     }
 
+    public function offsetSet($offset, $value)
+    {
+        $this->columns[$offset] = $value;
+    }
+
     /**
      * Join columns together using specified delimiter
      *
