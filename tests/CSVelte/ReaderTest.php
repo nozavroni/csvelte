@@ -199,8 +199,17 @@ class ReaderTest extends TestCase
         }
     }
 
-    // public function testBodyRowsAreIndexedByHeaderValues()
-    // {
-    //
-    // }
+    public function testBodyRowsAreIndexedByHeaderValues()
+    {
+        $flavor = new Flavor(null, array('hasHeader' => true));
+        $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
+        $line = $reader->current();
+        $this->assertEquals($line[0], $line['Bank Name']);
+        $this->assertEquals($line[1], $line['City']);
+        $this->assertEquals($line[2], $line['ST']);
+        $this->assertEquals($line[3], $line['CERT']);
+        $this->assertEquals($line[4], $line['Acquiring Institution']);
+        $this->assertEquals($line[5], $line['Closing Date']);
+        $this->assertEquals($line[6], $line['Updated Date']);
+    }
 }

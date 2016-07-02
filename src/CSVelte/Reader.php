@@ -110,6 +110,7 @@ class Reader implements \OuterIterator
                     $this->header = new HeaderRow($parsed);
                 } else {
                     $this->current = new Row($parsed);
+                    if ($this->header) $this->current->setHeaderRow($this->header);
                 }
             } catch (EndOfFileException $e) {
                 $this->current = false;
