@@ -2,7 +2,6 @@
 
 use CSVelte\Reader;
 use CSVelte\Utils;
-use CSVelte\Traits\GetsMagicPropertiesFromArray;
 
 /**
  * Reader row class
@@ -14,7 +13,10 @@ use CSVelte\Traits\GetsMagicPropertiesFromArray;
  */
 class Row extends RowBase
 {
-    use GetsMagicPropertiesFromArray;
+    /**
+     * @var array Same as columns only indexed using headers rather than numbers
+     */
+    protected $assocCols = array();
 
     /**
      * Set the header row (so that it can be used to index the row)
@@ -27,7 +29,7 @@ class Row extends RowBase
     public function setHeaderRow(HeaderRow $headers)
     {
         $this->headers = $headers;
-        $this->properties = array_combine($headers->toArray(), $this->columns);
+        $this->assocCols = array_combine($headers->toArray(), $this->columns);
     }
 
     /**
@@ -40,7 +42,7 @@ class Row extends RowBase
     public function offsetExists($offset)
     {
         try {
-            Utils::array_get($this->properties, $offset, null, true);
+            Utils::array_get($this->assocCols, $offset, null, true);
         } catch (\OutOfBoundsException $e) {
             // now check $this->properties?
             return parent::offsetExists($offset);
@@ -58,7 +60,7 @@ class Row extends RowBase
     public function offsetGet($offset)
     {
         try {
-            $val = Utils::array_get($this->properties, $offset, null, true);
+            $val = Utils::array_get($this->assocCols, $offset, null, true);
         } catch (\OutOfBoundsException $e) {
             // now check $this->properties?
             return parent::offsetGet($offset);

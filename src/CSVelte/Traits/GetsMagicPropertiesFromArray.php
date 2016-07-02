@@ -37,7 +37,7 @@ trait GetsMagicPropertiesFromArray
     }
 
     /**
-     * Sets property value in properties array
+     * Sets property value in properties
      *
      * @param string Property name
      * @param any Property value
