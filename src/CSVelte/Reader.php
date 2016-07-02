@@ -12,13 +12,20 @@ use CSVelte\Exception\EndOfFileException;
  * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @todo      Use SPL interfaces such as Iterator, SeekableIterator, Countable,
- *     etc. to make the reader as easy as possible to work with
+ * @todo Is there ever a use case where one needs to simply iterate over every
+ *     datum within a CSV data source, ignoring rows almost completely? It would
+ *     just iterate over a row until it got to the end of the row, at which point
+ *     it would just start over at the beginning of the next row? One continuous
+ *     foreach over every datum in the source. IF so, check out RecursiveIterator
+ * @todo Use the abstract SPL class FilterIterator (extend it) for a cleaner
+ *     interface for eliminating the header row from being iterated.
+ * @todo Also, is there any way to do some kind of caching or something? Probably
+ *     not but if you could that would be a cool feature...
  */
 class Reader implements \OuterIterator
 {
-    const PLACEHOLDER_DELIM = '[=[__DELIM__]=]';
-    const PLACEHOLDER_NEWLINE = '[=[__NEWLINE__]=]';
+    const PLACEHOLDER_DELIM   = '[=[__DLIM__]=]';
+    const PLACEHOLDER_NEWLINE = '[=[__NWLN__]=]';
 
     /**
      * This class supports any sources of input that implements this interface.
@@ -232,7 +239,6 @@ class Reader implements \OuterIterator
         $this->current = null;
         $this->load();
         if ($this->hasHeader()) {
-            $this->line++;
             $this->next();
         }
         return $this->current();
