@@ -3,6 +3,7 @@
 use CSVelte\Contract\Readable;
 use CSVelte\Exception\EndOfFileException;
 use CSVelte\Exception\InvalidStreamUriException;
+use CSVelte\Filter\EncodeQuotedSpecialChars;
 
 /**
  * CSVelte\Input\Stream
@@ -11,7 +12,7 @@ use CSVelte\Exception\InvalidStreamUriException;
  * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @todo      Look at the ArrayObject class and see if it can be used 
+ * @todo      Look at the ArrayObject class and see if it can be used
  */
 class Stream implements Readable
 {
@@ -46,6 +47,11 @@ class Stream implements Readable
     {
         if (false === ($this->source = @fopen($name, 'r'))) {
             // @todo custom exception
+            // @todo This isn't always the correct exception to throw here. It's
+            // misleading. Sometimes stream/file can't be opened because it does
+            // not exist, or isn't readable, you need to refactor and throw a
+            // more specific exception depending on why fopen failed. Also, look
+            // into the parse_url function and see if it can help you with this
             throw new InvalidStreamUriException('Cannot open stream: ' . $name);
         }
         $this->updateInfo();
