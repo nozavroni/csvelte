@@ -9,10 +9,34 @@
  */
 require __DIR__ . '/../vendor/autoload.php';
 
-function dd($input, $exit = true)
+function dd($input, $exit = true, $label = null)
 {
+    if ($label) echo $label . "\n" . implode(array_map(function($c){ return "-"; }, str_split($label))) . "\n";
     var_dump($input);
+    echo "\n";
     if ($exit) exit;
+}
+
+/**
+ * Show Invisibles
+ * This is used for displaying invisible characters while testing. When I need to
+ * dump a string or array of strings and it contains newlines, there's no way for
+ * me to reliably know whether they are \n \r or \r\n. This will split strings up
+ * and add a ("\r") next to each invisible character (at least the ones I use )
+ * frequently within this library).
+ *
+ * @note I was going to write out a function that replaces these characters with
+ *     visible versions, but it appears that json_encode does this pretty well
+ *     for me. Neato!
+ */
+function si($in, $exit = true, $dump = true)
+{
+    $out = json_encode($in);
+    if ($dump) return var_dump($out);
+    else {
+        if ($exit) exit($out);
+    }
+    return $out;
 }
 
 function with($obj) { return $obj; }

@@ -4,6 +4,7 @@ use CSVelte\Contract\Readable;
 use CSVelte\Exception\EndOfFileException;
 use CSVelte\Exception\InvalidStreamUriException;
 use CSVelte\Filter\EncodeQuotedSpecialChars;
+use CSVelte\Traits\HandlesQuotedLineTerminators;
 
 /**
  * CSVelte\Input\Stream
@@ -16,6 +17,8 @@ use CSVelte\Filter\EncodeQuotedSpecialChars;
  */
 class Stream implements Readable
 {
+    use HandlesQuotedLineTerminators;
+
     /**
      * @const integer
      */
@@ -132,19 +135,19 @@ class Stream implements Readable
     /**
      * @inheritDoc
      */
-    public function readLine($max = null, $eol = "\n")
-    {
-        if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {
-            if ($this->isEof()) {
-                throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
-            } else {
-                // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
-                throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
-            }
-        }
-        $this->updateInfo();
-        return $line;
-    }
+    // public function readLine($max = null, $eol = "\n")
+    // {
+    //     if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {
+    //         if ($this->isEof()) {
+    //             throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
+    //         } else {
+    //             // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
+    //             throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
+    //         }
+    //     }
+    //     $this->updateInfo();
+    //     return $line;
+    // }
 
     /**
      * Have we reached the EOF (end of file/stream)?

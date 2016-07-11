@@ -27,8 +27,7 @@ class InputStringTest extends TestCase
     {
         $str = new String($this->CSVstrings['QuoteMinimal']);
         $this->assertEquals("Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date", $str->readLine());
-        $this->assertEquals("First CornerStone Bank,\"King of", $str->readLine());
-        $this->assertEquals("Prussia\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $str->readLine());
+        $this->assertEquals("First CornerStone Bank,\"King of\nPrussia\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $str->readLine());
         $this->assertEquals("Trust Company Bank,Memphis,TN,9956,The Bank of Fayette County,29-Apr-16,25-May-16", $str->readLine());
         $this->assertEquals("North Milwaukee State Bank,Milwaukee,WI,20364,First-Citizens Bank & Trust Company,11-Mar-16,16-Jun-16", $str->readLine());
     }

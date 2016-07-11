@@ -9,5 +9,5 @@
  */
 class File extends Stream
 {
-
+    
 }
