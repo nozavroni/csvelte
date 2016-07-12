@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use CSVelte\Input\File;
 use CSVelte\Input\Stream;
+use CSVelte\Input\String;
 use CSVelte\Input\SeekableStream;
 
 /**
@@ -20,7 +21,7 @@ class InputTest extends TestCase
     {
         $this->banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');
     }
-    
+
     public function testCreateNewFile()
     {
         $file = new File(__DIR__ . '/../files/banklist.csv');

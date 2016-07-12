@@ -60,6 +60,16 @@ class Stream implements Readable
         $this->updateInfo();
     }
 
+    // public function __destruct()
+    // {
+    //     $this->close();
+    // }
+    //
+    // public function close()
+    // {
+    //     return fclose($this->source);
+    // }
+
     /**
      * Get the current position of the pointer
      *
@@ -135,19 +145,19 @@ class Stream implements Readable
     /**
      * @inheritDoc
      */
-    // public function readLine($max = null, $eol = "\n")
-    // {
-    //     if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {
-    //         if ($this->isEof()) {
-    //             throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
-    //         } else {
-    //             // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
-    //             throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
-    //         }
-    //     }
-    //     $this->updateInfo();
-    //     return $line;
-    // }
+    public function nextLine($max = null, $eol = "\n")
+    {
+        if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {
+            if ($this->isEof()) {
+                throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
+            } else {
+                // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
+                throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
+            }
+        }
+        $this->updateInfo();
+        return $line;
+    }
 
     /**
      * Have we reached the EOF (end of file/stream)?
