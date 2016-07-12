@@ -10,6 +10,8 @@ use CSVelte\Stream\EncodeQuotedSpecialCharsWrapper;
  * @package   CSVelte Unit Tests
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @deprecated I decided to go in another direction so I'll likely eliminate this
+ *     once I'm 100% sure about my chosen solution.
  */
 class StreamBufferTest extends TestCase
 {

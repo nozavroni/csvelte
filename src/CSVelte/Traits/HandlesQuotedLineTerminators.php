@@ -1,5 +1,6 @@
 <?php namespace CSVelte\Traits;
 
+use CSVelte\Utils;
 use CSVelte\Exception\EndOfFileException;
 use CSVelte\Exception\OutOfBoundsException;
 
@@ -20,8 +21,19 @@ trait HandlesQuotedLineTerminators
 {
     protected $escapeChar = '\\';
     protected $quoteChars = '"\'';
-    protected $open = array();
+    protected $open = false;
 
+    /**
+     * Read single line from CSV data source (stream, file, etc.), taking into
+     * account CSV's de-facto quoting rules with respect to designated line
+     * terminator character when they fall within quoted strings.
+     *
+     * @param int
+     * @param char
+     * @return string
+     * @access public
+     * @see README file for more about CSV de-facto standard
+     */
     public function readLine($max = null, $eol = "\n")
     {
         $this->open = array_fill_keys(str_split($this->quoteChars), false);
@@ -32,24 +44,42 @@ trait HandlesQuotedLineTerminators
         return rtrim(implode($eol, $lines), $eol);
     }
 
+    /**
+     * Determine whether last line ended while a quoted string was still "open"
+     *
+     * @param string Line of csv to analyze
+     * @return bool
+     * @access protected
+     */
     protected function inQuotedString($line)
     {
+        $upshot = function($carry, $item){ return $carry + $item; };
         if (!empty($line)) {
             do {
                 if (!isset($i)) $i = 0;
                 $c = $line[$i++];
                 if (strpos($this->quoteChars, $c) !== false) {
-                    $this->open[$c] = !$this->open[$c];
+                    // only open a quoted string if no others are open
+                    // make a copy of open array
+                    $open = $this->open;
+                    // unset current quote character
+                    unset($open[$c]);
+                    if (!$reduction = array_reduce($open, $upshot)) $this->open[$c] = !$this->open[$c];
                 }
             } while ($i < strlen($line));
         }
-        $result = array_unique($this->open);
-        if (count($result) > 1 || current($result)) {
-            return true;
-        }
-        return false;
+        // we're only interested in whether or not the open array contains a true value
+        return array_reduce($this->open, $upshot);
+        // $result = array_unique($this->open);
+        // if (count($result) > 1 || current($result)) {
+        //     return true;
+        // }
+        // return false;
     }
 
+    /**
+     * Read next line from CSV file
+     */
     abstract protected function nextLine($max = null, $eol = "\n");
 
     // protected function nextLine($max = null, $eol = "\n")
