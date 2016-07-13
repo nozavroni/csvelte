@@ -19,9 +19,9 @@ use CSVelte\Exception\OutOfBoundsException;
  */
 trait HandlesQuotedLineTerminators
 {
-    protected $escapeChar = '\\';
     protected $quoteChars = '"\'';
     protected $open = false;
+    // protected $escapeChar = '\\';
     // protected $escape = false;
 
     /**
@@ -81,11 +81,6 @@ trait HandlesQuotedLineTerminators
         }
         // we're only interested in whether or not the open array contains a true value
         return array_reduce($this->open, $upshot);
-        // $result = array_unique($this->open);
-        // if (count($result) > 1 || current($result)) {
-        //     return true;
-        // }
-        // return false;
     }
 
     /**
