@@ -12,6 +12,9 @@
  *     that has all of these array methods. This way you could simply call
  *     $array->get($key, $default, $throwException = true) or
  *     $array->items() or $array->remove($item) or $array->average(), etc. See issue #14
+ * @todo Or, if you don't want to do that, you could create a Trait out of these
+ *     methods/functions and attach it to anything that's iterable or follows a
+ *     particular interface...
  */
 class Utils
 {

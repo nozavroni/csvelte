@@ -67,6 +67,8 @@ class Flavor
      *     of a concrete implementation of this class. For instance, whether or
      *     not a file has a header, what its character encoding is, etc. These
      *     values, unlike attributes, are mutable and may be changed at any time.
+     * @todo This is going away. The kinds of things I was planning on putting in
+     *     here will now live CSVelte\Schema instead
      */
     protected $properties = array(
         'encoding' => null, // @todo implement this...
@@ -81,8 +83,10 @@ class Flavor
     protected $attributes = array(
         'delimiter' => ',',
         'quoteChar' => '"',
-        'quoteStyle' => self::QUOTE_MINIMAL,
         'escapeChar' => '\\',
+        'doubleQuote' => false,
+        'skipInitialSpace' => false,
+        'quoteStyle' => self::QUOTE_MINIMAL,
         'lineTerminator' => "\r\n"
     );
 
@@ -93,6 +97,8 @@ class Flavor
      *     attributes are immutable. They can only be set here.
      * @return void
      * @todo Should this throw an exception when attributes are invalid? I think so...
+     * @todo I'm not sure I care for the idea of attributes being stored in an
+     *     array rather than simply using class properties. What's the benefit?
      */
     public function __construct($attributes = null, $properties = array())
     {
