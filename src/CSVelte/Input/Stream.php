@@ -65,6 +65,17 @@ class Stream implements Readable
     }
 
     /**
+     * Class destructor
+     *
+     * @return void
+     * @access public
+     */
+    public function __destruct()
+    {
+        $this->close();
+    }
+
+    /**
      * Close the stream
      * Close the stream resource and release any other resources opened by this
      * stream object.

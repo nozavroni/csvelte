@@ -164,11 +164,6 @@ class InputTest extends TestCase
         $stream = new Stream($inv_resource);
     }
 
-    // public function testCloseStreamResourceInDestructor()
-    // {
-    //
-    // }
-
     /**
      * @expectedException CSVelte\Exception\InvalidStreamResourceException
      */
@@ -182,5 +177,22 @@ class InputTest extends TestCase
         $this->assertTrue($stream->close());
         // trying to read from a stream that has been closed should trigger an exception
         $stream->read(100);
+    }
+
+    public function testCloseStreamResourceInDestructor()
+    {
+        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $handle = fopen($filename, 'r+');
+        $stream = new Stream($handle);
+        $this->assertSame($expected = $handle, $stream->getStreamResource());
+        $this->assertTrue(is_resource($stream->getStreamResource()));
+        $this->assertTrue(is_resource($handle));
+        // should be able to read from stream because it's open
+        $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\r\nFirst CornerStone Bank,King ", $actual = $stream->read(100));
+
+        unset($stream);
+        // trying to read from a stream that has been destroyed should fail
+        $this->assertFalse($fail = @fread($handle, 100));
+        $this->assertFalse(is_resource($handle));
     }
 }
