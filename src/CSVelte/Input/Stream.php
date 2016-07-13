@@ -51,8 +51,7 @@ class Stream implements Readable
     {
         if (is_resource($stream)) {
             if (self::RESOURCE_TYPE !== ($type = get_resource_type($stream))) {
-                // throw exception
-                return;
+                throw new \InvalidArgumentException('Invalid resource type provided: ' . $type);
             }
         } else {
             if (false === ($stream = @fopen($stream, 'r'))) {

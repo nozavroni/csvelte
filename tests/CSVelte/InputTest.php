@@ -155,10 +155,14 @@ class InputTest extends TestCase
         $this->assertSame($expected = $handle, $stream->getStreamResource(), "Ensure that the stream resource fetched from stream object is the same one that was passed in through its constructor.");
     }
 
-    // public function testStreamThrowsExceptionIfPassedIncorrectResourceType()
-    // {
-    //
-    // }
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testStreamThrowsExceptionIfPassedIncorrectResourceType()
+    {
+        $inv_resource = xml_parser_create('');
+        $stream = new Stream($inv_resource);
+    }
 
     /**
      * 3xpectedException CSVelte\Exception\
