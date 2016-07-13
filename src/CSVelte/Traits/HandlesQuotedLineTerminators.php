@@ -35,7 +35,7 @@ trait HandlesQuotedLineTerminators
      * @access public
      * @see README file for more about CSV de-facto standard
      */
-    public function readLine($max = null, $eol = "\n")
+    public function readLine($max = null, $eol = PHP_EOL)
     {
         $this->open = array_fill_keys(str_split($this->quoteChars), false);
         try {
@@ -91,7 +91,7 @@ trait HandlesQuotedLineTerminators
     /**
      * Read next line from CSV file
      */
-    abstract protected function nextLine($max = null, $eol = "\n");
+    abstract protected function nextLine($max = null, $eol = PHP_EOL);
 
     // protected function nextLine($max = null, $eol = "\n")
     // {

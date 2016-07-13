@@ -61,4 +61,13 @@ class InputStringTest extends TestCase
         $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,'Twin \"Citys\nNew line\nDoodad\" Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n"), "Ensure that single double quoted newlines work as expected within single single quoted strings.");
         $this->assertEquals($expected = "\"Hometown \\\"National Bank\\\",Longview,WA,35156,'Twin City\'s\nNew line\nDoodad Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n"), "Ensure that backslash escapes single double/single-quotes that fall within their same quote type. Although I'm not entirely sure this is expected behavior and will need to consult the RFC.");
     }
+
+    public function testInputReadLineUsesPhpEolConstantAsDefaultLineTerminator()
+    {
+        $csv = implode(PHP_EOL, preg_split("/(\r\n|\r|\n)/", $this->CSVstrings['DoubleQuotes']));
+        $stream = new String($this->CSVstrings['DoubleQuotes']);
+        $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date", $stream->readLine());
+        $this->assertEquals($expected = "First CornerStone Bank,\"The Very Holiest \"\"King\nof\nPrussia\"\" and all his goons\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $stream->readLine());
+        $this->assertEquals($expected = "Trust Company Bank,Memphis,TN,9956,\"The 'Bank\nof\nFayette' County\",29-Apr-16,25-May-16", $stream->readLine());
+    }
 }

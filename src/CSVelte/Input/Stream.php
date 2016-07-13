@@ -145,7 +145,7 @@ class Stream implements Readable
     /**
      * @inheritDoc
      */
-    public function nextLine($max = null, $eol = "\n")
+    public function nextLine($max = null, $eol = PHP_EOL)
     {
         if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {
             if ($this->isEof()) {
