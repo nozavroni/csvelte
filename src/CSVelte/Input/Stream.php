@@ -3,6 +3,7 @@
 use CSVelte\Contract\Readable;
 use CSVelte\Exception\EndOfFileException;
 use CSVelte\Exception\InvalidStreamUriException;
+use CSVelte\Exception\InvalidStreamResourceException;
 
 /**
  * CSVelte\Input\Stream
@@ -51,7 +52,7 @@ class Stream implements Readable
     {
         if (is_resource($stream)) {
             if (self::RESOURCE_TYPE !== ($type = get_resource_type($stream))) {
-                throw new \InvalidArgumentException('Invalid resource type provided: ' . $type);
+                throw new InvalidStreamResourceException('Invalid resource type provided: ' . $type);
             }
         } else {
             if (false === ($stream = @fopen($stream, 'r'))) {
@@ -80,6 +81,12 @@ class Stream implements Readable
         return false;
     }
 
+    /**
+     * Retrieve underlying stream resource
+     *
+     * @return resource
+     * @access public
+     */
     public function getStreamResource()
     {
         return $this->source;
@@ -145,13 +152,13 @@ class Stream implements Readable
      */
     public function read($length)
     {
+        $this->assertStreamExistsAndIsReadable();
         if (false === ($data = fread($this->source, $length))) {
-            if ($this->isEof()) {
+            if ($this->isEof())
                 throw new EndOfFileException('Cannot read from ' . $this->name() . '. End of file has been reached.');
-            } else {
-                // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
-                throw new \OutOfBoundsException('Cannot read from ' . $this->name());
-            }
+            // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
+            //throw new \OutOfBoundsException('Cannot read from ' . $this->name());
+            return false;
         }
         $this->updateInfo();
         return $data;
@@ -162,13 +169,13 @@ class Stream implements Readable
      */
     public function readLine($max = null, $eol = "\n")
     {
+        $this->assertStreamExistsAndIsReadable();
         if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {
-            if ($this->isEof()) {
-                throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
-            } else {
-                // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
-                throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
-            }
+            if ($this->isEof())
+                throw new EndOfFileException('Cannot read from ' . $this->name() . '. End of file has been reached.');
+            // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
+            //throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
+            return false;
         }
         $this->updateInfo();
         return $line;
@@ -195,5 +202,23 @@ class Stream implements Readable
     {
         rewind($this->source);
         $this->updateInfo();
+    }
+
+    /**
+     * Does a series of checks on the internal stream resource to ensure it is
+     * readable, hasn't been closed already, etc. If it finds a problem, the
+     * appropriate exception will be thrown. Called before any attempts to read
+     * from the stream resource.
+     *
+     * @return void
+     * @throws CSVelte\CSVelte\Exception\InvalidStreamResourceException
+     * @access protected
+     */
+    protected function assertStreamExistsAndIsReadable()
+    {
+        switch (true) {
+            case !is_resource($this->source):
+                throw new InvalidStreamResourceException('Cannot read from ' . $this->name() . '. It is either invalid or has been closed.');
+        }
     }
 }

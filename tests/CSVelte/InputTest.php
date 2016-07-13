@@ -156,7 +156,7 @@ class InputTest extends TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException CSVelte\Exception\InvalidStreamResourceException
      */
     public function testStreamThrowsExceptionIfPassedIncorrectResourceType()
     {
@@ -164,26 +164,23 @@ class InputTest extends TestCase
         $stream = new Stream($inv_resource);
     }
 
-    /**
-     * 3xpectedException CSVelte\Exception\
-     */
     // public function testCloseStreamResourceInDestructor()
     // {
     //
     // }
 
     /**
-     * @expectedException CSVelte\Exception\
+     * @expectedException CSVelte\Exception\InvalidStreamResourceException
      */
-    // public function testReadTriggersExceptionOnceStreamHasBeenClosed()
-    // {
-    //     $filename = realpath(__DIR__ . '/../files/banklist.csv');
-    //     $stream = new Stream($filename);
-    //     // should be able to read from stream because it's open
-    //     $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\r\nFirst CornerStone Bank,King ", $actual = $stream->read(100));
-    //     $this->assertTrue(is_resource($stream->getStreamResource()));
-    //     $this->assertTrue($stream->close());
-    //     // trying to read from a stream that has been closed should trigger an exception
-    //     $stream->read(100);
-    // }
+    public function testReadTriggersExceptionOnceStreamHasBeenClosed()
+    {
+        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $stream = new Stream($filename);
+        // should be able to read from stream because it's open
+        $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\r\nFirst CornerStone Bank,King ", $actual = $stream->read(100));
+        $this->assertTrue(is_resource($stream->getStreamResource()));
+        $this->assertTrue($stream->close());
+        // trying to read from a stream that has been closed should trigger an exception
+        $stream->read(100);
+    }
 }
