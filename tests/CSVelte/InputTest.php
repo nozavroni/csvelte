@@ -19,6 +19,7 @@ class InputTest extends TestCase
     public function setUp()
     {
         $this->banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');
+        $this->testDataDoubleQuotes = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\nFirst CornerStone Bank,\"King of\n\"\"Prussia\"\"\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16\nTrust Company Bank,Memphis,TN,9956,The Bank of Fayette County,29-Apr-16,25-May-16\nNorth Milwaukee State Bank,Milwaukee,WI,20364,First-Citizens Bank & Trust Company,11-Mar-16,16-Jun-16\nHometown National Bank,Longview,WA,35156,Twin City Bank,2-Oct-15,13-Apr-16\nThe Bank of Georgia,Peachtree City,GA,35259,Fidelity Bank,2-Oct-15,13-Apr-16\nPremier Bank,Denver,CO,34112,\"United Fidelity \r\n \r \r \n \r\n Bank, fsb\",10-Jul-15,17-Dec-15\n";
     }
 
     public function testCreateNewFile()
@@ -137,7 +138,24 @@ class InputTest extends TestCase
         //$stream->read(100);
     }
 
-    // public function testStreamCanAcceptStreamResourceInConstructor()
+    public function testStreamCanAcceptStreamResourceInConstructor()
+    {
+        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $handle = fopen($filename, 'r+');
+        // read a little data from the resource...
+        $hdata = fread($handle, 100);
+        // create a new stream input with handle
+        $stream = new Stream($handle);
+        // read a little data from the stream input...
+        $sdata = $stream->read(100);
+
+        // did stream reader start off where fread left the pointer?
+        $this->assertEquals($expected = "of Prussia,PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16\r\nTrust Company Bank,Memph", $sdata, "Ensure that when passing a stream handle to stream class's constructor, that the internal stream/file pointer is not reset or moved in any way.");
+        // same resource?
+        $this->assertSame($expected = $handle, $stream->getStreamResource(), "Ensure that the stream resource fetched from stream object is the same one that was passed in through its constructor.");
+    }
+
+    // public function testStreamThrowsExceptionIfPassedIncorrectResourceType()
     // {
     //
     // }

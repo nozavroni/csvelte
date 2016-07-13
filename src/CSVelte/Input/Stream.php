@@ -21,6 +21,11 @@ class Stream implements Readable
     const MAX_LINE_LENGTH = 4096;
 
     /**
+     * @const string
+     */
+    const RESOURCE_TYPE = 'stream';
+
+    /**
      * @var resource The stream resource to input file
      */
     protected $source;
@@ -38,16 +43,24 @@ class Stream implements Readable
     /**
      * Class constructor
      *
-     * @param string The path and filename of the input file to read from
+     * @param stream|string Either a valid stream handle (opened with fopen or similar function) OR a valid stream URI
      * @return void
      * @access public
      */
-    public function __construct($name)
+    public function __construct($stream)
     {
-        if (false === ($this->source = @fopen($name, 'r'))) {
-            // @todo custom exception
-            throw new InvalidStreamUriException('Cannot open stream: ' . $name);
+        if (is_resource($stream)) {
+            if (self::RESOURCE_TYPE !== ($type = get_resource_type($stream))) {
+                // throw exception
+                return;
+            }
+        } else {
+            if (false === ($stream = @fopen($stream, 'r'))) {
+                // @todo custom exception
+                throw new InvalidStreamUriException('Cannot open stream: ' . $stream);
+            }
         }
+        $this->source = $stream;
         $this->updateInfo();
     }
 
@@ -135,10 +148,10 @@ class Stream implements Readable
     {
         if (false === ($data = fread($this->source, $length))) {
             if ($this->isEof()) {
-                throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
+                throw new EndOfFileException('Cannot read from ' . $this->name() . '. End of file has been reached.');
             } else {
                 // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
-                throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
+                throw new \OutOfBoundsException('Cannot read from ' . $this->name());
             }
         }
         $this->updateInfo();
