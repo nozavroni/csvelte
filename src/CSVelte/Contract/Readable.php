@@ -16,6 +16,7 @@ interface Readable
      * @param integer Amount of characters to read from input source
      * @return string The specified amount of characters read from input source
      * @access public
+     * @todo Renaming this method "readChars" might be a little more consistent..
      */
     public function read($chars);
 
@@ -40,7 +41,7 @@ interface Readable
      * File must be able to be rewound when the end is reached
      *
      * @return void
-     * @access public 
+     * @access public
      */
     public function rewind();
 }

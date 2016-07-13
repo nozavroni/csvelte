@@ -20,6 +20,12 @@ class String extends SeekableStream
     {
         $this->remember($string);
     }
+    //
+    // public function __destruct()
+    // {
+    //     $this->forget();
+    //     parent::__destruct();
+    // }
 
     protected function remember($str)
     {
@@ -35,4 +41,14 @@ class String extends SeekableStream
         $this->rewind();
         $this->updateInfo();
     }
+
+    // protected function forget()
+    // {
+    //     if (false === fwrite($this->source, "")) {
+    //         // @todo throw custom exception
+    //         throw new \Exception('Cannot write to ' . $name);
+    //     }
+    //     $this->rewind();
+    //     $this->updateInfo();
+    // }
 }

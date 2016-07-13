@@ -3,8 +3,8 @@
 use CSVelte\Contract\Readable;
 use CSVelte\Exception\EndOfFileException;
 use CSVelte\Exception\InvalidStreamUriException;
-use CSVelte\Filter\EncodeQuotedSpecialChars;
 use CSVelte\Traits\HandlesQuotedLineTerminators;
+use CSVelte\Exception\InvalidStreamResourceException;
 
 /**
  * CSVelte\Input\Stream
@@ -25,6 +25,11 @@ class Stream implements Readable
     const MAX_LINE_LENGTH = 4096;
 
     /**
+     * @const string
+     */
+    const RESOURCE_TYPE = 'stream';
+
+    /**
      * @var resource The stream resource to input file
      */
     protected $source;
@@ -42,21 +47,34 @@ class Stream implements Readable
     /**
      * Class constructor
      *
-     * @param string The path and filename of the input file to read from
+     * @param stream|string Either a valid stream handle (opened with fopen or similar function) OR a valid stream URI
      * @return void
      * @access public
      */
-    public function __construct($name)
+    public function __construct($stream)
     {
-        if (false === ($this->source = @fopen($name, 'r'))) {
-            // @todo custom exception
-            // @todo This isn't always the correct exception to throw here. It's
-            // misleading. Sometimes stream/file can't be opened because it does
-            // not exist, or isn't readable, you need to refactor and throw a
-            // more specific exception depending on why fopen failed. Also, look
-            // into the parse_url function and see if it can help you with this
-            throw new InvalidStreamUriException('Cannot open stream: ' . $name);
+// <<<<<<< HEAD
+//         if (false === ($this->source = @fopen($name, 'r'))) {
+//             // @todo custom exception
+//             // @todo This isn't always the correct exception to throw here. It's
+//             // misleading. Sometimes stream/file can't be opened because it does
+//             // not exist, or isn't readable, you need to refactor and throw a
+//             // more specific exception depending on why fopen failed. Also, look
+//             // into the parse_url function and see if it can help you with this
+//             throw new InvalidStreamUriException('Cannot open stream: ' . $name);
+// =======
+        if (is_resource($stream)) {
+            if (self::RESOURCE_TYPE !== ($type = get_resource_type($stream))) {
+                throw new InvalidStreamResourceException('Invalid resource type provided: ' . $type);
+            }
+        } else {
+            if (false === ($stream = @fopen($stream, 'r'))) {
+                // @todo custom exception
+                throw new InvalidStreamUriException('Cannot open stream: ' . $stream);
+            }
+// >>>>>>> 87621e81c38097ada924eac3b911e23b67604cc3
         }
+        $this->source = $stream;
         $this->updateInfo();
     }
 
@@ -69,6 +87,45 @@ class Stream implements Readable
     // {
     //     return fclose($this->source);
     // }
+
+    /**
+     * Class destructor
+     *
+     * @return void
+     * @access public
+     */
+    public function __destruct()
+    {
+        $this->close();
+    }
+
+    /**
+     * Close the stream
+     * Close the stream resource and release any other resources opened by this
+     * stream object.
+     *
+     * @return bool
+     * @access public
+     * @todo Should this throw an exception if user tries to close a stream that
+     *     isn't open? I don't think it should because I can't think of a way it
+     *     would be useful or intuitive. In fact it'd probably cause confusion
+     */
+    public function close()
+    {
+        if (is_resource($this->source)) return fclose($this->source);
+        return false;
+    }
+
+    /**
+     * Retrieve underlying stream resource
+     *
+     * @return resource
+     * @access public
+     */
+    public function getStreamResource()
+    {
+        return $this->source;
+    }
 
     /**
      * Get the current position of the pointer
@@ -130,13 +187,13 @@ class Stream implements Readable
      */
     public function read($length)
     {
+        $this->assertStreamExistsAndIsReadable();
         if (false === ($data = fread($this->source, $length))) {
-            if ($this->isEof()) {
-                throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
-            } else {
-                // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
-                throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
-            }
+            if ($this->isEof())
+                throw new EndOfFileException('Cannot read from ' . $this->name() . '. End of file has been reached.');
+            // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
+            //throw new \OutOfBoundsException('Cannot read from ' . $this->name());
+            return false;
         }
         $this->updateInfo();
         return $data;
@@ -147,13 +204,13 @@ class Stream implements Readable
      */
     public function nextLine($max = null, $eol = PHP_EOL)
     {
+        $this->assertStreamExistsAndIsReadable();
         if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {
-            if ($this->isEof()) {
-                throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
-            } else {
-                // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
-                throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
-            }
+            if ($this->isEof())
+                throw new EndOfFileException('Cannot read from ' . $this->name() . '. End of file has been reached.');
+            // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
+            //throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
+            return false;
         }
         $this->updateInfo();
         return $line;
@@ -180,5 +237,23 @@ class Stream implements Readable
     {
         rewind($this->source);
         $this->updateInfo();
+    }
+
+    /**
+     * Does a series of checks on the internal stream resource to ensure it is
+     * readable, hasn't been closed already, etc. If it finds a problem, the
+     * appropriate exception will be thrown. Called before any attempts to read
+     * from the stream resource.
+     *
+     * @return void
+     * @throws CSVelte\CSVelte\Exception\InvalidStreamResourceException
+     * @access protected
+     */
+    protected function assertStreamExistsAndIsReadable()
+    {
+        switch (true) {
+            case !is_resource($this->source):
+                throw new InvalidStreamResourceException('Cannot read from ' . $this->name() . '. It is either invalid or has been closed.');
+        }
     }
 }

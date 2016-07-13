@@ -20,6 +20,7 @@ class InputTest extends TestCase
     public function setUp()
     {
         $this->banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');
+        $this->testDataDoubleQuotes = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\nFirst CornerStone Bank,\"King of\n\"\"Prussia\"\"\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16\nTrust Company Bank,Memphis,TN,9956,The Bank of Fayette County,29-Apr-16,25-May-16\nNorth Milwaukee State Bank,Milwaukee,WI,20364,First-Citizens Bank & Trust Company,11-Mar-16,16-Jun-16\nHometown National Bank,Longview,WA,35156,Twin City Bank,2-Oct-15,13-Apr-16\nThe Bank of Georgia,Peachtree City,GA,35259,Fidelity Bank,2-Oct-15,13-Apr-16\nPremier Bank,Denver,CO,34112,\"United Fidelity \r\n \r \r \n \r\n Bank, fsb\",10-Jul-15,17-Dec-15\n";
     }
 
     public function testCreateNewFile()
@@ -129,5 +130,79 @@ class InputTest extends TestCase
         $stream->readLine();
         $stream->readLine();
         $this->assertEquals($expected = "Trust Company Bank,Memphis,TN,9956,\"The Bank of\r\n\r\n\r\nAnother line of stuff\r\n And another line\r\n Fayette County\",29-Apr-16,25-May-16", $stream->readLine(null, "\r\n"));
+    }
+
+    /**
+     * 3xpectedException CSVelte\Exception\
+     */
+    public function testCloseStreamResourceManually()
+    {
+        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $stream = new Stream($filename);
+        // should be able to read from stream because it's open
+        $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\r\nFirst CornerStone Bank,King ", $actual = $stream->read(100));
+        $this->assertTrue(is_resource($stream->getStreamResource()));
+        $this->assertTrue($stream->close());
+        $this->assertFalse($stream->close());
+        // trying to read from a stream that has been closed should trigger an exception
+        //$stream->read(100);
+    }
+
+    public function testStreamCanAcceptStreamResourceInConstructor()
+    {
+        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $handle = fopen($filename, 'r+');
+        // read a little data from the resource...
+        $hdata = fread($handle, 100);
+        // create a new stream input with handle
+        $stream = new Stream($handle);
+        // read a little data from the stream input...
+        $sdata = $stream->read(100);
+
+        // did stream reader start off where fread left the pointer?
+        $this->assertEquals($expected = "of Prussia,PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16\r\nTrust Company Bank,Memph", $sdata, "Ensure that when passing a stream handle to stream class's constructor, that the internal stream/file pointer is not reset or moved in any way.");
+        // same resource?
+        $this->assertSame($expected = $handle, $stream->getStreamResource(), "Ensure that the stream resource fetched from stream object is the same one that was passed in through its constructor.");
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\InvalidStreamResourceException
+     */
+    public function testStreamThrowsExceptionIfPassedIncorrectResourceType()
+    {
+        $inv_resource = xml_parser_create('');
+        $stream = new Stream($inv_resource);
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\InvalidStreamResourceException
+     */
+    public function testReadTriggersExceptionOnceStreamHasBeenClosed()
+    {
+        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $stream = new Stream($filename);
+        // should be able to read from stream because it's open
+        $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\r\nFirst CornerStone Bank,King ", $actual = $stream->read(100));
+        $this->assertTrue(is_resource($stream->getStreamResource()));
+        $this->assertTrue($stream->close());
+        // trying to read from a stream that has been closed should trigger an exception
+        $stream->read(100);
+    }
+
+    public function testCloseStreamResourceInDestructor()
+    {
+        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $handle = fopen($filename, 'r+');
+        $stream = new Stream($handle);
+        $this->assertSame($expected = $handle, $stream->getStreamResource());
+        $this->assertTrue(is_resource($stream->getStreamResource()));
+        $this->assertTrue(is_resource($handle));
+        // should be able to read from stream because it's open
+        $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\r\nFirst CornerStone Bank,King ", $actual = $stream->read(100));
+
+        unset($stream);
+        // trying to read from a stream that has been destroyed should fail
+        $this->assertFalse($fail = @fread($handle, 100));
+        $this->assertFalse(is_resource($handle));
     }
 }
