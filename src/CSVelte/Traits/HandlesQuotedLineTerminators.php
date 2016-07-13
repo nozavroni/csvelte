@@ -22,6 +22,7 @@ trait HandlesQuotedLineTerminators
     protected $escapeChar = '\\';
     protected $quoteChars = '"\'';
     protected $open = false;
+    protected $escape = false;
 
     /**
      * Read single line from CSV data source (stream, file, etc.), taking into
@@ -37,15 +38,20 @@ trait HandlesQuotedLineTerminators
     public function readLine($max = null, $eol = "\n")
     {
         $this->open = array_fill_keys(str_split($this->quoteChars), false);
-        do {
-            if (!isset($lines)) $lines = array();
-            array_push($lines, $this->nextLine($max, $eol));
-        } while ($this->inQuotedString(end($lines)));
+        try {
+            do {
+                if (!isset($lines)) $lines = array();
+                array_push($lines, $this->nextLine($max, $eol));
+            } while ($this->inQuotedString(end($lines)));
+        } catch (EndOfFileException $e) {
+            // only throw the exception if we don't already have lines in the buffer
+            if (!count($lines)) throw $e;
+        }
         return rtrim(implode($eol, $lines), $eol);
     }
 
     /**
-     * Determine whether last line ended while a quoted string was still "open"
+     * Determine whether last line ended while a quoted string wasx still "open"
      *
      * @param string Line of csv to analyze
      * @return bool
@@ -58,6 +64,11 @@ trait HandlesQuotedLineTerminators
             do {
                 if (!isset($i)) $i = 0;
                 $c = $line[$i++];
+                if ($this->escape) {
+                    $this->escape = false;
+                    continue;
+                }
+                if ($c == $this->escapeChar) $this->escape = true;
                 if (strpos($this->quoteChars, $c) !== false) {
                     // only open a quoted string if no others are open
                     // make a copy of open array
