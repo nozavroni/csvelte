@@ -11,7 +11,7 @@ use CSVelte\Exception\InvalidStreamUriException;
  * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @todo      Look at the ArrayObject class and see if it can be used 
+ * @todo      Look at the ArrayObject class and see if it can be used
  */
 class Stream implements Readable
 {
@@ -49,6 +49,28 @@ class Stream implements Readable
             throw new InvalidStreamUriException('Cannot open stream: ' . $name);
         }
         $this->updateInfo();
+    }
+
+    /**
+     * Close the stream
+     * Close the stream resource and release any other resources opened by this
+     * stream object.
+     *
+     * @return bool
+     * @access public
+     * @todo Should this throw an exception if user tries to close a stream that
+     *     isn't open? I don't think it should because I can't think of a way it
+     *     would be useful or intuitive. In fact it'd probably cause confusion
+     */
+    public function close()
+    {
+        if (is_resource($this->source)) return fclose($this->source);
+        return false;
+    }
+
+    public function getStreamResource()
+    {
+        return $this->source;
     }
 
     /**

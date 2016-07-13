@@ -120,4 +120,48 @@ class InputTest extends TestCase
         $this->assertEquals($expected = 0, $stream->position());
         $this->assertEquals($first150, $stream->read(150));
     }
+
+    /**
+     * 3xpectedException CSVelte\Exception\
+     */
+    public function testCloseStreamResourceManually()
+    {
+        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $stream = new Stream($filename);
+        // should be able to read from stream because it's open
+        $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\r\nFirst CornerStone Bank,King ", $actual = $stream->read(100));
+        $this->assertTrue(is_resource($stream->getStreamResource()));
+        $this->assertTrue($stream->close());
+        $this->assertFalse($stream->close());
+        // trying to read from a stream that has been closed should trigger an exception
+        //$stream->read(100);
+    }
+
+    // public function testStreamCanAcceptStreamResourceInConstructor()
+    // {
+    //
+    // }
+
+    /**
+     * 3xpectedException CSVelte\Exception\
+     */
+    // public function testCloseStreamResourceInDestructor()
+    // {
+    //
+    // }
+
+    /**
+     * @expectedException CSVelte\Exception\
+     */
+    // public function testReadTriggersExceptionOnceStreamHasBeenClosed()
+    // {
+    //     $filename = realpath(__DIR__ . '/../files/banklist.csv');
+    //     $stream = new Stream($filename);
+    //     // should be able to read from stream because it's open
+    //     $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\r\nFirst CornerStone Bank,King ", $actual = $stream->read(100));
+    //     $this->assertTrue(is_resource($stream->getStreamResource()));
+    //     $this->assertTrue($stream->close());
+    //     // trying to read from a stream that has been closed should trigger an exception
+    //     $stream->read(100);
+    // }
 }
