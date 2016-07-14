@@ -131,7 +131,8 @@ class Taster
         $escapeChar = '\\';
         $lineTerminator = $this->lickLineEndings();
         $quoteStyle = $this->lickQuotingStyle($data, $quoteChar, $delimiter, $lineTerminator);
-        return new Flavor(compact('quoteChar', 'escapeChar', 'delimiter', 'lineTerminator', 'quoteStyle'));
+        $header = $this->lickHeader($data, $quoteChar, $delimiter, $lineTerminator);
+        return new Flavor(compact('quoteChar', 'escapeChar', 'delimiter', 'lineTerminator', 'quoteStyle', 'header'));
     }
 
     /**
@@ -557,6 +558,7 @@ class Taster
         foreach ($types as $line_no => $cols) {
             foreach ($cols as $col_no => $col_info) {
                 extract($col_info);
+                if (!array_key_exists($col_no, $potential_header)) continue;
                 extract($potential_header[$col_no], EXTR_PREFIX_ALL, "header");
                 if ($header_type == self::TYPE_STRING) {
                     // use length

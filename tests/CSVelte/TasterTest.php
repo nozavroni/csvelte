@@ -150,6 +150,7 @@ class TasterTest extends TestCase
             'quoteChar' => '"',
             'escapeChar' => '\\',
             'lineTerminator' => "\n",
+            'header' => true,
             'quoteStyle' => Flavor::QUOTE_MINIMAL
         ));
         $this->assertEquals($expected_flavor, $taster->lick());
@@ -163,8 +164,10 @@ class TasterTest extends TestCase
             'delimiter' => "\t",
             'quoteChar' => "'",
             'escapeChar' => '\\',
+            'doubleQuote' => false,
+            'quoteStyle' => Flavor::QUOTE_MINIMAL,
             'lineTerminator' => "\n",
-            'quoteStyle' => Flavor::QUOTE_MINIMAL
+            'header' => true
         ));
         $this->assertEquals($expected_flavor, $taster->lick());
     }

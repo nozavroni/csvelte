@@ -82,7 +82,7 @@ class ReaderTest extends TestCase
 
     public function testReaderCurrent()
     {
-        $flavor = new Flavor(null, array('hasHeader' => false));
+        $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $this->assertInstanceOf($expected = Reader\Row::class, $reader->current());
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
@@ -90,7 +90,7 @@ class ReaderTest extends TestCase
 
     public function testReaderNext()
     {
-        $flavor = new Flavor(null, array('hasHeader' => false));
+        $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
         $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->next()->toArray());
@@ -99,7 +99,7 @@ class ReaderTest extends TestCase
 
     public function testReaderValid()
     {
-        $flavor = new Flavor(null, array('hasHeader' => false));
+        $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
         $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->next()->toArray());
@@ -118,7 +118,7 @@ class ReaderTest extends TestCase
 
     public function testReaderKey()
     {
-        $flavor = new Flavor(null, array('hasHeader' => false));
+        $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
         $this->assertEquals($expected = 1, $reader->key());
@@ -148,7 +148,7 @@ class ReaderTest extends TestCase
 
     public function testReaderCanBeRewound()
     {
-        $flavor = new Flavor(null, array('hasHeader' => false));
+        $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $reader->next(); // move to line 2
         $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->current()->toArray());
@@ -162,7 +162,7 @@ class ReaderTest extends TestCase
 
     public function testReaderCanBeIterated()
     {
-        $flavor = new Flavor(null, array('hasHeader' => false));
+        $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $expected_line = 0;
         $first = $reader->current();
@@ -185,14 +185,14 @@ class ReaderTest extends TestCase
 
     public function testReaderImplementsOuterIterator()
     {
-        $flavor = new Flavor(null, array('hasHeader' => false));
+        $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->getInnerIterator()->toArray());
     }
 
     public function testReaderCanSkipFirstLineAsHeader()
     {
-        $flavor = new Flavor(null, array('hasHeader' => true));
+        $flavor = new Flavor(array('header' => true));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
         $this->assertEquals(
             $expectedHeader = array('Bank Name','City','ST','CERT','Acquiring Institution','Closing Date','Updated Date'),
@@ -202,7 +202,7 @@ class ReaderTest extends TestCase
 
     public function testHeaderRowIsAlwaysSkippedWhenWorkingWithReader()
     {
-        $flavor = new Flavor(null, array('hasHeader' => true));
+        $flavor = new Flavor(array('header' => true));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
         // make sure that directly after instantiation, current() returns row #2
         $this->assertEquals($expectedFirstRow = array('First CornerStone Bank','King of Prussia','PA','35312','First-Citizens Bank & Trust Company','6-May-16','25-May-16'), $reader->current()->toArray());
@@ -217,7 +217,7 @@ class ReaderTest extends TestCase
 
     public function testBodyRowsAreIndexedByHeaderValues()
     {
-        $flavor = new Flavor(null, array('hasHeader' => true));
+        $flavor = new Flavor(array('header' => true));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
         $line = $reader->current();
         $this->assertEquals($line[0], $line['Bank Name']);
@@ -257,7 +257,7 @@ class ReaderTest extends TestCase
      */
     public function testIterateOverRowsThenIterateOverColumns()
     {
-        $flavor = new Flavor(null, array('hasHeader' => true));
+        $flavor = new Flavor(array('header' => true));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
 
         $expectedLine = 1;

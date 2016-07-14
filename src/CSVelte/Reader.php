@@ -80,12 +80,13 @@ class Reader implements \OuterIterator
             $flavor = $taster->lick();
         }
         try {
-            $hasHeader = $flavor->getProperty('hasHeader');
+            $hasHeader = $flavor->header;
         } catch (\OutOfBoundsException $e) {
             $hasHeader = null;
         } finally {
             if (is_null($hasHeader)) {
-                $flavor->setProperty('hasHeader', $taster->lickHeader($this->source->read(Taster::SAMPLE_SIZE), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator));
+                // Flavor is immutable, give me a new one with header set to lickHeader return val
+                $flavor = $flavor->copy(array('header' => $taster->lickHeader($this->source->read(Taster::SAMPLE_SIZE), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator)));
             }
         }
         $this->flavor = $flavor;
@@ -142,11 +143,7 @@ class Reader implements \OuterIterator
      */
     public function hasHeader()
     {
-        try {
-            return $this->getFlavor()->getProperty('hasHeader');
-        } catch (\OutOfBoundsException $e) {
-            return false;
-        }
+        return $this->getFlavor()->header;
     }
 
     /**

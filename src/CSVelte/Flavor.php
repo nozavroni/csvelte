@@ -63,19 +63,6 @@ class Flavor
     const QUOTE_NONNUMERIC = 'quote_nonnumeric';
 
     /**
-     * @var array These are any configuration parameters that would not be part
-     *     of a concrete implementation of this class. For instance, whether or
-     *     not a file has a header, what its character encoding is, etc. These
-     *     values, unlike attributes, are mutable and may be changed at any time.
-     * @todo This is going away. The kinds of things I was planning on putting in
-     *     here will now live CSVelte\Schema instead
-     */
-    protected $properties = array(
-        'encoding' => null, // @todo implement this...
-        'hasHeader' => null
-    );
-
-    /**
      * @var array Describes a particular CSV file's "flavor" or format. These
      *     attributes are immutable. They cannot be changed after constructing
      *     a flavor object
@@ -113,39 +100,6 @@ class Flavor
                 $this->attributes[$attr] = $val;
             }
         }
-        // @todo should this silently ignore unknown properties or should it thrown an exception
-        // foreach ($this->properties as $name => $value) {
-        //     $this->properties[$name] = Utils::array_get($properties, $name, null);
-        // }
-        $this->properties = array_merge($this->properties, $properties);
-    }
-
-    /**
-     * Set/create a property
-     *
-     * @param string The property to set
-     * @param string The propery's value
-     * @return $this
-     * @access public
-     */
-    public function setProperty($name, $value)
-    {
-        $this->properties[$name] = $value;
-        return $this;
-    }
-
-    /**
-     * Retrieve the value of specified property
-     *
-     * @param string The property to retrieve
-     * @return mixed The value of property
-     * @access public
-     * @throws OutOfBoundsException
-     */
-    public function getProperty($name)
-    {
-        if (!array_key_exists($name, $this->properties)) throw new \OutOfBoundsException('Attempting to access nonexistant property: ' . $name);
-        return $this->properties[$name];
     }
 
     /**
@@ -161,6 +115,20 @@ class Flavor
     {
         if (!array_key_exists($attr, $this->attributes))
             throw new UnknownAttributeException("Unknown attribute: " . $attr);
+    }
+
+    /**
+     * Copy this flavor object (optionally with new attributes)
+     *
+     * @param array
+     * @return CSVelte\Flavor
+     * @access public
+     * @todo I may want to remove the array type-hint so that this can accept
+     *     array-like objects and iterables as well. Not sure...
+     */
+    public function copy(array $attribs = array())
+    {
+        return new Flavor(array_merge($this->attributes, $attribs));
     }
 
     /**

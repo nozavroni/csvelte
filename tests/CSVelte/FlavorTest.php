@@ -80,36 +80,25 @@ class FlavorTest extends TestCase
         $this->assertEquals($attribs['quoteStyle'], $flavor->quoteStyle);
     }
 
-    public function testInitializeFlavorWithProperties()
+    public function testFlavorCanCopyItself()
     {
-        $flavor = new Flavor(null, array(
-            'hasHeader' => true
-        ));
-        $this->assertTrue($flavor->getProperty('hasHeader'));
-        $flavor->setProperty('hasHeader', false);
-        $this->assertFalse($flavor->getProperty('hasHeader'));
+        $flavor = new Flavor($exp_attribs = array('delimiter' => '|', 'quoteChar' => "'", 'escapeChar' => '&', 'doubleQuote' => true, 'skipInitialSpace' => true, 'quoteStyle' => Flavor::QUOTE_NONE, 'lineTerminator' => "\r", 'header' => null));
+        $this->assertEquals($flavor, $flavor->copy());
+        $this->assertNotSame($flavor, $flavor->copy());
     }
 
-    public function testSettingNonExistentPropertyIsAllowed()
+    public function testFlavorCanCopyItselfWithAlteredAttribs()
     {
-        // I'm thinking I might allow "creating" properties that don't already
-        // exist within the Flavor class on-the-fly. This would allow for end-users
-        // to provide their own properties. Until I find a reason not to, I'll
-        // allow it...
-        $flavor = new Flavor(null, array('foo' => 'bar'));
-        $this->assertEquals($expected = "bar", $flavor->getProperty('foo'));
-        $flavor->setProperty('foo', 'baz');
-        $flavor->setProperty('bar', 'foobar');
-        $this->assertEquals($expected = "baz", $flavor->getProperty('foo'));
-        $this->assertEquals($expected = "foobar", $flavor->getProperty('bar'));
+        $flavor = new Flavor($attribs = array('delimiter' => '|', 'quoteChar' => "'", 'escapeChar' => '&', 'doubleQuote' => true, 'skipInitialSpace' => true, 'quoteStyle' => Flavor::QUOTE_NONE, 'lineTerminator' => "\r", 'header' => null));
+
+        $new_attribs = array(
+            'header' => true,
+            'lineTerminator' => "\n",
+            'delimiter' => "\t"
+        );
+        $exp_attribs = array_merge($attribs, $new_attribs);
+
+        $this->assertEquals(new Flavor($exp_attribs), $flavor->copy($new_attribs));
     }
 
-    /**
-     * @expectedException \OutOfBoundsException
-     */
-    public function testGetNonExistentPropertyThrowsException()
-    {
-        $flavor = new Flavor();
-        $flavor->getProperty('poopoo');
-    }
 }
