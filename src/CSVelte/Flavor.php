@@ -87,7 +87,8 @@ class Flavor
         'doubleQuote' => false,
         'skipInitialSpace' => false,
         'quoteStyle' => self::QUOTE_MINIMAL,
-        'lineTerminator' => "\r\n"
+        'lineTerminator' => "\r\n",
+        'header' => null
     );
 
     /**

@@ -37,6 +37,7 @@ class FlavorTest extends TestCase
         $this->assertEquals($quoting = Flavor::QUOTE_MINIMAL, $flavor->quoteStyle);
         $this->assertFalse($flavor->doubleQuote);
         $this->assertFalse($flavor->skipInitialSpace);
+        $this->assertNull($flavor->header);
     }
 
     /**
