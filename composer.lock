@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0724e218595ee00308e9c839e255aca7",
-    "content-hash": "7632dd2e71a2da8075f30797cc989404",
+    "hash": "b3ab479f6e7dc4979edaeec0c8984414",
+    "content-hash": "27517d9e990f42a859e38dc5f30dc049",
     "packages": [
         {
             "name": "nesbot/carbon",
@@ -115,16 +115,16 @@
         },
         {
             "name": "symfony/translation",
-            "version": "v3.1.1",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation.git",
-                "reference": "b36e79d7bbbfa4a7e9708335082b3eba2263d356"
+                "reference": "d63a94528530c3ea5ff46924c8001cec4a398609"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation/zipball/b36e79d7bbbfa4a7e9708335082b3eba2263d356",
-                "reference": "b36e79d7bbbfa4a7e9708335082b3eba2263d356",
+                "url": "https://api.github.com/repos/symfony/translation/zipball/d63a94528530c3ea5ff46924c8001cec4a398609",
+                "reference": "d63a94528530c3ea5ff46924c8001cec4a398609",
                 "shasum": ""
             },
             "require": {
@@ -175,7 +175,7 @@
             ],
             "description": "Symfony Translation Component",
             "homepage": "https://symfony.com",
-            "time": "2016-06-14 11:18:07"
+            "time": "2016-06-29 05:41:56"
         }
     ],
     "packages-dev": [
@@ -287,12 +287,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/padraic/mockery.git",
-                "reference": "ec1ca8266d9f8220cb0f90bbb84735137d180c90"
+                "reference": "ee06e7b564ea4dc9b90605d894c2626f87df334d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/ec1ca8266d9f8220cb0f90bbb84735137d180c90",
-                "reference": "ec1ca8266d9f8220cb0f90bbb84735137d180c90",
+                "url": "https://api.github.com/repos/padraic/mockery/zipball/ee06e7b564ea4dc9b90605d894c2626f87df334d",
+                "reference": "ee06e7b564ea4dc9b90605d894c2626f87df334d",
                 "shasum": ""
             },
             "require": {
@@ -344,7 +344,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2016-06-02 10:51:58"
+            "time": "2016-07-06 09:05:19"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1492,16 +1492,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.1.1",
+            "version": "v3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "c5a7e7fc273c758b92b85dcb9c46149ccda89623"
+                "reference": "2884c26ce4c1d61aebf423a8b912950fe7c764de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/c5a7e7fc273c758b92b85dcb9c46149ccda89623",
-                "reference": "c5a7e7fc273c758b92b85dcb9c46149ccda89623",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/2884c26ce4c1d61aebf423a8b912950fe7c764de",
+                "reference": "2884c26ce4c1d61aebf423a8b912950fe7c764de",
                 "shasum": ""
             },
             "require": {
@@ -1537,7 +1537,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2016-06-14 11:18:07"
+            "time": "2016-06-29 05:41:56"
         },
         {
             "name": "webmozart/assert",
@@ -1597,7 +1597,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^5.3.3 || ^7.0"
+        "php": "^5.3.3"
     },
     "platform-dev": []
 }
