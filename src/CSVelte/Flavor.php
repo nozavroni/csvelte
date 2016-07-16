@@ -1,6 +1,7 @@
 <?php namespace CSVelte;
 
 use CSVelte\Exception\UnknownAttributeException;
+use CSVelte\Exception\UnknownFlavorException;
 use CSVelte\Exception\ImmutableException;
 
 /**
@@ -10,34 +11,7 @@ use CSVelte\Exception\ImmutableException;
  * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @todo      The python module that inspired this library has more attributes
- *            than what I'm using here. I need to take a look at those attributes
- *            and make a determination as to whether I want o implement them
- *             - doublequote: boolean value - I think it specifies whether or not
- *               double quotes are escaped with ANOTHER double quote within a quoted string
- *             - skipinitialspace: I'm less certain about this one, but I'm
- *               thinking possibly, columns that have newlines may begin with a
- *               space indent after each newline. look at the RFC
- *             - _name: This is a label for descendants of this class to diff=
- *               erentiate them from each other
- *             - _valid: I think this is some internal legacy python inheritance class thing...
- *             - skipblank - I don't know where this one came from but it might
- *               be a decent idea to include it. Self explanatory
- *             - hasHeader - I'm not sure if the flavor should include this or
- *               not. The python module doesnt include it in its "dialect" class
- *               but I always kind of wondered why... maybe play around with the
- *               library once you have it flushed out a little and see what u think
- *               After thinking about it a bit, I realized why the csv module doesn't
- *               include it in the Dialiect. This is because they want to be able
- *               to include various concrete implementations of Dialect for "excel-tab",
- *               "standard-csv", "standard-tsv", etc. They cannot include things
- *               such as hasHeader and characterEncoding because then they would
- *               need to create concrete implementations of each of these variations
- *               of their concrete dialects "excel-tab-header", "excel-tab-noheader",
- *               "excel-tab-utf8", "excel-tab-utf8-header", etc. This would quickly
- *               get out of hand. So, what's the solution? Add a second set of
- *               attributes to flavor that is both optional AND mutable (unlike )
- *               attributes which are all required and totally immutable)
+ * @todo      Might move this into CSVelte\Flavor\Flavor and make it abstract
  */
 class Flavor
 {
@@ -62,21 +36,14 @@ class Flavor
      */
     const QUOTE_NONNUMERIC = 'quote_nonnumeric';
 
-    /**
-     * @var array Describes a particular CSV file's "flavor" or format. These
-     *     attributes are immutable. They cannot be changed after constructing
-     *     a flavor object
-     */
-    protected $attributes = array(
-        'delimiter' => ',',
-        'quoteChar' => '"',
-        'escapeChar' => '\\',
-        'doubleQuote' => false,
-        'skipInitialSpace' => false,
-        'quoteStyle' => self::QUOTE_MINIMAL,
-        'lineTerminator' => "\r\n",
-        'header' => null
-    );
+    protected $delimiter = ",";
+    protected $quoteChar = '"';
+    protected $escapeChar = '\\';
+    protected $doubleQuote = false;
+    protected $skipInitialSpace = false;
+    protected $quoteStyle = self::QUOTE_MINIMAL;
+    protected $lineTerminator = "\r\n";
+    protected $header;
 
     /**
      * Class constructor
@@ -85,10 +52,8 @@ class Flavor
      *     attributes are immutable. They can only be set here.
      * @return void
      * @todo Should this throw an exception when attributes are invalid? I think so...
-     * @todo I'm not sure I care for the idea of attributes being stored in an
-     *     array rather than simply using class properties. What's the benefit?
      */
-    public function __construct($attributes = null, $properties = array())
+    public function __construct($attributes = null)
     {
         if (!is_null($attributes)) {
             if (!is_array($attributes)) {
@@ -97,10 +62,21 @@ class Flavor
             }
             foreach ($attributes as $attr => $val) {
                 $this->assertValidAttribute($attr);
-                $this->attributes[$attr] = $val;
+                $this->$attr = $val;
             }
         }
     }
+
+    // this is the stupidest thing ever... it just keeps telling me "Class CSVelte\Flavor\Flavor not found on line 79"... $classpath is NEVER equal to CSVelte\Flavor\Flavor. Not at ANY point! WTF?? This is driving me nuts!!
+    // public static function create($name)
+    // {
+    //     $class = implode(array_map(function($v){ return ucfirst(strtolower($v)); }, explode('-', $name)));
+    //     $classpath = 'CSVelte\\Flavor\\' . $class;
+    //     if (!class_exists($classpath)) {
+    //         throw new UnknownFlavorException('Unknown CSV flavor: ' . $name);
+    //     }
+    //     return new $classpath;
+    // }
 
     /**
      * Assert that a particular attribute is valid (basically just that itexists) and throw an exception otherwise
@@ -110,10 +86,12 @@ class Flavor
      * @return void
      * @access protected
      * @throws UnknownAttributeException
+     * @todo This should accept a second parameter for value that asserts the value
+     *     is a valid value
      */
     protected function assertValidAttribute($attr)
     {
-        if (!array_key_exists($attr, $this->attributes))
+        if (!property_exists(self::class, $attr))
             throw new UnknownAttributeException("Unknown attribute: " . $attr);
     }
 
@@ -128,7 +106,9 @@ class Flavor
      */
     public function copy(array $attribs = array())
     {
-        return new Flavor(array_merge($this->attributes, $attribs));
+        // $attributes = array_merge(get_class_vars(self::class), get_object_vars($this));
+        $attributes = get_object_vars($this);
+        return new Flavor(array_merge($attributes, $attribs));
     }
 
     /**
@@ -142,7 +122,7 @@ class Flavor
     public function __get($attr)
     {
         $this->assertValidAttribute($attr);
-        return $this->attributes[$attr];
+        return $this->$attr;
     }
 
     /**

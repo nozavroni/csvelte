@@ -3,7 +3,12 @@
 use PHPUnit\Framework\TestCase;
 use Mockery as m;
 use Mockery\Adapter\PHPUnit\MockeryPHPUnitIntegration;
+use CSVelte\Exception\UnknownFlavorException;
 use CSVelte\Flavor;
+use CSVelte\Flavor\Excel;
+use CSVelte\Flavor\ExcelTab;
+use CSVelte\Flavor\Unix;
+use CSVelte\Flavor\UnixTab;
 
 /**
  * CSVelte\FlavorTest
@@ -21,6 +26,7 @@ class FlavorTest extends TestCase
      */
     public function testCSVelteFlavor()
     {
+        $flavor = new Flavor(array('delimiter' => "\tab!!"));
         $this->assertInstanceOf($expected = 'CSVelte\Flavor', new Flavor);
     }
 
@@ -99,6 +105,76 @@ class FlavorTest extends TestCase
         $exp_attribs = array_merge($attribs, $new_attribs);
 
         $this->assertEquals(new Flavor($exp_attribs), $flavor->copy($new_attribs));
+    }
+
+    // public function testFlavorCreateFactoryByName()
+    // {
+    //     $excel = Flavor::create('excel-tab');
+    //     $this->assertInstanceOf(Excel::class, $excel);
+    // }
+    //
+    // public function testConcreteFlavorClasses()
+    // {
+    //     $expected = array(
+    //         // this is the RFC standard for CSV according to https://tools.ietf.org/html/rfc4180
+    //         'excel' => array(
+    //             'delimiter' => ',',
+    //             'quoteChar' => '"',
+    //             'doubleQuote' => true,
+    //             'skipInitialSpace' => false,
+    //             'lineTerminator' => "\r\n",
+    //             'quoteStyle' => Flavor::QUOTE_MINIMAL
+    //         ),
+    //         // these will be all the same as excel with the exception of delimiter
+    //         'excel-tab' => array(
+    //             'delimiter' => "\t"
+    //         ),
+    //         // I'm not sure if this is actually the correct set of parameters I just guessed
+    //         'unix' => array(
+    //             'delimiter' => ',',
+    //             'quoteChar' => '"',
+    //             'escapeChar' => '\\',
+    //             'doubleQuote' => false,
+    //             'skipInitialSpace' => false,
+    //             'lineTerminator' => "\n",
+    //             'quoteStyle' => Flavor::QUOTE_NONNUMERIC
+    //         ),
+    //         'unix-tab' => array(
+    //             'delimiter' => "\t",
+    //         )
+    //     );
+    //
+    //     $excel = Flavor::create('excel');
+    //     $excel_tab = Flavor::create('excel-tab');
+    //     $unix = Flavor::create('unix');
+    //     $unix_tab = Flavor::create('unix-tab');
+    //
+    //     $excel_flavor = new CSVelte\Flavor\Excel;
+    //     $exceltab_flavor = new CSVelte\Flavor\ExcelTab;
+    //     // $unix_flavor = new CSVelte\Flavor\Unix;
+    //     // $unixtab_flavor = new CSVelte\Flavor\UnixTab;
+    //
+    //     $this->assertEquals($excel_flavor, $excel);
+    //     $this->assertEquals($exceltab_flavor, $excel_tab);
+    //     $this->assertEquals($unix_flavor, $unix);
+    //     $this->assertEquals($unixtab_flavor, $unix_tab);
+    //
+    //     $this->assertEquals($excel_flavor, $excel->copy($expected['excel']));
+    //     $this->assertEquals($exceltab_flavor, $excel_tab->copy($expected['excel-tab']));
+    //     $this->assertEquals($unix_flavor, $unix->copy($expected['unix']));
+    //     $this->assertEquals($unixtab_flavor, $unix_tab->copy($expected['unix-tab']));
+    // }
+
+    public function testConcreteFlavors()
+    {
+        $excel = new CSVelte\Flavor\Excel;
+        $this->assertEquals("\r\n", $excel->lineTerminator);
+        $this->assertEquals('"', $excel->quoteChar);
+        $this->assertEquals(",", $excel->delimiter);
+        $this->assertEquals(Flavor::QUOTE_MINIMAL, $excel->quoteStyle);
+        $this->assertTrue($excel->doubleQuote);
+        $this->assertFalse($excel->skipInitialSpace);
+        $this->assertNull($excel->escapeChar);
     }
 
 }
