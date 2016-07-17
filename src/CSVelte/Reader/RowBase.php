@@ -2,6 +2,7 @@
 
 use CSVelte\Reader;
 use CSVelte\Utils;
+use CSVelte\Flavor;
 use CSVelte\Exception\ImmutableException;
 
 /**
@@ -34,6 +35,8 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
      */
     protected $headers;
 
+    protected $flavor;
+
     /**
      * Class constructor
      *
@@ -42,10 +45,17 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
      * @access public
      * @todo Look into SplFixedArray for csv sources w/out a header row.
      */
-    public function __construct(array $columns)
+    public function __construct(array $columns, Flavor $flavor = null)
     {
+        if (is_null($flavor)) $flavor = new Flavor;
+        $this->flavor = $flavor;
         $this->columns = array_values($columns);
         $this->rewind();
+    }
+
+    public function __toString()
+    {
+        return $this->join();
     }
 
     /**
@@ -54,8 +64,9 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
      * @return boolean
      * @access public
      */
-    public function join($delimiter = "")
+    public function join($delimiter = null)
     {
+        if (is_null($delimiter)) $delimiter = $this->flavor->delimiter;
         return implode($delimiter, $this->columns);
     }
 

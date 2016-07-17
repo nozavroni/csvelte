@@ -1,6 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use CSVelte\Input\String;
+use CSVelte\Flavor;
 use CSVelte\Reader;
 use CSVelte\Reader\Row;
 use CSVelte\Reader\HeaderRow;
@@ -214,5 +216,20 @@ class ReaderRowTest extends TestCase
         $this->assertEquals('423', $row['id']);
         $this->assertEquals('12-28-2015', $row['start-date']);
         $this->assertEquals('04-21-2016', $row['end [date]']);
+    }
+
+    public function testRowCanBeCastToString()
+    {
+        $row = new Row($cols = array('one', 'two', 'three'));
+        $this->assertEquals($expected = "one,two,three", (string) $row);
+    }
+
+    public function testRowInheritsReaderFlavor()
+    {
+        $data = "one|two|three\r\nfour|five|six\r\nseven|eight|nine\r\n";
+        $flavor = new Flavor(array('delimiter' => '|'));
+        $reader = new Reader(new String($data), $flavor);
+        $row = $reader->current();
+        $this->assertEquals($expected = "one|two|three", (string) $row);
     }
 }

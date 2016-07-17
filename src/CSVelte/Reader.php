@@ -107,9 +107,9 @@ class Reader implements \OuterIterator
                 $this->line++;
                 $parsed = $this->parse($line);
                 if ($this->hasHeader() && $this->line === 1) {
-                    $this->header = new HeaderRow($parsed);
+                    $this->header = new HeaderRow($parsed, $this->flavor);
                 } else {
-                    $this->current = new Row($parsed);
+                    $this->current = new Row($parsed, $this->flavor);
                     if ($this->header) $this->current->setHeaderRow($this->header);
                 }
             } catch (EndOfFileException $e) {

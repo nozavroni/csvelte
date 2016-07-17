@@ -1,6 +1,8 @@
 <?php
 use PHPUnit\Framework\TestCase;
 use CSVelte\Writer;
+use CSVelte\Reader;
+use CSVelte\Input\String;
 use CSVelte\Output\Stream;
 use CSVelte\Contract\Writable;
 use CSVelte\Flavor;
@@ -26,5 +28,22 @@ class WriterTest extends TestCase
         $writer = new Writer($out);
         $data = array('one','two', 'three');
         $this->assertEquals(strlen(implode(',', $data)) + strlen("\r\n"), $writer->writeRow($data));
+    }
+
+    public function testWriterWriteWriteSingleRowUsingIterator()
+    {
+        $out = new Stream('php://memory');
+        $writer = new Writer($out);
+        $data = new ArrayIterator(array('one','two', 'three'));
+        $this->assertEquals(strlen(implode(',', $data->getArrayCopy())) + strlen("\r\n"), $writer->writeRow($data));
+    }
+
+    public function testWriterWriteWriteSingleRowUsingCSVReader()
+    {
+        $out = new Stream('php://memory');
+        $in = new String($string = "foo,bar,baz\r\nbar,bin,boz\r\nboo,bat,biz\r\n");
+        $writer = new Writer($out);
+        $data = new Reader($in, new Flavor);
+        $this->assertEquals(strlen("foo,bar,baz\r\n"), $writer->writeRow($data->current()));
     }
 }
