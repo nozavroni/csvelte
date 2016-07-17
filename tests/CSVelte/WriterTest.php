@@ -46,4 +46,15 @@ class WriterTest extends TestCase
         $data = new Reader($in, new Flavor);
         $this->assertEquals(strlen("foo,bar,baz\r\n"), $writer->writeRow($data->current()));
     }
+
+    // public function testWriterWriteMultipleRows()
+    // {
+    //     $out = new Stream('php://memory');
+    //     $writer = new Writer($out);
+    //     $reader = new Reader(new CSVelte\Input\Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')));
+    //     $data = array();
+    //     foreach ($reader as $row) {
+    //         $data []= $row->toArray();
+    //     }
+    // }
 }

@@ -9,5 +9,4 @@
  */
 class InvalidHeaderException extends CSVelteException
 {
-
 }

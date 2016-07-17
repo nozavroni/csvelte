@@ -272,4 +272,25 @@ class ReaderTest extends TestCase
         }
     }
 
+    /**
+     * Just out of curiosity, test a flavor that uses "\n" for the delimiter and
+     * like.. a tab or diff kind of line terminator string ("\r\n" or "\n"?) as
+     * the line terminator. I just want to see how flexible the flavor concept
+     * really is. Play around with stuff like * as line terminator and/or | as
+     * the quote character. Try # or * or ^ or % as the escape character. Try it
+     * with doubleQuote turned on and turned off (because, according to what
+     * exists of a spec, doubleQuote and escapeChar are mutually exclusive)
+     */
+    // public function testFlavorsThatReallyStretchTheDialectSlashFlavorConceptToItsLimits()
+    // {
+    //     $flavor = new Flavor(array(
+    //         'delimiter' => "\n",
+    //         'lineTerminator' => "\r",
+    //         'escapeChar' => "\t",
+    //         'doubleQuote' => false,
+    //         'quoteStyle' => Flavor::QUOTE_ALL,
+    //         'header' => true
+    //     ));
+    // }
+
 }

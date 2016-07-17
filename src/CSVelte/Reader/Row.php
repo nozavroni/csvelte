@@ -29,11 +29,18 @@ class Row extends RowBase
      */
     public function setHeaderRow(HeaderRow $headers)
     {
-        if (count($headers) !== count($this)) {
-            throw new InvalidHeaderException("Header count ({$headers->count()}) does not match column count ({$this->count()}).");
+        $headerArray = $headers->toArray();
+        if ($hcount = count($headers) !== $rcount = count($this)) {
+            if ($hcount > $rcount) {
+                // header count is long, could be an error, but lets just fill in the short row with null values...
+                array_pad($this->columns, $hcount, null);
+            } else {
+                // header count is short, this is likely an error...
+                throw new InvalidHeaderException("Header count ({$headers->count()}) does not match column count ({$this->count()}).");
+            }
         }
         $this->headers = $headers;
-        $this->assocCols = array_combine($headers->toArray(), $this->columns);
+        $this->assocCols = array_combine($headerArray, $this->columns);
     }
 
     /**

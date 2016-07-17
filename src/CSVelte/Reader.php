@@ -110,7 +110,12 @@ class Reader implements \OuterIterator
                     $this->header = new HeaderRow($parsed, $this->flavor);
                 } else {
                     $this->current = new Row($parsed, $this->flavor);
-                    if ($this->header) $this->current->setHeaderRow($this->header);
+                    try {
+                        if ($this->header) $this->current->setHeaderRow($this->header);
+                    } catch (InvalidHeaderException $e) {
+                        // @todo this needs to be tested (incompatible column/header count)
+                        
+                    }
                 }
             } catch (EndOfFileException $e) {
                 $this->current = false;

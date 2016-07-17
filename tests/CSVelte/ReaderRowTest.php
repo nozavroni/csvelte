@@ -7,6 +7,7 @@ use CSVelte\Reader;
 use CSVelte\Reader\Row;
 use CSVelte\Reader\HeaderRow;
 use CSVelte\Exception\ImmutableException;
+use CSVelte\Exception\InvalidHeaderException;
 
 /**
  * CSVelte\Reader\Row Tests
@@ -216,6 +217,22 @@ class ReaderRowTest extends TestCase
         $this->assertEquals('423', $row['id']);
         $this->assertEquals('12-28-2015', $row['start-date']);
         $this->assertEquals('04-21-2016', $row['end [date]']);
+    }
+
+    public function testShortRowGetsNullValuesForExtraColumns()
+    {
+        $expected_header = array('first','second','third','fourth','fifth','sixth');
+        $expected_values = array('one','two','three','four','five','six');
+        $expected_shortvalues = array_slice($expected_values, 0, 3);
+        $expected_shortvalues[] = null;
+        $expected_shortvalues[] = null;
+        $expected_shortvalues[] = null;
+
+        $flavor = new Flavor(array('delimiter' => "\t", 'lineTerminator' => "\n"));
+        $hrow = new HeaderRow($expected_header, $flavor);
+        $shortrow = new Row($expected_shortvalues, $flavor);
+        $shortrow->setHeaderRow($hrow);
+        $this->assertEquals($expected_shortvalues, $shortrow->toArray());
     }
 
     public function testRowCanBeCastToString()
