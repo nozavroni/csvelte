@@ -14,13 +14,26 @@ class Writer
      */
     protected $flavor;
 
-    public function __construct()
+    /**
+     * @var CSVelte\Contracts\Writable
+     */
+    protected $output;
+
+    public function __construct(Writable $output)
     {
         $this->flavor = new Flavor;
+        $this->output = $output;
     }
 
     public function getFlavor()
     {
         return $this->flavor;
+    }
+
+    public function writeRow($row)
+    {
+        $row = implode($this->flavor->delimiter, $row);
+        $row .= $this->flavor->lineTerminator;
+        return $this->output->write($row);
     }
 }
