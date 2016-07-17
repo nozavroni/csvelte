@@ -1,6 +1,7 @@
 <?php namespace CSVelte\Output;
 
-use CSVelte\Contract\Writable as Writable;
+use CSVelte\Contract\Writable;
+use CSVelte\Traits\StreamIO;
 
 /**
  * CSVelte Stream Writer
@@ -12,15 +13,9 @@ use CSVelte\Contract\Writable as Writable;
  */
 class Stream implements Writable
 {
-    protected $source;
+    use StreamIO;
 
-    public function __construct($stream)
-    {
-        if (false === ($stream = fopen($stream, 'w'))) {
-            throw new \Exception('Cannot write to ' . $stream);
-        }
-        $this->source = $stream;
-    }
+    const FOPEN_MODE = 'w';
 
     public function write($data)
     {
