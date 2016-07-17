@@ -34,14 +34,19 @@ class Writer
         return $this->flavor;
     }
 
-    public function writeRow(Iterator $row)
+    public function writeRow($row)
     {
-        $row = implode($this->flavor->delimiter, $row);
-        $row .= $this->flavor->lineTerminator;
+        if (is_array($row)) $row = new \ArrayIterator($row);
+        $row = $this->prepareRow($row);
         return $this->output->write($row);
     }
 
-    protected function prepareRow($row) {
-
+    protected function prepareRow(\Iterator $row)
+    {
+        $return = array();
+        foreach ($row as $col) {
+            $return []= $col;
+        }
+        return implode($this->flavor->delimiter, $return) . $this->flavor->lineTerminator;
     }
 }

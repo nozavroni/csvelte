@@ -20,9 +20,11 @@ class WriterTest extends TestCase
         $this->assertSame($expectedFlavor, $writer->getFlavor());
     }
 
-    public function testWriterWriteSingleRow()
+    public function testWriterWriteWriteSingleRowUsingArray()
     {
         $out = new Stream('php://memory');
         $writer = new Writer($out);
+        $data = array('one','two', 'three');
+        $this->assertEquals(strlen(implode(',', $data)) + strlen("\r\n"), $writer->writeRow($data));
     }
 }
