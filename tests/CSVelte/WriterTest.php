@@ -57,19 +57,19 @@ class WriterTest extends TestCase
         $writer->writeRows('foo');
     }
 
-    // public function testWriterWriteMultipleRows()
-    // {
-    //     $out = new Stream('php://memory');
-    //     $writer = new Writer($out);
-    //     $reader = new Reader(new CSVelte\Input\Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')));
-    //     $data = array();
-    //     $i = 0;
-    //     foreach ($reader as $row) {
-    //         if ($i > 10) break;
-    //         $data []= $row->toArray();
-    //         $i++;
-    //     }
-    //     $written_rows = $writer->writeRows($data);
-    //     $this->assertEquals(10, $written_rows);
-    // }
+    public function testWriterWriteMultipleRows()
+    {
+        $out = new Stream('php://memory');
+        $writer = new Writer($out);
+        $reader = new Reader(new CSVelte\Input\Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')));
+        $data = array();
+        $i = 0;
+        foreach ($reader as $row) {
+            if ($i == 10) break;
+            $data []= $row->toArray();
+            $i++;
+        }
+        $written_rows = $writer->writeRows($data);
+        $this->assertEquals(10, $written_rows);
+    }
 }

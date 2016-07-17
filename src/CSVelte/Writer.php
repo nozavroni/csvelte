@@ -44,9 +44,14 @@ class Writer
     public function writeRows($rows)
     {
         if (is_array($rows)) $rows = new \ArrayIterator($rows);
-        if (!($rows instanceof Iterator)) {
+        if (!($rows instanceof \Iterator)) {
             throw new \InvalidArgumentException('First argument for ' . __CLASS__ . '::' . __METHOD__ . ' must be iterable');
         }
+        $written = 0;
+        foreach ($rows as $row) {
+            if ($this->writeRow($row)) $written++;
+        }
+        return $written;
     }
 
     protected function prepareRow(\Iterator $row)
