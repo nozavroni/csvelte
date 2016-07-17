@@ -47,6 +47,16 @@ class WriterTest extends TestCase
         $this->assertEquals(strlen("foo,bar,baz\r\n"), $writer->writeRow($data->current()));
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testWriterWriteRowsThrowsExceptionIfPassedNonIterable()
+    {
+        $out = new Stream('php://memory');
+        $writer = new Writer($out);
+        $writer->writeRows('foo');
+    }
+
     // public function testWriterWriteMultipleRows()
     // {
     //     $out = new Stream('php://memory');
@@ -59,6 +69,7 @@ class WriterTest extends TestCase
     //         $data []= $row->toArray();
     //         $i++;
     //     }
-    //     dd($data);
+    //     $written_rows = $writer->writeRows($data);
+    //     $this->assertEquals(10, $written_rows);
     // }
 }
