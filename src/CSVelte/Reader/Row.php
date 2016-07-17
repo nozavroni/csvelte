@@ -30,13 +30,13 @@ class Row extends RowBase
     public function setHeaderRow(HeaderRow $headers)
     {
         $headerArray = $headers->toArray();
-        if ($hcount = count($headers) !== $rcount = count($this)) {
+        if (($hcount = $headers->count()) !== ($rcount = $this->count())) {
             if ($hcount > $rcount) {
                 // header count is long, could be an error, but lets just fill in the short row with null values...
-                array_pad($this->columns, $hcount, null);
+                $this->columns = array_pad($this->columns, $hcount, null);
             } else {
                 // header count is short, this is likely an error...
-                throw new InvalidHeaderException("Header count ({$headers->count()}) does not match column count ({$this->count()}).");
+                throw new InvalidHeaderException("Header count ({$hcount}) does not match column count ({$rcount}).");
             }
         }
         $this->headers = $headers;

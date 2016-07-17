@@ -53,8 +53,12 @@ class WriterTest extends TestCase
     //     $writer = new Writer($out);
     //     $reader = new Reader(new CSVelte\Input\Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')));
     //     $data = array();
+    //     $i = 0;
     //     foreach ($reader as $row) {
+    //         if ($i > 10) break;
     //         $data []= $row->toArray();
+    //         $i++;
     //     }
+    //     dd($data);
     // }
 }

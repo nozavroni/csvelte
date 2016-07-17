@@ -205,12 +205,12 @@ class ReaderTest extends TestCase
         $flavor = new Flavor(array('header' => true));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
         // make sure that directly after instantiation, current() returns row #2
-        $this->assertEquals($expectedFirstRow = array('First CornerStone Bank','King of Prussia','PA','35312','First-Citizens Bank & Trust Company','6-May-16','25-May-16'), $reader->current()->toArray());
+        $this->assertEquals($expectedFirstRow = array('Bank Name' => 'First CornerStone Bank','City' => 'King of Prussia','ST' => 'PA','CERT' => '35312','Acquiring Institution' => 'First-Citizens Bank & Trust Company','Closing Date' => '6-May-16','Updated Date' => '25-May-16'), $reader->current()->toArray());
         $this->assertEquals($expectedHeader = array('Bank Name','City','ST','CERT','Acquiring Institution','Closing Date','Updated Date'), $reader->header()->toArray());
         // make sure that running through foreach starts with row #2
         foreach ($reader as $line_no => $row) {
             $this->assertEquals(2, $line_no);
-            $this->assertEquals($expectedFirstRow = array('First CornerStone Bank','King of Prussia','PA','35312','First-Citizens Bank & Trust Company','6-May-16','25-May-16'), $row->toArray());
+            $this->assertEquals($expectedFirstRow = array('Bank Name' => 'First CornerStone Bank','City' => 'King of Prussia','ST' => 'PA','CERT' => '35312','Acquiring Institution' => 'First-Citizens Bank & Trust Company','Closing Date' => '6-May-16','Updated Date' => '25-May-16'), $row->toArray());
             break;
         }
     }
@@ -259,14 +259,16 @@ class ReaderTest extends TestCase
     {
         $flavor = new Flavor(array('header' => true));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
+        $headers = explode(',', 'Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date');
 
         $expectedLine = 1;
         foreach ($reader as $line_no => $row) {
             $expectedCol = 0;
             $this->assertEquals(++$expectedLine, $line_no);
-            foreach ($row as $col_no => $val) {
-                $this->assertEquals($expectedCol++, $col_no);
-
+            $i = 0;
+            foreach ($row as $hdr => $val) {
+                $this->assertEquals($headers[$i], $hdr);
+                $i++;
             }
             if ($expectedLine > 2) break;
         }

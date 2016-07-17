@@ -118,7 +118,7 @@ abstract class RowBase implements \Iterator, \Countable, \ArrayAccess
      */
     public function key()
     {
-        return $this->position;
+        return isset($this->headers[$this->position]) ? $this->headers[$this->position] : $this->position;
     }
 
     /**

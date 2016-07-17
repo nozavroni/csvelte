@@ -223,12 +223,17 @@ class ReaderRowTest extends TestCase
     {
         $expected_header = array('first','second','third','fourth','fifth','sixth');
         $expected_values = array('one','two','three','four','five','six');
-        $expected_shortvalues = array_slice($expected_values, 0, 3);
-        $expected_shortvalues[] = null;
-        $expected_shortvalues[] = null;
-        $expected_shortvalues[] = null;
+        $expected_shortvalues = array_slice(array_combine($expected_header, $expected_values), 0, 3);
+        $expected_shortvalues = array(
+            'first' => 'one',
+            'second' => 'two',
+            'third' => 'three',
+            'fourth' => null,
+            'fifth' => null,
+            'sixth' => null
+        );
 
-        $flavor = new Flavor(array('delimiter' => "\t", 'lineTerminator' => "\n"));
+        $flavor = new Flavor(array('delimiter' => "\t", 'lineTerminator' => "\n", 'header' => true));
         $hrow = new HeaderRow($expected_header, $flavor);
         $shortrow = new Row($expected_shortvalues, $flavor);
         $shortrow->setHeaderRow($hrow);
@@ -248,5 +253,18 @@ class ReaderRowTest extends TestCase
         $reader = new Reader(new String($data), $flavor);
         $row = $reader->current();
         $this->assertEquals($expected = "one|two|three", (string) $row);
+    }
+
+    // public function testSetHeadersDirectlyInConstructorArray()
+    // {
+    //     // test that you can set the headers within the array you pass to Row() itself
+    // }
+
+    public function testCastToArrayUsesHeadersIfAvailable()
+    {
+        $row = new Row($vals = array('aone','atwo','athree','anda','four'));
+        $headers = new HeaderRow($keys = array('first','second','third','fourth','fifth'));
+        $row->setHeaderRow($headers);
+        $this->assertEquals($expected = array_combine($keys, $vals), $row->toArray());
     }
 }
