@@ -1,6 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
 use CSVelte\Writer;
+use CSVelte\Output\Stream;
 use CSVelte\Contract\Writable;
 use CSVelte\Flavor;
 /**
@@ -12,39 +13,16 @@ use CSVelte\Flavor;
  */
 class WriterTest extends TestCase
 {
-    protected $writable;
-
-    public function setUp()
+    public function testWriterCustomFlavor()
     {
-        $writable = $this->createMock(Writable::class);
-        $writable->expects($this->any())
-            ->method('write')
-            ->will($this->returnCallback(function(){ $data = func_get_arg(0); return strlen($data); }));
-        $this->writable = $writable;
+        $out = new Stream('php://memory');
+        $writer = new Writer($out, $expectedFlavor = new Flavor(array('delimiter' => '|')));
+        $this->assertSame($expectedFlavor, $writer->getFlavor());
     }
 
-    public function testFoo()
+    public function testWriterWriteSingleRow()
     {
-        $this->assertEquals($foo = "I am going to write writable tests first I guess", $foo);
+        $out = new Stream('php://memory');
+        $writer = new Writer($out);
     }
-
-    // /**
-    //  * Just a basic test to get started
-    //  */
-    // public function testWriterUsesDefaultFlavor()
-    // {
-    //     $writer = new CSVelte\Writer($this->writable);
-    //     $this->assertInstanceOf(CSVelte\Flavor::class, $writer->getFlavor());
-    // }
-    //
-    // public function testWriterUsesWritable()
-    // {
-    //     $writer = new CSVelte\Writer($this->writable);
-    //     $data = "Write this to the writable.";
-    //     $expected = strlen($data);
-    //     $this->assertEquals($expected, $this->writable->write($data));
-    //     $row = array('foo','bar','baz','bin');
-    //     $written = implode(",", $row) . "\r\n";
-    //     $this->assertEquals($expected = strlen($written), $writer->writeRow($row));
-    // }
 }
