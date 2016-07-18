@@ -19,10 +19,8 @@ use CSVelte\Exception\OutOfBoundsException;
  */
 trait HandlesQuotedLineTerminators
 {
-    // protected $quoteChars = '"\'';
     protected $open = false;
-    // protected $escapeChar = '\\';
-    // protected $escape = false;
+    protected $escape = false;
 
     /**
      * Read single line from CSV data source (stream, file, etc.), taking into
@@ -34,15 +32,16 @@ trait HandlesQuotedLineTerminators
      * @return string
      * @access public
      * @see README file for more about CSV de-facto standard
+     * @todo This should probably just accept a Flavor as its only argument
      */
-    public function readLine($max = null, $eol = PHP_EOL, $quoteChar = '"')
+    public function readLine($max = null, $eol = PHP_EOL, $quoteChar = '"', $escapeChar = '\\')
     {
         // $this->open = array_fill_keys(str_split($this->quoteChars), false);
         try {
             do {
                 if (!isset($lines)) $lines = array();
                 array_push($lines, $this->nextLine($max, $eol));
-            } while ($this->inQuotedString(end($lines), $quoteChar));
+            } while ($this->inQuotedString(end($lines), $quoteChar, $escapeChar));
         } catch (EndOfFileException $e) {
             // only throw the exception if we don't already have lines in the buffer
             if (!count($lines)) throw $e;
@@ -57,31 +56,20 @@ trait HandlesQuotedLineTerminators
      * @return bool
      * @access protected
      */
-    protected function inQuotedString($line, $quoteChar)
+    protected function inQuotedString($line, $quoteChar, $escapeChar)
     {
-        $upshot = function($carry, $item){ return $carry + $item; };
         if (!empty($line)) {
             do {
                 if (!isset($i)) $i = 0;
                 $c = $line[$i++];
-                // if ($this->escape) {
-                //     $this->escape = false;
-                //     continue;
-                // }
-                // if ($c == $this->escapeChar) $this->escape = true;
-                // if (strpos($this->quoteChars, $c) !== false) {
-                if ($c == $quoteChar) {
-                    // only open a quoted string if no others are open
-                    // make a copy of open array
-                    $open = $this->open;
-                    // unset current quote character
-                    //unset($open[$c]);
-                    /*if (!$reduction = array_reduce($open, $upshot))*/ $this->open = !$this->open;
+                if ($this->escape) {
+                    continue;
                 }
+                $this->escape = ($c == $escapeChar);
+                if ($c == $quoteChar) $this->open = !$this->open;
             } while ($i < strlen($line));
         }
-        // we're only interested in whether or not the open array contains a true value
-        return $this->open; // array_reduce($this->open, $upshot);
+        return $this->open;
     }
 
     /**

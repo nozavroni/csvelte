@@ -72,4 +72,21 @@ class WriterTest extends TestCase
         $written_rows = $writer->writeRows($data);
         $this->assertEquals(10, $written_rows);
     }
+
+    // public function testWriteWriteRowsAcceptsReader()
+    // {
+    //     $flavor = new Flavor(array('lineTerminator' => "\r\n"));
+    //     $out = new Stream('php://memory');
+    //     $writer = new Writer($out);
+    //     $reader = new Reader(new CSVelte\Input\Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
+    //     // $i = 0;
+    //     // foreach ($reader as $row) {
+    //     //     if ($i == 20) break;
+    //     //     dd($row, false, "row");
+    //     //     $i++;
+    //     // }
+    //     // this bug is being caused by an apostrophy "opening" a quoted string within the readable... fix it.
+    //     $written_rows = $writer->writeRows($reader);
+    //     $this->assertEquals(545, $written_rows);
+    // }
 }
