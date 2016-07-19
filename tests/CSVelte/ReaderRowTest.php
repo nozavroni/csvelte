@@ -4,8 +4,8 @@ use PHPUnit\Framework\TestCase;
 use CSVelte\Input\String;
 use CSVelte\Flavor;
 use CSVelte\Reader;
-use CSVelte\Reader\Row;
-use CSVelte\Reader\HeaderRow;
+use CSVelte\Table\Row;
+use CSVelte\Table\HeaderRow;
 use CSVelte\Exception\ImmutableException;
 use CSVelte\Exception\InvalidHeaderException;
 

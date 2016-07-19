@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use Mockery as m;
 use Mockery\Adapter\PHPUnit\MockeryPHPUnitIntegration;
 use CSVelte\Reader;
-use CSVelte\Reader\Row;
+use CSVelte\Table\Row;
 use CSVelte\Flavor;
 use CSVelte\Contract\Readable;
 use CSVelte\Input\Stream;
@@ -84,7 +84,7 @@ class ReaderTest extends TestCase
     {
         $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
-        $this->assertInstanceOf($expected = Reader\Row::class, $reader->current());
+        $this->assertInstanceOf($expected = Row::class, $reader->current());
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
     }
 

@@ -1,18 +1,18 @@
-<?php namespace CSVelte\Reader;
+<?php namespace CSVelte\Table;
 
-use CSVelte\Reader;
 use CSVelte\Utils;
 use CSVelte\Exception\InvalidHeaderException;
 
 /**
- * Reader row class
- * The CSVelte\Reader returns Row objects for each row it reads
+ * Table Row Class
+ * Represents a row of tabular data (CSVelte\Table\Data objects)
  *
- * @package   CSVelte\Reader
- * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @package    CSVelte
+ * @subpackage CSVelte\Table
+ * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
+ * @author     Luke Visinoni <luke.visinoni@gmail.com>
  */
-class Row extends RowBase
+class Row extends AbstractRow
 {
     /**
      * @var array Same as columns only indexed using headers rather than numbers
@@ -22,10 +22,9 @@ class Row extends RowBase
     /**
      * Set the header row (so that it can be used to index the row)
      *
-     * @param CSVelte\Reader\HeaderRow
-     * @return void ($this?)
+     * @param CSVelte\Table\HeaderRow
+     * @return void (return $this?)
      * @access public
-     * @todo Throw exception if header row is wrong length
      */
     public function setHeaderRow(HeaderRow $headers)
     {
@@ -44,7 +43,7 @@ class Row extends RowBase
     }
 
     /**
-     * Is there an offset at specified position
+     * Is there an offset at specified position?
      *
      * @param integer Offset
      * @return boolean
@@ -62,10 +61,10 @@ class Row extends RowBase
     }
 
     /**
-     * Retrieve offset at specified position
+     * Retrieve data at specified column offset
      *
      * @param integer Offset
-     * @return any
+     * @return CSVelte\Table\Data
      * @access public
      */
     public function offsetGet($offset)
@@ -73,7 +72,6 @@ class Row extends RowBase
         try {
             $val = Utils::array_get($this->assocCols, $offset, null, true);
         } catch (\OutOfBoundsException $e) {
-            // now check $this->properties?
             return parent::offsetGet($offset);
         }
         return $val;

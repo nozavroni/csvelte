@@ -1,8 +1,8 @@
 <?php namespace CSVelte;
 
 use CSVelte\Contract\Readable;
-use CSVelte\Reader\Row;
-use CSVelte\Reader\HeaderRow;
+use CSVelte\Table\Row;
+use CSVelte\Table\HeaderRow;
 use CSVelte\Exception\EndOfFileException;
 
 /**
