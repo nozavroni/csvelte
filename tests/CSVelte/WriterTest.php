@@ -73,20 +73,33 @@ class WriterTest extends TestCase
         $this->assertEquals(10, $written_rows);
     }
 
-    // public function testWriteWriteRowsAcceptsReader()
-    // {
-    //     $flavor = new Flavor(array('lineTerminator' => "\r\n"));
-    //     $out = new Stream('php://memory');
-    //     $writer = new Writer($out);
-    //     $reader = new Reader(new CSVelte\Input\Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
-    //     // $i = 0;
-    //     // foreach ($reader as $row) {
-    //     //     if ($i == 20) break;
-    //     //     dd($row, false, "row");
-    //     //     $i++;
-    //     // }
-    //     // this bug is being caused by an apostrophy "opening" a quoted string within the readable... fix it.
-    //     $written_rows = $writer->writeRows($reader);
-    //     $this->assertEquals(545, $written_rows);
-    // }
+    public function testWriteWriteRowsAcceptsReader()
+    {
+        $flavor = new Flavor(array('lineTerminator' => "\r\n"));
+        $out = new Stream('php://memory');
+        // $outFlavor = new Flavor([
+        //     'lineTerminator' => "\n",
+        //     'delimiter' => "|",
+        //     'quoteChar' => '*',
+        //     'escapeChar' => null,
+        //     'doubleQuote' => true,
+        //     'quoteStyle' => Flavor::QUOTE_NONNUMERIC
+        // ]);
+        // $out = new Stream('file:///Users/luke/test.csv');
+        $writer = new Writer($out);
+        $reader = new Reader(new CSVelte\Input\Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
+        $written_rows = $writer->writeRows($reader);
+        $this->assertEquals(545, $written_rows);
+    }
+
+    public function testWriterUsesCorrectDelimiterAndLineTerminator()
+    {
+        $flavor = new Flavor(array('delimiter' => "|", 'lineTerminator' => "\n"));
+        $handle = fopen('php://memory', 'w+');
+        $out = new Stream($handle);
+        $writer = new Writer($out, $flavor);
+        $writer->writeRow(array('1','two','thr33'));
+        rewind($handle);
+        $this->assertEquals($expected = "1|two|thr33\n", fgets($handle));
+    }
 }

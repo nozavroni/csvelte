@@ -30,11 +30,11 @@ trait StreamIO {
     public function __construct($stream)
     {
         if (is_resource($stream)) {
-            if (self::RESOURCE_TYPE !== ($type = get_resource_type($stream))) {
+            if ('stream' !== ($type = get_resource_type($stream))) {
                 throw new InvalidStreamResourceException('Invalid resource type provided: ' . $type);
             }
         } else {
-            if (false === ($stream = @fopen($stream, self::FOPEN_MODE))) {
+            if (false === ($stream = @fopen($stream, $this->getMode()))) {
                 // @todo custom exception
                 throw new InvalidStreamUriException('Cannot open stream: ' . $stream);
             }
@@ -136,4 +136,6 @@ trait StreamIO {
     {
         return dirname($this->info['uri']);
     }
+
+    abstract protected function getMode();
 }

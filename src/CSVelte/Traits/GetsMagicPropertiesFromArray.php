@@ -10,6 +10,7 @@ use CSVelte\Utils;
  * @package   CSVelte\Trait
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo      I believe this can be deleted... I'm not using it anywhere
  */
 trait GetsMagicPropertiesFromArray
 {

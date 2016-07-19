@@ -5,6 +5,7 @@ use CSVelte\Contract\Readable;
 use CSVelte\Exception\EndOfFileException;
 use CSVelte\Traits\HandlesQuotedLineTerminators;
 use CSVelte\Exception\InvalidStreamResourceException;
+use CSVelte\Exception\InvalidStreamUriException;
 
 /**
  * CSVelte\Input\Stream
@@ -19,8 +20,6 @@ class Stream implements Readable
 {
     use HandlesQuotedLineTerminators, StreamIO;
 
-    const FOPEN_MODE = 'r';
-
     /**
      * @const string
      */
@@ -30,6 +29,18 @@ class Stream implements Readable
      * @const integer
      */
     const MAX_LINE_LENGTH = 4096;
+
+    /**
+     * Get the "mode" used to open stream resource handle
+     *
+     * @return string
+     * @see fopen function
+     * @todo I'm definitely not in love with this design but I'll refactor later
+     */
+    protected function getMode()
+    {
+        return 'rb';
+    }
 
     /**
      * @inheritDoc

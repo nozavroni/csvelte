@@ -15,7 +15,17 @@ class Stream implements Writable
 {
     use StreamIO;
 
-    const FOPEN_MODE = 'w';
+    /**
+     * Get the "mode" used to open stream resource handle
+     *
+     * @return string
+     * @see fopen function
+     * @todo I'm definitely not in love with this design but I'll refactor later
+     */
+    protected function getMode()
+    {
+        return 'w';
+    }
 
     public function write($data)
     {
