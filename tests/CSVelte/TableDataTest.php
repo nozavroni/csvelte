@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use CSVelte\Table\Data;
 use CSVelte\Table\Data\Numeric;
+use CSVelte\Table\Data\Boolean;
 
 /**
  * CSVelte\Table\Data Tests
@@ -63,5 +64,24 @@ class TableDataTest extends TestCase
         $this->assertInstanceOf(Data\Numeric::class, $scinot);
         $expected = new Data\Numeric(.423E-11);
         $this->assertEquals($expected->__toString(), '0.423E-11');
+    }
+
+    public function testDataFactoryBooleanFromString()
+    {
+        $trueval = Data::fromString('true');
+        $this->assertInstanceOf(Data\Boolean::class, $trueval);
+        $this->assertEquals('true', (string) $trueval);
+
+        $boolval = Data::fromString('false');
+        $this->assertInstanceOf(Data\Boolean::class, $boolval);
+        $this->assertEquals('false', (string) $boolval);
+
+        $boolval = Data::fromString('on');
+        $this->assertInstanceOf(Data\Boolean::class, $boolval);
+        $this->assertEquals('true', (string) $boolval);
+
+        $boolval = Data::fromString('off');
+        $this->assertInstanceOf(Data\Boolean::class, $boolval);
+        $this->assertEquals('false', (string) $boolval);
     }
 }

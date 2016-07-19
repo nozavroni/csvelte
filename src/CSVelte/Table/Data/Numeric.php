@@ -14,9 +14,9 @@ class Numeric extends BaseData
 {
     protected $value;
 
-    public function __construct($value)
+    protected static function is($checkval)
     {
-        $this->value = $this->cast($value);
+        return is_numeric($checkval);
     }
 
     protected function cast($val)
