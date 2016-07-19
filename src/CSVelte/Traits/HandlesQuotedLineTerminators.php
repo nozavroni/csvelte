@@ -1,8 +1,6 @@
 <?php namespace CSVelte\Traits;
 
-use CSVelte\Utils;
 use CSVelte\Exception\EndOfFileException;
-use CSVelte\Exception\OutOfBoundsException;
 
 /**
  * Handle line terminators that fall within a quoted string
@@ -19,7 +17,14 @@ use CSVelte\Exception\OutOfBoundsException;
  */
 trait HandlesQuotedLineTerminators
 {
+    /**
+     * @var bool True if current line ended while inside a quoted string
+     */
     protected $open = false;
+
+    /**
+     * @var bool True if last character read was the escape character
+     */
     protected $escape = false;
 
     /**
@@ -36,7 +41,6 @@ trait HandlesQuotedLineTerminators
      */
     public function readLine($max = null, $eol = PHP_EOL, $quoteChar = '"', $escapeChar = '\\')
     {
-        // $this->open = array_fill_keys(str_split($this->quoteChars), false);
         try {
             do {
                 if (!isset($lines)) $lines = array();
@@ -63,6 +67,7 @@ trait HandlesQuotedLineTerminators
                 if (!isset($i)) $i = 0;
                 $c = $line[$i++];
                 if ($this->escape) {
+                    $this->escape = false;
                     continue;
                 }
                 $this->escape = ($c == $escapeChar);
@@ -73,20 +78,18 @@ trait HandlesQuotedLineTerminators
     }
 
     /**
-     * Read next line from CSV file
+     * Read next line from CSV file (delegate to class)
+     * Because this trait overrides the readLine method of the Readable interface,
+     * it has to require this method in its place. That way it can still delegate
+     * the reading of data to the actual class and only concern itself with the
+     * task at hand (quoted newlines)
+     *
+     * @abstract
+     * @access protected
+     * @param int
+     * @param char
+     * @return string The next line of text from the input source
+     * @throws CSVelte\Exception\EndOfFileException
      */
     abstract protected function nextLine($max = null, $eol = PHP_EOL);
-
-    // protected function nextLine($max = null, $eol = "\n")
-    // {
-    //     if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {
-    //         if ($this->isEof()) {
-    //             throw new EndOfFileException('Cannot read line from ' . $this->name() . '. End of file has been reached.');
-    //         } else {
-    //             // @todo not sure if this is necessary... may cause bugs/unpredictable behavior even...
-    //             throw new \OutOfBoundsException('Cannot read line from ' . $this->name());
-    //         }
-    //     }
-    //     return $line;
-    // }
 }

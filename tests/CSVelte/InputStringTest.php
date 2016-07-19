@@ -17,7 +17,7 @@ class InputStringTest extends TestCase
         'QuoteMinimal' => "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\nFirst CornerStone Bank,\"King of\nPrussia\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16\nTrust Company Bank,Memphis,TN,9956,The Bank of Fayette County,29-Apr-16,25-May-16\nNorth Milwaukee State Bank,Milwaukee,WI,20364,First-Citizens Bank & Trust Company,11-Mar-16,16-Jun-16\nHometown National Bank,Longview,WA,35156,Twin City Bank,2-Oct-15,13-Apr-16\nThe Bank of Georgia,Peachtree City,GA,35259,Fidelity Bank,2-Oct-15,13-Apr-16\nPremier Bank,Denver,CO,34112,\"United Fidelity \r\n \r \r \n \r\n Bank, fsb\",10-Jul-15,17-Dec-15\nEdgebrook Bank,Chicago,IL,57772,Republic Bank of Chicago,8-May-15,2-Jun-16\nDoral Bank,San Juan,PR,32102,Banco Popular de Puerto Rico,27-Feb-15,13-May-15\nCapitol\t City Bank & Trust: Company,Atlanta,GA,33938,First-Citizens Bank & Trust: Company,13-Feb-15,21-Apr-15\nHighland: Community Bank,Chicago,IL,20290,\"United Fidelity Bank, fsb\",23-Jan-15,21-Apr-15\nFirst National Bank of Crestview ,Crestview,FL,17557,First NBC Bank,16-Jan-15,15-Jan-16\nNorthern Star Bank,Mankato,MN,34983,BankVista,19-Dec-14,6-Jan-16\n\"Frontier Bank, FSB D/B/A El Paseo Bank\",Palm Desert,CA,34738,\"Bank of Southern California, N.A.\",7-Nov-14,6-Jan-16\nThe National Republic Bank of Chicago,Chicago,IL,916,State Bank of Texas,24-Oct-14,6-Jan-16\nNBRS Financial,Rising Sun,MD,4862,Howard Bank,17-Oct-14,26-Mar-15\n\"GreenChoice Bank, fsb\",Chicago,IL,28462,\"Providence Bank, LLC\",25-Jul-14,28-Jul-15\nEastside Commercial Bank,Conyers,GA,58125,Community: Southern Bank,18-Jul-14,28-Jul-15\nThe Freedom State Bank ,Freedom,OK,12483,Alva State Bank & Trust Company,27-Jun-14,25-Mar-16\nValley Bank,Fort Lauderdale,FL,21793,\"Landmark Bank, National Association\",20-Jun-14,29-Jun-15\nValley Bank,Moline,IL,10450,Great Southern Bank,20-Jun-14,26-Jun-15\nSlavie Federal Savings Bank,Bel Air,MD,32368,\"Bay Bank, FSB\",30-May-14,15-Jun-15\nColumbia Savings Bank,Cincinnati,OH,32284,\"United Fidelity Bank, fsb\",23-May-14,28-May-15\nAztecAmerica Bank ,Berwyn,IL,57866,Republic Bank of Chicago,16-May-14,18-Jul-14\nAllendale County Bank,Fairfax,SC,15062,Palmetto State Bank,25-Apr-14,18-Jul-14\nVantage Point Bank,Horsham,PA,58531,First Choice Bank,28-Feb-14,3-Mar-15\n\"Millennium Bank, National\n Association\",Sterling,VA,35096,WashingtonFirst Bank,28-Feb-14,3-Mar-15\nSyringa Bank,Boise,ID,34296,Sunwest Bank,31-Jan-14,12-Apr-16\nThe Bank of Union,El Reno,OK,17967,BancFirst,24-Jan-14,25-Mar-16\nDuPage National Bank,West Chicago,IL,5732,Republic Bank of Chicago,17-Jan-14,19-F\n",
         'DoubleQuotes' => "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\nFirst CornerStone Bank,\"The Very Holiest \"\"King\nof\nPrussia\"\" and all his goons\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16\nTrust Company Bank,Memphis,TN,9956,\"The 'Bank\nof\nFayette' County\",29-Apr-16,25-May-16\nNorth Milwaukee State Bank,Milwaukee,WI,20364,\"First-Citizens\"\" Bank & Trust Company\",11-Mar-16,16-Jun-16\nHometown National Bank,Longview,WA,35156,\"Twin City's Bank\",2-Oct-15,13-Apr-16\nHometown National Bank,Longview,WA,35156,'Twin ''Citys'' Bank',2-Oct-15,13-Apr-16\nHometown National Bank,Longview,WA,35156,'Twin ''Citys\nNew line\nDoodad'' Bank',2-Oct-15,13-Apr-16\nHometown National Bank,Longview,WA,35156,'Twin \"Citys\nNew line\nDoodad\" Bank',2-Oct-15,13-Apr-16\n'Hometown \"National Bank\"',Longview,WA,35156,'Twin City\'s\nNew line\nDoodad Bank',2-Oct-15,13-Apr-16\n",
         'EscapeChars' => "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\nFirst CornerStone Bank,\"King of\nPrussia\",PA,35312,\"First-Citizens \\\"Bank & Trust Company\",6-May-16,25-May-16\nTrust Company Bank,Memphis,TN,9956,\"The Bank #\"of Fayette County\",29-Apr-16,25-May-16\nNorth Milwaukee State Bank,Milwaukee,WI,20364,\"Escaping with a\"aa\" character a\"Bank & Trust Company\",11-Mar-16,16-Jun-16\nHometown National Bank,Longview,WA,35156,Twin City Bank\\\n of escaped non-quoted newline characters.\\\n yay!\\\n neato\\\n pateeto,2-Oct-15,13-Apr-16\nThe Bank of Georgia non-quoted tex\\'t fields containing escaped \\\" chars,Peachtree City,GA,35259,Fidelity Bank,2-Oct-15,13-Apr-16\nPremier Bank,Denver,CO,34112,\"United Fidelity \r\n \r \r \n \r\n Bank, fsb\",10-Jul-15,17-Dec-15\nEdgebrook Bank,Chicago,IL,57772,Republic Bank of Chicago,8-May-15,2-Jun-16\nDoral Bank,San Juan,PR,32102,Banco Popular de Puerto Rico,27-Feb-15,13-May-15\n",
-        'QuotingEdgeCases' => "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\nValley Bank,Moline,IL,10450,Great Southern Bank,20-Jun-14,26-Jun-15\nSlavie's Federal Savings Bank,Bel Air,MD,32368,\"Bay Bank, FSB\",30-May-14,15-Jun-15\nColumbia's Savings Bank,Cincinnati,OH,32284,\"United Fidelity Bank, fsb\",23-May-14,28-May-15\nAztecAmerica Bank ,Berwyn,IL,57866,Republic Bank of Chicago,16-May-14,18-Jul-14\nAllendale County Bank,Fairfax,SC,15062,Palmetto State Bank,25-Apr-14,18-Jul-14\nVantage Point Bank,Horsham,PA,58531,First Choice Bank,28-Feb-14,3-Mar-15\n\"Millennium Bank, National\n Association\",Sterling,VA,35096,WashingtonFirst Bank,28-Feb-14,3-Mar-15\nSyringa Bank,Boise,ID,34296,Sunwest Bank,31-Jan-14,12-Apr-16\nThe Bank of Union,El Reno,OK,17967,BancFirst,24-Jan-14,25-Mar-16\nDuPage National Bank,West Chicago,IL,5732,Republic Bank of Chicago,17-Jan-14,19-May-15\n"
+        'QuotingEdgeCases' => "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\nValley Bank,Moline,IL,10450,Great Southern Bank,20-Jun-14,26-Jun-15\nSlavie's Federal Savings Bank,Bel Air,MD,32368,\"Bay Bank, FSB\",30-May-14,15-Jun-15\nColumbia Savings Bank,Cincinnati,OH,32284,\"United Fidelity's Bank, fsb\",23-May-14,28-May-15\nAztec America Bank,Berwyn,IL,57866,\"Republic \\\"Bank of Chicago\",16-May-14,18-Jul-14\n'Allendale, County Bank',Fairfax,SC,15062,Palmetto\'s State Bank,25-Apr-14,18-Jul-14\n'Vantage, Point Bank',Horsham,PA,58531,'First \"Choice Bank',28-Feb-14,3-Mar-15\n'Millennium Bank, National\n Association',Sterling,VA,35096,'Washington-First Bank',28-Feb-14,3-Mar-15\nSyringa Bank,Boise,ID,34296,\"Big Boys &\"Sunwest Bizzity Bank\",31-Jan-14,12-Apr-16\nThe Bank of Union,El Reno,OK,17967,\"Banc of the First\\\\\"\" Escaped Escape Character\",24-Jan-14,25-Mar-16\nDuPage National Bank,West Chicago,IL,5732,Republic Bank of Chicago,17-Jan-14,19-May-15\n"
     );
 
     public function testNewInputString()
@@ -62,7 +62,7 @@ class InputStringTest extends TestCase
         $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,'Twin ''Citys\nNew line\nDoodad'' Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'"), "Ensure that newlines that fall within double-single quoted strings within strings quoted by single-single quotes work as expected");
         $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,'Twin \"Citys\nNew line\nDoodad\" Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'"), "Ensure that single double quoted newlines work as expected within single single quoted strings.");
         // @todo this is actually testing escape character and should be moved into its own test method
-        $this->assertEquals($expected = "'Hometown \"National Bank\"',Longview,WA,35156,'Twin City\'s\nNew line\nDoodad Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'", '#'), "Ensure that backslash escapes single double/single-quotes that fall within their same quote type. Although I'm not entirely sure this is expected behavior and will need to consult the RFC. UPDATE: Consulted and it is expected so long as escapeChar is set and doubleQuote is false.");
+        $this->assertEquals($expected = "'Hometown \"National Bank\"',Longview,WA,35156,'Twin City\'s\nNew line\nDoodad Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'", '\\'), "Ensure that backslash escapes single double/single-quotes that fall within their same quote type. Although I'm not entirely sure this is expected behavior and will need to consult the RFC. UPDATE: Consulted and it is expected so long as escapeChar is set and doubleQuote is false.");
     }
 
     public function testInputReadLineUsesPhpEolConstantAsDefaultLineTerminator()
@@ -77,9 +77,54 @@ class InputStringTest extends TestCase
     public function testOnlyQuoteCharFromFlavorObjectAffectsOpenCloseQuotedString()
     {
         $stream = new String($this->CSVstrings['QuotingEdgeCases']);
-        $stream->readLine(); // eat header line...
-        $stream->readLine(); // eat second line...
-        //dd($stream->readLine()); // read third line...
+        $stream->readLine(); // burn the header line...
+        $stream->readLine(); // and the second line...
+        $this->assertEquals(
+            $expected = "Slavie's Federal Savings Bank,Bel Air,MD,32368,\"Bay Bank, FSB\",30-May-14,15-Jun-15",
+            $stream->readLine(null, PHP_EOL, '"', '\\'),
+            "Ensure unquoted apostrophe doesn't need to be escaped when double-quote is the quote character"
+        );
+        $this->assertEquals(
+            $expected = "Columbia Savings Bank,Cincinnati,OH,32284,\"United Fidelity's Bank, fsb\",23-May-14,28-May-15",
+            $stream->readLine(null, PHP_EOL, '"', '\\'),
+            "Ensure quoted apostrophe doesn't need to be escaped when double-quote is the quote character"
+        );
+        $this->assertEquals(
+            $expected = "Aztec America Bank,Berwyn,IL,57866,\"Republic \\\"Bank of Chicago\",16-May-14,18-Jul-14",
+            $stream->readLine(null, PHP_EOL, '"', '\\'),
+            "Ensure single double-quote must be escaped when double-quote is the quote character"
+        );
+        $this->assertEquals(
+            $expected = "'Allendale, County Bank',Fairfax,SC,15062,Palmetto\'s State Bank,25-Apr-14,18-Jul-14",
+            $stream->readLine(null, PHP_EOL, "'", '\\'),
+            "Ensure apostrophe must be escaped when single-quote is the quote character"
+        );
+        $this->assertEquals(
+            $expected = "'Vantage, Point Bank',Horsham,PA,58531,'First \"Choice Bank',28-Feb-14,3-Mar-15",
+            $stream->readLine(null, PHP_EOL, "'", '\\'),
+            "Ensure double-quotes don't need to be escaped when single-quote is the quote character as long as they're enclosed by single-quotes"
+        );
+        $this->assertEquals(
+            $expected = "'Millennium Bank, National\n Association',Sterling,VA,35096,'Washington-First Bank',28-Feb-14,3-Mar-15",
+            $stream->readLine(null, PHP_EOL, "'", '\\'),
+            "Ensure newlines don't need to be escaped when single-quote is the quote character as long as they're enclosed by single-quotes"
+        );
+        // @todo Had to scrap this for now, the trait I'm testing only works when columns are quoted.
+        // $this->assertEquals(
+        //     $expected = "Syringa Bank,Boise,ID,34296,Big Boys\\\nSunwest\\\nBizzity Bank,31-Jan-14,12-Apr-16",
+        //     $stream->readLine(null, PHP_EOL, "'", '\\'),
+        //     "Ensure newlines are allowed without enclosing quotes as long as they're escaped"
+        // );
+        $this->assertEquals(
+            $expected = "Syringa Bank,Boise,ID,34296,\"Big Boys &\"Sunwest Bizzity Bank\",31-Jan-14,12-Apr-16",
+            $stream->readLine(null, PHP_EOL, '"', '&'),
+            "Ensure escape character can be whatever character you want it to be"
+        );
+        $this->assertEquals(
+            $expected = "The Bank of Union,El Reno,OK,17967,\"Banc of the First\\\\\"\" Escaped Escape Character\",24-Jan-14,25-Mar-16",
+            $stream->readLine(null, PHP_EOL, '"', '\\'),
+            "Ensure escape character can be escaped by itself within quoted string"
+        );
     }
 
     // @todo Make sure only one character can be provided as escape char (write test)
