@@ -31,7 +31,6 @@ class Row extends RowBase
     {
         $headerArray = $headers->toArray();
         if (($hcount = $headers->count()) !== ($rcount = $this->count())) {
-            if ($rcount > 1000) dd($this);
             if ($hcount > $rcount) {
                 // header count is long, could be an error, but lets just fill in the short row with null values...
                 $this->columns = array_pad($this->columns, $hcount, null);

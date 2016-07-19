@@ -15,6 +15,43 @@ use CSVelte\Flavor;
  */
 class WriterTest extends TestCase
 {
+    protected $testdata = array(
+        array('id', 'title', 'summary', 'address', 'city', 'state', 'zip', 'notes'),
+        array('1', 'This is a test title', '    And a summary that you want to read because it is so summarrific', '123 Address St.', 'Cityville', 'ST', '12345', 'Notes are for jerks and losers'),
+        array('2', 'This has, a, comma or two', 'isn\'t this apostrophe pretty?', '321 Nough Rd', 'Nonestown', 'NO', '54321', '   Notes are the best place to put "text containing quotes" or even quotes containing "text".     '),
+        array('3', "I\tlike ham soda", 'I\'m a silly little summary', '555 Silly Avenue', 'Eden', 'CA', '55651', 'These; ~notes~ `cont@in, character$: _that_ *are* /sometimes/ \'used\' -in- |p|ace| \\of\\ <commas> [when] {writing} #CSV %data.'),
+        array('4', 'I\'m a "title"', 'Summarize <strong>this</strong>', '87-845 Something; cool Drive', 'Coolsville', 'CT', '68452-4257', 'These notes contain no special characters at all not even a period'),
+        array('5', "This is the title of it", "A summary isn't to be taken lightly", '1122 Some Rd Apt #12-A', 'The Town', 'PP', '12223', "I decided to \n put a bunch of \r random \r\n\r\nline\nterminators in this notes\r\nfield. Weird, huh?"),
+    );
+
+    // public function testWriterHandlesQuotingCorrectly()
+    // {
+    //     $flavor = new Flavor(array(
+    //         'header' => true,
+    //         'doubleQuote' => true,
+    //         'escapeChar' => null,
+    //         'quoteChar' => '"',
+    //         'lineTerminator' => "\n",
+    //         'skipInitialSpace' => false,
+    //         'delimiter' => ',',
+    //         'quoteStyle' => Flavor::QUOTE_MINIMAL
+    //     ));
+    //     $handle = fopen('php://memory', 'w+');
+    //     $out = new Stream($handle);
+    //     $writer = new Writer($out, $flavor);
+    //     $writer->writeRows($this->testdata);
+    //     rewind($handle);
+    //     $this->assertEquals($expected = "id,title,summary,address,city,state,zip,notes\n", fgets($handle), "Ensure the header row is handled correctly when flavor has header set to true");
+    //     $this->assertEquals($expected = "1,This is a test title,    And a summary that you want to read because it is so summarrific,123 Address St.,Cityville,ST,12345,Notes are for jerks and losers\n", fgets($handle), "Ensure whitespace is preserved at the beginning of a column");
+    //     $this->assertEquals($expected = "2,\"This has, a, comma or two\",isn't this apostrophe pretty?,321 Nough Rd,Nonestown,NO,54321,\"   Notes are the best place to put \"\"text containing quotes\"\" or even quotes containing \"\"text\"\".\n\"", fgets($handle), "Ensure writer adds double double-quotes when flavor designates doubleQuote=true and a column contains double-quotes.");
+    //
+    //     // dd(fgets($handle), false, "header");
+    //     // dd(fgets($handle), false, "line 1");
+    //     // dd(fgets($handle), false, "line 2");
+    //     // dd(fgets($handle), false, "line 3");
+    //     // dd(fgets($handle), false, "line 4");
+    // }
+
     public function testWriterCustomFlavor()
     {
         $out = new Stream('php://memory');
@@ -102,4 +139,6 @@ class WriterTest extends TestCase
         rewind($handle);
         $this->assertEquals($expected = "1|two|thr33\n", fgets($handle));
     }
+
+
 }
