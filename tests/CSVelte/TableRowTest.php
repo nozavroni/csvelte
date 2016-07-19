@@ -16,7 +16,7 @@ use CSVelte\Exception\InvalidHeaderException;
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-class ReaderRowTest extends TestCase
+class TableRowTest extends TestCase
 {
     public function testNewReaderRowAcceptsArray()
     {
