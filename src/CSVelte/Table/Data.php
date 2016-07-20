@@ -1,10 +1,9 @@
 <?php namespace CSVelte\Table;
 
-use CSVelte\Table\Data\Numeric;
-use CSVelte\Table\Data\Boolean;
+use CSVelte\Contract\DataType;
 
 /**
- * Table Data Class
+ * Table Data Item Class
  * Represents data within a particular row/column within a set of tabular data
  *
  * @package    CSVelte
@@ -12,38 +11,43 @@ use CSVelte\Table\Data\Boolean;
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  */
-abstract class Data
+class Data
 {
+    /**
+     * @var CSVelte\Table\DataType
+     */
+    protected $value;
 
-    public function __construct($value)
+    /**
+     * Class constructor
+     *
+     * @param mixed Can be either a native PHP value or a DataType object
+     * @return void
+     * @access public
+     */
+    public function __construct($val)
     {
-        $this->value = $this->cast($value);
+        $this->value = $this->assumeDataType($val);
     }
 
-    public static function fromString($str)
+    protected function assumeDataType($val)
     {
-        if (Numeric::is($str)) return new Numeric($str);
-        elseif (Boolean::is($str)) return new Boolean($str);
-        else {
-            // getting to this...
+        if ($val instanceof DataType) return $val;
+        // value is not a DataType object, so try to cast it to one...
+        // @todo one thing to think about though is that several of these have at least
+        // one sub-type (DateTime has Date, Time, Timezone; Numeric potentially
+        // has float, int, signed/unsigned int, etc.; and Text has literally an
+        // endless number of possible sub-types)
+        $types = array('DateTime', 'Duration', 'Numeric', 'Boolean', 'Text');
+        switch (true) {
+            case DateTime::validate($val):
+                return DateTime::create($val);
+            case Numeric::validate($val):
+                return Numeric::create($val);
+            case Boolean::validate($val):
+                return Boolean::create($val);
+            case Duration::validate($val):
+                return Duration::create($val);
         }
     }
-
-    public function __toString()
-    {
-        return (string) $this->value;
-    }
-
-    protected function cast($value)
-    {
-        // @todo Handle this more gracefully...
-        throw new \Exception('Cannot instantiate this class directly.');
-    }
-
-    protected static function is($value)
-    {
-        // @todo Handle this more gracefully...
-        throw new \Exception('Cannot call this method on Data class directly.');
-    }
-
 }
