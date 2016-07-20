@@ -15,4 +15,15 @@ class Text extends AbstractType
     {
 
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function toNumeric()
+    {
+        if (false !== strpos($this->value, '.')) {
+            return (float) $this->value;
+        }
+        return (int) $this->value;
+    }
 }

@@ -31,9 +31,15 @@ class TableDataTypeTest extends TestCase
     public function testTextDataTypeCastWithNoParamsWillInferCastTypeFromValue()
     {
         $numeric = new Text("500");
-        $this->assertInstanceOf(Numeric::class, $fivehundo = $numeric->cast());
+        $this->assertInstanceOf(Numeric::class, $fivehundo = $numeric->cast(), 'Ensure integer will properly be cast to numeric data type from text.');
         $this->assertEquals(Text::TYPE_NUMERIC, $fivehundo->getType());
         $this->assertTrue(is_int($fivehundo->getValue()));
         $this->assertSame(500, $fivehundo->getValue());
+
+        $data = new Text("100.25");
+        $this->assertInstanceOf(Numeric::class, $float = $data->cast(), 'Ensure float (numbers with decimals) will properly be cast to numeric data type from text.');
+        $this->assertEquals(Text::TYPE_NUMERIC, $float->getType());
+        $this->assertTrue(is_float($float->getValue()));
+        $this->assertSame(100.25, $float->getValue());
     }
 }
