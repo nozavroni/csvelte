@@ -13,6 +13,9 @@ class Text extends AbstractType
 
     protected function convert($val)
     {
+        if (is_bool($val)) {
+            $val = ($val) ? Boolean::TRUE : Boolean::FALSE;
+        }
         return (string) $val;
     }
 }

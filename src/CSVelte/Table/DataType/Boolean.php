@@ -25,6 +25,11 @@ class Boolean extends AbstractType
         array('0', '1'),
     );
 
+    public function __toString()
+    {
+        return $this->value ? self::TRUE : self::FALSE;
+    }
+
     protected function convert($val)
     {
         if (is_string($val)) {

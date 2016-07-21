@@ -9,6 +9,8 @@
  */
 class Null extends AbstractType
 {
+    const TEXT = 'NULL';
+
     protected $type = 'null';
 
     protected function convert($val)

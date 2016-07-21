@@ -22,11 +22,29 @@ use CSVelte\Table\DataType\Null;
  */
 class TableDataTypeTest extends TestCase
 {
-    public function testDataTypeFromTextToNumeric()
+    public function testTextCastToString()
+    {
+        $text = new Text($expected = 'I like text');
+        $this->assertSame($expected, (string) $text);
+
+    }
+
+    public function testDataTypeFromTextToText()
     {
         $data = new Text($expected = 'I am some text.');
         $this->assertSame($expected, $data->getValue());
+        $textDigits = new Text(423);
+        $this->assertSame($expected = '423', $textDigits->getValue());
+        $textTrue = new Text(true);
+        $this->assertSame($expected = (string) Boolean::TRUE, $textTrue->getValue());
+        $textFalse = new Text(false);
+        $this->assertSame($expected = (string) Boolean::FALSE, $textFalse->getValue());
+        $nulltext = new Text(null);
+        $this->assertSame("", $nulltext->getValue(), "Ensure null value is converted to blank string.");
+    }
 
+    public function testDataTypeFromTextToNumeric()
+    {
         $numeric = new Numeric($expected = '1000000');
         $this->assertSame((int) $expected, $numeric->getValue());
         $numericfancy = new Numeric('1,000,000');
@@ -78,9 +96,6 @@ class TableDataTypeTest extends TestCase
         $this->assertTrue($true->getValue(), "Ensure that Boolean::addBinarySet() accepts an associative array with Boolean class constants as keys (using true value).");
         $false = new Boolean('needles');
         $this->assertTrue($true->getValue(), "Ensure that Boolean::addBinarySet() accepts an associative array with Boolean class constants as keys (using false value).");
-
-        // @todo Test that Boolean::addBinarySet() accepts either a two-element array in the form of [false, true] or an associative array in the form of ['true' => 'truevalue', 'false' => 'falsevalue']. It also should take [Boolean::TRUE => 'truthvalue', Boolean::FALSE => 'falsevalue']
-
     }
 
     /**
@@ -89,11 +104,6 @@ class TableDataTypeTest extends TestCase
     public function testBooleanAddBinarySetThrowsExceptionIfInvalidSet()
     {
         Boolean::addBinarySet(array('cat turds', 'kitty litter', 'almond roca for beagles'));
-    }
-
-    public function testDataTypeFromTextToText()
-    {
-
     }
 
     public function testNullDataTypeDoesntHaveAValue()

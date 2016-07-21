@@ -37,7 +37,7 @@ abstract class AbstractType implements DataTypeContract
      */
     protected $value;
 
-    public function __construct($val)
+    public function __construct($val = null)
     {
         // DataType objects are immutable so I don't want a setValue() method,
         // not even a private/protected one. So the convert method simply accepts
@@ -74,5 +74,10 @@ abstract class AbstractType implements DataTypeContract
     protected function convert($val)
     {
         throw new NotYetImplementedException('This method has not been implemented: ' . __METHOD__);
+    }
+
+    public function __toString()
+    {
+        return (string) $this->value;
     }
 }
