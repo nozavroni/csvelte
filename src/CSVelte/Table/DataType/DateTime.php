@@ -52,6 +52,18 @@ class DateTime extends AbstractType
         if (is_null($val)) {
             return Carbon::now();
         };
+        if (is_integer($val)) {
+            // assume it's a unix timestamp
+            return Carbon::createFromTimestamp($val);
+        }
+        if (is_object($val)) {
+            if ($val instanceof Carbon) {
+                return $val;
+            }
+            if ($val instanceof \DateTime) {
+                return Carbon::instance($val);
+            }
+        }
         return Carbon::parse($val);
     }
 }

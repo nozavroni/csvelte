@@ -1,7 +1,5 @@
 <?php
 
-date_default_timezone_set('America/Los_Angeles');
-
 use PHPUnit\Framework\TestCase;
 use Carbon\Carbon;
 use CSVelte\Table\Data;
@@ -27,8 +25,7 @@ class TableDataTypeTest extends TestCase
 {
     public function setUp()
     {
-        $knownDate = Carbon::create(2016, 7, 21, 6, 11, 23);
-        Carbon::setTestNow($knownDate);
+        date_default_timezone_set('America/Los_Angeles');
     }
 
     public function testTextCastToString()
@@ -127,9 +124,56 @@ class TableDataTypeTest extends TestCase
 
     public function testDateTimeDataTypeDefaultsToNowWhenGivenNoInitValue()
     {
+        $testnow = Carbon::create(2016, 7, 21, 6, 11, 23, new \DateTimeZone(date_default_timezone_get()));
+        Carbon::setTestNow($testnow);
         $dt = new DateTime();
-        // see test setup method for why "now" = July 21, 2016 at 6:11am and 23 seconds...
         $this->assertInstanceOf(CSVelte\Table\DataType\DateTime::class, $dt);
-        $this->assertEquals('2016-07-21T06:11:23-0700', (string) $dt);
+        $this->assertEquals($testnow->toIso8601String(), (string) $dt);
     }
+
+    public function testDateTimeDataTypeFromStringAssumesPHPDefaultTimeZone()
+    {
+        $this->assertEquals('America/Los_Angeles', date_default_timezone_get());
+        $cdate = Carbon::create(1986, 4, 23, 2, 14, 0, new \DateTimeZone(date_default_timezone_get()));
+        $dt = new DateTime('1986-04-23 2:14am');
+        $this->assertInstanceOf(CSVelte\Table\DataType\DateTime::class, $dt);
+        $this->assertEquals($cdate->getTimezone(), $dt->getValue()->getTimezone());
+        $this->assertSame((string) $cdate, (string) $dt->getValue());
+
+        date_default_timezone_set('America/New_York');
+        $this->assertEquals('America/New_York', date_default_timezone_get());
+        $cdate = Carbon::create(1986, 4, 23, 2, 14, 0, new \DateTimeZone(date_default_timezone_get()));
+        $dt = new DateTime('1986-04-23 2:14am');
+        $this->assertInstanceOf(CSVelte\Table\DataType\DateTime::class, $dt);
+        $this->assertEquals($cdate->getTimezone(), $dt->getValue()->getTimezone());
+        $this->assertSame((string) $cdate, (string) $dt->getValue());
+    }
+
+    public function testDateTimeDataTypeAcceptsVariousInitDateTypes()
+    {
+        $testnow = Carbon::create(2016, 7, 21, 6, 11, 23, new \DateTimeZone(date_default_timezone_get()));
+        Carbon::setTestNow($testnow);
+
+        $phpDateTimeObj = new \DateTime($phpDateTimeObjInit = '2004-06-05 2:30pm');
+        $datetime = new DateTime($phpDateTimeObj);
+        $this->assertEquals($expDTObjStr = '2004-06-05T14:30:00-0700', (string) $datetime); // @todo cant figure out why its 0700
+
+        $phpNow = time();
+        $phpNowFormatted = date(\DateTime::ISO8601, $phpNow);
+        $datetime = new DateTime($phpNow);
+        $this->assertEquals($phpNowFormatted, (string) $datetime);
+
+        $dataTypeText = new Text($phpDateTimeObj->format(\DateTime::ISO8601));
+        $datetime = new DateTime($dataTypeText);
+        $this->assertEquals($expDTObjStr, (string) $datetime);
+
+        $strNow = 'now';
+        $datetime = new DateTime($strNow);
+        $this->assertEquals(Carbon::now()->toIso8601String(), (string) $datetime);
+    }
+
+    // public function testDateTimeDataTypeAllowsCustomStringConversionFormat()
+    // {
+    //     $datetime = new DateTime();
+    // }
 }
