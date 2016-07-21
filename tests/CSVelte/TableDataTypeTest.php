@@ -1,6 +1,9 @@
 <?php
 
+date_default_timezone_set('America/Los_Angeles');
+
 use PHPUnit\Framework\TestCase;
+use Carbon\Carbon;
 use CSVelte\Table\Data;
 use CSVelte\Table\DataType\Numeric;
 use CSVelte\Table\DataType\Text;
@@ -22,6 +25,12 @@ use CSVelte\Table\DataType\Null;
  */
 class TableDataTypeTest extends TestCase
 {
+    public function setUp()
+    {
+        $knownDate = Carbon::create(2016, 7, 21, 6, 11, 23);
+        Carbon::setTestNow($knownDate);
+    }
+
     public function testTextCastToString()
     {
         $text = new Text($expected = 'I like text');
@@ -114,5 +123,13 @@ class TableDataTypeTest extends TestCase
         // @todo I don't know if this should quietly ignore the init value or if it should bitch about it with an exception...
         $nonnull = new Null(25);
         $this->assertNull($nonnull->getValue());
+    }
+
+    public function testDateTimeDataTypeDefaultsToNowWhenGivenNoInitValue()
+    {
+        $dt = new DateTime();
+        // see test setup method for why "now" = July 21, 2016 at 6:11am and 23 seconds...
+        $this->assertInstanceOf(CSVelte\Table\DataType\DateTime::class, $dt);
+        $this->assertEquals('2016-07-21T06:11:23-0700', (string) $dt);
     }
 }
