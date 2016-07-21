@@ -22,7 +22,7 @@ use CSVelte\Table\DataType\Null;
  */
 class TableDataTypeTest extends TestCase
 {
-    public function testDataTypeFromText()
+    public function testDataTypeFromTextToNumeric()
     {
         $data = new Text($expected = 'I am some text.');
         $this->assertSame($expected, $data->getValue());
@@ -37,7 +37,10 @@ class TableDataTypeTest extends TestCase
         $this->assertSame(1000.14, $numericfancydecimal->getValue());
         $currency = new Numeric($expcurrency = '$1,000.14');
         $this->assertSame(1000.14, $currency->getValue());
+    }
 
+    public function testDataTypeFromTextToBoolean()
+    {
         $boolean = new Boolean($expected = 'true');
         $this->assertSame(true, $boolean->getValue());
         $boolean = new Boolean($expected = 'false');
@@ -80,7 +83,15 @@ class TableDataTypeTest extends TestCase
 
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
     public function testBooleanAddBinarySetThrowsExceptionIfInvalidSet()
+    {
+        Boolean::addBinarySet(array('cat turds', 'kitty litter', 'almond roca for beagles'));
+    }
+
+    public function testDataTypeFromTextToText()
     {
 
     }
