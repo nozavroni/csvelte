@@ -106,8 +106,13 @@ class TableDataTypeTest extends TestCase
         Boolean::addBinarySet(array('cat turds', 'kitty litter', 'almond roca for beagles'));
     }
 
-    public function testNullDataTypeDoesntHaveAValue()
+    public function testNullDataTypeDoesntRequireOrAcceptAnInitValue()
     {
+        $null = new Null();
+        $this->assertSame(null, $null->getValue());
 
+        // @todo I don't know if this should quietly ignore the init value or if it should bitch about it with an exception...
+        $nonnull = new Null(25);
+        $this->assertNull($nonnull->getValue());
     }
 }
