@@ -172,8 +172,17 @@ class TableDataTypeTest extends TestCase
         $this->assertEquals(Carbon::now()->toIso8601String(), (string) $datetime);
     }
 
-    // public function testDateTimeDataTypeAllowsCustomStringConversionFormat()
-    // {
-    //     $datetime = new DateTime();
-    // }
+    public function testDateTimeDataTypeAllowsCustomStringConversionFormatUsingSameInterfaceAsCarbon()
+    {
+        $testnow = Carbon::create(2016, 7, 21, 6, 11, 23, new \DateTimeZone(date_default_timezone_get()));
+        Carbon::setTestNow($testnow);
+
+        $datetime = new DateTime();
+        $this->assertEquals($testnow->toIso8601String(), (string) $datetime, 'DateTime data type\'s string format should default to ISO-8601.');
+
+        DateTime::setToStringFormat(\DateTime::RSS);
+        $this->assertEquals('Thu, 21 Jul 2016 06:11:23 -0700', $datetime->__toString(), 'DateTime data type\'s string format should be customizable using PHP\'s standard date() strings');
+        DateTime::resetToStringFormat();
+        $this->assertEquals('2016-07-21T06:11:23-0700', $datetime->__toString(), 'DateTime data type\'s string format should return to default when reset');
+    }
 }

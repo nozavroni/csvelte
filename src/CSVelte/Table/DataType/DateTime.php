@@ -23,6 +23,18 @@ class DateTime extends AbstractType
     protected $value;
 
     /**
+     * @var string
+     * @static
+     */
+    protected static $defaultToStringFormat = \DateTime::ISO8601;
+
+    /**
+     * @var string
+     * @static
+     */
+    protected static $toStringFormat;
+
+    /**
      * Object to string overloading
      *
      * @param void
@@ -37,7 +49,7 @@ class DateTime extends AbstractType
     {
         // @todo I am not going for full CSVW-compliance, at least not yet, but
         // if I was, I believe this is the correct textual representation of a date
-        return $this->value->toIso8601String();
+        return $this->value->format(self::$toStringFormat ?: self::$defaultToStringFormat);
     }
 
     /**
@@ -65,5 +77,15 @@ class DateTime extends AbstractType
             }
         }
         return Carbon::parse($val);
+    }
+
+    public static function setToStringFormat($format)
+    {
+        self::$toStringFormat = (string) $format;
+    }
+
+    public static function resetToStringFormat()
+    {
+        self::$toStringFormat = null;
     }
 }
