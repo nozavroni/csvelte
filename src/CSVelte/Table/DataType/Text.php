@@ -11,19 +11,8 @@ class Text extends AbstractType
 {
     protected $type = 'text';
 
-    public function castTo($type)
+    protected function convert($val)
     {
-
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function toNumeric()
-    {
-        if (false !== strpos($this->value, '.')) {
-            return (float) $this->value;
-        }
-        return (int) $this->value;
+        return (string) $val;
     }
 }

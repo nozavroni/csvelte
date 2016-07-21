@@ -11,8 +11,8 @@ class Null extends AbstractType
 {
     protected $type = 'null';
 
-    public function castTo($type)
+    protected function convert($val)
     {
-
+        return null;
     }
 }

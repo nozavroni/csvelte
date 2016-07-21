@@ -11,8 +11,9 @@ class Numeric extends AbstractType
 {
     protected $type = 'numeric';
 
-    public function castTo($type)
+    protected function convert($val)
     {
-
+        $val = preg_replace('/[^0-9\.]/', '', $val);
+        return (false === strpos($val, '.')) ? (int) $val : (float) $val;
     }
 }

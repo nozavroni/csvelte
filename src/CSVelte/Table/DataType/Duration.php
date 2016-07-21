@@ -14,8 +14,8 @@ class Duration extends AbstractType
 {
     protected $type = 'duration';
 
-    public function castTo($type)
+    protected function convert($val)
     {
-
+        throw new NotYetImplementedException();
     }
 }

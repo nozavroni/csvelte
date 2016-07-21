@@ -14,8 +14,8 @@ class DateTime extends AbstractType
 {
     protected $type = 'date-time';
 
-    public function castTo($type)
+    protected function convert($val)
     {
-
+        return (string) $val;
     }
 }
