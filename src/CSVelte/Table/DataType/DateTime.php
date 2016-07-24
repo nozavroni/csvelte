@@ -9,6 +9,12 @@ use Carbon\Carbon;
  * @subpackage CSVelte\Table\DataType
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo Perhaps I should also create a CSVelte\Table\DataType\DateTime\Date,
+ *     Time, TimeZone, Duration, Period, Interval? etc. Think about it. Also
+ *     check the CSVW documents and see what they recommend.
+ * @todo It might be a good idea to move the DataType namespace up a level. They
+ *     don't necessarily have to reside within a "table" to be data values of a
+ *     specific type, possessing specific properties and behaviors.
  */
 class DateTime extends AbstractType
 {

@@ -17,6 +17,10 @@ use CSVelte\Exception\NotYetImplementedException;
  * @todo This is my second attempt at DataType and for the second time, they are
  *       becoming way overly complicated and confusing. Back to the drawing board
  *       ...... again!
+ * @todo Look at section 6.4 of the Tabular Data Model spec. It explains in detail
+ *     exactly how you should parse a cell to go from text to a meaningful data
+ *     type as well as having a much better way for describing data types than I'm
+ *     using here. Probably going to have to basically rewrite data types and cells. 
  */
 abstract class AbstractType implements DataTypeContract
 {

@@ -16,6 +16,8 @@ use CSVelte\Table\DataType\Null;
  * @package   CSVelte Unit Tests
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo I might go ahead and leave Table for the next version... I'm going to
+ *     try to nail down the essential CSV read/write functionality for now.
  */
 class TableTest extends TestCase
 {
@@ -24,6 +26,14 @@ class TableTest extends TestCase
         $table = new Table();
         $this->assertInstanceOf(Table::class, $table);
     }
+
+    // public function testBuildTableFromScratch()
+    // {
+    //     // and then hopefully we can find a good enough use for it to justify
+    //     // all the grief it's causing me.
+    //     $table = new Table();
+    //     $table->attach();
+    // }
 
     // public function testLetsSeeHowOneMightUseATableObjectWhenWritingACSVFile()
     // {

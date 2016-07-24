@@ -75,6 +75,30 @@ class WriterTest extends TestCase
         $this->assertEquals(strlen(implode(',', $data->getArrayCopy())) + strlen("\r\n"), $writer->writeRow($data));
     }
 
+    // @todo I can't finish this until some bugs int he reader are worked out... See Github issue #45
+    // public function testWriterWriteHeaderRow()
+    // {
+    //     $out = new Stream('file:///Users/luke/test.csv');
+    //     $writer = new Writer($out, $flavor = new Flavor(array('header' => true, 'doubleQuote' => true)));
+    //     $stream = $out->getStreamResource();
+    //     $headers = $this->testdata[0];
+    //     $data = array_slice($this->testdata, 1);
+    //     $writer->setHeaderRow($headers);
+    //     $writer->writeRows($data);
+    //     $in = new CSVelte\Input\Stream('file:///Users/luke/test.csv');
+    //     $reader = new Reader($in, $flavor);
+    //     $this->assertEquals($expected = $headers, $reader->header()->toArray());
+    //     $this->assertEquals($line1 = $data[0], array_values($reader->current()->toArray()));
+    //     // @todo this is going to be incorrect until I fix the reader... it should be removing escape quotes
+    //     /* $this->assertEquals($line1 = $data[1], array_values(*/ $reader->next() /*->toArray()))*/;
+    //     $this->assertEquals($line1 = $data[2], array_values($reader->next()->toArray()));
+    // }
+
+    public function testWriterThrowsExceptionIfUserAttemptsToSetHeaderAfterRowsHaveBeenWritten()
+    {
+        // @todo Write this test
+    }
+
     public function testWriterWriteWriteSingleRowUsingCSVReader()
     {
         $out = new Stream('php://memory');
@@ -127,6 +151,11 @@ class WriterTest extends TestCase
         $reader = new Reader(new CSVelte\Input\Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
         $written_rows = $writer->writeRows($reader);
         $this->assertEquals(545, $written_rows);
+    }
+
+    public function testWriterWritesHeaderFromReader()
+    {
+        // do it!
     }
 
     public function testWriterUsesCorrectDelimiterAndLineTerminator()

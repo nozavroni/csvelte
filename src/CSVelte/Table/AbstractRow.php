@@ -84,6 +84,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      *
      * @return string representation of this object
      * @access public
+     * @todo Should this end with a lineTerminator? I think it probably should...
      */
     public function __toString()
     {

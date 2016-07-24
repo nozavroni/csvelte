@@ -280,4 +280,10 @@ class TableDataTypeTest extends TestCase
     {
         $dur = new Duration(true);
     }
+
+    // public function testDurationDataTypeCanBeUsedInConjunctionWithDateTimeDataTypeToRepresentTimePeriod()
+    // {
+    //     // @todo Implement any other date/time related data type stuff later, as
+    //     // it becomes needed. Moving on to more pressing issues for now...
+    // }
 }
