@@ -1,5 +1,7 @@
 <?php namespace CSVelte\Table;
-use CSVelte\Traits\HandlesQuotedLineTerminators;
+
+use CSVelte\Table\Schema;
+
 /**
  * CSV data is just a big table. This is a table class.Fill it with rows and cols.
  * You fill it with rows of data...
@@ -43,7 +45,10 @@ use CSVelte\Traits\HandlesQuotedLineTerminators;
  *              have read from the file/stream, only now taking quotes and newlines
  *              and all that into account.
  */
-class Table extends AbstractTable
+class Table
 {
+    public function __construct(Schema $schema = null)
+    {
 
+    }
 }

@@ -1,11 +1,10 @@
 <?php namespace CSVelte\Table;
 
 use CSVelte\Utils;
-use CSVelte\Exception\InvalidHeaderException;
 
 /**
  * Table Row Class
- * Represents a row of tabular data (CSVelte\Table\Data objects)
+ * Represents a row of tabular data (CSVelte\Table\Cell objects)
  *
  * @package    CSVelte
  * @subpackage CSVelte\Table

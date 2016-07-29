@@ -9,5 +9,8 @@
  */
 interface DataType
 {
-
+    public function isValid();
+    public function getValue();
+    public function __toString();
+    //protected function fromString($str);
 }

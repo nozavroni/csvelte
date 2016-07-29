@@ -135,6 +135,14 @@ class Utils
         return $return;
     }
 
+    /**
+     * Uses array_map to apply a callback to each character in a string
+     */
+    public static function string_map($str, Callable $callable)
+    {
+        return join(array_map($callable, str_split($str)));
+    }
+
     // if (!function_exists('array_column')) {
     //     throw new \Exception("Need to implement this");
     // }

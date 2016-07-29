@@ -118,6 +118,25 @@ class Reader implements \OuterIterator
         }
     }
 
+    // protected function loadNew()
+    // {
+    //     if (!$this->isLoaded()) {
+    //         try {
+    //             $lt = $this->getFlavor()->lineTerminator;
+    //             $line = $this->source->readLine(null, $lt);
+    //             $parsed = $this->parse($line);
+    //             $this->line++;
+    //             if ($this->isHeaderLine()) {
+    //                 $row = new HeaderRow($parsed);
+    //             } else {
+    //                 $row = new Row($parsed);
+    //             }
+    //         } catch (EndOfFileException $e) {
+    //             $this->current = false;
+    //         }
+    //     }
+    // }
+
     /**
      * Retreive the "flavor" object being used by the reader
      *

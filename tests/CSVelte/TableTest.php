@@ -21,10 +21,30 @@ use CSVelte\Table\DataType\Null;
  */
 class TableTest extends TestCase
 {
+    protected $CSVstrings = array(
+        'Basic' => "ID,Title,Name,Stock Number,Difference,Standard Number,Price,Weird Name,Another Title,Decimal\n1,\"Eldon Base for stackable storage shelf platinum\",Muhammed MacIntyre,3,-213.25,38.94,35,Nunavut,Storage & Organization,0.8\n2,\"1.7 Cubic Foot Compact Office Refrigerators\",Barry French,293,457.81,208.16,68.02,Nunavut,Appliances,0.58\n3,Cardinal Slant-DÆ Ring Binder Heavy Gauge Vinyl,Barry French,293,46.71,8.69,2.99,Nunavut,\"Binders and Binder Accessories\",0.39\n4,R380,Clay Rozendal,483,1198.97,195.99,3.99,Nunavut,Telephones and Communication,0.58\n5,Holmes HEPA Air Purifier,Carlos Soltero,515,30.94,21.78,5.94,Nunavut,Appliances,0.5\n6,G.E. Longer-Life Indoor Recessed Floodlight Bulbs,Carlos Soltero,515,4.43,6.64,4.95,Nunavut,Office Furnishings,0.37\n7,Angle-D Binders with Locking Rings Label Holders,Carl Jackson,613,-54.04,7.3,7.72,Nunavut,Binders and Binder Accessories,0.38\n8,SAFCO Mobile Desk Side File Wire Frame,Carl Jackson,613,127.70,42.76,6.22,Nunavut,Storage & Organization,\n9,SAFCO Commercial Wire Shelving Black,Monica Federle,643,-695.26,138.14,35,Nunavut,Storage & Organization,\n10,Xerox 198,Dorothy Badders,678,-226.36,4.98,8.33,Nunavut,Paper,0.38",
+    );
+
     public function testCreateTable()
     {
         $table = new Table();
         $this->assertInstanceOf(Table::class, $table);
+    }
+
+    public function testCreateTableFromScratch()
+    {
+        $table = new Table();
+        $lines = explode("\n", $this->CSVstrings['Basic']);
+        $i = 0;
+        foreach ($lines as $line_no => $line) {
+            $items = explode(",", $line);
+            if (!$i) {
+                // this is the header
+                
+            }
+            $i++;
+        }
+
     }
 
     // public function testBuildTableFromScratch()
