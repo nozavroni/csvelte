@@ -199,9 +199,25 @@ class Reader implements \OuterIterator
         }
     }
 
+    /**
+     * Remove quotes wrapping text
+     */
     protected function unQuote($data)
     {
+        $escapeChar = $this->getFlavor()->doubleQuote ? $this->getFlavor()->quoteChar : $this->getFlavor()->escapeChar;
+        $quoteChar = $this->getFlavor()->quoteChar;
+        $data = $this->unEscape($data, $escapeChar, $quoteChar);
         return preg_replace('/^(["\'])(.*)\1$/ms', '\2', $data);
+    }
+
+    /**
+    * @todo This actually shouldn't even be necessary. Characters should be read
+    *     in one at a time and a quote that follows another should just be ignored
+    *     deeming this unnecessary.
+     */
+    protected function unEscape($str, $esc, $quo)
+    {
+        return str_replace($esc . $quo, $quo, $str);
     }
 
     /**

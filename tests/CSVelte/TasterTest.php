@@ -164,7 +164,7 @@ class TasterTest extends TestCase
             'delimiter' => "\t",
             'quoteChar' => "'",
             'escapeChar' => '\\',
-            'doubleQuote' => false,
+            'doubleQuote' => true,
             'quoteStyle' => Flavor::QUOTE_MINIMAL,
             'lineTerminator' => "\n",
             'header' => true

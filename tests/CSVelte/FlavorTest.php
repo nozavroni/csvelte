@@ -41,7 +41,7 @@ class FlavorTest extends TestCase
         $this->assertEquals($escapeChar = "\\", $flavor->escapeChar);
         $this->assertEquals($lineTerminator = "\r\n", $flavor->lineTerminator);
         $this->assertEquals($quoting = Flavor::QUOTE_MINIMAL, $flavor->quoteStyle);
-        $this->assertFalse($flavor->doubleQuote);
+        $this->assertTrue($flavor->doubleQuote);
         $this->assertFalse($flavor->skipInitialSpace);
         $this->assertNull($flavor->header);
     }

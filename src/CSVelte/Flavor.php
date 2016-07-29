@@ -39,7 +39,7 @@ class Flavor
     protected $delimiter = ",";
     protected $quoteChar = '"';
     protected $escapeChar = '\\';
-    protected $doubleQuote = false;
+    protected $doubleQuote = true;
     protected $skipInitialSpace = false;
     protected $quoteStyle = self::QUOTE_MINIMAL;
     protected $lineTerminator = "\r\n";

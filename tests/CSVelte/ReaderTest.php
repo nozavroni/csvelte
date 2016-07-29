@@ -93,8 +93,8 @@ class ReaderTest extends TestCase
         $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
-        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->next()->toArray());
-        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->current()->toArray());
+        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"Cube\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->next()->toArray());
+        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"Cube\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->current()->toArray());
     }
 
     public function testReaderValid()
@@ -102,7 +102,7 @@ class ReaderTest extends TestCase
         $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
-        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->next()->toArray());
+        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"Cube\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->next()->toArray());
         // there are 10 lines in the source file...
         $reader->next(); // 7...
         $reader->next(); // 6...
@@ -122,7 +122,7 @@ class ReaderTest extends TestCase
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
         $this->assertEquals($expected = 1, $reader->key());
-        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->next()->toArray());
+        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"Cube\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->next()->toArray());
         $this->assertEquals($expected = 2, $reader->key());
         // there are 10 lines in the source file...
         $reader->next(); // 7...
@@ -151,7 +151,7 @@ class ReaderTest extends TestCase
         $flavor = new Flavor(array('header' => false));
         $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
         $reader->next(); // move to line 2
-        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"\"Cube\"\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->current()->toArray());
+        $this->assertEquals($expected = array("2","1.7 Cubic Foot Compact \"Cube\" Office Refrigerators","Barry French","293","457.81","208.16","68.02","Nunavut","Appliances","0.58"), $reader->current()->toArray());
         $reader->next(); // move to ilne 3
         $reader->next(); // move to line 4
         $this->assertEquals($expected = 4, $reader->key());
@@ -282,8 +282,9 @@ class ReaderTest extends TestCase
         $this->assertEquals("First CornerStone Bank", $line1[0], "Quote stripping tests--control test.");
         $this->assertEquals("King of\nPrussia", $line1[1], "Ensure that quoted strings get quotes stripped when read with reader");
         $line2 = $reader->next();
-        $this->assertEquals("Trust \"\"Company\"\" Bank", $line2[0], "Quote stripping tests--control test.");
-        $this->assertEquals("The \"\"Bank of Fayette\"\" County", $line2[4], "Ensure that quoted strings get quotes stripped when read with reader");
+        $this->assertEquals("Trust \"Company\" Bank", $line2[0], "Ensure doublequote escaped quotes are reduced to one quote.");
+        $this->assertEquals("The \"Bank of Fayette\" County", $line2[4], "Ensure doublequote escaped quotes are reduced to one quote.");
+        // @todo need to test that escapeChar is removed when reading as well...
     }
 
     /**
