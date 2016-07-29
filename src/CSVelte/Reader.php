@@ -201,7 +201,7 @@ class Reader implements \OuterIterator
 
     protected function unQuote($data)
     {
-        return preg_replace('/^(["\'])(.*)\1$/', '\2', $data);
+        return preg_replace('/^(["\'])(.*)\1$/ms', '\2', $data);
     }
 
     /**

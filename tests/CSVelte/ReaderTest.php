@@ -274,6 +274,18 @@ class ReaderTest extends TestCase
         }
     }
 
+    public function testReaderStripsQuotesFromQuotedCells()
+    {
+        $in = new String("First CornerStone Bank,\"King of\nPrussia\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16\n\"Trust \"\"Company\"\" Bank\",Memphis,TN,9956,\"The \"\"Bank of Fayette\"\" County\",29-Apr-16,25-May-16\nNorth Milwaukee State Bank,Milwaukee,WI,20364,First-Citizens Bank & Trust Company,11-Mar-16,16-Jun-16\nHometown National Bank,Longview,WA,35156,Twin City Bank,2-Oct-15,13-Apr-16\nThe Bank of Georgia,Peachtree City,GA,35259,Fidelity Bank,2-Oct-15,13-Apr-16\nPremier Bank,Denver,CO,34112,\"United Fidelity \r\n \r \r \n \r\n Bank, fsb\",10-Jul-15,17-Dec-15");
+        $reader = new Reader($in, new Flavor(array('lineTerminator' => "\n")));
+        $line1 = $reader->current();
+        $this->assertEquals("First CornerStone Bank", $line1[0], "Quote stripping tests--control test.");
+        $this->assertEquals("King of\nPrussia", $line1[1], "Ensure that quoted strings get quotes stripped when read with reader");
+        $line2 = $reader->next();
+        $this->assertEquals("Trust \"\"Company\"\" Bank", $line2[0], "Quote stripping tests--control test.");
+        $this->assertEquals("The \"\"Bank of Fayette\"\" County", $line2[4], "Ensure that quoted strings get quotes stripped when read with reader");
+    }
+
     /**
      * Just out of curiosity, test a flavor that uses "\n" for the delimiter and
      * like.. a tab or diff kind of line terminator string ("\r\n" or "\n"?) as

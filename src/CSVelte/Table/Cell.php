@@ -1,6 +1,7 @@
 <?php namespace CSVelte\Table;
 
 use CSVelte\Contract\DataType;
+use CSVelte\Table\Data\StringValue;
 
 /**
  * Table Data Item Class
@@ -25,8 +26,21 @@ class Cell
      * @return void
      * @access public
      */
-    public function __construct()
+    public function __construct($value)
     {
+        if (!($value instanceof DataType)) {
+            $value = new StringValue($value);
+        }
+        $this->setValue($value);
+    }
 
+    public function setValue(DataType $value)
+    {
+        $this->value = $value;
+    }
+
+    public function __toString()
+    {
+        return (string) $this->value;
     }
 }

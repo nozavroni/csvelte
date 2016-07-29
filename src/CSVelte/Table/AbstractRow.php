@@ -67,6 +67,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * @param CSVelte\Flavor
      * @return void
      * @access public
+     * @todo This doesn't really need to be passed $flavor
      * @todo Look into SplFixedArray for csv sources w/out a header row.
      * @see The docblock for the flavor property explains why I want to get rid
      *      of the second parameter being passed to this object.

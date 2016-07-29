@@ -25,8 +25,11 @@ class Row extends AbstractRow
      * @return void (return $this?)
      * @access public
      */
-    public function setHeaderRow(HeaderRow $headers)
+    public function setHeaderRow(AbstractRow $headers)
     {
+        if (!($headers instanceof HeaderRow)) {
+            $headers = new HeaderRow($headers->toArray());
+        }
         $headerArray = $headers->toArray();
         if (($hcount = $headers->count()) !== ($rcount = $this->count())) {
             if ($hcount > $rcount) {
