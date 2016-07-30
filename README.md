@@ -25,7 +25,8 @@ You should be using [Composer](https://getcomposer.org/). Did you not see how ea
 
 ```php
 <?php
-require_once "/path/to/CSVelte/src/AutoLoad.php";
+// just include this line and classes will be auto-loaded for you
+require_once "/path/to/CSVelte/src/AutoLoader.php";
 
 $reader = CSVelte::reader("./files/input.csv");
 ```
