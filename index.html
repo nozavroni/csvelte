@@ -16,6 +16,19 @@
     <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/styles/default.min.css">
+    <link rel="stylesheet" href="stylesheets/androidstudio.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.5.0/highlight.min.js"></script>
+    <script>
+        hljs.initHighlightingOnLoad();
+        $(function(){
+            $('#paypallink').on("click", function(e){
+                e.preventDefault();
+                $('#submit_paypal_form').click();
+            });
+        });
+    </script>
+
   </head>
   <body>
       <div id="header">
@@ -45,11 +58,45 @@
         <h3>Introducing CSVelte</h3>
         <h4>A modern solution to an age-old problem</h4>
         <p>It's been over half a decade since I <a href="http://www.devnetwork.net/viewtopic.php?f=50&t=115633">released PHP CSV Utilities v0.3</a>. Since then, PHP has changed drastically (not to mention the changes I've gone through... hello gray hairs!). It's grown up quite a bit. We've gotten namespaces, traits, anonymous functions, generators, and a bunch more cool features since I last wrote a line of code related to CSV and tabular data. And seeing as PHP has given me so much cool new stuff to work with, I decided the library should get a shiny new name. So, without further ado, please welcome the new and improved and updated for PHP5.3+, CSVelte! Pronounced just like the word "svelte". You see what I did there? Pretty clever, ain't I?</p>
+        <h3>Getting Started</h3>
+        <p>CSVelte requires at least PHP5.3</p>
+        <h4>Installation</h4>
+        <h5>With Composer</h5>
+        <p>To install using composer, just use the following command. That's it. Happy coding.</p>
+        <pre><code class="bash">$ composer install lukev/csvelte</code></pre>
+        <h5>Without Composer (direct download)</h5>
+        <p>You should be using <a href="https://getcomposer.org/">Composer</a>. Did you not see how easy that was? It's stupid easy. Stupid easy. Use Composer. Anyway, if you insist, you may <a href="https://github.com/deni-zen/csvelte">download the latest version of CSVelte</a> from Github, and then include the autoloader file, which will register CSVelte's autoload function for you. That's it. Happy coding.</p>
+        <pre><code class="php">&lt;?php
+require_once "/path/to/CSVelte/src/AutoLoad.php";
+
+$reader = CSVelte::reader("./files/input.csv");</code></pre>
+
+        <h3>Learn More</h3>
+        <p>Head on over to the <a href="documentation.html">API documentation</a> for instructions on reading and writing CSV files, auto-detecting CSV format, and more.</p>
+        <h3>Contribute</h3>
+        <p>CSVelte is a free (as in beer) library. I work on it in my spare time. If you like it, feel free to <a id="paypallink" href="javascript:;">buy me beer</a>. Contributions will help me to keep pumping out new features and bug fixes and to, eventually, create a dedicated CSVelte website. Or, if you have an idea for a new feature or a bug report, feel free to <a href="https://github.com/deni-zen/csvelte/pulls">submit a pull request</a> on Github.</p>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+            <input type="hidden" name="cmd" value="_s-xclick">
+            <input type="hidden" name="hosted_button_id" value="E4DWT2TDA754Q">
+            <input type="image" id="submit_paypal_form" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+        </form>
+        <h3>License</h3>
+        <p>CSVelte is also free as in speach. It is licensed under the MIT license, meaning basically, you can do whatever you want with it so long as you include the original copyright and license notice in any copy of the software/source.</p>
+        <h3>About the author</h3>
+        <p>CSVelte was designed and developed by <a href="https://github.com/deni-zen">Luke Visinoni</a>. Feel free to <a href="mailto:luke.visinoni@gmail.com">drop me a line</a> if you want to tell me how great it is.</p>
+        <p>
+            <a href="mailto:luke.visinoni@gmail.com">luke.visinoni@gmail.com</a><br>
+            Twitter: <a href="https://twitter.com/denizengarden">https://twitter.com/denizengarden</a><br>
+            Github: <a href="https://github.com/deni-zen">https://github.com/deni-zen</a>
+        </p>
       </section>
 
+      <section class="copyright">
+          <p><span class="credits right">&copy; Copyright 2016 Luke Visinoni &mdash; Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span></p>
+      </section>
     </div>
-    <p><span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span></p>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
+
   </body>
 </html>
