@@ -24,7 +24,7 @@ $ composer install lukev/csvelte
 You should be using [Composer](https://getcomposer.org/). Did you not see how easy that was? It's stupid easy. Stupid easy. Use Composer. Anyway, if you insist, you may download the latest version of CSVelte using the button above, and then include the autoloader file, which will register CSVelte's autoload function for you. That's it. Happy coding.
 
 ```php
-&lt;?php
+<?php
 require_once "/path/to/CSVelte/src/AutoLoad.php";
 
 $reader = CSVelte::reader("./files/input.csv");
