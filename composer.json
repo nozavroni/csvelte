@@ -1,6 +1,6 @@
 {
     "name": "lukev/csvelte",
-    "description": "A CSV (CSVW-compliance driven) reader/writer for PHP (pronounced \"svelte\")",
+    "description": "Slender, elegant CSV for PHP5.3+",
     "type": "library",
     "keywords": ["CSV", "PHP", "PHP5", "CSVW", "data-interchange", "JSON", "CSV Schema", "CSV Validation", "CSV Dialect", "Excel", "Tabular Data", "RFC 4180"],
     "homepage": "https://deni-zen.github.io/csvelte/",
@@ -8,8 +8,8 @@
     "authors": [
         {
             "name": "Luke Visinoni",
-            "email": "lvisinoni@icloud.com",
-            "homepage": "http://luke.visinoni.net/",
+            "email": "luke.visinoni@gmail.com",
+            "homepage": "https://github.com/deni-zen",
             "role": "Creator and Sole Developer"
         }
     ],
@@ -20,7 +20,8 @@
     "require-dev": {
         "phpunit/phpunit": "5.4.*",
         "mockery/mockery": "dev-master",
-        "mikey179/vfsStream": "^1.6"
+        "mikey179/vfsStream": "^1.6",
+        "phpdocumentor/phpdocumentor": "2.*"
     },
     "autoload": {
         "psr-4": {
