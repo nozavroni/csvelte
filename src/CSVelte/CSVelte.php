@@ -1,6 +1,7 @@
 <?php namespace CSVelte;
 
 use CSVelte\Reader;
+use CSVelte\Flavor;
 use CSVelte\Input\File;
 use CSVelte\Excaption\PermissionDeniedException;
 use CSVelte\Exception\FileNotFoundException;
@@ -15,10 +16,10 @@ use CSVelte\Exception\FileNotFoundException;
  */
 class CSVelte
 {
-    public static function reader($filename)
+    public static function reader($filename, Flavor $flavor = null)
     {
         $infile = new File($filename);
-        return new Reader($infile);
+        return new Reader($infile, $flavor);
     }
     /**
      * Assert that a particular file exists and is readable (user has permission
