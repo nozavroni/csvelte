@@ -62,6 +62,21 @@ $flvr = new Flavor(array(
 $reader = CSVelte::reader('./data/products.csv', $flvr);
 ```
 
+### Reading the header row 
+
+CSV files can contain a header row as the first row in the file, but CSV as a format doesn't have a native mechanism for specifying metadata such as whether or not a header row is included. CSVelte's autodetect mechanism will do its best to determine whether or not there is a header row, but if you like, you can specify this using the flavor object by setting the "header" attribute to "true". If the flavor's header attribute is set to true, rows can be referenced by their column header. For example:
+
+```php
+<?php
+$flavor = new CSVelte\Flavor(array('header' => true));
+$reader = CSVelte::reader('./data/products.csv', $flavor);
+foreach ($reader as $line_no => $row) {
+    // now you can do this... 
+    $product = $row['name'];
+    $price = $row['price'];
+}
+```
+
 ## Writing CSV data
 
 Writing CSV data to a local file is made super easy by CSVelte as well. In fact, the process looks pretty similar to reading CSV data. To write a CSV file, simply pass the name of the file you want to write to CSVelte::writer() and it will return a CSVelte\Writer object for that file (the file will be created if it doesn't exist). You can then use this object to write as many rows of CSV data as you like. By default, CSVelte\Writer will output data in the flavor of CSV specified by <a href="https://tools.ietf.org/html/rfc4180">RFC 4180</a> (Excel's version of CSV). 
