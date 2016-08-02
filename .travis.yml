@@ -1,15 +1,11 @@
 language: php
+
 php:
-- '5.4'
-- '5.5'
-- '5.6'
-- '7.0'
+  - '5.4'
+  - '5.5'
+  - '5.6'
+  - '7.0'
+
 before_script:
-- echo 'date.timezone = "America/Los_Angeles"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-deploy:
-  provider: releases
-  api_key:
-    secure: eIPkLIAw5qfdJalINGDjqETVnTB4MHhTcYma2fNzdm7QavwELAbT3g6b7N92zZty9s/EwNeo5hG7YWFKnF9YAuMe9isNOhL/VM5tJp0luKhuGmqKD+qx+593NHfMVoOfborE0m4bwE5/XJfWrxjHtbU+FpsZ2QPtnaKkGfDgGXlKwmQ26fh+qEBfU/cjjceMI4/xu2RPQXWeHG4Cdn9L5sLVd+1jQVY1hnxkeiFLWzds7eeTEA6iOcNfXqyRluT/2E+Le4pUmF3R2Ef7kbmmhJJwiciQFkeQkADNOXx+iMC2ucSP3PW1Cd6WD57AApVU45Oux/njbqzUkqOR5Ue07G1GCUkWGdO8iRWynLmdAqqsDFoIZPvi/0xJVxHpoxt25umJuQpxyfiKOTEZ6ahxhpwRQJU/rLLxLtPh/s2nyK8FBvXHR6VffUMUKj+kdIw2PZ6zfIKIpZ3Sta5XGBwOYp4alLfq5XsYZDKULt3mVkMU73j5tU7iA4mqbaWQplEOYenNC4Xl+PJMauefW9gON/lizz/0NsL5tRvRjRN28iztq9EcAiJPHQBUQ4iyRU5aw2swE2OoftVz6Mi4aCaiDNVUWlXpyjW9xh4JYALL9v5cjplV8EIqrKly9poIwQXaEwrx0SDoR1mWbetRP63TnGzIr9+vbb/v4VIylNecPWQ=
-  file: ''
-  on:
-    repo: deni-zen/csvelte
+    - composer install
+    - echo 'date.timezone = "America/Los_Angeles"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
