@@ -34,4 +34,18 @@ class CSVelteTest extends TestCase
     {
         $reader = CSVelte::reader(__DIR__ . '/../files/banklust.csv', $flavor);
     }
+
+    /**
+     * @todo use vfsStream lib to test that CSVelte::reader() checks for file readability
+     */
+
+     public function testCSVelteReaderCanBeUsedDirectlyInsideOfAForeachLoop()
+     {
+         $rows = 0;
+         foreach (CSVelte::reader(__DIR__ . '/../files/banklist.csv') as $row) {
+             $rows++;
+         }
+         $this->assertEquals(545, $rows);
+     }
+
 }
