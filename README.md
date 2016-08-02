@@ -31,6 +31,37 @@ require_once "/path/to/CSVelte/src/AutoLoader.php";
 $reader = CSVelte::reader("./files/input.csv");
 ```
 
+## Reading CSV 
+
+Reading CSV data from a local file is as simple as creating a reader object and iterating over it using foreach. As long as the data even slightly resembles CSV data, the reader should be able to figure out how to read it. You don't need to tell it what line endings are being used, what the delimiter character is, what the quote character is, etc. It will usually be able to figure all that out on its own. You just tell it where to find a CSV file and you're golden.
+
+```php
+<?php
+foreach ($reader = CSVelte::reader('./data/products.csv') as $line_no => $row) {
+    // $row will now be a CSVelte\Table\Row object (which is an iterator)
+    foreach ($row as $label => $data) {
+        // $label will now be the column header value (if there is one, otherwise it will be a numeric index)
+        // $data will now be a CSVelte\Table\Cell object
+        $str = (string) $data; // can be converted to string this easily
+        $val = $data->getValue(); // or use this to get semantic value
+        do_something_useful_with($label, $str);
+    }
+}
+```
+
+It is however, possible to explicitly tell the reader class what "flavor" of CSV you are working with via the CSVelte\Flavor class. To do this, you simply create a new flavor class and pass it as the second argument to the reader method. If you pass a flavor object to the reader, it turns autodetection off completely. So don't expect that whatever attributes you don't pass to your flavor object will be ascertained by the reader. They won't. It will just use some sane default instead.
+
+```php
+<?php
+$flvr = new Flavor(array(
+    'delimiter' => "\t",
+    'lineTerminator' => "\n",
+    'quoteStyle' => Flavor::QUOTE_ALL,
+    'header' => false
+));
+$reader = CSVelte::reader('./data/products.csv', $flvr);
+```
+
 ## Learn More
 
 Head on over to the [API documentation](https://deni-zen.github.io/csvelte/documentation.html) for instructions on reading and writing CSV files, auto-detecting CSV format, and more.
