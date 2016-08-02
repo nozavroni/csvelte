@@ -48,4 +48,15 @@ class CSVelteTest extends TestCase
          $this->assertEquals(545, $rows);
      }
 
+     public function testCSVelteReaderString()
+     {
+         $string = "foo,bar,baz\ncolbert,4,prez\nyou,2,silly\ntoocool,4,school\n";
+         $reader = CSVelte::stringReader($string, new Flavor(array('lineTerminator' => "\n", 'header' => true)));
+         $this->assertEquals($reader->current()[0], 'colbert');
+     }
+
+     // .. WRITER ...
+
+
+
 }

@@ -3,6 +3,7 @@
 use CSVelte\Reader;
 use CSVelte\Flavor;
 use CSVelte\Input\File;
+use CSVelte\Input\String;
 use CSVelte\Excaption\PermissionDeniedException;
 use CSVelte\Exception\FileNotFoundException;
 
@@ -31,6 +32,21 @@ class CSVelte
     {
         self::assertFileIsReadable($filename);
         $infile = new File($filename);
+        return new Reader($infile, $flavor);
+    }
+
+    /**
+     * Convenience method for creating a new CSVelte\Reader object for reading
+     * from a PHP string
+     *
+     * @param string The CSV data to read
+     * @param CSVelte\Flavor An explicit flavor object for the reader to use
+     * @return CSVelte\Reader
+     * @access public
+     */
+    public static function stringReader($str, Flavor $flavor = null)
+    {
+        $infile = new String($str);
         return new Reader($infile, $flavor);
     }
 
