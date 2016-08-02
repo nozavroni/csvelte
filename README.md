@@ -138,5 +138,5 @@ CSVelte is also free as in speach. It is licensed under the MIT license, meaning
 
 ## About the author
 
-CSVelte was designed and developed by [Luke Visinoni](https://github.com/deni-zen). Feel free to [drop me a line](mailto:luke.visinoni@gmail.com) if you want to tell me how great it is.
+CSVelte was designed and developed by [Luke Visinoni](https://github.com/deni-zen). Feel free to [drop me a line](mailto:luke.visinoni@gmail.com) if you want to tell me how great it is or even if you want to tell me it's an abomination and that I should be shot. I'd love to hear from you either way! 
 
