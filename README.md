@@ -126,7 +126,7 @@ $writer->writeRow(array(1,'PNUL1937u','Some Product', 'A product that does stuff
 
 ## Learn More
 
-Head on over to the [API documentation](https://deni-zen.github.io/csvelte/documentation.html) for instructions on reading and writing CSV files, auto-detecting CSV format, and more.
+Head on over to the [documentation site](https://deni-zen.github.io/csvelte/documentation/) for instructions on reading and writing CSV files, auto-detecting CSV format, and more. You can also peruse the [API documentation](https://deni-zen.github.io/csvelte/apidocs/) to discover all kinds of neato features I don't have time to fully document.
 
 ## Contribute
 
