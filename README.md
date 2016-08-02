@@ -64,7 +64,7 @@ $reader = CSVelte::reader('./data/products.csv', $flvr);
 
 ### Reading the header row 
 
-CSV files can contain a header row as the first row in the file, but CSV as a format doesn't have a native mechanism for specifying metadata such as whether or not a header row is included. CSVelte's autodetect mechanism will do its best to determine whether or not there is a header row, but if you like, you can specify this using the flavor object by setting the "header" attribute to "true". If the flavor's header attribute is set to true, rows can be referenced by their column header. For example:
+CSV files can contain a header row as the first row in the file, but CSV as a format doesn't have a native mechanism for specifying metadata such as whether or not a header row is included. CSVelte's autodetect mechanism will do its best to determine whether or not there is a header row, but if you like, you can specify this using the flavor object by setting the "header" attribute to "true". If the flavor's header attribute is set to true, the header row will be skipped when iterating with foreach and rows can then be referenced by their column header. For example:
 
 ```php
 <?php
