@@ -26,4 +26,12 @@ class CSVelteTest extends TestCase
         $this->assertInstanceOf(Flavor::class, $flavor);
         $this->assertSame($flavor, $reader->getFlavor());
     }
+
+    /**
+     * @expectedException CSVelte\Exception\FileNotFoundException
+     */
+    public function testGenerateReaderWillThrowExceptionIfFileDoesNotExist()
+    {
+        $reader = CSVelte::reader(__DIR__ . '/../files/banklust.csv', $flavor);
+    }
 }

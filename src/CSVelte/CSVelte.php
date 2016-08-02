@@ -18,6 +18,7 @@ class CSVelte
 {
     public static function reader($filename, Flavor $flavor = null)
     {
+        self::assertFileIsReadable($filename);
         $infile = new File($filename);
         return new Reader($infile, $flavor);
     }
