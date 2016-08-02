@@ -69,6 +69,42 @@ Writing CSV data to a local file is made super easy by CSVelte as well. In fact,
 ```php
 <?php
 $writer = CSVelte::writer('./reports/2016-04-23.csv');
+$writer->writeRow(array('colbert', 'for', 'prez', '2020'));
+```
+
+Anything iterable can be passed to writeRow or writeRows. And writeRows just calls writeRow repeadedly, meaning that if its an iterable of iterables, you can pass it to writeRows. Just make sure that each iteration has the same number of elements. 
+
+### Writing other flavors of CSV
+
+You can tell the writer object to write out different flavors of CSV (using tabs instead of commas or backslash instead of two double quotes, etc.) by passing it a CSVelte\Flavor object, configured to your particular flavor of CSV. 
+
+```php
+<?php
+// you can use one of the preconfigured flavors...
+$flavor = new CSVelte\Flavor\ExcelTab;
+// or configure your own
+$flavor = new CSVelte\Flavor(array(
+    'lineTerminator' => "\n",
+    'quoteStyle' => Flavor::QUOTE_NONNUMERIC
+));
+// or a little of both
+$flavor = new CSVelte\Flavor\ExcelTab(array(
+    'lineTerminator' => "\n"
+));
+$writer = CSVelte::writer('./files/products.csv', $flavor);
+```
+
+### Writing the header row
+
+So what about the header row? Do you just always make sure to pass the header row as the first call to writeRow()? Or is there some explicit way to specify the header row? Well, you _can_ pass your header row as the first row to writeRow(). That would certainly work. So long as you were certain no other rows had been written to the output file already. To more explicitly write your header row, make sure the flavor object passed to your writer has the "header" attribute set to "true". Then call setHeaderRow() on your writer, passing it an array containing your header values.
+
+```php
+<?php
+$flavor = new CSVelte\Flavor(array('header' => true));
+$writer = CSVelte::writer('./files/products.csv', $flavor);
+$writer->setHeaderRow(array('id','sku','name','description','price'));
+$writer->writeRow(array(1,'PNUL1937u','Some Product', 'A product that does stuff', '$19.99'));
+// ...etc
 ```
 
 ## Learn More
