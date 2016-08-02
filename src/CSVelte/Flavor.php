@@ -38,6 +38,7 @@ class Flavor
 
     protected $delimiter = ",";
     protected $quoteChar = '"';
+    // @todo should this be null?
     protected $escapeChar = '\\';
     protected $doubleQuote = true;
     protected $skipInitialSpace = false;
