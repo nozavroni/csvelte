@@ -107,6 +107,8 @@ $writer->writeRow(array(1,'PNUL1937u','Some Product', 'A product that does stuff
 // ...etc
 ```
 
+*Note:* Just be careful not to call setHeaderRow _after_ any data has been written to the output file, as it will result in an exception. Also, if you're calling setHeaderRow() and the resulting file doesn't contain your header row, make sure the flavor object has its "header" attribute set to "true". 
+
 ## Learn More
 
 Head on over to the [API documentation](https://deni-zen.github.io/csvelte/documentation.html) for instructions on reading and writing CSV files, auto-detecting CSV format, and more.
