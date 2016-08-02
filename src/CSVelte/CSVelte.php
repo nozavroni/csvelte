@@ -16,19 +16,32 @@ use CSVelte\Exception\FileNotFoundException;
  */
 class CSVelte
 {
+    /**
+     * Convenience method for creating a new CSVelte\Reader object
+     * Used to create a local file CSV reader object.
+     *
+     * @param string The filename to read
+     * @param CSVelte\Flavor An explicit flavor object for the reader to use
+     * @return CSVelte\Reader
+     * @throws CSVelte\Exception\PermissionDeniedException
+     * @throws CSVelte\Exception\FileNotFoundException
+     * @access public
+     */
     public static function reader($filename, Flavor $flavor = null)
     {
         self::assertFileIsReadable($filename);
         $infile = new File($filename);
         return new Reader($infile, $flavor);
     }
+
     /**
      * Assert that a particular file exists and is readable (user has permission
      * to read/access it)
      *
-     * @access protected
-     * @var string The name of the file you wish to check
+     * @param string The name of the file you wish to check
      * @return void
+     * @access protected
+     * @throws CSVelte\Exception\PermissionDeniedException
      */
     protected static function assertFileIsReadable($filename)
     {
@@ -41,9 +54,10 @@ class CSVelte
     /**
      * Assert that a particular file exists
      *
-     * @access protected
-     * @var string The name of the file you wish to check
+     * @param string The name of the file you wish to check
      * @return void
+     * @access protected
+     * @throws CSVelte\Exception\FileNotFoundException
      */
     protected static function assertFileExists($filename)
     {
