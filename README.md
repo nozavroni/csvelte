@@ -31,7 +31,7 @@ require_once "/path/to/CSVelte/src/AutoLoader.php";
 $reader = CSVelte::reader("./files/input.csv");
 ```
 
-## Reading CSV 
+## Reading CSV data
 
 Reading CSV data from a local file is as simple as creating a reader object and iterating over it using foreach. As long as the data even slightly resembles CSV data, the reader should be able to figure out how to read it. You don't need to tell it what line endings are being used, what the delimiter character is, what the quote character is, etc. It will usually be able to figure all that out on its own. You just tell it where to find a CSV file and you're golden.
 
@@ -60,6 +60,15 @@ $flvr = new Flavor(array(
     'header' => false
 ));
 $reader = CSVelte::reader('./data/products.csv', $flvr);
+```
+
+## Writing CSV data
+
+Writing CSV data to a local file is made super easy by CSVelte as well. In fact, the process looks pretty similar to reading CSV data. To write a CSV file, simply pass the name of the file you want to write to CSVelte::writer() and it will return a CSVelte\Writer object for that file (the file will be created if it doesn't exist). You can then use this object to write as many rows of CSV data as you like. By default, CSVelte\Writer will output data in the flavor of CSV specified by <a href="https://tools.ietf.org/html/rfc4180">RFC 4180</a> (Excel's version of CSV). 
+
+```php
+<?php
+$writer = CSVelte::writer('./reports/2016-04-23.csv');
 ```
 
 ## Learn More
