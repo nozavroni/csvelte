@@ -2,7 +2,8 @@
 
 use CSVelte\Reader;
 use CSVelte\Flavor;
-use CSVelte\Input\File;
+use CSVelte\Input\File as InFile;
+use CSVelte\Output\File as OutFile;
 use CSVelte\Input\String;
 use CSVelte\Excaption\PermissionDeniedException;
 use CSVelte\Exception\FileNotFoundException;
@@ -31,7 +32,7 @@ class CSVelte
     public static function reader($filename, Flavor $flavor = null)
     {
         self::assertFileIsReadable($filename);
-        $infile = new File($filename);
+        $infile = new InFile($filename);
         return new Reader($infile, $flavor);
     }
 
@@ -48,6 +49,26 @@ class CSVelte
     {
         $infile = new String($str);
         return new Reader($infile, $flavor);
+    }
+
+    /**
+     * Convenience method for creating a new CSVelte\Writer object for writing
+     * CSV data to a file
+     */
+    public static function writer($filename, Flavor $flavor = null)
+    {
+        $outfile = new OutFile($filename);
+        return new Writer($outfile, $flavor);
+    }
+
+    /**
+     * Convenience method for exporting data to a file
+     */
+    public static function export($filename, $data, Flavor $flavor = null)
+    {
+        $outfile = new OutFile($filename);
+        $writer = new Writer($outfile, $flavor);
+        return $writer->writeRows($data);
     }
 
     /**
