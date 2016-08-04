@@ -28,12 +28,13 @@ class ReaderTest extends TestCase
 
     public function testReaderTreatsQuotedNewlinesAsOneLine()
     {
-        // $flavor = new Flavor(array('quoteStyle' => Flavor::QUOTE_MINIMAL, 'lineTerminator' => "\n"), array('hasHeader' => false));
-        // //$source = new String($this->CSVstrings['QuoteMinimal']);
-        // $source = new Stream('file:///var/www/verylarge.csv');
-        // $reader = new Reader($source, $flavor);
-        // $line = $reader->readLine();
-        //$this->assertEquals($expected = "First CornerStone Bank,\"King of\nPrussia\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $line->join(","));
+        $flavor = new Flavor(array('quoteStyle' => Flavor::QUOTE_MINIMAL, 'lineTerminator' => "\n"), array('hasHeader' => false));
+        $source = new String($this->CSVstrings['QuoteMinimal']);
+        //$source = new Stream('file:///Users/luke/test.csv');
+        $reader = new Reader($source, $flavor);
+        //$reader->next();
+        $line = $reader->current();
+        $this->assertEquals($expected = "First CornerStone Bank,King of\nPrussia,PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $line->join(","));
     }
 
     public function testReaderWillAutomaticallyDetectFlavorIfNoneProvided()

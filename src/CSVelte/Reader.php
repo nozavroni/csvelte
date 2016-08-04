@@ -175,14 +175,18 @@ class Reader implements \OuterIterator
      *
      * @param string The string to do the replacements on
      * @param char The delimiter character to replace
+     * @param char The quote character
+     * @param string Line terminator sequence
      * @return string The data with replacements performed
      * @access protected
      * @todo I could probably pass in (maybe optionally) the newline character I
      *     want to replace as well. I'll do that if I need to.
+     * @todo Create a regex class so you can do $regex->escape() rather than
+     *     preg_quote
      */
-    protected function replaceQuotedSpecialChars($data, $delim, $eol)
+    protected function replaceQuotedSpecialChars($data, $delim, $quo, $eol)
     {
-        return preg_replace_callback('/([\'"])(.*)\1/imsU', function($matches) use ($delim, $eol) {
+        return preg_replace_callback('/(['. preg_quote($quo, '/') . '])(.*)\1/imsU', function($matches) use ($delim, $eol) {
             $ret = str_replace($eol, self::PLACEHOLDER_NEWLINE, $matches[0]);
             $ret = str_replace($delim, self::PLACEHOLDER_DELIM, $ret);
             return $ret;
@@ -236,7 +240,7 @@ class Reader implements \OuterIterator
     protected function parse($line)
     {
         $f = $this->getFlavor();
-        $replaced = $this->replaceQuotedSpecialChars($line, $f->delimiter, $f->lineTerminator);
+        $replaced = $this->replaceQuotedSpecialChars($line, $f->delimiter, $f->quoteChar, $f->lineTerminator);
         $columns = explode($f->delimiter, $replaced);
         $that = $this;
         return array_map(function($val) use ($that, $f) {

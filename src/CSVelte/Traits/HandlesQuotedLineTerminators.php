@@ -62,6 +62,8 @@ trait HandlesQuotedLineTerminators
      */
     protected function inQuotedString($line, $quoteChar, $escapeChar)
     {
+        // dd($line, false, "line");
+        // dd($quoteChar, false, "quoteChar");
         if (!empty($line)) {
             do {
                 if (!isset($i)) $i = 0;

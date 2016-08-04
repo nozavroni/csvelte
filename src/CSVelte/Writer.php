@@ -1,11 +1,12 @@
 <?php namespace CSVelte;
 
+use CSVelte\Exception\WriterException;
 use CSVelte\Contract\Writable;
 use CSVelte\Table\Data;
 use CSVelte\Table\HeaderRow;
 use CSVelte\Table\Row;
 use CSVelte\Flavor;
-// use CSVelte\Table\Column;
+use CSVelte\Reader;
 
 /**
  * CSVelte Writer Base Class
@@ -78,6 +79,9 @@ class Writer
      */
     public function setHeaderRow($headers)
     {
+        if ($this->written) {
+            throw new WriterException("Cannot set header row once data has already been written. ");
+        }
         if (is_array($headers)) $headers = new \ArrayIterator($headers);
         $this->headers = $headers;
     }
@@ -105,7 +109,6 @@ class Writer
 
     protected function writeHeaderRow(HeaderRow $row)
     {
-
         return $this->output->write((string) $row . $this->getFlavor()->lineTerminator);
     }
 
@@ -123,6 +126,9 @@ class Writer
             throw new \InvalidArgumentException('First argument for ' . __CLASS__ . '::' . __METHOD__ . ' must be iterable');
         }
         $written = 0;
+        if ($rows instanceof Reader) {
+            $this->writeHeaderRow($rows->header());
+        }
         foreach ($rows as $row) {
             if ($this->writeRow($row)) $written++;
         }
