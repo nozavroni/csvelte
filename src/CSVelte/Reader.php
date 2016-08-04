@@ -1,9 +1,12 @@
 <?php namespace CSVelte;
 
+use \Closure;
+use \FilterIterator;
 use CSVelte\Contract\Readable;
 use CSVelte\Table\Row;
 use CSVelte\Table\HeaderRow;
 use CSVelte\Exception\EndOfFileException;
+use CSVelte\Reader\FilteredIterator as FilteredReader;
 
 /**
  * CSVelte
@@ -25,7 +28,7 @@ use CSVelte\Exception\EndOfFileException;
  *     you might be able to gleen from that. Apparently it has some CSV methods. Can
  *     I use that class/object or can anything be learned from it?
  */
-class Reader implements \OuterIterator
+class Reader implements \Iterator
 {
     const PLACEHOLDER_DELIM   = '[=[__DLIM__]=]';
     const PLACEHOLDER_NEWLINE = '[=[__NWLN__]=]';
@@ -57,6 +60,11 @@ class Reader implements \OuterIterator
      * @var CSVelte\Reader\HeaderRow The header row (if any)
      */
     protected $header;
+
+    /**
+     * @var array An array of callback functions
+     */
+    protected $filters = array();
 
     /**
      * Class constructor
@@ -256,6 +264,7 @@ class Reader implements \OuterIterator
 
     public function next()
     {
+
         $this->current = null;
         $this->load();
         return $this->current;
@@ -283,13 +292,28 @@ class Reader implements \OuterIterator
         return $this->current();
     }
 
-    public function getInnerIterator()
-    {
-        return $this->current();
-    }
-
     public function header()
     {
         return $this->header;
     }
+
+    public function addFilter(Closure $filter)
+    {
+        array_push($this->filters, $filter);
+        return $this;
+    }
+
+    public function addFilters(array $filters)
+    {
+        foreach ($filters as $filter) {
+            $this->addFilter($filter);
+        }
+        return $this;
+    }
+
+    public function filter()
+    {
+        return new FilteredReader($this, $this->filters);
+    }
+
 }

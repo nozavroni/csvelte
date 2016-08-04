@@ -19,6 +19,8 @@ use CSVelte\Exception\FileNotFoundException;
 class CSVelte
 {
     /**
+     * CSVelte\Reader Factory
+     *
      * Convenience method for creating a new CSVelte\Reader object
      * Used to create a local file CSV reader object.
      *
@@ -37,6 +39,8 @@ class CSVelte
     }
 
     /**
+     * String Reader Factory
+     *
      * Convenience method for creating a new CSVelte\Reader object for reading
      * from a PHP string
      *
@@ -52,8 +56,15 @@ class CSVelte
     }
 
     /**
+     * CSVelte\Writer Factory
+     *
      * Convenience method for creating a new CSVelte\Writer object for writing
      * CSV data to a file
+     *
+     * @param string The filename to read
+     * @param CSVelte\Flavor An explicit flavor object for the writer to use
+     * @return CSVelte\Writer
+     * @access public
      */
     public static function writer($filename, Flavor $flavor = null)
     {
@@ -62,7 +73,15 @@ class CSVelte
     }
 
     /**
+     * Export CSV data to local file
+     *
      * Convenience method for exporting data to a file
+     *
+     * @param string The filename to read
+     * @param Iterator|array Data to write to CSV file
+     * @param CSVelte\Flavor An explicit flavor object for the writer to use
+     * @return int Number of rows written
+     * @access public
      */
     public static function export($filename, $data, Flavor $flavor = null)
     {

@@ -3,12 +3,14 @@
 use PHPUnit\Framework\TestCase;
 use Mockery as m;
 use Mockery\Adapter\PHPUnit\MockeryPHPUnitIntegration;
+use CSVelte\CSVelte;
 use CSVelte\Reader;
 use CSVelte\Table\Row;
 use CSVelte\Flavor;
 use CSVelte\Contract\Readable;
 use CSVelte\Input\Stream;
 use CSVelte\Input\String;
+use Carbon\Carbon;
 
 /**
  * CSVelte\Reader Tests
@@ -184,12 +186,13 @@ class ReaderTest extends TestCase
         $this->assertEquals($first, $reader->current());
     }
 
-    public function testReaderImplementsOuterIterator()
-    {
-        $flavor = new Flavor(array('header' => false));
-        $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
-        $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->getInnerIterator()->toArray());
-    }
+    // I was using outeriterator incorrectly so I killed it
+    // public function testReaderImplementsOuterIterator()
+    // {
+    //     $flavor = new Flavor(array('header' => false));
+    //     $reader = new Reader(new Stream(realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv')), $flavor);
+    //     $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf, platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->getInnerIterator()->toArray());
+    // }
 
     public function testReaderCanSkipFirstLineAsHeader()
     {
@@ -288,6 +291,26 @@ class ReaderTest extends TestCase
         // @todo need to test that escapeChar is removed when reading as well...
     }
 
+    public function testReaderCanBeLoopedThroughMultipleTimes()
+    {
+        $reader = CSVelte::reader(realpath(__DIR__ . '/../files/banklist.csv'));
+        $i = 0;
+        foreach ($reader as $row) {
+            $i++;
+        }
+        $this->assertEquals(545, $i, "First iteration of several");
+        $i = 0;
+        foreach ($reader as $row) {
+            $i++;
+        }
+        $this->assertEquals(545, $i, "Second iteration of several");
+        $i = 0;
+        foreach ($reader as $row) {
+            $i++;
+        }
+        $this->assertEquals(545, $i, "Last iteration of several");
+    }
+
     /**
      * Just out of curiosity, test a flavor that uses "\n" for the delimiter and
      * like.. a tab or diff kind of line terminator string ("\r\n" or "\n"?) as
@@ -308,5 +331,68 @@ class ReaderTest extends TestCase
     //         'header' => true
     //     ));
     // }
+
+    public function testIteratorFilter()
+    {
+        $reader = CSVelte::reader(realpath(__DIR__ . '/../files/banklist.csv'));
+        $i = 0;
+        foreach ($reader as $row) {
+            $i++;
+        }
+        $this->assertEquals(545, $i, "Control test to ensure that filter works properly");
+        $reader->addFilter(function($row) {
+            // only iterate rows with CERT larger than 30000
+            if (isset($row['CERT'])) {
+                $cert = (int) $row['CERT'];
+                return ($cert > 30000);
+            }
+            return true;
+        });
+        $i2 = 0;
+        foreach ($reader->filter() as $row) {
+            if ($row['CERT'] <= 30000) {
+                $this->assertTrue(false, "Ensure that reader filters properly");
+            };
+            $i2++;
+        }
+        $this->assertEquals(296, $i2);
+    }
+
+    public function testMultipleFiltersOnReader()
+    {
+        $data = "id,firstname,lastname,email,phone,created
+1,luke,visinoni,luke.visinoni@gmail.com,5305551234,2016-04-23 14:25:04
+2,margaret,kelly,mkelly@mekelly.info,5305554321,2014-01-12 05:04:23
+3,patrick,kelly,pat.kelly@mekelly.info,5305551112,2010-03-20 06:34:39
+4,jeff,carson,jcarson23@gmail.com,5307812234,2011-11-01 5:01:05
+5,larry,thecableguy,larry@cableguy.net,,2013-01-02 22:45:52
+6,jim,jefferies,,5302239399,2015-12-24 11:51:57
+";
+        $reader = CSVelte::stringReader($data, new Flavor(array('lineTerminator' => "
+", 'header' => true)));
+        $i = 0;
+        foreach ($reader as $row) {
+            $i++;
+        }
+        $this->assertEquals(6, $i, "Control test to ensure that multiple filter works properly");
+        $i2 = 0;
+        $release = Carbon::parse("2012-11-01 8:00");
+        foreach ($reader->addFilter(function($row) use ($release) {
+            if (isset($row['created'])) {
+                $date = Carbon::parse($row['created']);
+                return $date->gt($release);
+            }
+            return true;
+        })->addFilter(function($row) {
+            return !empty($row['email']);
+        })->filter() as $row) {
+            $date = Carbon::parse($row['created']);
+            if (empty($row['email']) || $date->lte($release)) {
+                $this->assertTrue(false, "Ensure that reader filters properly");
+            };
+            $i2++;
+        }
+        $this->assertEquals(3, $i2);
+    }
 
 }

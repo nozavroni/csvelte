@@ -27,6 +27,8 @@ class WriterTest extends TestCase
 
     protected $tmpdir;
 
+    protected $deleteme;
+
     public function setUp()
     {
         if (!is_dir($this->tmpdir = realpath(__DIR__ . '/../files') . '/temp')) {
@@ -34,12 +36,13 @@ class WriterTest extends TestCase
                 throw new \Exception('Cannot create temp dir');
             }
         }
+        $this->deleteme = $this->tmpdir . '/deleteme.csv';
     }
 
     public function tearDown()
     {
-        @unlink(realpath(__DIR__ . '/../files/temp/deleteme.csv'));
-        @rmdir(realpath(__DIR__ . '/../files/temp'));
+        // @unlink($this->deleteme);
+        // @rmdir($this->tmpdir);
     }
 
     // public function testWriterHandlesQuotingCorrectly()
@@ -204,5 +207,69 @@ class WriterTest extends TestCase
         $this->assertEquals($expected = "1|two|thr33\n", fgets($handle));
     }
 
+    public function testWriterQuotesItemsCorrectlyForQuoteMinimal()
+    {
+        $flavor = new Flavor(array(
+            'lineTerminator' => "\n",
+            'header' => true,
+            'doubleQuote' => true
+        ));
+        $writer = CSVelte::writer($this->deleteme, $flavor);
+        $writer->writeRows($this->testdata);
+        $data = file($this->deleteme);
+        $this->assertEquals("id,title,summary,address,city,state,zip,notes\n", $data[0]);
+        // @todo get rid of space at beginning of third col
+        $this->assertEquals("1,This is a test title,    And a summary that you want to read because it is so summarrific,123 Address St.,Cityville,ST,12345,Notes are for jerks and losers\n", $data[1]);
+        $this->assertEquals("2,\"This has, a, comma or two\",isn't this apostrophe pretty?,321 Nough Rd,Nonestown,NO,54321,\"   Notes are the best place to put \"\"text containing quotes\"\" or even quotes containing \"\"text\"\".     \"\n", $data[2]);
+        $this->assertEquals("3,I	like ham soda,I'm a silly little summary,555 Silly Avenue,Eden,CA,55651,\"These; ~notes~ `cont@in, character$: _that_ *are* /sometimes/ 'used' -in- |p|ace| \of\ <commas> [when] {writing} #CSV %data.\"\n", $data[3]);
+        $this->assertEquals("5,This is the title of it,A summary isn't to be taken lightly,1122 Some Rd Apt #12-A,The Town,PP,12223,\"I decided to \n", $data[5]);
+    }
 
+    public function testWriterQuotesItemsCorrectlyForQuoteAll()
+    {
+        $flavor = new Flavor(array(
+            'lineTerminator' => "\n",
+            'header' => true,
+            'doubleQuote' => true,
+            'quoteStyle' => Flavor::QUOTE_ALL
+        ));
+        $writer = CSVelte::writer($this->deleteme, $flavor);
+        $writer->writeRows($this->testdata);
+        $data = file($this->deleteme);
+        $this->assertEquals('"id","title","summary","address","city","state","zip","notes"' . "\n", $data[0]);
+        // @todo get rid of space at beginning of third col
+        $this->assertEquals('"1","This is a test title","    And a summary that you want to read because it is so summarrific","123 Address St.","Cityville","ST","12345","Notes are for jerks and losers"' . "\n", $data[1]);
+    }
+
+    public function testWriterQuotesItemsCorrectlyForQuoteNonNumeric()
+    {
+        $flavor = new Flavor(array(
+            'lineTerminator' => "\n",
+            'header' => true,
+            'doubleQuote' => true,
+            'quoteStyle' => Flavor::QUOTE_NONNUMERIC
+        ));
+        $writer = CSVelte::writer($this->deleteme, $flavor);
+        $writer->writeRows($this->testdata);
+        $data = file($this->deleteme);
+        $this->assertEquals('"id","title","summary","address","city","state","zip","notes"' . "\n", $data[0]);
+        // @todo get rid of space at beginning of third col
+        $this->assertEquals('1,"This is a test title","    And a summary that you want to read because it is so summarrific","123 Address St.","Cityville","ST",12345,"Notes are for jerks and losers"' . "\n", $data[1]);
+    }
+
+    public function testWriterQuotesItemsCorrectlyForQuoteNone()
+    {
+        $flavor = new Flavor(array(
+            'lineTerminator' => "\n",
+            'header' => true,
+            'doubleQuote' => true,
+            'quoteStyle' => Flavor::QUOTE_NONE
+        ));
+        $writer = CSVelte::writer($this->deleteme, $flavor);
+        $writer->writeRows($this->testdata);
+        $data = file($this->deleteme);
+        $this->assertEquals('id,title,summary,address,city,state,zip,notes' . "\n", $data[0]);
+        // @todo get rid of space at beginning of third col
+        $this->assertEquals('1,This is a test title,    And a summary that you want to read because it is so summarrific,123 Address St.,Cityville,ST,12345,Notes are for jerks and losers' . "\n", $data[1]);
+    }
 }
