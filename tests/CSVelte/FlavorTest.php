@@ -1,8 +1,6 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Mockery as m;
-use Mockery\Adapter\PHPUnit\MockeryPHPUnitIntegration;
 use CSVelte\Exception\UnknownFlavorException;
 use CSVelte\Flavor;
 use CSVelte\Flavor\Excel;
@@ -19,8 +17,6 @@ use CSVelte\Flavor\UnixTab;
  */
 class FlavorTest extends TestCase
 {
-    use MockeryPHPUnitIntegration;
-
     /**
      * This is just a really simple test to get things started...
      */
