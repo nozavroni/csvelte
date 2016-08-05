@@ -1,6 +1,6 @@
 {
     "name": "lukev/csvelte",
-    "description": "Slender, elegant CSV for PHP5.3+",
+    "description": "Slender, elegant CSV for PHP5.6+",
     "type": "library",
     "keywords": ["CSV", "PHP", "PHP5", "CSVW", "data-interchange", "JSON", "CSV Schema", "CSV Validation", "CSV Dialect", "Excel", "Tabular Data", "RFC 4180"],
     "homepage": "https://deni-zen.github.io/csvelte/",
@@ -14,7 +14,7 @@
         }
     ],
     "require": {
-        "php": "^5.3.3",
+        "php": "^5.6",
         "nesbot/carbon": "^1.21"
     },
     "require-dev": {
