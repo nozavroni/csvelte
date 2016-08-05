@@ -9,3 +9,5 @@ php:
 before_script:
     - composer install
     - echo 'date.timezone = "America/Los_Angeles"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+
+script: phpunit
