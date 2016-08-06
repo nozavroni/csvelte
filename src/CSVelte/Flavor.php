@@ -38,8 +38,9 @@ class Flavor
 
     protected $delimiter = ",";
     protected $quoteChar = '"';
+    // @todo should this be null?
     protected $escapeChar = '\\';
-    protected $doubleQuote = false;
+    protected $doubleQuote = true;
     protected $skipInitialSpace = false;
     protected $quoteStyle = self::QUOTE_MINIMAL;
     protected $lineTerminator = "\r\n";
@@ -65,6 +66,25 @@ class Flavor
                 $this->$attr = $val;
             }
         }
+    }
+
+    /**
+     * Does this flavor of CSV have a header row?
+     *
+     * The difference between $flavor->header and $flavor->hasHeader() is that
+     * hasHeader() is always going to give you a boolean value, whereas
+     * $flavor->header may be null. A null value for header could mean that the
+     * taster class could not reliably determine whether or not there was a
+     * header row or it could simply mean that the flavor was instantiated with
+     * no value for the header property. 
+     *
+     * @param void
+     * @return boolean
+     * @access public
+     */
+    public function hasHeader()
+    {
+        return (bool) $this->header;
     }
 
     // this is the stupidest thing ever... it just keeps telling me "Class CSVelte\Flavor\Flavor not found on line 79"... $classpath is NEVER equal to CSVelte\Flavor\Flavor. Not at ANY point! WTF?? This is driving me nuts!!

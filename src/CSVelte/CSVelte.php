@@ -1,5 +1,11 @@
 <?php namespace CSVelte;
 
+use CSVelte\Reader;
+use CSVelte\Flavor;
+use CSVelte\Input\File as InFile;
+use CSVelte\Output\File as OutFile;
+use CSVelte\Input\String;
+use CSVelte\Excaption\PermissionDeniedException;
 use CSVelte\Exception\FileNotFoundException;
 
 /**
@@ -13,50 +19,89 @@ use CSVelte\Exception\FileNotFoundException;
 class CSVelte
 {
     /**
-     * Class constructor
+     * CSVelte\Reader Factory
+     *
+     * Convenience method for creating a new CSVelte\Reader object
+     * Used to create a local file CSV reader object.
+     *
+     * @param string The filename to read
+     * @param CSVelte\Flavor An explicit flavor object for the reader to use
+     * @return CSVelte\Reader
+     * @throws CSVelte\Exception\PermissionDeniedException
+     * @throws CSVelte\Exception\FileNotFoundException
+     * @access public
      */
-    public function __construct()
+    public static function reader($filename, Flavor $flavor = null)
     {
-
+        self::assertFileIsReadable($filename);
+        $infile = new InFile($filename);
+        return new Reader($infile, $flavor);
     }
 
     /**
-     * Import CSV data from external source (file)
+     * String Reader Factory
      *
-     * @var string The name of the file you wish to import
-     * @return boolean True if import was successful
-     * @todo Should this maybe return the number of lines imported on success?
-     * @todo Move all the file assertion code into CSVelte\File
+     * Convenience method for creating a new CSVelte\Reader object for reading
+     * from a PHP string
+     *
+     * @param string The CSV data to read
+     * @param CSVelte\Flavor An explicit flavor object for the reader to use
+     * @return CSVelte\Reader
+     * @access public
      */
-    public function import($file)
+    public static function stringReader($str, Flavor $flavor = null)
     {
-        $this->assertFileIsReadable($file);
+        $infile = new String($str);
+        return new Reader($infile, $flavor);
     }
 
     /**
-     * Headers accessor
-     * Gets or sets the CSV header values (as an array)
+     * CSVelte\Writer Factory
      *
-     * @return array|boolean Returns array of header values or a boolean value if setting
-     * @todo I'm not sure I like the ambiguous accessor interface... a method
-     *       should only do one thing and it shouldn't depend on context
+     * Convenience method for creating a new CSVelte\Writer object for writing
+     * CSV data to a file
+     *
+     * @param string The filename to read
+     * @param CSVelte\Flavor An explicit flavor object for the writer to use
+     * @return CSVelte\Writer
+     * @access public
      */
-    public function headers()
+    public static function writer($filename, Flavor $flavor = null)
     {
-        return [];
+        $outfile = new OutFile($filename);
+        return new Writer($outfile, $flavor);
+    }
+
+    /**
+     * Export CSV data to local file
+     *
+     * Convenience method for exporting data to a file
+     *
+     * @param string The filename to read
+     * @param Iterator|array Data to write to CSV file
+     * @param CSVelte\Flavor An explicit flavor object for the writer to use
+     * @return int Number of rows written
+     * @access public
+     */
+    public static function export($filename, $data, Flavor $flavor = null)
+    {
+        $outfile = new OutFile($filename);
+        $writer = new Writer($outfile, $flavor);
+        return $writer->writeRows($data);
     }
 
     /**
      * Assert that a particular file exists and is readable (user has permission
      * to read/access it)
      *
-     * @access protected
-     * @var string The name of the file you wish to check
+     * @param string The name of the file you wish to check
      * @return void
+     * @access protected
+     * @throws CSVelte\Exception\PermissionDeniedException
      */
-    protected function assertFileIsReadable($filename)
+    protected static function assertFileIsReadable($filename)
     {
-        $this->assertFileExists($filename);
+        self::assertFileExists($filename);
         if (!is_readable($filename)) {
             throw new PermissionDeniedException('Permission denied for: ' . $filename);
         }
@@ -65,11 +110,12 @@ class CSVelte
     /**
      * Assert that a particular file exists
      *
-     * @access protected
-     * @var string The name of the file you wish to check
+     * @param string The name of the file you wish to check
      * @return void
+     * @access protected
+     * @throws CSVelte\Exception\FileNotFoundException
      */
-    protected function assertFileExists($filename)
+    protected static function assertFileExists($filename)
     {
         if (!file_exists($filename)) {
             throw new FileNotFoundException('File does not exist: ' . $filename);

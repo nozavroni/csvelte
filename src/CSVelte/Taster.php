@@ -90,17 +90,34 @@ class Taster
     protected $input;
 
     /**
+     * Sample of CSV data to use for tasting (determining CSV flavor)
+     * @var string
+     */
+    protected $sample;
+
+    /**
      * Class constructor--accepts a CSV input source
      *
      * @param CSVelte\Contract\Readable The source of CSV data
      * @return void
      * @access public
+     * @todo It may be a good idea to skip the first line or two for the sample
+     *     so that the header line(s) don't throw things off (with the exception
+     *     of lickHeader() obviously)
      */
     public function __construct(Readable $input)
     {
         $this->input = $input;
+        $this->sample = $input->read(self::SAMPLE_SIZE);
     }
 
+    /**
+     * I'm not sure what this is for...
+     * @param  Readable $input The input source
+     * @return CSVelte\Taster
+     * @todo Get rid of this unless there is a good reason for having it...?
+     * @ignore
+     */
     public static function create(Readable $input)
     {
         return new Taster($input);
@@ -118,20 +135,24 @@ class Taster
      * @todo Implement a lickQuote method for when lickQuoteAndDelim method fails
      * @todo Should there bea lickEscapeChar method? the python module that inspired
      *     this library doesn't include one...
+     * @todo This should cache the results and only regenerate if $this->sample
+     *     changes (or $this->input)
      */
     public function lick()
     {
-        $data = $this->input->read(2500);
+        $lineTerminator = $this->lickLineEndings();
         try {
             list($quoteChar, $delimiter) = $this->lickQuoteAndDelim();
         } catch (TasteQuoteAndDelimException $e) {
             $quoteChar = '"';
-            $delimiter = $this->lickDelimiter();
+            $delimiter = $this->lickDelimiter($lineTerminator);
         }
+        /**
+         * @todo Should this be null? Because doubleQuote = true means this = null
+         */
         $escapeChar = '\\';
-        $lineTerminator = $this->lickLineEndings();
-        $quoteStyle = $this->lickQuotingStyle($data, $quoteChar, $delimiter, $lineTerminator);
-        $header = $this->lickHeader($data, $quoteChar, $delimiter, $lineTerminator);
+        $quoteStyle = $this->lickQuotingStyle($this->sample, $quoteChar, $delimiter, $lineTerminator);
+        $header = $this->lickHeader($this->sample, $quoteChar, $delimiter, $lineTerminator);
         return new Flavor(compact('quoteChar', 'escapeChar', 'delimiter', 'lineTerminator', 'quoteStyle', 'header'));
     }
 
@@ -157,9 +178,8 @@ class Taster
      * as the end-of-line character
      *
      * @return char The end-of-line char for the input data
-     * @access public
+     * @access protected
      * @credit pulled from stackoverflow thread *tips hat to username "Harm"*
-     * @todo make protected
      * @todo This should throw an exception if it cannot determine the line ending
      * @todo I probably will make this method protected when I'm done with testing...
      * @todo If there is any way for this method to fail (for instance if a file )
@@ -167,9 +187,9 @@ class Taster
      *       a relevant TasterException
      * @todo Use replaceQuotedSpecialChars rather than removeQuotedStrings()
      */
-    public function lickLineEndings()
+    protected function lickLineEndings()
     {
-        $str = $this->removeQuotedStrings($this->input->read(2500));
+        $str = $this->removeQuotedStrings($this->sample);
         $eols = [
             self::EOL_WINDOWS => "\r\n",  // 0x0D - 0x0A - Windows, DOS OS/2
             self::EOL_UNIX    => "\n",    // 0x0A -      - Unix, OSX
@@ -194,34 +214,38 @@ class Taster
      * determine these characters some other way... (see lickDelimiter)
      *
      * @return array A two-row array containing quotechar, delimchar
-     * @access public
+     * @access protected
      * @todo make protected
      * @todo This should throw an exception if it cannot determine the delimiter
      *     this way.
+     * @todo This should check for any line endings not just \n
      */
-    public function lickQuoteAndDelim()
+    protected function lickQuoteAndDelim()
     {
-        $data = $this->input->read(2500);
         $patterns = array();
-        // delim can be anything but line breaks, quotes, or any type of spaces
-        $delim = '([^\r\n\w"\'' . chr(self::SPACE) . '])';
-        $patterns[] = '/' . $delim . ' ?(["\']).*?(\2)(\1)/'; // ,"something", - anything but whitespace or quotes followed by a possible space followed by a quote followed by anything followed by same quote, followed by same anything but whitespace
-        $patterns[] = '/(?:^|\n)(["\']).*?(\1)' . $delim . ' ?/'; // 'something', - beginning of line or line break, followed by quote followed by anything followed by quote followed by anything but whitespace or quotes
-        $patterns[] = '/' . $delim . ' ?(["\']).*?(\2)(?:^|\n)/'; // ,'something' - anything but whitespace or quote followed by possible space followed by quote followed by anything followed by quote, followed by end of line
-        $patterns[] = '/(?:^|\n)(["\']).*?(\2)(?:$|\n)/'; // 'something' - beginning of line followed by quote followed by anything followed by quote followed by same quote followed by end of line
+        // delim can be anything but line breaks, quotes, alphanumeric, underscore, backslash, or any type of spaces
+        $antidelims = implode(array("\r", "\n", "\w", preg_quote('"', '/'), preg_quote("'", '/')/*, preg_quote('\\', '/')*/, preg_quote(chr(self::SPACE), '/')));
+        $delim = '(?P<delim>[^' . $antidelims . '])';
+        $quote = '(?P<quoteChar>"|\'|`)'; // @todo I think MS Excel uses some strange encoding for fancy open/close quotes
+        $patterns[] = '/' . $delim . ' ?' . $quote . '.*?\2\1/ms'; // ,"something", - anything but whitespace or quotes followed by a possible space followed by a quote followed by anything followed by same quote, followed by same anything but whitespace
+        $patterns[] = '/(?:^|\n)' . $quote . '.*?\1' . $delim . ' ?/ms'; // 'something', - beginning of line or line break, followed by quote followed by anything followed by quote followed by anything but whitespace or quotes
+        $patterns[] = '/' . $delim . ' ?' . $quote . '.*?\2(?:^|\n)/ms'; // ,'something' - anything but whitespace or quote followed by possible space followed by quote followed by anything followed by quote, followed by end of line
+        $patterns[] = '/(?:^|\n)' . $quote . '.*?\2(?:$|\n)/ms'; // 'something' - beginning of line followed by quote followed by anything followed by quote followed by same quote followed by end of line
         foreach ($patterns as $pattern) {
-            if (preg_match_all($pattern, $data, $matches) && $matches) break;
+            // @todo I had to add the error suppression char here because it was
+            //     causing undefined offset errors with certain data sets. strange...
+            if (@preg_match_all($pattern, $this->sample, $matches) && $matches) break;
         }
         if ($matches) {
-            $quotes = array_count_values($matches[2]);
+            $quotes = array_count_values($matches['quoteChar']);
             arsort($quotes);
             $quotes = array_flip($quotes);
-            if ($quote = array_shift($quotes)) {
-                $delims = array_count_values($matches[1]);
+            if ($theQuote = array_shift($quotes)) {
+                $delims = array_count_values($matches['delim']);
                 arsort($delims);
                 $delims = array_flip($delims);
-                $delim = array_shift($delims);
-                return array($quote, $delim);
+                $theDelim = array_shift($delims);
+                return array($theQuote, $theDelim);
             }
         }
         throw new TasteQuoteAndDelimException("quoteChar and delimiter cannot be determined");
@@ -231,22 +255,20 @@ class Taster
       * Take a list of likely delimiter characters and find the one that occurs
       * the most consistent amount of times within the provided data.
       *
-      * @param string The data to examime for "quoting style"
-      * @param char The type of quote character being used (single or double)
-      * @param char The character used as the column delimiter
-      * @param char The character used for newlines
-      * @return string One of four "QUOTING_" constants defined above--see this
-      *     method's description for more info.
-      * @access public
+      * @param string The character(s) used for newlines
+      * @return string One of four Flavor::QUOTING_* constants
+      * @see CSVelte\Flavor for possible quote style constants
+      * @access protected
       * @todo Refactor this method--It needs more thorough testing against a wider
       *     variety of CSV data to be sure it works reliably. And I'm sure there
       *     are many performance and logic improvements that could be made. This
       *     is essentially a first draft.
       * @todo Use replaceQuotedSpecialChars rather than removeQuotedStrings
       */
-    public function lickDelimiter($data, $eol, $delimiters)
+    protected function lickDelimiter($eol = "\n")
     {
-        $lines = explode($eol, $this->removeQuotedStrings($data));
+        $delimiters = array(",", "\t", "|", ":", ";", "/", '\\');
+        $lines = explode($eol, $this->removeQuotedStrings($this->sample));
         $modes = array();
         $start = 0;
         $charFrequency = array();
@@ -301,13 +323,13 @@ class Taster
      * @param char The character used for newlines
      * @return string One of four "QUOTING_" constants defined above--see this
      *     method's description for more info.
-     * @access public
+     * @access protected
      * @todo Refactor this method--It needs more thorough testing against a wider
      *     variety of CSV data to be sure it works reliably. And I'm sure there
      *     are many performance and logic improvements that could be made. This
      *     is essentially a first draft.
      */
-    public function lickQuotingStyle($data, $quote, $delim, $eol)
+    protected function lickQuotingStyle($data, $quote, $delim, $eol)
     {
         $data = $this->replaceQuotedSpecialChars($data, $delim);
 

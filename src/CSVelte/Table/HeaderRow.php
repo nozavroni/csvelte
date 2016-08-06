@@ -1,11 +1,7 @@
-<?php namespace CSVelte\Reader;
-
-use CSVelte\Reader;
-
+<?php namespace CSVelte\Table;
 /**
- * Reader header row class
- * A specialized version of Reader\Row that represents the header row within CSV
- * input source.
+ * Table Header Row
+ * A specialized version of CSVelte\Table\Row that represents a header row.
  *
  * @todo Notes about implementation of headers as row indexes...
  * Because property names adhere to a much stricter naming scheme, any array key
@@ -20,18 +16,7 @@ use CSVelte\Reader;
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-class HeaderRow extends RowBase
+class HeaderRow extends AbstractRow
 {
-    // /**
-    //  * @inheritDoc
-    //  */
-    // public function __construct(array $headers)
-    // {
-    //     $headers = $this->propertize($headers);
-    //     parent::__construct($headers);
-    // }
-    //
-    // /**
-    //  * "Propertize" the header names so that they can be called as properties
-    //  */
+
 }

@@ -1,11 +1,22 @@
-<?php namespace CSVelte\Contract;
+<?php
+/**
+ * CSVelte
+ * Slender, elegant CSV for PHP5.3+
+ *
+ * @version v0.1
+ * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
+ * @author Luke Visinoni <luke.visinoni@gmail.com>
+ * @license See LICENSE file
+ */
+namespace CSVelte\Contract;
 /**
  * Seekable interface
+ * 
  * Implement this interface to be "seekable"
  *
- * @package   CSVelte\Contract
- * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @package CSVelte
+ * @subpackage Contract (Interfaces)
+ * @since v0.1
  */
 interface Seekable
 {
