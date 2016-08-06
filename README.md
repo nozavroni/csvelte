@@ -140,3 +140,10 @@ CSVelte is also free as in speach. It is licensed under the MIT license, meaning
 
 CSVelte was designed and developed by [Luke Visinoni](https://github.com/deni-zen). Feel free to [drop me a line](mailto:luke.visinoni@gmail.com) if you want to tell me how great it is or even if you want to tell me it's an abomination and that I should be shot. I'd love to hear from you either way! 
 
+## Credits and Special Thanks
+
+I would just like to thank Pádraic Brady and anybody else working on the Mockery library for their extremely clean and elegant Github/Travis-CI/Scrutinizer/Coveralls/etc. integration code. Without it, this library would have taken much longer to see its first release. And although I tried to simply take inspiration from it, I found it hard not to simply copy what they did. But as they say, [imitation is the sincerest form of flattery](https://books.google.com/books?id=6AclAAAAMAAJ&pg=PA114#v=onepage&q&f=false).
+
+I would also like to thank the small, tight-knit community of developers at the <a href="http://devnetwork.net/">PHP Developer's Network Forums</a>. I honestly don't know where I'd be without those guys. They taught me everything I know!
+
+Finally, I'd like to thank both the members of the [CSV on the Web Working Group](https://www.w3.org/2013/csvw/wiki/Main_Page) as well as the authors of [Python PEP #305](https://www.python.org/dev/peps/pep-0305/), which was actually the inspiration for the first permutation of this library (PHP CSV Utilities) almost a decade ago. 
