@@ -56,7 +56,7 @@ class CSVelteTest extends TestCase
      */
     public function testGenerateReaderWillThrowExceptionIfFileDoesNotExist()
     {
-        $reader = CSVelte::reader(__DIR__ . '/../files/banklust.csv', $flavor);
+        $reader = CSVelte::reader(__DIR__ . '/../files/banklust.csv');
     }
 
     /**
