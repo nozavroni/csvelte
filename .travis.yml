@@ -14,3 +14,8 @@ before_script:
     - echo 'date.timezone = "America/Los_Angeles"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
 
 script: phpunit -c phpunit.xml
+
+notifications:
+  email:
+    - luke.visinoni@gmail.com
+    - luke@visinoni.net
