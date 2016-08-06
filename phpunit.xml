@@ -1,23 +1,28 @@
-<phpunit bootstrap="tests/bootstrap.php">
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         syntaxCheck="false"
+         bootstrap="tests/bootstrap.php">
     <testsuites>
-      <testsuite name="build">
+      <testsuite name="Core CSVelte Functionality">
         <file>tests/CSVelte/CSVelteTest.php</file>
         <file>tests/CSVelte/FlavorTest.php</file>
+        <file>tests/CSVelte/InputStringTest.php</file>
+        <file>tests/CSVelte/InputTest.php</file>
         <file>tests/CSVelte/TasterTest.php</file>
         <file>tests/CSVelte/ReaderTest.php</file>
-        <file>tests/CSVelte/WriterTest.php</file>
-        <file>tests/CSVelte/TableTest.php</file> <!-- @todo for now, this one will include only very rudimentary table functionality -->
-        <file>tests/CSVelte/InputOutputTest.php</file> <!-- @todo add this immediately to replace the other IO test files -->
-        <file>tests/CSVelte/DocsExamplesTest.php</file>
-      </testsuite>
-      <!-- <testsuite name="table">
-        <file>tests/CSVelte/TableTest.php</file>
-        <file>tests/CSVelte/TableSchemaTest.php</file>
         <file>tests/CSVelte/TableRowTest.php</file>
-        <file>tests/CSVelte/TableColumnTest.php</file>
-        <file>tests/CSVelte/TableColumnSchemaTest.php</file>
-        <file>tests/CSVelte/TableDataTypeTest.php</file>
-        <file>tests/CSVelte/TableCellTest.php</file>
-      </testsuite> -->
+        <file>tests/CSVelte/WriterTest.php</file>
+      </testsuite>
     </testsuites>
+    <filter>
+        <whitelist>
+            <directory>./src/</directory>
+        </whitelist>
+    </filter>
 </phpunit>
