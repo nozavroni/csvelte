@@ -212,7 +212,7 @@ class TasterTest extends TestCase
 
     public function testLickingDifferentDataSets()
     {
-        $banklist = new File($this->testfile('banklist.csv'));
+        $banklist = new File($this->samplefile('banklist.csv'));
         $taster = new Taster($banklist);
         $expected_flavor = new Flavor(array(
             'delimiter' => ",",
@@ -227,7 +227,7 @@ class TasterTest extends TestCase
         $flavor = $taster->lick();
         $this->assertEquals($expected_flavor, $flavor);
 
-        $longname = new File($this->testfile('userssharedsdfratebrthsyaw1819raceethncty20002012.csv'));
+        $longname = new File($this->samplefile('userssharedsdfratebrthsyaw1819raceethncty20002012.csv'));
         $taster = new Taster($longname);
         $expected_flavor = new Flavor(array(
             'delimiter' => ",",
@@ -240,7 +240,7 @@ class TasterTest extends TestCase
         ));
         $this->assertEquals($expected_flavor, $taster->lick());
 
-        $sample = new File($this->testfile('sample.csv'));
+        $sample = new File($this->samplefile('sample.csv'));
         $taster = new Taster($sample);
         $expected_flavor = new Flavor(array(
             'delimiter' => ",",
@@ -253,7 +253,7 @@ class TasterTest extends TestCase
         ));
         $this->assertEquals($expected_flavor, $taster->lick());
 
-        $data = file_get_contents($this->testfile('SampleCSVFile_11kb.csv'));
+        $data = file_get_contents($this->samplefile('SampleCSVFile_11kb.csv'));
         $data = str_replace(',', '|', $data);
         $data = preg_replace("/(\n|\r|\r\n)/", "\n", $data);
         $data = str_replace('"', "'", $data);
