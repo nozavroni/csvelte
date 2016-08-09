@@ -1,5 +1,5 @@
 {
-    "name": "lukev/csvelte",
+    "name": "nozavroni/csvelte",
     "description": "Slender, elegant CSV for PHP5.6+",
     "type": "library",
     "keywords": ["CSV", "PHP", "PHP5", "CSVW", "data-interchange", "JSON", "CSV Schema", "CSV Validation", "CSV Dialect", "Excel", "Tabular Data", "RFC 4180"],
