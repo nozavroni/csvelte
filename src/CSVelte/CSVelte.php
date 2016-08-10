@@ -1,4 +1,17 @@
-<?php namespace CSVelte;
+<?php
+/**
+ * CSVelte: Slender, elegant CSV for PHP
+ *
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
+ *
+ * @version   v0.1
+ * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ */
+namespace CSVelte;
 
 use CSVelte\Reader;
 use CSVelte\Flavor;
@@ -9,24 +22,27 @@ use CSVelte\Excaption\PermissionDeniedException;
 use CSVelte\Exception\FileNotFoundException;
 
 /**
- * CSVelte
- * A PHP CSV utility library (formerly PHP CSV Utilities).
+ * CSVelte Facade
  *
- * @package   CSVelte
- * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * This class consists of static factory methods for easily generating commonly
+ * used objects such as readers and writers, as well as convenience methods for
+ * commonly used functionality such as exporting CSV data to a file.
+ *
+ * @package CSVelte
+ * @subpackage Factory/Adapter
+ * @since v0.1
  */
 class CSVelte
 {
     /**
      * CSVelte\Reader Factory
      *
-     * Convenience method for creating a new CSVelte\Reader object
+     * Factory method for creating a new CSVelte\Reader object
      * Used to create a local file CSV reader object.
      *
      * @param string The filename to read
-     * @param CSVelte\Flavor An explicit flavor object for the reader to use
-     * @return CSVelte\Reader
+     * @param CSVelte\Flavor An explicit flavor object that will be passed to the reader
+     * @return CSVelte\Reader An iterator for specified CSV file
      * @throws CSVelte\Exception\PermissionDeniedException
      * @throws CSVelte\Exception\FileNotFoundException
      * @access public
@@ -41,12 +57,12 @@ class CSVelte
     /**
      * String Reader Factory
      *
-     * Convenience method for creating a new CSVelte\Reader object for reading
+     * Factory method for creating a new CSVelte\Reader object for reading
      * from a PHP string
      *
      * @param string The CSV data to read
-     * @param CSVelte\Flavor An explicit flavor object for the reader to use
-     * @return CSVelte\Reader
+     * @param CSVelte\Flavor An explicit flavor object that will be passed to the reader
+     * @return CSVelte\Reader An iterator for provided CSV data
      * @access public
      */
     public static function stringReader($str, Flavor $flavor = null)
@@ -58,12 +74,13 @@ class CSVelte
     /**
      * CSVelte\Writer Factory
      *
-     * Convenience method for creating a new CSVelte\Writer object for writing
-     * CSV data to a file
+     * Factory method for creating a new CSVelte\Writer object for writing
+     * CSV data to a file. If file doesn't exist, it will be created. If it
+     * already contains data, it will be overwritten.
      *
-     * @param string The filename to read
+     * @param string The filename to write to.
      * @param CSVelte\Flavor An explicit flavor object for the writer to use
-     * @return CSVelte\Writer
+     * @return CSVelte\Writer A writer object for writing to given filename
      * @access public
      */
     public static function writer($filename, Flavor $flavor = null)
@@ -75,11 +92,12 @@ class CSVelte
     /**
      * Export CSV data to local file
      *
-     * Convenience method for exporting data to a file
+     * Facade method for exporting data to given filename. IF file doesn't exist
+     * it will be created. If it does exist it will be overwritten.
      *
-     * @param string The filename to read
+     * @param string The filename to export data to
      * @param Iterator|array Data to write to CSV file
-     * @param CSVelte\Flavor An explicit flavor object for the writer to use
+     * @param CSVelte\Flavor An explicit flavor object that will be passed to the writer
      * @return int Number of rows written
      * @access public
      */
@@ -91,6 +109,8 @@ class CSVelte
     }
 
     /**
+     * Assert that file is readable
+     *
      * Assert that a particular file exists and is readable (user has permission
      * to read/access it)
      *
@@ -98,6 +118,7 @@ class CSVelte
      * @return void
      * @access protected
      * @throws CSVelte\Exception\PermissionDeniedException
+     * @internal
      */
     protected static function assertFileIsReadable($filename)
     {
@@ -114,6 +135,7 @@ class CSVelte
      * @return void
      * @access protected
      * @throws CSVelte\Exception\FileNotFoundException
+     * @internal
      */
     protected static function assertFileExists($filename)
     {

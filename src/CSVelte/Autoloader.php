@@ -1,6 +1,7 @@
 <?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
+ * 
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
@@ -88,6 +89,8 @@ class Autoloader
      * queue. This allows for CSVelte's autoloader to work its magic without
      * having to worry about interfering with any other autoloader.
      *
+     * Also adds all of this class's search paths to PHP's include path.
+     *
      * @return boolean Whatever the return value of spl_autoload_register is
      * @see spl_autoload_register
      */
@@ -118,7 +121,7 @@ class Autoloader
         foreach ($paths as $path) {
             $classPath = $path . DIRECTORY_SEPARATOR . $fqcp . '.php';
             if(file_exists($classPath) && is_readable($classPath)) {
-                require($classPath);
+                require_once($classPath);
                 return true;
             }
         }
