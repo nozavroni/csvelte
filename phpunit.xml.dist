@@ -12,6 +12,7 @@
     <testsuites>
       <testsuite name="Core CSVelte Functionality">
         <file>tests/CSVelte/CSVelteTest.php</file>
+        <file>tests/CSVelte/AutoloaderTest.php</file>
         <file>tests/CSVelte/FlavorTest.php</file>
         <file>tests/CSVelte/InputStringTest.php</file>
         <file>tests/CSVelte/InputTest.php</file>
