@@ -9,24 +9,26 @@
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ * @internal 
  */
 namespace CSVelte;
 /**
- * CSVelte\Utils
- * A PHP CSV utility library (formerly PHP CSV Utilities).
+ * CSVelte Utility Tool Belt
  *
- * @package   CSVelte
- * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @todo      Make all of these available as global functions via a utils.php file
- *            file (just create aliases)
- * @todo Rather than what I mentioned above, maybe just implement a collection class
- *     that has all of these array methods. This way you could simply call
- *     $array->get($key, $default, $throwException = true) or
- *     $array->items() or $array->remove($item) or $array->average(), etc. See issue #14
- * @todo Or, if you don't want to do that, you could create a Trait out of these
- *     methods/functions and attach it to anything that's iterable or follows a
- *     particular interface...
+ * This is a heinously ugly class full of static methods for performing various
+ * useful functions such as removing an element from an array by value, averaging
+ * the values of an erray, etc.
+ *
+ * *Note:* Don't get used to this class, it is almost certainly going away eventuallly
+ *
+ * @package CSVelte
+ * @subpackage Utilities
+ * @since v0.1
+ * @internal
+ * @todo Either clean this up immensely, maybe by turning it into a collection
+ *     object class or move them to namespaced functions. Or, if you can stomach
+ *     the idea of adding another dependency, just use an existing utility
+ *     library such as Underscore or something.
  */
 class Utils
 {

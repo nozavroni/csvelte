@@ -1,14 +1,15 @@
 <?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
- * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV 
- * standardization efforts, CSVelte was written in an effort to take all the 
- * suck out of working with CSV. 
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
  *
  * @version   v0.1
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ * @internal
  */
 namespace CSVelte\Table\Data;
 
@@ -27,6 +28,7 @@ use Carbon\Carbon;
  * @todo It might be a good idea to move the Data\Value namespace up a level. They
  *     don't necessarily have to reside within a "table" to be data values of a
  *     specific type, possessing specific properties and behaviors. CSVelte\Data\Value
+ * @internal
  */
 class DateTimeValue extends Value
 {

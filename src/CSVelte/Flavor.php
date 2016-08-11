@@ -27,8 +27,6 @@ use CSVelte\Exception\ImmutableException;
  * @package CSVelte
  * @subpackage Flavor
  * @since v0.1
- * @example /examples/CSVelte/Flavor.php 13 13 An example of creating a flavor
- *     object for CSV files implementing RFC 4180 (Excel) format
  */
 class Flavor
 {

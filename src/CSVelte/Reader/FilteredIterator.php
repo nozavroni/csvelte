@@ -1,14 +1,51 @@
 <?php
-
+/**
+ * CSVelte: Slender, elegant CSV for PHP
+ *
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
+ *
+ * @version   v0.1
+ * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ * @internal 
+ */
 namespace CSVelte\Reader;
 
 use CSVelte\Reader as CsvReader;
 use \FilterIterator;
 
+/**
+ * Filtered Reader Iterator
+ *
+ * This class is not intended to be instantiated manually. It is returned by the
+ * CSVelte\Reader class when filter() is called to iterate over the CSV file,
+ * skipping all rows that don't pass the filter(s) tests.
+ *
+ * @package CSVelte
+ * @subpackage Reader
+ * @since v0.1
+ * @internal
+ */
 class FilteredIterator extends FilterIterator
 {
+    /**
+     * A list of callback functions
+     * @var array of Callable objects/functions
+     */
     protected $filters = array();
 
+    /**
+     * FilteredIterator Constructor
+     *
+     * Initializes the iterator using the CSV reader and its array of callback
+     * filter functions/callables.
+     *
+     * @param CsvReader $reader  The CSV reader being iterated
+     * @param array     $filters The list of callbacks
+     */
     public function __construct(CsvReader $reader, array $filters)
     {
         $this->filters = $filters;
@@ -16,9 +53,11 @@ class FilteredIterator extends FilterIterator
     }
 
     /**
-     * This isnt working
-     * @todo as a solution to this, return a new ReaderFilter($this) from
-     * $reader->filter()
+     * Run filters against each row.
+     * Loop through all of the callback functions, and if any of them fail, do
+     * not include this row in the iteration.
+     *
+     * @return boolean
      */
     public function accept()
     {
