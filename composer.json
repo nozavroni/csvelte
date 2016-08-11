@@ -1,6 +1,6 @@
 {
-    "name": "lukev/csvelte",
-    "description": "Slender, elegant CSV for PHP5.6+",
+    "name": "nozavroni/csvelte",
+    "description": "Slender, elegant CSV for PHP",
     "type": "library",
     "keywords": ["CSV", "PHP", "PHP5", "CSVW", "data-interchange", "JSON", "CSV Schema", "CSV Validation", "CSV Dialect", "Excel", "Tabular Data", "RFC 4180"],
     "homepage": "https://deni-zen.github.io/csvelte/",
