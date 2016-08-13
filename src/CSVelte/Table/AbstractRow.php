@@ -1,4 +1,16 @@
-<?php namespace CSVelte\Table;
+<?php
+/**
+ * CSVelte: Slender, elegant CSV for PHP
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
+ *
+ * @version   v0.1
+ * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ */
+namespace CSVelte\Table;
 
 use \Iterator;
 use \Countable;
@@ -11,19 +23,9 @@ use CSVelte\Exception\ImmutableException;
  * Table row abstract base class
  * Represents a row of tabular data (represented by CSVelte\Table\Data objects)
  *
- * @package    CSVelte
+ * @package CSVelte
  * @subpackage CSVelte\Table
- * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author     Luke Visinoni <luke.visinoni@gmail.com>
- * @todo       I had originally envisioned (and wrote) this class as only a Row
- *     class to be used by a Reader object. And I had intended on making rows and
- *     data/columns immutable. But seeing as I will now be using it for both Readers
- *     *and* writers, and anywhere else it may be needed, I'm not as sure about
- *     that idea. Although I guess now that I think about it, even when I'm
- *     writing a "row", and I have to add quotes and escape characters and what-
- *     ever else, that will all happen as a result of "rendering" a row. The
- *     actual data contained within it doesn't have to change at all and probably
- *     shouldn't. Something to think about...
+ * @since v0.1
  * @todo On all of the ArrayAccess methods, the docblocks say that $offset can be
  *     either an integer offset or a string index, but that isn't true, they must
  *     be an integer offset. Fix docblocks.
@@ -65,12 +67,9 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      *
      * @param array An array (or anything that looks like one) of data (columns)
      * @param CSVelte\Flavor
-     * @return void
      * @access public
      * @todo This doesn't really need to be passed $flavor
      * @todo Look into SplFixedArray for csv sources w/out a header row.
-     * @see The docblock for the flavor property explains why I want to get rid
-     *      of the second parameter being passed to this object.
      */
     public function __construct(array $columns, Flavor $flavor = null)
     {
@@ -238,7 +237,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        // $this->columns[$offset] = $value;
         // columns are immutable, cannot be set
         $this->raiseImmutableException();
     }
@@ -254,8 +252,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function offsetUnset($offset)
     {
-        // $this->assertOffsetExists($offset);
-        // unset($this->columns[$offset]);
         $this->raiseImmutableException();
     }
 

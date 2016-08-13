@@ -11,7 +11,7 @@ CSVelte requires at least PHP5.3
 
 ### Installation
 
-#### With Composer 
+#### With Composer
 
 To install using composer, just use the following command. That's it. Happy coding.
 
@@ -62,7 +62,7 @@ $flvr = new Flavor(array(
 $reader = CSVelte::reader('./data/products.csv', $flvr);
 ```
 
-### Reading the header row 
+### Reading the header row
 
 CSV files can contain a header row as the first row in the file, but CSV as a format doesn't have a native mechanism for specifying metadata such as whether or not a header row is included. CSVelte's autodetect mechanism will do its best to determine whether or not there is a header row, but if you like, you can specify this using the flavor object by setting the "header" attribute to "true". If the flavor's header attribute is set to true, the header row will be skipped when iterating with foreach and rows can then be referenced by their column header. For example:
 
@@ -71,7 +71,7 @@ CSV files can contain a header row as the first row in the file, but CSV as a fo
 $flavor = new CSVelte\Flavor(array('header' => true));
 $reader = CSVelte::reader('./data/products.csv', $flavor);
 foreach ($reader as $line_no => $row) {
-    // now you can do this... 
+    // now you can do this...
     $product = $row['name'];
     $price = $row['price'];
 }
@@ -79,7 +79,7 @@ foreach ($reader as $line_no => $row) {
 
 ## Writing CSV data
 
-Writing CSV data to a local file is made super easy by CSVelte as well. In fact, the process looks pretty similar to reading CSV data. To write a CSV file, simply pass the name of the file you want to write to CSVelte::writer() and it will return a CSVelte\Writer object for that file (the file will be created if it doesn't exist). You can then use this object to write as many rows of CSV data as you like. By default, CSVelte\Writer will output data in the flavor of CSV specified by <a href="https://tools.ietf.org/html/rfc4180">RFC 4180</a> (Excel's version of CSV). 
+Writing CSV data to a local file is made super easy by CSVelte as well. In fact, the process looks pretty similar to reading CSV data. To write a CSV file, simply pass the name of the file you want to write to CSVelte::writer() and it will return a CSVelte\Writer object for that file (the file will be created if it doesn't exist). You can then use this object to write as many rows of CSV data as you like. By default, CSVelte\Writer will output data in the flavor of CSV specified by <a href="https://tools.ietf.org/html/rfc4180">RFC 4180</a> (Excel's version of CSV).
 
 ```php
 <?php
@@ -87,11 +87,11 @@ $writer = CSVelte::writer('./reports/2016-04-23.csv');
 $writer->writeRow(array('colbert', 'for', 'prez', '2020'));
 ```
 
-Anything iterable can be passed to writeRow or writeRows. And writeRows just calls writeRow repeadedly, meaning that if its an iterable of iterables, you can pass it to writeRows. Just make sure that each iteration has the same number of elements. 
+Anything iterable can be passed to writeRow or writeRows. And writeRows just calls writeRow repeadedly, meaning that if its an iterable of iterables, you can pass it to writeRows. Just make sure that each iteration has the same number of elements.
 
 ### Writing other flavors of CSV
 
-You can tell the writer object to write out different flavors of CSV (using tabs instead of commas or backslash instead of two double quotes, etc.) by passing it a CSVelte\Flavor object, configured to your particular flavor of CSV. 
+You can tell the writer object to write out different flavors of CSV (using tabs instead of commas or backslash instead of two double quotes, etc.) by passing it a CSVelte\Flavor object, configured to your particular flavor of CSV.
 
 ```php
 <?php
@@ -122,11 +122,17 @@ $writer->writeRow(array(1,'PNUL1937u','Some Product', 'A product that does stuff
 // ...etc
 ```
 
-*Note:* Just be careful not to call setHeaderRow _after_ any data has been written to the output file, as it will result in an exception. Also, if you're calling setHeaderRow() and the resulting file doesn't contain your header row, make sure the flavor object has its "header" attribute set to "true". 
+*Note:* Just be careful not to call setHeaderRow _after_ any data has been written to the output file, as it will result in an exception. Also, if you're calling setHeaderRow() and the resulting file doesn't contain your header row, make sure the flavor object has its "header" attribute set to "true".
 
 ## Learn More
 
-Head on over to the [documentation site](https://deni-zen.github.io/csvelte/documentation/) for instructions on reading and writing CSV files, auto-detecting CSV format, and more. You can also peruse the [API documentation](https://deni-zen.github.io/csvelte/apidocs/) to discover all kinds of neato features I don't have time to fully document.
+### Official Documentation
+
+Head on over to the [documentation site](http://csvelte.phpcsv.com/) for instructions on reading and writing CSV files, auto-detecting CSV format, and more. You can also peruse the [API documentation](http://csvelte.phpcsv.com/apidocs/index.html) to discover all kinds of neato features I don't have time to fully document.
+
+### Mailing List
+
+For questions and in-depth discussion of CSVelte and CSV on the web, join the [mailing list](https://groups.google.com/forum/#!forum/csvelte-users).
 
 ## Contribute
 
@@ -138,7 +144,7 @@ CSVelte is also free as in speach. It is licensed under the MIT license, meaning
 
 ## About the author
 
-CSVelte was designed and developed by [Luke Visinoni](https://github.com/deni-zen). Feel free to [drop me a line](mailto:luke.visinoni@gmail.com) if you want to tell me how great it is or even if you want to tell me it's an abomination and that I should be shot. I'd love to hear from you either way! 
+CSVelte was designed and developed by [Luke Visinoni](https://github.com/deni-zen). Feel free to [drop me a line](mailto:luke.visinoni@gmail.com) if you want to tell me how great it is or even if you want to tell me it's an abomination and that I should be shot. I'd love to hear from you either way!
 
 ## Credits and Special Thanks
 
@@ -146,4 +152,4 @@ I would just like to thank Pádraic Brady and anybody else working on the Mocker
 
 I would also like to thank the small, tight-knit community of developers at the <a href="http://devnetwork.net/">PHP Developer's Network Forums</a>. I honestly don't know where I'd be without those guys. They taught me everything I know!
 
-Finally, I'd like to thank both the members of the [CSV on the Web Working Group](https://www.w3.org/2013/csvw/wiki/Main_Page) as well as the authors of [Python PEP #305](https://www.python.org/dev/peps/pep-0305/), which was actually the inspiration for the first permutation of this library (PHP CSV Utilities) almost a decade ago. 
+Finally, I'd like to thank both the members of the [CSV on the Web Working Group](https://www.w3.org/2013/csvw/wiki/Main_Page) as well as the authors of [Python PEP #305](https://www.python.org/dev/peps/pep-0305/), which was actually the inspiration for the first permutation of this library (PHP CSV Utilities) almost a decade ago.

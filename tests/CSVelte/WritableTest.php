@@ -57,4 +57,12 @@ class WritableTest extends TestCase
         $data = "this,is,some,data\r\nand,this,is,more\r\nand,so,is,this\r\n";
         $this->assertEquals(strlen($data), $file->write($data));
     }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testInstantiateInvalidFileThrowsException()
+    {
+        $file = new File('./foo/bar.biz');
+    }
 }
