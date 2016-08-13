@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Trait CSVelte\Traits\HandlesQuotedLineTerminators | CSVelte API Level Documentation</title>
+
+	<link rel="stylesheet" href="resources/bootstrap.min.css?973e37a8502921d56bc02bb55321f45b072b6f71">
+	<link rel="stylesheet" href="resources/style.css?49f43d3208c5d7e33fa16d36107a345bf11cc00d">
+
+</head>
+
+<body>
+	<nav id="navigation" class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="index.html" class="navbar-brand">CSVelte API Level Documentation</a>
+			</div>
+			<div class="collapse navbar-collapse">
+
+                <form id="search" class="navbar-form navbar-left" role="search">
+                    <input type="hidden" name="cx" value="">
+                    <input type="hidden" name="ie" value="UTF-8">
+                    <div class="form-group">
+                        <input type="text" name="q" class="search-query form-control" placeholder="Search">
+					</div>
+				</form>
+
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="namespace-CSVelte.Traits.html" title="Summary of CSVelte\Traits"><span>Namespace</span></a>
+					</li>
+					<li class="active">
+<span>Class</span>					</li>
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+					</li>
+
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="-API-documentation.zip" title="Download documentation as ZIP archive"><span>Download</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="left">
+	<div id="menu">
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+					<li class="active">
+						<a href="namespace-CSVelte.html">
+							CSVelte<span></span>
+						</a>
+							<ul>
+					<li>
+						<a href="namespace-CSVelte.Contract.html">
+							Contract						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Exception.html">
+							Exception						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Flavor.html">
+							Flavor						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Input.html">
+							Input						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Output.html">
+							Output						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Table.html">
+							Table						</a>
+							</li>
+					<li class="active">
+						<a href="namespace-CSVelte.Traits.html">
+							Traits						</a>
+							</li>
+								</ul></li>
+			</ul>
+		</div>
+
+
+		<div id="elements">
+
+
+			<h3>Traits</h3>
+			<ul>
+				<li class="active"><a href="class-CSVelte.Traits.HandlesQuotedLineTerminators.html">HandlesQuotedLineTerminators</a></li>
+				<li><a href="class-CSVelte.Traits.StreamIO.html">StreamIO</a></li>
+			</ul>
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+	<div id="rightInner">
+<div id="content" class="class">
+	<h1>Trait HandlesQuotedLineTerminators</h1>
+
+
+	<div class="description">
+	<p>Handle line terminators that fall within a quoted string
+When line terminators fall within a quoted string, they should be fead into
+the column just like any other character, rather than starting a new row of
+CSV data. In order for a reader to be able to handle newlines in this way, it
+must implement this trait.</p>
+	</div>
+
+
+
+
+
+
+
+	<div>
+		<h3>Direct Known Users</h3>
+		<p class="elementList">
+			<code><a href="class-CSVelte.Input.Stream.html">CSVelte\Input\Stream</a></code>
+		</p>
+	</div>
+
+	<div>
+		<h3>Indirect Known Users</h3>
+		<p class="elementList">
+			<code><a href="class-CSVelte.Input.File.html">CSVelte\Input\File</a></code>, 
+			<code><a href="class-CSVelte.Input.SeekableStream.html">CSVelte\Input\SeekableStream</a></code>, 
+			<code><a href="class-CSVelte.Input.String.html">CSVelte\Input\String</a></code>
+		</p>
+	</div>
+
+	<div class="alert alert-info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-CSVelte.html">CSVelte</a>\<a href="namespace-CSVelte.Traits.html">Traits</a><br>
+		<b>Package:</b> CSVelte<br>
+
+				<b>Copyright:</b>
+				(c) 2016, Luke Visinoni <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;">&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;</a><br>
+				<b>Author:</b>
+				Luke Visinoni <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;">&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;</a><br>
+				<b>Note:</b>
+				<p>Add this trait to a CSVelte\Input class to be able to read mult-line
+           CSV records properly.</p><br>
+			<b>Located at</b> <a href="source-class-CSVelte.Traits.HandlesQuotedLineTerminators.html#17-109" title="Go to source code">CSVelte/Traits/HandlesQuotedLineTerminators.php</a>
+		<br>
+	</div>
+
+
+
+		<div class="panel panel-default">
+			<div class="panel-heading"><h2>Methods summary</h2></div>
+			<table class="summary table table-bordered table-striped methods" id="methods">
+		<tr data-order="readLine" id="_readLine">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_readLine">#</a>
+			<code><a href="source-class-CSVelte.Traits.HandlesQuotedLineTerminators.html#42-66" title="Go to source code">readLine</a>( <span>integer <var>$max</var> = <span class="php-keyword1">null</span></span>, <span>char <var>$eol</var> = PHP_EOL</span>, <span> <var>$quoteChar</var> = <span class="php-quote">'&quot;'</span></span>, <span> <var>$escapeChar</var> = <span class="php-quote">'\\'</span></span> )</code>
+
+			<div class="description short">
+				<p>Read single line from CSV data source (stream, file, etc.), taking into
+account CSV's de-facto quoting rules with respect to designated line
+terminator character when they fall within quoted strings.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Read single line from CSV data source (stream, file, etc.), taking into
+account CSV's de-facto quoting rules with respect to designated line
+terminator character when they fall within quoted strings.</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$max</var></dt>
+						<dd></dd>
+						<dt><var>$eol</var></dt>
+						<dd></dd>
+						<dt><var>$quoteChar</var></dt>
+						<dd></dd>
+						<dt><var>$escapeChar</var></dt>
+						<dd></dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string
+					</div>
+
+
+					<h4>See</h4>
+					<div class="list">
+							README file for more about CSV de-facto standard<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+			</table>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+</div>
+	</div>
+
+	<div id="footer">
+		CSVelte API Level Documentation API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

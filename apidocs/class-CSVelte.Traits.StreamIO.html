@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Trait CSVelte\Traits\StreamIO | CSVelte API Level Documentation</title>
+
+	<link rel="stylesheet" href="resources/bootstrap.min.css?973e37a8502921d56bc02bb55321f45b072b6f71">
+	<link rel="stylesheet" href="resources/style.css?49f43d3208c5d7e33fa16d36107a345bf11cc00d">
+
+</head>
+
+<body>
+	<nav id="navigation" class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="index.html" class="navbar-brand">CSVelte API Level Documentation</a>
+			</div>
+			<div class="collapse navbar-collapse">
+
+                <form id="search" class="navbar-form navbar-left" role="search">
+                    <input type="hidden" name="cx" value="">
+                    <input type="hidden" name="ie" value="UTF-8">
+                    <div class="form-group">
+                        <input type="text" name="q" class="search-query form-control" placeholder="Search">
+					</div>
+				</form>
+
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="namespace-CSVelte.Traits.html" title="Summary of CSVelte\Traits"><span>Namespace</span></a>
+					</li>
+					<li class="active">
+<span>Class</span>					</li>
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+					</li>
+
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="-API-documentation.zip" title="Download documentation as ZIP archive"><span>Download</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="left">
+	<div id="menu">
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+					<li class="active">
+						<a href="namespace-CSVelte.html">
+							CSVelte<span></span>
+						</a>
+							<ul>
+					<li>
+						<a href="namespace-CSVelte.Contract.html">
+							Contract						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Exception.html">
+							Exception						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Flavor.html">
+							Flavor						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Input.html">
+							Input						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Output.html">
+							Output						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Table.html">
+							Table						</a>
+							</li>
+					<li class="active">
+						<a href="namespace-CSVelte.Traits.html">
+							Traits						</a>
+							</li>
+								</ul></li>
+			</ul>
+		</div>
+
+
+		<div id="elements">
+
+
+			<h3>Traits</h3>
+			<ul>
+				<li><a href="class-CSVelte.Traits.HandlesQuotedLineTerminators.html">HandlesQuotedLineTerminators</a></li>
+				<li class="active"><a href="class-CSVelte.Traits.StreamIO.html">StreamIO</a></li>
+			</ul>
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+	<div id="rightInner">
+<div id="content" class="class">
+	<h1>Trait StreamIO</h1>
+
+
+
+
+
+
+
+
+
+	<div>
+		<h3>Direct Known Users</h3>
+		<p class="elementList">
+			<code><a href="class-CSVelte.Input.Stream.html">CSVelte\Input\Stream</a></code>, 
+			<code><a href="class-CSVelte.Output.Stream.html">CSVelte\Output\Stream</a></code>
+		</p>
+	</div>
+
+	<div>
+		<h3>Indirect Known Users</h3>
+		<p class="elementList">
+			<code><a href="class-CSVelte.Input.File.html">CSVelte\Input\File</a></code>, 
+			<code><a href="class-CSVelte.Input.SeekableStream.html">CSVelte\Input\SeekableStream</a></code>, 
+			<code><a href="class-CSVelte.Input.String.html">CSVelte\Input\String</a></code>, 
+			<code><a href="class-CSVelte.Output.File.html">CSVelte\Output\File</a></code>
+		</p>
+	</div>
+
+	<div class="alert alert-info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-CSVelte.html">CSVelte</a>\<a href="namespace-CSVelte.Traits.html">Traits</a><br>
+		
+
+			<b>Located at</b> <a href="source-class-CSVelte.Traits.StreamIO.html#18-152" title="Go to source code">CSVelte/Traits/StreamIO.php</a>
+		<br>
+	</div>
+
+
+
+		<div class="panel panel-default">
+			<div class="panel-heading"><h2>Methods summary</h2></div>
+			<table class="summary table table-bordered table-striped methods" id="methods">
+		<tr data-order="__construct" id="___construct">
+
+			<td class="attributes"><code>
+				 public 
+				
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#___construct">#</a>
+			<code><a href="source-class-CSVelte.Traits.StreamIO.html#35-55" title="Go to source code">__construct</a>( <span>stream|string <var>$stream</var></span> )</code>
+
+			<div class="description short">
+				<p>Class constructor</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Class constructor</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$stream</var></dt>
+						<dd>a valid stream handle (opened with fopen or similar function) OR a valid stream URI</dd>
+					</dl></div>
+
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="__destruct" id="___destruct">
+
+			<td class="attributes"><code>
+				 public 
+				
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#___destruct">#</a>
+			<code><a href="source-class-CSVelte.Traits.StreamIO.html#57-66" title="Go to source code">__destruct</a>( )</code>
+
+			<div class="description short">
+				<p>Class destructor</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Class destructor</p>
+
+
+
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="close" id="_close">
+
+			<td class="attributes"><code>
+				 public 
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_close">#</a>
+			<code><a href="source-class-CSVelte.Traits.StreamIO.html#68-83" title="Go to source code">close</a>( )</code>
+
+			<div class="description short">
+				<p>Close the stream
+Close the stream resource and release any other resources opened by this
+stream object.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Close the stream
+Close the stream resource and release any other resources opened by this
+stream object.</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="getStreamResource" id="_getStreamResource">
+
+			<td class="attributes"><code>
+				 public 
+				resource
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_getStreamResource">#</a>
+			<code><a href="source-class-CSVelte.Traits.StreamIO.html#85-94" title="Go to source code">getStreamResource</a>( )</code>
+
+			<div class="description short">
+				<p>Retrieve underlying stream resource</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Retrieve underlying stream resource</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						resource
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="position" id="_position">
+
+			<td class="attributes"><code>
+				 public 
+				integer
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_position">#</a>
+			<code><a href="source-class-CSVelte.Traits.StreamIO.html#96-105" title="Go to source code">position</a>( )</code>
+
+			<div class="description short">
+				<p>Get the current position of the pointer</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Get the current position of the pointer</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						integer<br>Position of pointer within source
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="name" id="_name">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_name">#</a>
+			<code><a href="source-class-CSVelte.Traits.StreamIO.html#121-132" title="Go to source code">name</a>( )</code>
+
+			<div class="description short">
+				<p>Retrieve the name of this stream. If stream is a file, it will return the
+file's name. If it's some other type of stream, it's hard to say what,
+exactly, the name will be.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Retrieve the name of this stream. If stream is a file, it will return the
+file's name. If it's some other type of stream, it's hard to say what,
+exactly, the name will be.</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						string<br>The name of the stream resource
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="path" id="_path">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_path">#</a>
+			<code><a href="source-class-CSVelte.Traits.StreamIO.html#134-149" title="Go to source code">path</a>( )</code>
+
+			<div class="description short">
+				<p>Retrieve the dirname part of the stream name</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Retrieve the dirname part of the stream name</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						string<br>The dirname of this stream's path
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+			</table>
+		</div>
+
+
+
+
+
+
+
+
+
+
+
+</div>
+	</div>
+
+	<div id="footer">
+		CSVelte API Level Documentation API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

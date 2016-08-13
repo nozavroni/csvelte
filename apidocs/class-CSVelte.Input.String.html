@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class CSVelte\Input\String | CSVelte API Level Documentation</title>
+
+	<link rel="stylesheet" href="resources/bootstrap.min.css?973e37a8502921d56bc02bb55321f45b072b6f71">
+	<link rel="stylesheet" href="resources/style.css?49f43d3208c5d7e33fa16d36107a345bf11cc00d">
+
+</head>
+
+<body>
+	<nav id="navigation" class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="index.html" class="navbar-brand">CSVelte API Level Documentation</a>
+			</div>
+			<div class="collapse navbar-collapse">
+
+                <form id="search" class="navbar-form navbar-left" role="search">
+                    <input type="hidden" name="cx" value="">
+                    <input type="hidden" name="ie" value="UTF-8">
+                    <div class="form-group">
+                        <input type="text" name="q" class="search-query form-control" placeholder="Search">
+					</div>
+				</form>
+
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="namespace-CSVelte.Input.html" title="Summary of CSVelte\Input"><span>Namespace</span></a>
+					</li>
+					<li class="active">
+<span>Class</span>					</li>
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+					</li>
+
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="-API-documentation.zip" title="Download documentation as ZIP archive"><span>Download</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="left">
+	<div id="menu">
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+					<li class="active">
+						<a href="namespace-CSVelte.html">
+							CSVelte<span></span>
+						</a>
+							<ul>
+					<li>
+						<a href="namespace-CSVelte.Contract.html">
+							Contract						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Exception.html">
+							Exception						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Flavor.html">
+							Flavor						</a>
+							</li>
+					<li class="active">
+						<a href="namespace-CSVelte.Input.html">
+							Input						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Output.html">
+							Output						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Table.html">
+							Table						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Traits.html">
+							Traits						</a>
+							</li>
+								</ul></li>
+			</ul>
+		</div>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-CSVelte.Input.File.html">File</a></li>
+				<li><a href="class-CSVelte.Input.SeekableStream.html">SeekableStream</a></li>
+				<li><a href="class-CSVelte.Input.Stream.html">Stream</a></li>
+				<li class="active"><a href="class-CSVelte.Input.String.html">String</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+	<div id="rightInner">
+<div id="content" class="class">
+	<h1>Class String</h1>
+
+
+	<div class="description">
+	<p>CSVelte\Input\string
+Allows Reader to read from any arbitrary string of CSV data by temporarily
+placing the string into memory and reading from there.g</p>
+	</div>
+
+	<dl class="tree well">
+		<dd style="padding-left:0px">
+			<a href="class-CSVelte.Input.Stream.html"><span>CSVelte\Input\Stream</span></a>
+			
+			 implements 
+				<a href="class-CSVelte.Contract.Readable.html"><span>CSVelte\Contract\Readable</span></a>
+			
+			 uses 
+					<a href="class-CSVelte.Traits.HandlesQuotedLineTerminators.html"><span>CSVelte\Traits\HandlesQuotedLineTerminators</span></a>, 
+			
+					<a href="class-CSVelte.Traits.StreamIO.html"><span>CSVelte\Traits\StreamIO</span></a>
+			
+		</dd>
+		<dd style="padding-left:30px">
+			<img src="resources/inherit.png" alt="Extended by">
+			<a href="class-CSVelte.Input.SeekableStream.html"><span>CSVelte\Input\SeekableStream</span></a>
+			
+			 implements 
+				<a href="class-CSVelte.Contract.Seekable.html"><span>CSVelte\Contract\Seekable</span></a>
+			
+			
+		</dd>
+		<dd style="padding-left:60px">
+			<img src="resources/inherit.png" alt="Extended by">
+<b><span>CSVelte\Input\String</span></b>			
+			
+			
+		</dd>
+	</dl>
+
+
+
+
+
+
+
+
+	<div class="alert alert-info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-CSVelte.html">CSVelte</a>\<a href="namespace-CSVelte.Input.html">Input</a><br>
+		<b>Package:</b> CSVelte\Reader<br>
+
+				<b>Copyright:</b>
+				(c) 2016, Luke Visinoni <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;">&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;</a><br>
+				<b>Author:</b>
+				Luke Visinoni <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;">&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;</a><br>
+			<b>Located at</b> <a href="source-class-CSVelte.Input.String.html#18-50" title="Go to source code">CSVelte/Input/String.php</a>
+		<br>
+	</div>
+
+
+
+		<div class="panel panel-default">
+			<div class="panel-heading"><h2>Methods summary</h2></div>
+			<table class="summary table table-bordered table-striped methods" id="methods">
+		<tr data-order="__construct" id="___construct">
+
+			<td class="attributes"><code>
+				 public 
+				
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#___construct">#</a>
+			<code><a href="source-class-CSVelte.Input.String.html#31-34" title="Go to source code">__construct</a>( <span>stream|string <var>$string</var></span> )</code>
+
+			<div class="description short">
+				<p>Class constructor</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Class constructor</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$string</var></dt>
+						<dd>a valid stream handle (opened with fopen or similar function) OR a valid stream URI</dd>
+					</dl></div>
+
+
+
+
+					<h4>Overrides</h4>
+					<div class="list"><code><a href="class-CSVelte.Input.Stream.html#___construct">CSVelte\Input\Stream::__construct</a></code></div>
+
+			</div>
+			</div></td>
+		</tr>
+			</table>
+		</div>
+
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods inherited from <a href="class-CSVelte.Input.SeekableStream.html#methods">CSVelte\Input\SeekableStream</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Input.SeekableStream.html#_seek">seek()</a></code>
+			</p>
+		</div>
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods inherited from <a href="class-CSVelte.Input.Stream.html#methods">CSVelte\Input\Stream</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Input.Stream.html#_isEof">isEof()</a></code>, 
+				<code><a href="class-CSVelte.Input.Stream.html#_nextLine">nextLine()</a></code>, 
+				<code><a href="class-CSVelte.Input.Stream.html#_read">read()</a></code>, 
+				<code><a href="class-CSVelte.Input.Stream.html#_rewind">rewind()</a></code>
+			</p>
+		</div>
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods inherited from <a href="class-CSVelte.Contract.Readable.html#methods">CSVelte\Contract\Readable</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Contract.Readable.html#_readLine">readLine()</a></code>
+			</p>
+		</div>
+
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods used from <a href="class-CSVelte.Traits.HandlesQuotedLineTerminators.html#methods">CSVelte\Traits\HandlesQuotedLineTerminators</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Traits.HandlesQuotedLineTerminators.html#_readLine">readLine()</a></code>
+			</p>
+		</div>
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods used from <a href="class-CSVelte.Traits.StreamIO.html#methods">CSVelte\Traits\StreamIO</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Traits.StreamIO.html#___destruct">__destruct()</a></code>, 
+				<code><a href="class-CSVelte.Traits.StreamIO.html#_close">close()</a></code>, 
+				<code><a href="class-CSVelte.Traits.StreamIO.html#_getStreamResource">getStreamResource()</a></code>, 
+				<code><a href="class-CSVelte.Traits.StreamIO.html#_name">name()</a></code>, 
+				<code><a href="class-CSVelte.Traits.StreamIO.html#_path">path()</a></code>, 
+				<code><a href="class-CSVelte.Traits.StreamIO.html#_position">position()</a></code>
+			</p>
+		</div>
+
+
+
+
+
+
+		<div class="panel panel-default">
+            <div class="panel-heading"><h2>Constants summary</h2></div>
+			<table class="summary table table-bordered table-striped constants" id="constants">
+			<tr data-order="STREAM_MEMORY" id="STREAM_MEMORY">
+
+				<td class="attributes"><code>string</code></td>
+				<td class="name">
+					<code>
+						<a href="source-class-CSVelte.Input.String.html#29" title="Go to source code"><b>STREAM_MEMORY</b></a>
+					</code>
+
+					<div class="description short">
+						
+					</div>
+
+					<div class="description detailed hidden">
+						
+
+					</div>
+				</td>
+				<td class="value">
+					<div>
+						<a href="#STREAM_MEMORY" class="anchor">#</a>
+						<code><span class="php-quote">'php://memory'</span></code>
+					</div>
+				</td>
+			</tr>
+			</table>
+		</div>
+
+		<div class="panel panel-default">
+            <div class="panel-heading"><h3>Constants inherited from <a href="class-CSVelte.Input.Stream.html#constants">CSVelte\Input\Stream</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Input.Stream.html#MAX_LINE_LENGTH"><b>MAX_LINE_LENGTH</b></a></code>, 
+				<code><a href="class-CSVelte.Input.Stream.html#RESOURCE_TYPE"><b>RESOURCE_TYPE</b></a></code>
+			</p>
+		</div>
+
+
+
+</div>
+	</div>
+
+	<div id="footer">
+		CSVelte API Level Documentation API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>
