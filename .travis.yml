@@ -14,6 +14,7 @@ sudo: false
 cache:
   directories:
     - $HOME/.composer/cache
+    - $HOME/sampledata
 
 before_install:
     - composer self-update
@@ -24,17 +25,14 @@ install:
 
 before_script:
     - composer install
-    - wget https://s3-us-west-2.amazonaws.com/csvelte/csvsampledata.tar.gz
-    - tar xvfz csvsampledata.tar.gz -C tests/
-    - echo 'date.timezone = "America/Los_Angeles"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+    - ./travis/before_script.sh
 
-script:
-    - ./travis/script.sh
+script: ./travis/script.sh
 
-after_script:
-    - ./travis/after_script.sh
+after_script: ./travis/after_script.sh
 
 notifications:
   email:
     - luke.visinoni@gmail.com
     - luke@visinoni.net
+    - csvelte-users@googlegroups.com
