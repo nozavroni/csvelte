@@ -1,7 +1,7 @@
 <?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
- * 
+ *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
@@ -22,24 +22,15 @@ use CSVelte\Exception\EndOfFileException;
 use CSVelte\Reader\FilteredIterator as FilteredReader;
 
 /**
- * CSVelte
- * A PHP CSV utility library (formerly PHP CSV Utilities).
+ * CSV Reader
  *
- * @package   CSVelte
- * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @todo Is there ever a use case where one needs to simply iterate over every
- *     datum within a CSV data source, ignoring rows almost completely? It would
- *     just iterate over a row until it got to the end of the row, at which point
- *     it would just start over at the beginning of the next row? One continuous
- *     foreach over every datum in the source. IF so, check out RecursiveIterator
- * @todo Use the abstract SPL class FilterIterator (extend it) for a cleaner
- *     interface for eliminating the header row from being iterated.
+ * Reads CSV data from any object that implements CSVelte\Contract\Readable.
+ *
+ * @package CSVelte
+ * @subpackage Reader
+ * @since v0.1
  * @todo Also, is there any way to do some kind of caching or something? Probably
  *     not but if you could that would be a cool feature...
- * @todo Check out http://php.net/manual/en/class.splfileobject.php and see what info
- *     you might be able to gleen from that. Apparently it has some CSV methods. Can
- *     I use that class/object or can anything be learned from it?
  */
 class Reader implements \Iterator
 {
@@ -60,7 +51,7 @@ class Reader implements \Iterator
     protected $flavor;
 
     /**
-     * @var CSVelte\Reader\Row Row currently loaded into memory
+     * @var CSVelte\Table\AbstractRow Row currently loaded into memory
      */
     protected $current;
 
@@ -70,7 +61,7 @@ class Reader implements \Iterator
     protected $line = 0;
 
     /**
-     * @var CSVelte\Reader\HeaderRow The header row (if any)
+     * @var CSVelte\Table\HeaderRow The header row (if any)
      */
     protected $header;
 
@@ -80,23 +71,17 @@ class Reader implements \Iterator
     protected $filters = array();
 
     /**
-     * Class constructor
-     * @param CSVelte\Contract\Readable The source of our CSV data
-     * @param CSVelte\Flavor The "flavor" or format specification object
-     * @return void
-     * @access public
-     * @todo Taster is kind of a mess. It's not particularly easy to work with.
-     *     Look at all this code I needed just to use it. Stupid. Time for a
-     *     refactor... Maybe pass an argument to the lick() method to have it
-     *     run lickHeader and set that value within the returned flavor's
-     *     properties rather than all this silliness. Not to mention the oddness
-     *     of setting a source in its constructor and then, inexplicably, still
-     *     asking for a data sample in lickHeader. Very poor design. SMH at myself.
+     * Reader Constructor.
+     * Initializes a reader object using an input source and optionally a flavor
+     *
+     * @param \CSVelte\Contract\Readable The source of our CSV data
+     * @param \CSVelte\Flavor The "flavor" or format specification object
      */
     public function __construct(Readable $input, Flavor $flavor = null)
     {
         $this->source = $input;
         $taster = new Taster($this->source);
+        // @todo put this inside a try/catch
         if (is_null($flavor)) {
             $flavor = $taster->lick();
         }
@@ -139,26 +124,8 @@ class Reader implements \Iterator
         }
     }
 
-    // protected function loadNew()
-    // {
-    //     if (!$this->isLoaded()) {
-    //         try {
-    //             $lt = $this->getFlavor()->lineTerminator;
-    //             $line = $this->source->readLine(null, $lt);
-    //             $parsed = $this->parse($line);
-    //             $this->line++;
-    //             if ($this->isHeaderLine()) {
-    //                 $row = new HeaderRow($parsed);
-    //             } else {
-    //                 $row = new Row($parsed);
-    //             }
-    //         } catch (EndOfFileException $e) {
-    //             $this->current = false;
-    //         }
-    //     }
-    // }
-
     /**
+     * Flavor Getter.
      * Retreive the "flavor" object being used by the reader
      *
      * @return CSVelte\Flavor
@@ -170,6 +137,8 @@ class Reader implements \Iterator
     }
 
     /**
+     * Check if flavor object defines header
+     *
      * Determine whether or not the input source's CSV data contains a header
      * row or not. Unless you explicitly specify so within your Flavor object,
      * this method is a logical best guess. The CSV format does not
@@ -187,6 +156,8 @@ class Reader implements \Iterator
     }
 
     /**
+     * Temporarily replace special characters within a quoted string
+     *
      * Replace all instances of newlines and whatever character you specify (as
      * the delimiter) that are contained within quoted text. The replacements are
      * simply a special placeholder string. This is done so that I can use the
@@ -200,6 +171,7 @@ class Reader implements \Iterator
      * @param string Line terminator sequence
      * @return string The data with replacements performed
      * @access protected
+     * @internal
      * @todo I could probably pass in (maybe optionally) the newline character I
      *     want to replace as well. I'll do that if I need to.
      * @todo Create a regex class so you can do $regex->escape() rather than
@@ -214,6 +186,18 @@ class Reader implements \Iterator
         }, $data);
     }
 
+    /**
+     * Undo temporary special char replacements
+     *
+     * Replace the special character placeholders with the characters they
+     * originally substituted.
+     *
+     * @param string $data The data to undo replacements in
+     * @param string $delim The delimiter character
+     * @param string $eol The character or string of characters used to terminate lines
+     * @return string The data with placeholders replaced with original characters
+     * @internal
+     */
     protected function undoReplaceQuotedSpecialChars($data, $delim, $eol)
     {
         $replacements = array(self::PLACEHOLDER_DELIM => $delim, self::PLACEHOLDER_NEWLINE => $eol);
@@ -225,7 +209,11 @@ class Reader implements \Iterator
     }
 
     /**
-     * Remove quotes wrapping text
+     * Remove quotes wrapping text.
+     *
+     * @param string The data to unquote
+     * @return string The data with quotes stripped from the outside of it
+     * @internal
      */
     protected function unQuote($data)
     {
@@ -236,9 +224,10 @@ class Reader implements \Iterator
     }
 
     /**
-    * @todo This actually shouldn't even be necessary. Characters should be read
-    *     in one at a time and a quote that follows another should just be ignored
-    *     deeming this unnecessary.
+     * @internal
+     * @todo This actually shouldn't even be necessary. Characters should be read
+     *     in one at a time and a quote that follows another should just be ignored
+     *     deeming this unnecessary.
      */
     protected function unEscape($str, $esc, $quo)
     {
@@ -251,12 +240,7 @@ class Reader implements \Iterator
      * @param string A line of CSV data to parse
      * @return array An array of columns
      * @access protected
-     * @todo The Readable class needs to be smart enough to ignore quoted newline
-     *     characters. If a newline falls within quotes, it should be considered
-     *     part of the line rather than its terminator. Maybe I need to put the
-     *     replaceQuotedSpecialChars method into Utils so that I can use it all
-     *     over the place? Or... maybe write a stream wrapper or whatever that
-     *     does those replacements. That might be a good way to go...
+     * @internal
      */
     protected function parse($line)
     {
