@@ -21,6 +21,7 @@
         <file>tests/CSVelte/TableRowTest.php</file>
         <file>tests/CSVelte/UtilsTest.php</file>
         <file>tests/CSVelte/WriterTest.php</file>
+        <file>tests/CSVelte/WritableTest.php</file>
       </testsuite>
     </testsuites>
     <filter>
