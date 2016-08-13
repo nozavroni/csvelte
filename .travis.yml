@@ -14,10 +14,11 @@ sudo: false
 cache:
   directories:
     - $HOME/.composer/cache
-    - $HOME/sampledata
+    - $HOME/.data/cache
 
 before_install:
     - composer self-update
+    - ./travis/init.sh
 
 install:
     - export PATH="$HOME/.composer/vendor/bin:$PATH"
