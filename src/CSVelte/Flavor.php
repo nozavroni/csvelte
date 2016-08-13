@@ -27,6 +27,15 @@ use CSVelte\Exception\ImmutableException;
  * @package CSVelte
  * @subpackage Flavor
  * @since v0.1
+ * @property-read string $delimiter The delimiter character
+ * @property-read string $quoteChar The quoting character
+ * @property-read string $lineTerminator The character sequence used to terminate rows of data
+ * @property-read string $escapeChar The character used to escape quotes within a quoted string
+ *     Mutually exclusive to $doubleQuote
+ * @property-read bool $doubleQuote If true, quote characters will be escaped by preceding them
+ *     with another quote character. Mutually exclusive to $escapeChar
+ * @property-read string $quoteStyle One of four class constants that determine which cells are quoted
+ * @property-read bool $header If true, first row should be treated as a header row
  */
 class Flavor
 {
@@ -202,7 +211,6 @@ class Flavor
      */
     public function copy(array $attribs = array())
     {
-        // $attributes = array_merge(get_class_vars(self::class), get_object_vars($this));
         $attributes = get_object_vars($this);
         return new Flavor(array_merge($attributes, $attribs));
     }
@@ -235,7 +243,7 @@ class Flavor
      */
     public function __set($attr, $val)
     {
-        throw new ImmutableException("Cannot change attributes on an immutable object: " . self::class);
+        throw new ImmutableException("Cannot change attributes on an immutable object: " . self::class . "::\$" . $attr);
     }
 
 }
