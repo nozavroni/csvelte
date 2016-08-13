@@ -7,5 +7,3 @@ if [ ! -d $SAMPLEDATA_PATH ]; then
     tar xvfz csvsampledata.tar.gz -C $SAMPLEDATA_PATH
 fi
 echo 'date.timezone = "America/Los_Angeles"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-
-cp -R $SAMPLEDATA_PATH/files tests/files
