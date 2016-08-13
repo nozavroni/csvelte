@@ -14,11 +14,9 @@ sudo: false
 cache:
   directories:
     - $HOME/.composer/cache
-    - $HOME/.data/cache
 
 before_install:
     - composer self-update
-    - ./travis/init.sh
 
 install:
     - export PATH="$HOME/.composer/vendor/bin:$PATH"
@@ -35,5 +33,4 @@ after_script: ./travis/after_script.sh
 notifications:
   email:
     - luke.visinoni@gmail.com
-    - luke@visinoni.net
     - csvelte-users@googlegroups.com
