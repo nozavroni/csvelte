@@ -55,4 +55,23 @@ class AutoloaderTest extends TestCase
         $this->assertContains($realdir, $includepaths);
         $this->assertContains($fakedir, $includepaths);
     }
+
+    public function testLoadClassReturnsTrueIfClassExists()
+    {
+        $auto = new Autoloader;
+        $this->assertTrue($auto->load('CSVelte\Utils'));
+    }
+
+    public function testLoadClassReturnsFalseIfClassDoesntExistAtAll()
+    {
+        $auto = new Autoloader;
+        $this->assertFalse($auto->load('CSVelte\Foo'));
+    }
+
+    public function testLoadClassLoadsClassIfItHasntBeenLoaded()
+    {
+        $auto = new Autoloader;
+        $this->assertTrue($auto->load($classname = 'CSVelte\Table\Data\BooleanValue'));
+        $this->assertTrue(class_exists($classname));
+    }
 }
