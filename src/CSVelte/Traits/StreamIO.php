@@ -1,9 +1,9 @@
 <?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
- * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV 
- * standardization efforts, CSVelte was written in an effort to take all the 
- * suck out of working with CSV. 
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
  *
  * @version   v0.1
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
@@ -36,7 +36,6 @@ trait StreamIO {
      * Class constructor
      *
      * @param stream|string Either a valid stream handle (opened with fopen or similar function) OR a valid stream URI
-     * @return void
      * @access public
      */
     public function __construct($stream)

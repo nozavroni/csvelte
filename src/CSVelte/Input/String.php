@@ -1,9 +1,9 @@
 <?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
- * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV 
- * standardization efforts, CSVelte was written in an effort to take all the 
- * suck out of working with CSV. 
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
  *
  * @version   v0.1
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
@@ -32,12 +32,6 @@ class String extends SeekableStream
     {
         $this->remember($string);
     }
-    //
-    // public function __destruct()
-    // {
-    //     $this->forget();
-    //     parent::__destruct();
-    // }
 
     protected function remember($str)
     {
@@ -53,14 +47,4 @@ class String extends SeekableStream
         $this->rewind();
         $this->updateInfo();
     }
-
-    // protected function forget()
-    // {
-    //     if (false === fwrite($this->source, "")) {
-    //         // @todo throw custom exception
-    //         throw new \Exception('Cannot write to ' . $name);
-    //     }
-    //     $this->rewind();
-    //     $this->updateInfo();
-    // }
 }
