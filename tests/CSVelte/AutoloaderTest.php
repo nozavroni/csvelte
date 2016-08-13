@@ -71,7 +71,7 @@ class AutoloaderTest extends TestCase
     public function testLoadClassLoadsClassIfItHasntBeenLoaded()
     {
         $auto = new Autoloader;
-        $this->assertTrue($auto->load($classname = 'CSVelte\Table\Data\BooleanValue'));
+        $this->assertTrue($auto->load($classname = 'CSVelte\Table\Row'));
         $this->assertTrue(class_exists($classname));
     }
 }
