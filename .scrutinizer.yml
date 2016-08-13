@@ -4,6 +4,8 @@ filter:
     excluded_paths: [vendor/*, tests/*]
 before_commands:
     - 'composer install --prefer-source'
+    - 'wget https://s3-us-west-2.amazonaws.com/csvelte/csvsampledata.tar.gz'
+    - 'tar xvfz csvsampledata.tar.gz -C tests/'
 tools:
     external_code_coverage:
         timeout: 300
