@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
- * @internal 
+ * @internal
  */
 namespace CSVelte;
 /**
@@ -54,62 +54,6 @@ class Utils
         return $items;
     }
 
-   /**
-    * @todo Find where I'm using this... I don't see how it could be working
-    *     considering $arr isn't passed by reference and it doesn't return anything
-    * @note I commented this function out and then reran my tests and nothing
-    *     seemed to break so I'm assuming I wrote it for something I no longer
-    *     use. I've rewritten it below to repurpose it for something else. Leaving
-    *     this here for no in case something pops up
-    */
-    // public static function array_remove($arr, $item)
-    // {
-    //     $unset = null;
-    //     foreach ($arr as $key => $val) {
-    //         if ($item == $val) {
-    //             unset($arr[$key]);
-    //             return;
-    //         }
-    //     }
-    //     // @todo Not sure if this is the right exception
-    //     throw new \OutOfBoundsException("array_remove: cannot find item within array");
-    // }
-
-    /**
-     * Copy an array, leaving out specified key or value.
-     * I am fully aware that you can simply unset($array[$key]) to remove an elem
-     * from an array by key, but removing an item from an array by value is a tad
-     * trickier. Also, this function doesn't actually affect the array, it passes
-     * back a copy with the specified element removed. Unless otherwise specified
-     */
-    public static function array_remove(&$arr, $item, $bykey = false, $copy = true)
-    {
-        if ($copy) {
-            dd($arr, false, "arr");
-            $arrcopy = self::array_copy($arr);
-            dd($arr, false, "arr before"); dd($arrcopy, false, "arrcopy before");
-            unset($arr);
-            dd($arr, false, "arr after"); dd($arrcopy, false, "arrcopy after");
-        }
-        // foreach ($arr as $key => $val) {
-        //     if ($item == $val) {
-        //         unset($arr[$key]);
-        //         return;
-        //     }
-        // }
-        // // @todo Not sure if this is the right exception
-        // throw new \OutOfBoundsException("array_remove: cannot find item within array");
-    }
-
-    public static function array_copy(array $arr, $preserve_keys = true)
-    {
-        $copy = array();
-        foreach ($arr as $k => $v) {
-            $copy[$k] = $v;
-        }
-        return $copy;
-    }
-
     public static function average($arr)
     {
         if (!is_array($arr)) throw new \InvalidArgumentException('"average" function expected array, got ' . gettype($arr));
@@ -120,9 +64,7 @@ class Utils
     {
         $return = array();
         foreach ($arr as $key => $val) {
-            if (is_array($val)) {
-                $return[$key] = self::average($val);
-            }
+            $return[$key] = self::average($val);
         }
         return $return;
     }
@@ -142,9 +84,7 @@ class Utils
     {
         $return = array();
         foreach ($arr as $key => $val) {
-            if (is_array($val)) {
-                $return[$key] = self::mode($val);
-            }
+            $return[$key] = self::mode($val);
         }
         return $return;
     }
@@ -157,7 +97,4 @@ class Utils
         return join(array_map($callable, str_split($str)));
     }
 
-    // if (!function_exists('array_column')) {
-    //     throw new \Exception("Need to implement this");
-    // }
 }

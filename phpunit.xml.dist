@@ -19,6 +19,7 @@
         <file>tests/CSVelte/TasterTest.php</file>
         <file>tests/CSVelte/ReaderTest.php</file>
         <file>tests/CSVelte/TableRowTest.php</file>
+        <file>tests/CSVelte/UtilsTest.php</file>
         <file>tests/CSVelte/WriterTest.php</file>
       </testsuite>
     </testsuites>
