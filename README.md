@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/deni-zen/csvelte.svg?branch=master)](https://travis-ci.org/deni-zen/csvelte)
-[![Coverage Status](https://coveralls.io/repos/github/deni-zen/csvelte/badge.svg?branch=master)](https://coveralls.io/github/deni-zen/csvelte?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/deni-zen/csvelte/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/deni-zen/csvelte/?branch=master)
+[![Build Status](https://travis-ci.org/nozavroni/csvelte.svg?branch=master)](https://travis-ci.org/nozavroni/csvelte)
+[![Coverage Status](https://coveralls.io/repos/github/nozavroni/csvelte/badge.svg?branch=master)](https://coveralls.io/github/nozavroni/csvelte?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nozavroni/csvelte/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nozavroni/csvelte/?branch=master)
 
 ![screen shot 2016-07-13 at 10 18 42 am](https://cloud.githubusercontent.com/assets/17840996/16812744/5b92f468-48e3-11e6-9d2a-5c735b1596c6.png)
 
@@ -140,7 +140,7 @@ For questions and in-depth discussion of CSVelte and CSV on the web, join the [m
 
 ## Contribute
 
-CSVelte is a free (as in beer) library. I work on it in my spare time. If you like it, feel free to buy me a beer (you can PayPal me at luke.visinoni@gmail.com). Contributions will help me to keep pumping out new features and bug fixes and to, eventually, create a dedicated CSVelte website. Or, if you have an idea for a new feature or a bug report, feel free to [submit a pull request](https://github.com/deni-zen/csvelte/pulls).
+CSVelte is a free (as in beer) library. I work on it in my spare time. If you like it, feel free to buy me a beer (you can PayPal me at luke.visinoni@gmail.com). Contributions will help me to keep pumping out new features and bug fixes and to, eventually, create a dedicated CSVelte website. Or, if you have an idea for a new feature or a bug report, feel free to [submit a pull request](https://github.com/nozavroni/csvelte/pulls).
 
 ## License
 
@@ -148,7 +148,7 @@ CSVelte is also free as in speach. It is licensed under the MIT license, meaning
 
 ## About the author
 
-CSVelte was designed and developed by [Luke Visinoni](https://github.com/deni-zen). Feel free to [drop me a line](mailto:luke.visinoni@gmail.com) if you want to tell me how great it is or even if you want to tell me it's an abomination and that I should be shot. I'd love to hear from you either way!
+CSVelte was designed and developed by [Luke Visinoni](https://github.com/nozavroni). Feel free to [drop me a line](mailto:luke.visinoni@gmail.com) if you want to tell me how great it is or even if you want to tell me it's an abomination and that I should be shot. I'd love to hear from you either way!
 
 ## Credits and Special Thanks
 
