@@ -1,12 +1,13 @@
 <?php
-use PHPUnit\Framework\TestCase;
-use CSVelte\Output\Stream;
+
 use CSVelte\Output\File;
+use CSVelte\Output\Stream;
 use org\bovigo\vfs\vfsStream;
+use PHPUnit\Framework\TestCase;
+
 /**
- * CSVelte\Writer Tests
+ * CSVelte\Writer Tests.
  *
- * @package   CSVelte Unit Tests
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
@@ -21,7 +22,7 @@ class WritableTest extends TestCase
         $root = vfsStream::setup('home');
         $this->fs = $root;
 
-        if (!is_dir($this->tmpdir = realpath(__DIR__ . '/../files') . '/temp')) {
+        if (!is_dir($this->tmpdir = realpath(__DIR__.'/../files').'/temp')) {
             if (!mkdir($this->tmpdir, 0755)) {
                 throw new \Exception('Cannot create temp dir');
             }
@@ -30,8 +31,8 @@ class WritableTest extends TestCase
 
     public function tearDown()
     {
-        @unlink(realpath(__DIR__ . '/../files/temp/deleteme.csv'));
-        @rmdir(realpath(__DIR__ . '/../files/temp'));
+        @unlink(realpath(__DIR__.'/../files/temp/deleteme.csv'));
+        @rmdir(realpath(__DIR__.'/../files/temp'));
     }
 
     public function testWriteStream()
@@ -52,7 +53,7 @@ class WritableTest extends TestCase
 
     public function testCreateFileIfDoesntExist()
     {
-        $filename = $this->tmpdir . '/deleteme.csv';
+        $filename = $this->tmpdir.'/deleteme.csv';
         $file = new File($filename);
         $data = "this,is,some,data\r\nand,this,is,more\r\nand,so,is,this\r\n";
         $this->assertEquals(strlen($data), $file->write($data));

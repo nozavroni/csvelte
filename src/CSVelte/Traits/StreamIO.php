@@ -6,17 +6,18 @@
  * suck out of working with CSV.
  *
  * @version   v0.1
+ *
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
 namespace CSVelte\Traits;
 
-use CSVelte\Exception\InvalidStreamUriException;
 use CSVelte\Exception\InvalidStreamResourceException;
+use CSVelte\Exception\InvalidStreamUriException;
 
-trait StreamIO {
-
+trait StreamIO
+{
     /**
      * @var resource The stream resource to input file
      */
@@ -28,26 +29,25 @@ trait StreamIO {
     protected $info;
 
     /**
-     * @var integer The position of the pointer within the stream resource
+     * @var int The position of the pointer within the stream resource
      */
     protected $position;
 
     /**
-     * Class constructor
+     * Class constructor.
      *
      * @param stream|string Either a valid stream handle (opened with fopen or similar function) OR a valid stream URI
-     * @access public
      */
     public function __construct($stream)
     {
         if (is_resource($stream)) {
             if ('stream' !== ($type = get_resource_type($stream))) {
-                throw new InvalidStreamResourceException('Invalid resource type provided: ' . $type);
+                throw new InvalidStreamResourceException('Invalid resource type provided: '.$type);
             }
         } else {
             if (false === ($stream = @fopen($stream, $this->getMode()))) {
                 // @todo custom exception
-                throw new InvalidStreamUriException('Cannot open stream: ' . $stream);
+                throw new InvalidStreamUriException('Cannot open stream: '.$stream);
             }
         }
         $this->source = $stream;
@@ -55,10 +55,9 @@ trait StreamIO {
     }
 
     /**
-     * Class destructor
+     * Class destructor.
      *
      * @return void
-     * @access public
      */
     public function __destruct()
     {
@@ -71,22 +70,24 @@ trait StreamIO {
      * stream object.
      *
      * @return bool
-     * @access public
+     *
      * @todo Should this throw an exception if user tries to close a stream that
      *     isn't open? I don't think it should because I can't think of a way it
      *     would be useful or intuitive. In fact it'd probably cause confusion
      */
     public function close()
     {
-        if (is_resource($this->source)) return fclose($this->source);
+        if (is_resource($this->source)) {
+            return fclose($this->source);
+        }
+
         return false;
     }
 
     /**
-     * Retrieve underlying stream resource
+     * Retrieve underlying stream resource.
      *
      * @return resource
-     * @access public
      */
     public function getStreamResource()
     {
@@ -94,10 +95,9 @@ trait StreamIO {
     }
 
     /**
-     * Get the current position of the pointer
+     * Get the current position of the pointer.
      *
-     * @return integer Position of pointer within source
-     * @access public
+     * @return int Position of pointer within source
      */
     public function position()
     {
@@ -105,16 +105,17 @@ trait StreamIO {
     }
 
     /**
-     * Get the current position of the pointer
+     * Get the current position of the pointer.
      *
-     * @return integer|false Position of pointer within source or false on failure
-     * @access protected
+     * @return int|false Position of pointer within source or false on failure
+     *
      * @todo Look through all the parameters returned by fstat() and see if any
      *     of it might be useful for this class or for File class.
      */
     protected function updateInfo()
     {
         $this->info = stream_get_meta_data($this->source);
+
         return $this->position = ftell($this->source);
     }
 
@@ -124,7 +125,6 @@ trait StreamIO {
      * exactly, the name will be.
      *
      * @return string The name of the stream resource
-     * @access public
      */
     public function name()
     {
@@ -132,10 +132,10 @@ trait StreamIO {
     }
 
     /**
-     * Retrieve the dirname part of the stream name
+     * Retrieve the dirname part of the stream name.
      *
      * @return string The dirname of this stream's path
-     * @access public
+     *
      * @todo I'm not sure this method is actually relevant when dealing with
      *     streams such as php://filter/read=string.toupper/resource=file:///var/www/foo.csv
      *     I'm not sure whether I should parse the stream name and return the

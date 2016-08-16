@@ -1,10 +1,11 @@
 <?php
-use PHPUnit\Framework\TestCase;
+
 use CSVelte\Autoloader;
+use PHPUnit\Framework\TestCase;
+
 /**
- * CSVelte\Autoloader Tests
+ * CSVelte\Autoloader Tests.
  *
- * @package   CSVelte Unit Tests
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
@@ -12,10 +13,10 @@ class AutoloaderTest extends TestCase
 {
     public function testAddPathsUsingConstructor()
     {
-        $dir = __DIR__ . '/../../src';
-        $paths = array(
-            $dir
-        );
+        $dir = __DIR__.'/../../src';
+        $paths = [
+            $dir,
+        ];
         $auto = new Autoloader($paths);
         $realdir = realpath($dir);
         $this->assertContains($realdir, $auto->getPaths());
@@ -23,7 +24,7 @@ class AutoloaderTest extends TestCase
 
     public function testAddPathsUsingAddPath()
     {
-        $dir = __DIR__ . '/../../src';
+        $dir = __DIR__.'/../../src';
         $auto = new Autoloader();
         $auto->addPath($dir);
         $realdir = realpath($dir);
@@ -32,7 +33,7 @@ class AutoloaderTest extends TestCase
 
     public function testNonExistantPathFailsQuietly()
     {
-        $dir = __DIR__ . '/../../sourrc';
+        $dir = __DIR__.'/../../sourrc';
         $auto = new Autoloader();
         $auto->addPath($dir);
         $realdir = realpath($dir);
@@ -42,12 +43,12 @@ class AutoloaderTest extends TestCase
 
     public function testRegisterAddsPathsToIncludePath()
     {
-        $dir = __DIR__ . '/../../src';
+        $dir = __DIR__.'/../../src';
         $fakedir = '../../fakedir';
-        $paths = array(
+        $paths = [
             $dir,
-            $fakedir
-        );
+            $fakedir,
+        ];
         $auto = new Autoloader($paths);
         $auto->register();
         $realdir = realpath($dir);
@@ -58,19 +59,19 @@ class AutoloaderTest extends TestCase
 
     public function testLoadClassReturnsTrueIfClassExists()
     {
-        $auto = new Autoloader;
+        $auto = new Autoloader();
         $this->assertTrue($auto->load('CSVelte\Utils'));
     }
 
     public function testLoadClassReturnsFalseIfClassDoesntExistAtAll()
     {
-        $auto = new Autoloader;
+        $auto = new Autoloader();
         $this->assertFalse($auto->load('CSVelte\Foo'));
     }
 
     public function testLoadClassLoadsClassIfItHasntBeenLoaded()
     {
-        $auto = new Autoloader;
+        $auto = new Autoloader();
         $this->assertTrue($auto->load($classname = 'CSVelte\Table\Row'));
         $this->assertTrue(class_exists($classname));
     }
