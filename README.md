@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/nozavroni/csvelte.svg?branch=master)](https://travis-ci.org/nozavroni/csvelte)
 [![Coverage Status](https://coveralls.io/repos/github/nozavroni/csvelte/badge.svg?branch=analysis-8KgreA)](https://coveralls.io/github/nozavroni/csvelte?branch=analysis-8KgreA)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nozavroni/csvelte/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nozavroni/csvelte/?branch=master)
+[![License](https://poser.pugx.org/nozavroni/csvelte/license)](https://packagist.org/packages/nozavroni/csvelte)
 
 ![screen shot 2016-07-13 at 10 18 42 am](https://cloud.githubusercontent.com/assets/17840996/16812744/5b92f468-48e3-11e6-9d2a-5c735b1596c6.png)
 
