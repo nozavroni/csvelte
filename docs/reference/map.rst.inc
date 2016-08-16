@@ -1,4 +1,4 @@
 * :doc:`/reference/flavors`
-* :doc:`/reference/taster`
+* :doc:`/reference/tasting`
 * :doc:`/reference/reading`
 * :doc:`/reference/writing`

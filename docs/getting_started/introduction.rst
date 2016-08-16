@@ -2,7 +2,7 @@
 Introduction
 ############
 
-CSVelte is a modern, object-oriented :abbr:`CSV (Comma Separated Values)` library for :abbr:`PHP (PHP: Hypertext Preprocessor)` 5.6+ (although the minimum version will likely change in the near future).
+CSVelte is a modern, object-oriented :abbr:`CSV (Comma Separated Values)` library for :abbr:`PHP (PHP: Hypertext Preprocessor)`. Its goal is to take the typically tedious, error-prone task of handling CSV data, and make it as simple and easy as possible.
 
 A little history
 ================
