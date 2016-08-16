@@ -646,9 +646,8 @@ code {
 }
 
     code.inline {
-      border-color: 1px solid #666;
-      background-color: #444;
-      color: #eee;
+      background-color: #222;
+      color: #fff;
     }
 
 pre {
