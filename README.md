@@ -139,6 +139,20 @@ Head on over to the [documentation site](http://csvelte.phpcsv.com/) for instruc
 
 For questions and in-depth discussion of CSVelte and CSV on the web, join the [mailing list](https://groups.google.com/forum/#!forum/csvelte-users).
 
+<iframe id="forum_embed"
+  src="javascript:void(0)"
+  scrolling="no"
+  frameborder="0"
+  width="900"
+  height="700">
+</iframe>
+<script type="text/javascript">
+  document.getElementById('forum_embed').src =
+     'https://groups.google.com/forum/embed/?place=forum/csvelte-users'
+     + '&showsearch=true&showpopout=true&showtabs=false'
+     + '&parenturl=' + encodeURIComponent(window.location.href);
+</script>
+
 ## Contribute
 
 CSVelte is a free (as in beer) library. I work on it in my spare time. If you like it, feel free to buy me a beer (you can PayPal me at luke.visinoni@gmail.com). Contributions will help me to keep pumping out new features and bug fixes and to, eventually, create a dedicated CSVelte website. Or, if you have an idea for a new feature or a bug report, feel free to [submit a pull request](https://github.com/deni-zen/csvelte/pulls).
