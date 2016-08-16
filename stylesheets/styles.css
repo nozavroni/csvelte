@@ -645,6 +645,12 @@ code {
   border-radius: 2px;
 }
 
+    code.inline {
+      border-color: 1px solid #666;
+      background-color: #444;
+      color: #eee;
+    }
+
 pre {
   /*padding: 8px 15px;*/
   /*background: #191919;*/
