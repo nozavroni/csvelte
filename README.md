@@ -21,7 +21,7 @@ CSVelte requires at least PHP5.3
 To install using Composer, just use the following command. Once CSVelte reaches a stable version, it will be simply a matter of ``composer require nozavroni/csvelte`` but for the time being you will need the ``@dev-master`` flag (or you can [lower your minimum-stability setting](https://getcomposer.org/doc/04-schema.md#minimum-stability)) or Composer will complain and refuse to install. 
 
 ```bash
-$ composer require nozavroni/csvelte @dev-master
+$ php composer.phar require nozavroni/csvelte @dev-master
 ```
 
 #### Without Composer (direct download)
