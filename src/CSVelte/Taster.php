@@ -6,6 +6,7 @@
  * suck out of working with CSV.
  *
  * @version   v0.1
+ *
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
@@ -14,8 +15,8 @@ namespace CSVelte;
 
 use Carbon\Carbon;
 use CSVelte\Contract\Readable;
-use CSVelte\Exception\TasteQuoteAndDelimException;
 use CSVelte\Exception\TasteDelimiterException;
+use CSVelte\Exception\TasteQuoteAndDelimException;
 
 /**
  * CSVelte\Taster
@@ -23,9 +24,9 @@ use CSVelte\Exception\TasteDelimiterException;
  * its "flavor". In other words, this class inspects CSV data and attempts to
  * auto-detect various CSV attributes such as line endings, quote characters, etc..
  *
- * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ *
  * @todo      There are a ton of improvements that could be made to this class.
  *            I'll do a refactor on this fella once I get at least one test
  *            passing for each of its public methods.
@@ -40,14 +41,14 @@ use CSVelte\Exception\TasteDelimiterException;
 class Taster
 {
     /**
-     * End-of-line constants
+     * End-of-line constants.
      */
-    const EOL_UNIX    = 'lf';
-    const EOL_TRS80   = 'cr';
+    const EOL_UNIX = 'lf';
+    const EOL_TRS80 = 'cr';
     const EOL_WINDOWS = 'crlf';
 
     /**
-     * ASCII character codes for "invisibles"
+     * ASCII character codes for "invisibles".
      */
     const HORIZONTAL_TAB = 9;
     const LINE_FEED = 10;
@@ -55,7 +56,7 @@ class Taster
     const SPACE = 32;
 
     /**
-     * Data types -- Used within the lickQuotingStyle method
+     * Data types -- Used within the lickQuotingStyle method.
      */
     const DATA_NONNUMERIC = 'nonnumeric';
     const DATA_SPECIAL = 'special';
@@ -63,20 +64,20 @@ class Taster
 
     /**
      * Placeholder strings -- hold the place of newlines and delimiters contained
-     * within quoted text so that the explode method doesn't split incorrectly
+     * within quoted text so that the explode method doesn't split incorrectly.
      */
     const PLACEHOLDER_NEWLINE = '[__NEWLINE__]';
     const PLACEHOLDER_DELIM = '[__DELIM__]';
 
     /**
-     * Recommended data sample size
+     * Recommended data sample size.
      */
     const SAMPLE_SIZE = 2500;
 
     /**
      * Column data types -- used within the lickHeader method to determine
      * whether the first row contains different types of data than the rest of
-     * the rows (and thus, is likely a header row)
+     * the rows (and thus, is likely a header row).
      */
     // +-987
     const TYPE_NUMBER = 'number';
@@ -97,22 +98,23 @@ class Taster
 
     /**
      * @var CSVelte\Contract\Readable The source of data to examine
-     * @access protected
      */
     protected $input;
 
     /**
-     * Sample of CSV data to use for tasting (determining CSV flavor)
+     * Sample of CSV data to use for tasting (determining CSV flavor).
+     *
      * @var string
      */
     protected $sample;
 
     /**
-     * Class constructor--accepts a CSV input source
+     * Class constructor--accepts a CSV input source.
      *
      * @param CSVelte\Contract\Readable The source of CSV data
+     *
      * @return void
-     * @access public
+     *
      * @todo It may be a good idea to skip the first line or two for the sample
      *     so that the header line(s) don't throw things off (with the exception
      *     of lickHeader() obviously)
@@ -125,14 +127,17 @@ class Taster
 
     /**
      * I'm not sure what this is for...
-     * @param  Readable $input The input source
+     *
+     * @param Readable $input The input source
+     *
      * @return CSVelte\Taster
+     *
      * @todo Get rid of this unless there is a good reason for having it...?
      * @ignore
      */
     public static function create(Readable $input)
     {
-        return new Taster($input);
+        return new self($input);
     }
 
     /**
@@ -143,7 +148,7 @@ class Taster
      * are quoted.
      *
      * @return CSVelte\Flavor The metadata that the CSV format doesn't provide
-     * @access public
+     *
      * @todo Implement a lickQuote method for when lickQuoteAndDelim method fails
      * @todo Should there bea lickEscapeChar method? the python module that inspired
      *     this library doesn't include one...
@@ -159,12 +164,13 @@ class Taster
             $quoteChar = '"';
             $delimiter = $this->lickDelimiter($lineTerminator);
         }
-        /**
+        /*
          * @todo Should this be null? Because doubleQuote = true means this = null
          */
         $escapeChar = '\\';
         $quoteStyle = $this->lickQuotingStyle($this->sample, $quoteChar, $delimiter, $lineTerminator);
         $header = $this->lickHeader($this->sample, $quoteChar, $delimiter, $lineTerminator);
+
         return new Flavor(compact('quoteChar', 'escapeChar', 'delimiter', 'lineTerminator', 'quoteStyle', 'header'));
     }
 
@@ -175,8 +181,9 @@ class Taster
      * replaceQuotedSpecialChars method which (at least to me) makes more sense.
      *
      * @param string The string to replace quoted strings within
+     *
      * @return string The input string with quoted strings removed
-     * @access protected
+     *
      * @todo Replace code that uses this method with the replaceQuotedSpecialChars
      *     method instead. I think it's cleaner.
      */
@@ -187,11 +194,11 @@ class Taster
 
     /**
      * Examine the input source to determine which character(s) are being used
-     * as the end-of-line character
+     * as the end-of-line character.
      *
      * @return char The end-of-line char for the input data
-     * @access protected
      * @credit pulled from stackoverflow thread *tips hat to username "Harm"*
+     *
      * @todo This should throw an exception if it cannot determine the line ending
      * @todo I probably will make this method protected when I'm done with testing...
      * @todo If there is any way for this method to fail (for instance if a file )
@@ -210,12 +217,13 @@ class Taster
 
         $curCount = 0;
         $curEol = '';
-        foreach($eols as $k => $eol) {
-            if( ($count = substr_count($str, $eol)) > $curCount) {
+        foreach ($eols as $k => $eol) {
+            if (($count = substr_count($str, $eol)) > $curCount) {
                 $curCount = $count;
                 $curEol = $eol;
             }
         }
+
         return $curEol;
     }
 
@@ -223,10 +231,10 @@ class Taster
      * The best way to determine quote and delimiter characters is when columns
      * are quoted, often you can seek out a pattern of delim, quote, stuff, quote, delim
      * but this only works if you have quoted columns. If you don't you have to
-     * determine these characters some other way... (see lickDelimiter)
+     * determine these characters some other way... (see lickDelimiter).
      *
      * @return array A two-row array containing quotechar, delimchar
-     * @access protected
+     *
      * @todo make protected
      * @todo This should throw an exception if it cannot determine the delimiter
      *     this way.
@@ -234,19 +242,21 @@ class Taster
      */
     protected function lickQuoteAndDelim()
     {
-        $patterns = array();
+        $patterns = [];
         // delim can be anything but line breaks, quotes, alphanumeric, underscore, backslash, or any type of spaces
-        $antidelims = implode(array("\r", "\n", "\w", preg_quote('"', '/'), preg_quote("'", '/')/*, preg_quote('\\', '/')*/, preg_quote(chr(self::SPACE), '/')));
-        $delim = '(?P<delim>[^' . $antidelims . '])';
+        $antidelims = implode(["\r", "\n", "\w", preg_quote('"', '/'), preg_quote("'", '/')/*, preg_quote('\\', '/')*/, preg_quote(chr(self::SPACE), '/')]);
+        $delim = '(?P<delim>[^'.$antidelims.'])';
         $quote = '(?P<quoteChar>"|\'|`)'; // @todo I think MS Excel uses some strange encoding for fancy open/close quotes
-        $patterns[] = '/' . $delim . ' ?' . $quote . '.*?\2\1/ms'; // ,"something", - anything but whitespace or quotes followed by a possible space followed by a quote followed by anything followed by same quote, followed by same anything but whitespace
-        $patterns[] = '/(?:^|\n)' . $quote . '.*?\1' . $delim . ' ?/ms'; // 'something', - beginning of line or line break, followed by quote followed by anything followed by quote followed by anything but whitespace or quotes
-        $patterns[] = '/' . $delim . ' ?' . $quote . '.*?\2(?:^|\n)/ms'; // ,'something' - anything but whitespace or quote followed by possible space followed by quote followed by anything followed by quote, followed by end of line
-        $patterns[] = '/(?:^|\n)' . $quote . '.*?\2(?:$|\n)/ms'; // 'something' - beginning of line followed by quote followed by anything followed by quote followed by same quote followed by end of line
+        $patterns[] = '/'.$delim.' ?'.$quote.'.*?\2\1/ms'; // ,"something", - anything but whitespace or quotes followed by a possible space followed by a quote followed by anything followed by same quote, followed by same anything but whitespace
+        $patterns[] = '/(?:^|\n)'.$quote.'.*?\1'.$delim.' ?/ms'; // 'something', - beginning of line or line break, followed by quote followed by anything followed by quote followed by anything but whitespace or quotes
+        $patterns[] = '/'.$delim.' ?'.$quote.'.*?\2(?:^|\n)/ms'; // ,'something' - anything but whitespace or quote followed by possible space followed by quote followed by anything followed by quote, followed by end of line
+        $patterns[] = '/(?:^|\n)'.$quote.'.*?\2(?:$|\n)/ms'; // 'something' - beginning of line followed by quote followed by anything followed by quote followed by same quote followed by end of line
         foreach ($patterns as $pattern) {
             // @todo I had to add the error suppression char here because it was
             //     causing undefined offset errors with certain data sets. strange...
-            if (@preg_match_all($pattern, $this->sample, $matches) && $matches) break;
+            if (@preg_match_all($pattern, $this->sample, $matches) && $matches) {
+                break;
+            }
         }
         if ($matches) {
             $quotes = array_count_values($matches['quoteChar']);
@@ -257,36 +267,41 @@ class Taster
                 arsort($delims);
                 $delims = array_flip($delims);
                 $theDelim = array_shift($delims);
-                return array($theQuote, $theDelim);
+
+                return [$theQuote, $theDelim];
             }
         }
-        throw new TasteQuoteAndDelimException("quoteChar and delimiter cannot be determined");
+        throw new TasteQuoteAndDelimException('quoteChar and delimiter cannot be determined');
     }
 
-     /**
-      * Take a list of likely delimiter characters and find the one that occurs
-      * the most consistent amount of times within the provided data.
-      *
-      * @param string The character(s) used for newlines
-      * @return string One of four Flavor::QUOTING_* constants
-      * @see CSVelte\Flavor for possible quote style constants
-      * @access protected
-      * @todo Refactor this method--It needs more thorough testing against a wider
-      *     variety of CSV data to be sure it works reliably. And I'm sure there
-      *     are many performance and logic improvements that could be made. This
-      *     is essentially a first draft.
-      * @todo Use replaceQuotedSpecialChars rather than removeQuotedStrings
-      */
+    /**
+     * Take a list of likely delimiter characters and find the one that occurs
+     * the most consistent amount of times within the provided data.
+     *
+     * @param string The character(s) used for newlines
+     *
+     * @return string One of four Flavor::QUOTING_* constants
+     *
+     * @see CSVelte\Flavor for possible quote style constants
+     *
+     * @todo Refactor this method--It needs more thorough testing against a wider
+     *     variety of CSV data to be sure it works reliably. And I'm sure there
+     *     are many performance and logic improvements that could be made. This
+     *     is essentially a first draft.
+     * @todo Use replaceQuotedSpecialChars rather than removeQuotedStrings
+     */
     protected function lickDelimiter($eol = "\n")
     {
-        $delimiters = array(",", "\t", "|", ":", ";", "/", '\\');
+        $delimiters = [',', "\t", '|', ':', ';', '/', '\\'];
         $lines = explode($eol, $this->removeQuotedStrings($this->sample));
-        $modes = array();
+        $modes = [];
         $start = 0;
-        $charFrequency = array();
+        $charFrequency = [];
         while ($start < count($lines)) {
             foreach ($lines as $key => $line) {
-                if (!trim($line)) continue;
+                if (!trim($line)) {
+                    continue;
+                }
                 foreach ($delimiters as $char) {
                     $freq = substr_count($line, $char);
                     $charFrequency[$char][$key] = $freq;
@@ -296,7 +311,7 @@ class Taster
         }
         $averages = Utils::array_average($charFrequency);
         $modes = Utils::array_mode($charFrequency);
-        $consistencies = array();
+        $consistencies = [];
         foreach ($averages as $achar => $avg) {
             foreach ($modes as $mchar => $mode) {
                 if ($achar == $mchar) {
@@ -313,6 +328,7 @@ class Taster
             throw new TasteDelimiterException('Cannot determine delimiter character');
         }
         arsort($consistencies);
+
         return key($consistencies);
     }
 
@@ -333,9 +349,10 @@ class Taster
      * @param char The type of quote character being used (single or double)
      * @param char The character used as the column delimiter
      * @param char The character used for newlines
+     *
      * @return string One of four "QUOTING_" constants defined above--see this
-     *     method's description for more info.
-     * @access protected
+     *                method's description for more info.
+     *
      * @todo Refactor this method--It needs more thorough testing against a wider
      *     variety of CSV data to be sure it works reliably. And I'm sure there
      *     are many performance and logic improvements that could be made. This
@@ -345,18 +362,18 @@ class Taster
     {
         $data = $this->replaceQuotedSpecialChars($data, $delim);
 
-        $quoting_styles = array(
-            Flavor::QUOTE_ALL => 0,
-            Flavor::QUOTE_NONE => 0,
-            Flavor::QUOTE_MINIMAL => 0,
+        $quoting_styles = [
+            Flavor::QUOTE_ALL        => 0,
+            Flavor::QUOTE_NONE       => 0,
+            Flavor::QUOTE_MINIMAL    => 0,
             Flavor::QUOTE_NONNUMERIC => 0,
-        );
+        ];
 
         $lines = explode($eol, $data);
-        $freq = array(
-            'quoted' => array(),
-            'unquoted' => array()
-        );
+        $freq = [
+            'quoted'   => [],
+            'unquoted' => [],
+        ];
 
         foreach ($lines as $key => $line) {
             // now we can sub back in the correct newlines
@@ -381,15 +398,22 @@ class Taster
         }
         $types = array_unique($freq['quoted']);
         // if quoting_styles still has QUOTE_ALL or QUOTE_NONE, then that's the one to return
-        if (array_key_exists(Flavor::QUOTE_ALL, $quoting_styles)) return Flavor::QUOTE_ALL;
-        if (array_key_exists(Flavor::QUOTE_NONE, $quoting_styles)) return Flavor::QUOTE_NONE;
+        if (array_key_exists(Flavor::QUOTE_ALL, $quoting_styles)) {
+            return Flavor::QUOTE_ALL;
+        }
+        if (array_key_exists(Flavor::QUOTE_NONE, $quoting_styles)) {
+            return Flavor::QUOTE_NONE;
+        }
         if (count($types) == 1) {
-            if (current($types) == self::DATA_SPECIAL) return Flavor::QUOTE_MINIMAL;
-            elseif (current($types) == self::DATA_NONNUMERIC) return Flavor::QUOTE_NONNUMERIC;
+            if (current($types) == self::DATA_SPECIAL) {
+                return Flavor::QUOTE_MINIMAL;
+            } elseif (current($types) == self::DATA_NONNUMERIC) {
+                return Flavor::QUOTE_NONNUMERIC;
+            }
         } else {
             if (array_key_exists(self::DATA_NONNUMERIC, array_flip($types))) {
                 // allow for a SMALL amount of error here
-                $counts = array(self::DATA_SPECIAL => 0, self::DATA_NONNUMERIC => 0);
+                $counts = [self::DATA_SPECIAL => 0, self::DATA_NONNUMERIC => 0];
                 array_walk($freq['quoted'], function ($val, $key) use (&$counts) {
                     $counts[$val]++;
                 });
@@ -397,18 +421,21 @@ class Taster
                 $most = current($counts);
                 $least = end($counts);
                 $err_margin = $least / $most;
-                if ($err_margin < 1) return Flavor::QUOTE_NONNUMERIC;
+                if ($err_margin < 1) {
+                    return Flavor::QUOTE_NONNUMERIC;
+                }
             }
         }
+
         return Flavor::QUOTE_MINIMAL;
     }
 
     /**
-     * Remove quotes around a piece of text (if there are any)
+     * Remove quotes around a piece of text (if there are any).
      *
      * @param string The data to "unquote"
+     *
      * @return string The data passed in, only with quotes stripped (off the edges)
-     * @access protected
      */
     protected function unQuote($data)
     {
@@ -419,8 +446,8 @@ class Taster
      * Determine whether a particular string of data has quotes around it.
      *
      * @param string The data to check
-     * @return boolean Whether the data is quoted or not
-     * @access protected
+     *
+     * @return bool Whether the data is quoted or not
      */
     protected function isQuoted($data)
     {
@@ -439,8 +466,9 @@ class Taster
      * or newline or quote.
      *
      * @param string The data to determine the type of
+     *
      * @return string The type of data (one of the "DATA_" constants above)
-     * @access protected
+     *
      * @todo I could probably eliminate this method and use an anonymous function
      *     instead. It isn't used anywhere else and its name could be misleading.
      *     Especially since I also have a lickType method that is used within the
@@ -455,6 +483,7 @@ class Taster
         } elseif (preg_match('/[^0-9]/', $data)) {
             return self::DATA_NONNUMERIC;
         }
+
         return self::DATA_UNKNOWN;
     }
 
@@ -465,20 +494,22 @@ class Taster
      * very unsmart "explode" function and not have to worry about it exploding
      * on delimiters or newlines within quotes. Once I have exploded, I typically
      * sub back in the real characters before doing anything else. Although
-     * currently there is no dedicated method for doing so I just use str_replace
+     * currently there is no dedicated method for doing so I just use str_replace.
      *
      * @param string The string to do the replacements on
      * @param char The delimiter character to replace
+     *
      * @return string The data with replacements performed
-     * @access protected
+     *
      * @todo I could probably pass in (maybe optionally) the newline character I
      *     want to replace as well. I'll do that if I need to.
      */
     protected function replaceQuotedSpecialChars($data, $delim)
     {
-        return preg_replace_callback('/([\'"])(.*)\1/imsU', function($matches) use ($delim) {
+        return preg_replace_callback('/([\'"])(.*)\1/imsU', function ($matches) use ($delim) {
             $ret = preg_replace("/([\r\n])/", self::PLACEHOLDER_NEWLINE, $matches[0]);
             $ret = str_replace($delim, self::PLACEHOLDER_DELIM, $ret);
+
             return $ret;
         }, $data);
     }
@@ -495,8 +526,9 @@ class Taster
      * to be practical.
      *
      * @param string The string of data to check the type of
+     *
      * @return string One of the TYPE_ string constants above
-     * @access protected
+     *
      * @uses Carbon/Carbon date/time ilbrary/class
      */
     protected function lickType($data)
@@ -516,7 +548,7 @@ class Taster
                 $day = '[0-3]?[0-9]';
                 $sep = '[\/\.\-]?';
                 $time = '([0-2]?[0-9](:[0-5][0-9]){1,2}(am|pm)?|[01]?[0-9](am|pm))';
-                $date = '(' . $month . $sep . $day . $sep . $year . '|' . $day . $sep . $month . $sep . $year . '|' . $year . $sep . $month . $sep . $day . ')';
+                $date = '('.$month.$sep.$day.$sep.$year.'|'.$day.$sep.$month.$sep.$year.'|'.$year.$sep.$month.$sep.$day.')';
                 $dt = Carbon::parse($data);
                 if ($dt->today()) {
                     // then this is most likely a time string...
@@ -526,7 +558,7 @@ class Taster
                 }
                 if (preg_match("/^{$date}$/i", $data)) {
                     return self::TYPE_DATE;
-                } elseif(preg_match("/^{$date} {$time}$/i")) {
+                } elseif (preg_match("/^{$date} {$time}$/i")) {
                     return self::TYPE_DATETIME;
                 }
             } catch (\Exception $e) {
@@ -536,6 +568,7 @@ class Taster
                 }
             }
         }
+
         return self::TYPE_STRING;
     }
 
@@ -554,8 +587,9 @@ class Taster
      * @param char The CSV data's delimiting char (can be a variety of chars but)
      *     typically is either a comma or a tab, sometimes a pipe)
      * @param char The CSV data's end-of-line char(s) (\n \r or \r\n)
-     * @return boolean True if the data (most likely) contains a header row
-     * @access public
+     *
+     * @return bool True if the data (most likely) contains a header row
+     *
      * @todo This method needs a total refactor. It's not necessary to loop twice
      *     You could get away with one loop and that would allow for me to do
      *     something like only examining enough rows to get to a particular
@@ -572,7 +606,7 @@ class Taster
     {
         $data = $this->replaceQuotedSpecialChars($data, $delim);
         $lines = explode($eol, $data);
-        $types = array();
+        $types = [];
         foreach ($lines as $line_no => $line) {
             // now we can sub back in the correct newlines
             $line = str_replace(self::PLACEHOLDER_NEWLINE, $eol, $line);
@@ -581,10 +615,10 @@ class Taster
             foreach ($cols as $col_no => $col) {
                 // now we can sub back in the correct delim characters
                 $col = str_replace(self::PLACEHOLDER_DELIM, $delim, $col);
-                $types[$line_no][$col_no] = array(
-                    'type' => $this->lickType($this->unQuote($col)),
-                    'length' => strlen($col)
-                );
+                $types[$line_no][$col_no] = [
+                    'type'   => $this->lickType($this->unQuote($col)),
+                    'length' => strlen($col),
+                ];
             }
         }
         $hasHeader = 0;
@@ -592,18 +626,27 @@ class Taster
         foreach ($types as $line_no => $cols) {
             foreach ($cols as $col_no => $col_info) {
                 extract($col_info);
-                if (!array_key_exists($col_no, $potential_header)) continue;
-                extract($potential_header[$col_no], EXTR_PREFIX_ALL, "header");
+                if (!array_key_exists($col_no, $potential_header)) {
+                    continue;
+                }
+                extract($potential_header[$col_no], EXTR_PREFIX_ALL, 'header');
                 if ($header_type == self::TYPE_STRING) {
                     // use length
-                    if ($length != $header_length) $hasHeader++;
-                    else $hasHeader--;
+                    if ($length != $header_length) {
+                        $hasHeader++;
+                    } else {
+                        $hasHeader--;
+                    }
                 } else {
-                    if ($type != $header_type) $hasHeader++;
-                    else $hasHeader--;
+                    if ($type != $header_type) {
+                        $hasHeader++;
+                    } else {
+                        $hasHeader--;
+                    }
                 }
             }
         }
+
         return $hasHeader > 0;
     }
 }

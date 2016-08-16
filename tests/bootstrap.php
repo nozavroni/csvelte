@@ -3,19 +3,24 @@
  * PHPUnit Bootstrap
  * The CLI test-runner calls this code before running its tests.
  *
- * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/CSVelte/TestFiles.php';
+require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/CSVelte/TestFiles.php';
 
 function dd($input, $exit = true, $label = null)
 {
-    if ($label) echo $label . "\n" . implode(array_map(function($c){ return "-"; }, str_split($label))) . "\n";
+    if ($label) {
+        echo $label."\n".implode(array_map(function ($c) {
+            return '-';
+        }, str_split($label)))."\n";
+    }
     var_dump($input);
     echo "\n";
-    if ($exit) exit;
+    if ($exit) {
+        exit;
+    }
 }
 
 /**
@@ -33,11 +38,18 @@ function dd($input, $exit = true, $label = null)
 function si($in, $exit = true, $dump = true)
 {
     $out = json_encode($in);
-    if ($dump) return var_dump($out);
-    else {
-        if ($exit) exit($out);
+    if ($dump) {
+        return var_dump($out);
+    } else {
+        if ($exit) {
+            exit($out);
+        }
     }
+
     return $out;
 }
 
-function with($obj) { return $obj; }
+function with($obj)
+{
+    return $obj;
+}

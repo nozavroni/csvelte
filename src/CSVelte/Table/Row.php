@@ -6,21 +6,20 @@
  * suck out of working with CSV.
  *
  * @version   v0.1
+ *
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
 namespace CSVelte\Table;
 
-use CSVelte\Utils;
 use CSVelte\Exception\InvalidHeaderException;
+use CSVelte\Utils;
 
 /**
  * Table Row Class
- * Represents a row of tabular data (CSVelte\Table\Cell objects)
+ * Represents a row of tabular data (CSVelte\Table\Cell objects).
  *
- * @package    CSVelte
- * @subpackage CSVelte\Table
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  */
@@ -29,14 +28,14 @@ class Row extends AbstractRow
     /**
      * @var array Same as columns only indexed using headers rather than numbers
      */
-    protected $assocCols = array();
+    protected $assocCols = [];
 
     /**
-     * Set the header row (so that it can be used to index the row)
+     * Set the header row (so that it can be used to index the row).
      *
      * @param CSVelte\Table\HeaderRow
+     *
      * @return void (return $this?)
-     * @access public
      */
     public function setHeaderRow(AbstractRow $headers)
     {
@@ -61,9 +60,9 @@ class Row extends AbstractRow
     /**
      * Is there an offset at specified position?
      *
-     * @param integer Offset
-     * @return boolean
-     * @access public
+     * @param int Offset
+     *
+     * @return bool
      */
     public function offsetExists($offset)
     {
@@ -73,15 +72,16 @@ class Row extends AbstractRow
             // now check $this->properties?
             return parent::offsetExists($offset);
         }
+
         return true;
     }
 
     /**
-     * Retrieve data at specified column offset
+     * Retrieve data at specified column offset.
      *
-     * @param integer Offset
+     * @param int Offset
+     *
      * @return CSVelte\Table\Data
-     * @access public
      */
     public function offsetGet($offset)
     {
@@ -90,6 +90,7 @@ class Row extends AbstractRow
         } catch (\OutOfBoundsException $e) {
             return parent::offsetGet($offset);
         }
+
         return $val;
     }
 }

@@ -1,17 +1,13 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-use CSVelte\Exception\UnknownFlavorException;
 use CSVelte\Flavor;
 use CSVelte\Flavor\Excel;
-use CSVelte\Flavor\ExcelTab;
 use CSVelte\Flavor\Unix;
-use CSVelte\Flavor\UnixTab;
+use PHPUnit\Framework\TestCase;
 
 /**
- * CSVelte\FlavorTest
+ * CSVelte\FlavorTest.
  *
- * @package   CSVelte\Flavor Unit Tests
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
@@ -22,19 +18,19 @@ class FlavorTest extends TestCase
      */
     public function testCSVelteFlavor()
     {
-        $flavor = new Flavor(array('delimiter' => "\tab!!"));
-        $this->assertInstanceOf($expected = 'CSVelte\Flavor', new Flavor);
+        $flavor = new Flavor(['delimiter' => "\tab!!"]);
+        $this->assertInstanceOf($expected = 'CSVelte\Flavor', new Flavor());
     }
 
     /**
-     * Test that CSVelte\Flavor provides reasonable default values for its attributes
+     * Test that CSVelte\Flavor provides reasonable default values for its attributes.
      */
     public function testCSVelteFlavorDefaults()
     {
-        $flavor = new Flavor;
-        $this->assertEquals($delimiter = ",", $flavor->delimiter);
-        $this->assertEquals($quoteChar = "\"", $flavor->quoteChar);
-        $this->assertEquals($escapeChar = "\\", $flavor->escapeChar);
+        $flavor = new Flavor();
+        $this->assertEquals($delimiter = ',', $flavor->delimiter);
+        $this->assertEquals($quoteChar = '"', $flavor->quoteChar);
+        $this->assertEquals($escapeChar = '\\', $flavor->escapeChar);
         $this->assertEquals($lineTerminator = "\r\n", $flavor->lineTerminator);
         $this->assertEquals($quoting = Flavor::QUOTE_MINIMAL, $flavor->quoteStyle);
         $this->assertTrue($flavor->doubleQuote);
@@ -47,32 +43,31 @@ class FlavorTest extends TestCase
      */
     public function testCSVelteFlavorGetNonExistAttributeThrowsException()
     {
-        $flavor = new Flavor;
+        $flavor = new Flavor();
         $foo = $flavor->foo;
     }
 
     /**
      * These objects are immutable, so any attempt to set an attribute should
      * result in an exception being thrown.
+     *
      * @expectedException CSVelte\Exception\ImmutableException
      */
     public function testCSVelteFlavorSetAttributeThrowsImmutableException()
     {
-        $flavor = new Flavor;
+        $flavor = new Flavor();
         $flavor->foo = 'bar';
     }
 
-    /**
-     *
-     */
+
     public function testInitializeFlavorUsingAssociativeArray()
     {
         $attribs = [
-            'delimiter' => "\t",
-            'quoteChar' => "'",
-            'escapeChar' => "'",
+            'delimiter'      => "\t",
+            'quoteChar'      => "'",
+            'escapeChar'     => "'",
             'lineTerminator' => "\r\n",
-            'quoteStyle' => Flavor::QUOTE_MINIMAL
+            'quoteStyle'     => Flavor::QUOTE_MINIMAL,
         ];
         $flavor = new Flavor($attribs);
         $this->assertEquals($attribs['delimiter'], $flavor->delimiter);
@@ -84,20 +79,20 @@ class FlavorTest extends TestCase
 
     public function testFlavorCanCopyItself()
     {
-        $flavor = new Flavor($exp_attribs = array('delimiter' => '|', 'quoteChar' => "'", 'escapeChar' => '&', 'doubleQuote' => true, 'skipInitialSpace' => true, 'quoteStyle' => Flavor::QUOTE_NONE, 'lineTerminator' => "\r", 'header' => null));
+        $flavor = new Flavor($exp_attribs = ['delimiter' => '|', 'quoteChar' => "'", 'escapeChar' => '&', 'doubleQuote' => true, 'skipInitialSpace' => true, 'quoteStyle' => Flavor::QUOTE_NONE, 'lineTerminator' => "\r", 'header' => null]);
         $this->assertEquals($flavor, $flavor->copy());
         $this->assertNotSame($flavor, $flavor->copy());
     }
 
     public function testFlavorCanCopyItselfWithAlteredAttribs()
     {
-        $flavor = new Flavor($attribs = array('delimiter' => '|', 'quoteChar' => "'", 'escapeChar' => '&', 'doubleQuote' => true, 'skipInitialSpace' => true, 'quoteStyle' => Flavor::QUOTE_NONE, 'lineTerminator' => "\r", 'header' => null));
+        $flavor = new Flavor($attribs = ['delimiter' => '|', 'quoteChar' => "'", 'escapeChar' => '&', 'doubleQuote' => true, 'skipInitialSpace' => true, 'quoteStyle' => Flavor::QUOTE_NONE, 'lineTerminator' => "\r", 'header' => null]);
 
-        $new_attribs = array(
-            'header' => true,
+        $new_attribs = [
+            'header'         => true,
             'lineTerminator' => "\n",
-            'delimiter' => "\t"
-        );
+            'delimiter'      => "\t",
+        ];
         $exp_attribs = array_merge($attribs, $new_attribs);
 
         $this->assertEquals(new Flavor($exp_attribs), $flavor->copy($new_attribs));
@@ -163,14 +158,13 @@ class FlavorTest extends TestCase
 
     public function testConcreteFlavors()
     {
-        $excel = new CSVelte\Flavor\Excel;
+        $excel = new CSVelte\Flavor\Excel();
         $this->assertEquals("\r\n", $excel->lineTerminator);
         $this->assertEquals('"', $excel->quoteChar);
-        $this->assertEquals(",", $excel->delimiter);
+        $this->assertEquals(',', $excel->delimiter);
         $this->assertEquals(Flavor::QUOTE_MINIMAL, $excel->quoteStyle);
         $this->assertTrue($excel->doubleQuote);
         $this->assertFalse($excel->skipInitialSpace);
         $this->assertNull($excel->escapeChar);
     }
-
 }

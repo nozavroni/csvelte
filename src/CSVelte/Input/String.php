@@ -6,21 +6,18 @@
  * suck out of working with CSV.
  *
  * @version   v0.1
+ *
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
 namespace CSVelte\Input;
 
-use CSVelte\Contract\Readable;
-use CSVelte\Exception\ImmutableException;
-
 /**
  * CSVelte\Input\string
  * Allows Reader to read from any arbitrary string of CSV data by temporarily
- * placing the string into memory and reading from there.g
+ * placing the string into memory and reading from there.g.
  *
- * @package   CSVelte\Reader
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
@@ -38,11 +35,11 @@ class String extends SeekableStream
         $name = self::STREAM_MEMORY;
         if (false === ($this->source = @fopen($name, 'w+'))) {
             // @todo custom exception
-            throw new InvalidStreamUriException('Cannot open stream: ' . $name);
+            throw new InvalidStreamUriException('Cannot open stream: '.$name);
         }
         if (false === fwrite($this->source, $str)) {
             // @todo throw custom exception
-            throw new \Exception('Cannot write to ' . $name);
+            throw new \Exception('Cannot write to '.$name);
         }
         $this->rewind();
         $this->updateInfo();

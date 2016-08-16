@@ -1,15 +1,14 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
 use CSVelte\Input\File;
+use CSVelte\Input\SeekableStream;
 use CSVelte\Input\Stream;
 use CSVelte\Input\String;
-use CSVelte\Input\SeekableStream;
+use PHPUnit\Framework\TestCase;
 
 /**
- * CSVelte\Input Tests
+ * CSVelte\Input Tests.
  *
- * @package   CSVelte Unit Tests
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
@@ -19,13 +18,13 @@ class InputTest extends TestCase
 
     public function setUp()
     {
-        $this->banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');
+        $this->banklist = file_get_contents(__DIR__.'/../files/banklist.csv');
         $this->testDataDoubleQuotes = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\nFirst CornerStone Bank,\"King of\n\"\"Prussia\"\"\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16\nTrust Company Bank,Memphis,TN,9956,The Bank of Fayette County,29-Apr-16,25-May-16\nNorth Milwaukee State Bank,Milwaukee,WI,20364,First-Citizens Bank & Trust Company,11-Mar-16,16-Jun-16\nHometown National Bank,Longview,WA,35156,Twin City Bank,2-Oct-15,13-Apr-16\nThe Bank of Georgia,Peachtree City,GA,35259,Fidelity Bank,2-Oct-15,13-Apr-16\nPremier Bank,Denver,CO,34112,\"United Fidelity \r\n \r \r \n \r\n Bank, fsb\",10-Jul-15,17-Dec-15\n";
     }
 
     public function testCreateNewFile()
     {
-        $file = new File(__DIR__ . '/../files/banklist.csv');
+        $file = new File(__DIR__.'/../files/banklist.csv');
         $this->assertEquals($expectedFilename = 'banklist.csv', $file->name());
     }
 
@@ -39,8 +38,8 @@ class InputTest extends TestCase
 
     public function testStreamInfoMethods()
     {
-        $banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');
-        $stream = new Stream($path = 'file://' . __DIR__ . '/../files/banklist.csv');
+        $banklist = file_get_contents(__DIR__.'/../files/banklist.csv');
+        $stream = new Stream($path = 'file://'.__DIR__.'/../files/banklist.csv');
         $this->assertEquals($expectedName = 'banklist.csv', $stream->name());
         // $this->assertEquals($expectedPath = realpath(__DIR__ . '/../files'), $stream->path());
         $this->assertEquals($expectedPath = dirname($path), $stream->path());
@@ -48,8 +47,8 @@ class InputTest extends TestCase
 
     public function testStreamReadSpecifiedNumberOfCharacters()
     {
-        $banklist = file_get_contents(__DIR__ . '/../files/banklist.csv');
-        $stream = new Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv'));
+        $banklist = file_get_contents(__DIR__.'/../files/banklist.csv');
+        $stream = new Stream('file://'.realpath(__DIR__.'/../files/banklist.csv'));
         $this->assertEquals($expectedFirst100 = substr($banklist, 0, 100), $stream->read(100));
         // now make sure it picks up from where it left off...
         $this->assertEquals($expectedNext50 = substr($banklist, 100, 50), $stream->read(50));
@@ -57,7 +56,7 @@ class InputTest extends TestCase
 
     public function testStreamSupportsComplexStreamNames()
     {
-        $upper = fopen($streamName = 'php://filter/read=string.toupper/resource=file://' . realpath(__DIR__ . '/../files/banklist.csv'), 'r+');
+        $upper = fopen($streamName = 'php://filter/read=string.toupper/resource=file://'.realpath(__DIR__.'/../files/banklist.csv'), 'r+');
         $stream = new Stream($streamName);
         $this->assertEquals($expected = fread($upper, 100), $stream->read(100));
     }
@@ -67,7 +66,7 @@ class InputTest extends TestCase
         list($line1, $line2, $line3, $therest) = explode($eol = "\n", $this->banklist, 4);
         $therest = str_replace("\n", "\r", $therest);
         list($line1oftherest, $therestoftherest) = explode("\r", $therest);
-        $stream = new Stream('file://' . __DIR__ . '/../files/banklist.csv');
+        $stream = new Stream('file://'.__DIR__.'/../files/banklist.csv');
         $this->assertEquals($line1, $stream->readLine());
         // next call should pull line 2
         $this->assertEquals($line2, $stream->readLine());
@@ -81,26 +80,26 @@ class InputTest extends TestCase
 
     public function testSeekToPosition()
     {
-        $stream = new SeekableStream('file://' . __DIR__ . '/../files/banklist.csv');
+        $stream = new SeekableStream('file://'.__DIR__.'/../files/banklist.csv');
         $stream->read(125);
         $this->assertEquals($expected = 125, $stream->position());
         $stream->seek(10);
         $this->assertEquals($expected = 10, $stream->position());
-        $this->assertEquals($expected = "City,ST,CERT,Acquiring In", $stream->read(25));
+        $this->assertEquals($expected = 'City,ST,CERT,Acquiring In', $stream->read(25));
     }
 
     public function testChainingMethods()
     {
-        $this->assertEquals($expected = "City,ST,CERT,Acquiring In", with(new SeekableStream('file://' . __DIR__ . '/../files/banklist.csv'))->seek(10)->read(25));
+        $this->assertEquals($expected = 'City,ST,CERT,Acquiring In', with(new SeekableStream('file://'.__DIR__.'/../files/banklist.csv'))->seek(10)->read(25));
     }
 
     public function testIsEof()
     {
-        $filename = realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv');
+        $filename = realpath(__DIR__.'/../files/SampleCSVFile_2kb.csv');
         $size = filesize($filename);
-        $stream = new SeekableStream('file://' . $filename);
+        $stream = new SeekableStream('file://'.$filename);
         $this->assertFalse($stream->isEof());
-        $read = $stream->read($size+1);
+        $read = $stream->read($size + 1);
         $this->assertTrue($stream->isEof());
         $stream->seek(0);
         $this->assertFalse($stream->isEof());
@@ -114,10 +113,10 @@ class InputTest extends TestCase
 
     public function testRewind()
     {
-        $filename = realpath(__DIR__ . '/../files/SampleCSVFile_2kb.csv');
+        $filename = realpath(__DIR__.'/../files/SampleCSVFile_2kb.csv');
         $stream = new Stream($filename);
         $first150 = $stream->read(150);
-        $this->assertEquals($expected = "c", $stream->read(1));
+        $this->assertEquals($expected = 'c', $stream->read(1));
         $stream->rewind();
         $this->assertEquals($expected = 0, $stream->position());
         $this->assertEquals($first150, $stream->read(150));
@@ -125,7 +124,7 @@ class InputTest extends TestCase
 
     public function testHandlesQuotedLineTerminatorsTrait()
     {
-        $filename = realpath(__DIR__ . '/../files/banklist-qsc-sm.csv');
+        $filename = realpath(__DIR__.'/../files/banklist-qsc-sm.csv');
         $stream = new Stream($filename);
         $stream->readLine();
         $stream->readLine();
@@ -133,11 +132,11 @@ class InputTest extends TestCase
     }
 
     /**
-     * 3xpectedException CSVelte\Exception\
+     * 3xpectedException CSVelte\Exception\.
      */
     public function testCloseStreamResourceManually()
     {
-        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $filename = realpath(__DIR__.'/../files/banklist.csv');
         $stream = new Stream($filename);
         // should be able to read from stream because it's open
         $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\r\nFirst CornerStone Bank,King ", $actual = $stream->read(100));
@@ -150,7 +149,7 @@ class InputTest extends TestCase
 
     public function testStreamCanAcceptStreamResourceInConstructor()
     {
-        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $filename = realpath(__DIR__.'/../files/banklist.csv');
         $handle = fopen($filename, 'r+');
         // read a little data from the resource...
         $hdata = fread($handle, 100);
@@ -162,7 +161,7 @@ class InputTest extends TestCase
         // did stream reader start off where fread left the pointer?
         $this->assertEquals($expected = "of Prussia,PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16\r\nTrust Company Bank,Memph", $sdata, "Ensure that when passing a stream handle to stream class's constructor, that the internal stream/file pointer is not reset or moved in any way.");
         // same resource?
-        $this->assertSame($expected = $handle, $stream->getStreamResource(), "Ensure that the stream resource fetched from stream object is the same one that was passed in through its constructor.");
+        $this->assertSame($expected = $handle, $stream->getStreamResource(), 'Ensure that the stream resource fetched from stream object is the same one that was passed in through its constructor.');
     }
 
     /**
@@ -179,7 +178,7 @@ class InputTest extends TestCase
      */
     public function testReadTriggersExceptionOnceStreamHasBeenClosed()
     {
-        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $filename = realpath(__DIR__.'/../files/banklist.csv');
         $stream = new Stream($filename);
         // should be able to read from stream because it's open
         $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\r\nFirst CornerStone Bank,King ", $actual = $stream->read(100));
@@ -191,7 +190,7 @@ class InputTest extends TestCase
 
     public function testCloseStreamResourceInDestructor()
     {
-        $filename = realpath(__DIR__ . '/../files/banklist.csv');
+        $filename = realpath(__DIR__.'/../files/banklist.csv');
         $handle = fopen($filename, 'r+');
         $stream = new Stream($handle);
         $this->assertSame($expected = $handle, $stream->getStreamResource());

@@ -1,11 +1,12 @@
 <?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
- * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV 
- * standardization efforts, CSVelte was written in an effort to take all the 
- * suck out of working with CSV. 
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
  *
  * @version   v0.1
+ *
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
@@ -21,7 +22,6 @@ use CSVelte\Exception\EndOfFileException;
  * CSV data. In order for a reader to be able to handle newlines in this way, it
  * must implement this trait.
  *
- * @package   CSVelte
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @note      Add this trait to a CSVelte\Input class to be able to read mult-line
@@ -46,31 +46,38 @@ trait HandlesQuotedLineTerminators
      *
      * @param int
      * @param char
+     *
      * @return string
-     * @access public
+     *
      * @see README file for more about CSV de-facto standard
+     *
      * @todo This should probably just accept a Flavor as its only argument
      */
     public function readLine($max = null, $eol = PHP_EOL, $quoteChar = '"', $escapeChar = '\\')
     {
         try {
             do {
-                if (!isset($lines)) $lines = array();
+                if (!isset($lines)) {
+                    $lines = [];
+                }
                 array_push($lines, $this->nextLine($max, $eol));
             } while ($this->inQuotedString(end($lines), $quoteChar, $escapeChar));
         } catch (EndOfFileException $e) {
             // only throw the exception if we don't already have lines in the buffer
-            if (!count($lines)) throw $e;
+            if (!count($lines)) {
+                throw $e;
+            }
         }
+
         return rtrim(implode($eol, $lines), $eol);
     }
 
     /**
-     * Determine whether last line ended while a quoted string was still "open"
+     * Determine whether last line ended while a quoted string was still "open".
      *
      * @param string Line of csv to analyze
+     *
      * @return bool
-     * @access protected
      */
     protected function inQuotedString($line, $quoteChar, $escapeChar)
     {
@@ -78,16 +85,21 @@ trait HandlesQuotedLineTerminators
         // dd($quoteChar, false, "quoteChar");
         if (!empty($line)) {
             do {
-                if (!isset($i)) $i = 0;
+                if (!isset($i)) {
+                    $i = 0;
+                }
                 $c = $line[$i++];
                 if ($this->escape) {
                     $this->escape = false;
                     continue;
                 }
                 $this->escape = ($c == $escapeChar);
-                if ($c == $quoteChar) $this->open = !$this->open;
+                if ($c == $quoteChar) {
+                    $this->open = !$this->open;
+                }
             } while ($i < strlen($line));
         }
+
         return $this->open;
     }
 
@@ -96,14 +108,16 @@ trait HandlesQuotedLineTerminators
      * Because this trait overrides the readLine method of the Readable interface,
      * it has to require this method in its place. That way it can still delegate
      * the reading of data to the actual class and only concern itself with the
-     * task at hand (quoted newlines)
+     * task at hand (quoted newlines).
      *
      * @abstract
-     * @access protected
+     *
      * @param int
      * @param char
-     * @return string The next line of text from the input source
+     *
      * @throws CSVelte\Exception\EndOfFileException
+     *
+     * @return string The next line of text from the input source
      */
     abstract protected function nextLine($max = null, $eol = PHP_EOL);
 }

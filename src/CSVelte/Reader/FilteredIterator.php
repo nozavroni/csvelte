@@ -1,44 +1,46 @@
 <?php
 /**
- * CSVelte: Slender, elegant CSV for PHP
+ * CSVelte: Slender, elegant CSV for PHP.
  *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
  * @version   v0.1
+ *
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
- * @internal 
+ *
+ * @internal
  */
 namespace CSVelte\Reader;
 
 use CSVelte\Reader as CsvReader;
-use \FilterIterator;
+use FilterIterator;
 
 /**
- * Filtered Reader Iterator
+ * Filtered Reader Iterator.
  *
  * This class is not intended to be instantiated manually. It is returned by the
  * CSVelte\Reader class when filter() is called to iterate over the CSV file,
  * skipping all rows that don't pass the filter(s) tests.
  *
- * @package CSVelte
- * @subpackage Reader
  * @since v0.1
+ *
  * @internal
  */
 class FilteredIterator extends FilterIterator
 {
     /**
-     * A list of callback functions
+     * A list of callback functions.
+     *
      * @var array of Callable objects/functions
      */
-    protected $filters = array();
+    protected $filters = [];
 
     /**
-     * FilteredIterator Constructor
+     * FilteredIterator Constructor.
      *
      * Initializes the iterator using the CSV reader and its array of callback
      * filter functions/callables.
@@ -57,7 +59,7 @@ class FilteredIterator extends FilterIterator
      * Loop through all of the callback functions, and if any of them fail, do
      * not include this row in the iteration.
      *
-     * @return boolean
+     * @return bool
      */
     public function accept()
     {
@@ -67,6 +69,7 @@ class FilteredIterator extends FilterIterator
                 return false;
             }
         }
+
         return true;
     }
 }

@@ -1,20 +1,16 @@
 <?php
 /**
- * TasterTest
+ * TasterTest.
  *
- * @package   CSVelte Unit Tests
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-use PHPUnit\Framework\TestCase;
 use CSVelte\CSVelte;
 use CSVelte\Flavor;
-use CSVelte\Taster;
-use CSVelte\Contract\Readable;
-use CSVelte\Input\Stream;
-use CSVelte\Input\String;
 use CSVelte\Input\File;
-use Carbon\Carbon;
+use CSVelte\Input\String;
+use CSVelte\Taster;
+use PHPUnit\Framework\TestCase;
 
 class TasterTest extends TestCase
 {
@@ -31,8 +27,10 @@ class TasterTest extends TestCase
     }
 
     /**
-     * Test that lick() properly determines CSV flavor
+     * Test that lick() properly determines CSV flavor.
+     *
      * @return void
+     *
      * @todo This is where the mock API becomes necessary. Since most of the
      *     Taster methods are protected/private, there is no way for me to test
      *     the individual internal method calls and such. I need to be able to
@@ -44,9 +42,9 @@ class TasterTest extends TestCase
         $input = new String($this->testData);
         $taster = new Taster($input);
         $this->assertInstanceOf(Flavor::class, $flavor = $taster->lick());
-        $this->assertEquals(",", $flavor->delimiter);
+        $this->assertEquals(',', $flavor->delimiter);
         $this->assertEquals("\n", $flavor->lineTerminator);
-        $this->assertEquals("\"", $flavor->quoteChar);
+        $this->assertEquals('"', $flavor->quoteChar);
         $this->assertTrue($flavor->doubleQuote);
         $this->assertEquals('\\', $flavor->escapeChar);
         $this->assertEquals(Flavor::QUOTE_MINIMAL, $flavor->quoteStyle);
@@ -69,7 +67,7 @@ class TasterTest extends TestCase
     {
         $cr = "\n";
         $lf = "\r"; // these are backwards but oh well
-        $crlf = $lf . $cr;
+        $crlf = $lf.$cr;
 
         $input = new String($this->testData);
         $taster = new Taster($input);
@@ -87,8 +85,8 @@ class TasterTest extends TestCase
         $taster = new Taster($input);
         $flavor = $taster->lick();
         $this->assertEquals($crlf, $flavor->lineTerminator);
-
     }
+
     //
     // public function testLickQuoteAndDelim()
     // {
@@ -117,7 +115,7 @@ class TasterTest extends TestCase
         $input = new String($this->testData);
         $taster = new Taster($input);
         $flavor = $taster->lick();
-        $this->assertEquals(",", $flavor->delimiter);
+        $this->assertEquals(',', $flavor->delimiter);
 
         $input = new String($this->testTabSingleData);
         $taster = new Taster($input);
@@ -183,14 +181,14 @@ class TasterTest extends TestCase
     {
         $input = new String($this->testData);
         $taster = new Taster($input);
-        $expected_flavor = new Flavor(array(
-            'delimiter' => ',',
-            'quoteChar' => '"',
-            'escapeChar' => '\\',
+        $expected_flavor = new Flavor([
+            'delimiter'      => ',',
+            'quoteChar'      => '"',
+            'escapeChar'     => '\\',
             'lineTerminator' => "\n",
-            'header' => true,
-            'quoteStyle' => Flavor::QUOTE_MINIMAL
-        ));
+            'header'         => true,
+            'quoteStyle'     => Flavor::QUOTE_MINIMAL,
+        ]);
         $this->assertEquals($expected_flavor, $taster->lick());
     }
 
@@ -198,15 +196,15 @@ class TasterTest extends TestCase
     {
         $input = new String($this->testData);
         $taster = new Taster($input);
-        $expected_flavor = new Flavor(array(
-            'delimiter' => ",",
-            'quoteChar' => "\"",
-            'escapeChar' => '\\',
-            'doubleQuote' => true,
-            'quoteStyle' => Flavor::QUOTE_MINIMAL,
+        $expected_flavor = new Flavor([
+            'delimiter'      => ',',
+            'quoteChar'      => '"',
+            'escapeChar'     => '\\',
+            'doubleQuote'    => true,
+            'quoteStyle'     => Flavor::QUOTE_MINIMAL,
             'lineTerminator' => "\n",
-            'header' => true
-        ));
+            'header'         => true,
+        ]);
         $this->assertEquals($expected_flavor, $taster->lick());
     }
 
@@ -214,43 +212,43 @@ class TasterTest extends TestCase
     {
         $banklist = new File($this->samplefile('banklist.csv'));
         $taster = new Taster($banklist);
-        $expected_flavor = new Flavor(array(
-            'delimiter' => ",",
-            'quoteChar' => "\"",
-            'escapeChar' => '\\',
-            'doubleQuote' => true,
-            'quoteStyle' => Flavor::QUOTE_MINIMAL,
+        $expected_flavor = new Flavor([
+            'delimiter'        => ',',
+            'quoteChar'        => '"',
+            'escapeChar'       => '\\',
+            'doubleQuote'      => true,
+            'quoteStyle'       => Flavor::QUOTE_MINIMAL,
             'skipInitialSpace' => false,
-            'lineTerminator' => "\r\n",
-            'header' => true
-        ));
+            'lineTerminator'   => "\r\n",
+            'header'           => true,
+        ]);
         $flavor = $taster->lick();
         $this->assertEquals($expected_flavor, $flavor);
 
         $longname = new File($this->samplefile('userssharedsdfratebrthsyaw1819raceethncty20002012.csv'));
         $taster = new Taster($longname);
-        $expected_flavor = new Flavor(array(
-            'delimiter' => ",",
-            'quoteChar' => "\"",
-            'escapeChar' => '\\',
-            'doubleQuote' => true,
-            'quoteStyle' => Flavor::QUOTE_MINIMAL,
+        $expected_flavor = new Flavor([
+            'delimiter'      => ',',
+            'quoteChar'      => '"',
+            'escapeChar'     => '\\',
+            'doubleQuote'    => true,
+            'quoteStyle'     => Flavor::QUOTE_MINIMAL,
             'lineTerminator' => "\n",
-            'header' => true
-        ));
+            'header'         => true,
+        ]);
         $this->assertEquals($expected_flavor, $taster->lick());
 
         $sample = new File($this->samplefile('sample.csv'));
         $taster = new Taster($sample);
-        $expected_flavor = new Flavor(array(
-            'delimiter' => ",",
-            'quoteChar' => "\"",
-            'escapeChar' => '\\',
-            'doubleQuote' => true,
-            'quoteStyle' => Flavor::QUOTE_NONE,
+        $expected_flavor = new Flavor([
+            'delimiter'      => ',',
+            'quoteChar'      => '"',
+            'escapeChar'     => '\\',
+            'doubleQuote'    => true,
+            'quoteStyle'     => Flavor::QUOTE_NONE,
             'lineTerminator' => "\r",
-            'header' => true
-        ));
+            'header'         => true,
+        ]);
         $this->assertEquals($expected_flavor, $taster->lick());
 
         $data = file_get_contents($this->samplefile('SampleCSVFile_11kb.csv'));
@@ -260,17 +258,17 @@ class TasterTest extends TestCase
         $data = str_replace('""', '\\"', $data);
         $sample = new String($data);
         $taster = new Taster($sample);
-        $expected_flavor = new Flavor(array(
-            'delimiter' => "|",
-            'quoteChar' => "'",
+        $expected_flavor = new Flavor([
+            'delimiter'  => '|',
+            'quoteChar'  => "'",
             'escapeChar' => '\\',
             // @todo When escape char is used this needs to be set to false
             // 'doubleQuote' => false,
-            'doubleQuote' => true,
-            'quoteStyle' => Flavor::QUOTE_MINIMAL,
+            'doubleQuote'    => true,
+            'quoteStyle'     => Flavor::QUOTE_MINIMAL,
             'lineTerminator' => "\n",
-            'header' => false
-        ));
+            'header'         => false,
+        ]);
         $this->assertEquals($expected_flavor, $taster->lick());
     }
 
@@ -293,5 +291,4 @@ class TasterTest extends TestCase
     //     //
     //     // $this->assertSame($tasterMock, $tasterMockCreate);
     // }
-
 }

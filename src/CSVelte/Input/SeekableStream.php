@@ -6,21 +6,18 @@
  * suck out of working with CSV.
  *
  * @version   v0.1
+ *
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
 namespace CSVelte\Input;
 
-use CSVelte\Contract\Readable;
 use CSVelte\Contract\Seekable;
 
 /**
  * CSVelte\Input\SeekableStream
- * Represents a stream source for CSV data
- *
- * @package CSVelte
- * @subpackage Input/Output
+ * Represents a stream source for CSV data.
  */
 class SeekableStream extends Stream implements Seekable
 {
@@ -28,6 +25,7 @@ class SeekableStream extends Stream implements Seekable
     {
         fseek($this->source, $pos);
         $this->updateInfo();
+
         return $this;
     }
 }
