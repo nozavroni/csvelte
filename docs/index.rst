@@ -17,16 +17,23 @@ Although eventually this library's scope will widen to include much of the `CSV 
 
     :doc:`reference/flavors`
         Due to CSV's lack of an established standard, numerous "flavors" or "dialects" of the format can be found "in the wild".
+
     :doc:`reference/tasting`
         Automatically detect the "flavor" of CSV data by inspecting a sample of it.
+
     :doc:`reference/reading`
         Read CSV data from local files, streams, or from a PHP string.
+
     :doc:`reference/writing`
         Write CSV data to local files or streams.
 
 ..  note::
 
     For a more detailed list of features, and to find out what kind of stuff is planned for later releases, check out the :doc:`roadmap`.
+
+..  warning::
+
+	This library is still very much in its infancy and its API is subject to change, even break backwards compatibility, at any time until it reaches version 1.0. After that, its API can be relied upon to remain stable and not break backwards compatibility until the next major version change (v2.x, v3.x, etc.)
 
 Getting Started
 ===============
@@ -74,7 +81,3 @@ Tutorials address a specific problem and walk you through each step of its solut
     tutorials/index
 
 ..  include:: reference/map.rst.inc
-
-..  note::
-
-	This library is still very much in its infancy and its API is subject to change, even break backwards compatibility, at any time until it reaches version 1.0. After that, its API can be relied upon to remain stable and not break backwards compatibility until the next major version change (v2.x, v3.x, etc.)

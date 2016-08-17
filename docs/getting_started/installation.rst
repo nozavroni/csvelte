@@ -25,7 +25,7 @@ If you've never used Composer, you'll want to head over to `getcomposer.org <htt
 
     $ php composer.phar require nozavroni/csvelte @dev-master
 
-.. note::
+.. warning::
 
     CSVelte is currently under heavy development. Once it reaches a stable version, it will be simply a matter of ``composer require nozavroni/csvelte`` but for the time being you will need the ``@dev-master`` flag or Composer will complain and refuse to install (or you can `lower your minimum-stability setting <https://getcomposer.org/doc/04-schema.md#minimum-stability>`_, which will have the same effect for *all* dependencies).
 
