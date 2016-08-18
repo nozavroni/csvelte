@@ -7,7 +7,7 @@ How does CSVelte address the extremely loose nature of CSV as a format? It allow
 Flavors of CSV
 ==============
 
-Taking cues from `Python's CSV module <https://docs.python.org/2/library/csv.html>`_, `Frictionless Data's CSV Dialect Description Format <http://specs.frictionlessdata.io/csv-dialect/>`_, as well as the `W3C's <https://www.w3.org/>`_ `CSV on the Web Working Group <https://www.w3.org/2013/csvw/wiki/Main_Page>`_, CSVelte allows developers to define distinct :ref:`flavors </reference/flavors>` of CSV so that consumers can rely on publishers using a specific :ref:`flavor </reference/flavors>`. Python has a similar concept they call "`dialects <https://docs.python.org/2/library/csv.html#dialects-and-formatting-parameters>`_". To define a flavor in CSV, you simply instantiate a ``CSVelte\Flavor`` object and specify its attributes.
+Taking cues from `Python's CSV module <https://docs.python.org/2/library/csv.html>`_ ( :pep:`302` ), `Frictionless Data's CSV Dialect Description Format <http://specs.frictionlessdata.io/csv-dialect/>`_, as well as the `W3C's <https://www.w3.org/>`_ `CSV on the Web Working Group <https://www.w3.org/2013/csvw/wiki/Main_Page>`_, CSVelte allows developers to define distinct :ref:`flavors </reference/flavors>` of CSV so that consumers can rely on publishers using a specific :ref:`flavor </reference/flavors>`. Python has a similar concept they call "`dialects <https://docs.python.org/2/library/csv.html#dialects-and-formatting-parameters>`_". To define a flavor in CSV, you simply instantiate a ``CSVelte\Flavor`` object and specify its attributes.
 
 .. code-block:: php
 
@@ -46,7 +46,7 @@ Flavor Attributes
 
     header
         Specifies whether to treat the first row of the dataset as a header row. If ``true``, the first row will be ignored by the ``CSVelte\Reader`` class when iterating over a dataset. Defaults to ``null``
-        
+
     delimiter
         Specifies a single character to be used as the field separator. Defaults to ``,``. Other common values are ``\t``, and ``|``.
 
@@ -60,7 +60,7 @@ Flavor Attributes
         Specifies how to handle quote characters that fall within a quoted string. If set to ``true``, two consecutive ``quoteChar`` characters will be treated as one. Defaults to ``true``.
 
     escapeChar
-        Specifies a single character to be used for escaping. Defaults to ``null`` as it is mutually exclusive to ``doubleQuote``.
+        Specifies a single character to be used for escaping the delimiter character within an unquoted field or a quote within a quoted field. Defaults to ``null`` as it is mutually exclusive to ``doubleQuote``.
 
     quoteStyle
         Specifies the types of fields that should be enclosed with ``quoteChar``. Value must be one of the following class constants. Defaults to Flavor::QUOTE_MINIMAL.
@@ -105,4 +105,8 @@ These class work exactly the same way that ``CSVelte\Flavor`` does, except that 
     $excelPipeQuoteAll = $excelPipe->copy([
         'quoteStyle' => Flavor::QUOTE_ALL
     ]);
-```
+
+But what do I do with it?
+=========================
+
+As I've explained, the ``CSVelte\Flavor`` class allows you to define a particular set of formatting attributes for CSV. But what then? Knowing a particular set of formatting attributes for CSV does you no good without some data to apply it to. And that brings us, finally, to the meat and potatoes of this library, its reader and writer.

@@ -26,7 +26,9 @@ Using the auto-detect feature is so easy, you won't even know you're using it. A
     // flavor will be quietly inferred from a sample of "products.csv"
     $reader = CSVelte::reader("./files/products.csv");
 
-There will be a more detailed explanation of this when we get to the section on :doc:`reading`. But for now, all you need to know is that CSVelte will *always* try to figure out the CSV flavor on its own unless you explicitly provide one.
+.. see-also::
+
+    There will be a more detailed explanation of this when we get to the section on :doc:`reading`. But for now, all you need to know is that CSVelte will *always* try to figure out the CSV flavor on its own unless you explicitly provide one.
 
 Analyzing CSV data manually
 ===========================
