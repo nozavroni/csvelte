@@ -6,21 +6,37 @@ Due to PHP's array-centric programming philosophy and its unprecedented communit
 
 If however, you're looking for a way to efficiently read CSV data from any source using a consistent, object-oriented interface, you've come to the right place.
 
-Reader and Readables
-====================
+The ``CSVelte\Reader`` class
+============================
 
-To read CSV data, whether it be from a local file, a stream, a PHP string or some other source, you'll use a combination of ``CSVelte\Reader`` and any class that implements the ``CSVelte\Contracts\Readable`` interface. Let's take a look at what it might look like to implement a reader object using a ``CSVelte\Input\File`` (local file) object.
+I believe in most cases, CSV data will be read from a file on the local file system. But there are certainly cases where one might need to read CSV directly from a PHP string, or from a stream. The data can come from virtually anywhere. It is for this reason that CSVelte makes available a :php:interface:`CSVelte\\Contracts\\Readable` interface. Any class that implements ``Readable`` can be read by ``CSVelte\Reader``. Simply pass your ``Readable`` object to its constructor as its first argument.
 
 ..  code-block:: php
 
     <?php
-    // create a local file "readable"
-    $csvfile = new CSVelte\Input\File('./data/orders.csv');
+    // local file "readable" object
+    $in = new CSVelte\Input\File('./data/customers.csv');
+    $reader = new CSVelte\Reader($in);
 
-    // now pass that "readable" to the "reader"
-    $reader = new CSVelte($csvfile);
+As I mentioned in ":doc:`tasting`", the reader object will always *attempt* to determine the CSV flavor, but the auto-detection feature, while very often correct, is only an educated guess, at best. If you know ahead of time what flavor CSV you are working with, it's **always** recommended that you explicitly pass a flavor object as the second argument to ``CSVelte\Reader`` so that it doesn't have to guess.
 
-Working with a reader object
-============================
+..  code-block:: php
 
-The ``CSVelte\Reader`` class implements PHP's :php:interface:`Iterator` which means that iterating over each row in your CSV data is as simple as a ``foreach`` loop.
+    <?php
+    $in = new CSVelte\Input\File("./data/purchases.csv");
+    // explicitly pass a flavor object to the reader to disable auto-detection
+    $reader = new CSVelte\Reader($in, new Flavor([
+        'delimiter' => '|',
+        'lineTerminator' => "\n",
+        'quoteStyle' => self::QUOTE_ALL,
+        'escapeChar' => '//',
+        'doubleQuote' => false,
+        'header' => true
+    ]));
+    foreach ($reader as $row) {
+        // now you can do something with $row...
+    }
+
+..  warning::
+
+    If you're unsure about the size and/or number of rows in the CSV file you're working with, you'll want to avoid doing things like unpacking it into a PHP array. This will result in the entire file being loaded into memory rather than just one row at a time. In cases where you know your CSV data is only a few hundred rows, this shouldn't be an issue, but it isn't at all uncommon for CSV files to be several orders of magnitude larger.
