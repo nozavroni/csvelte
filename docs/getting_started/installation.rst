@@ -19,7 +19,7 @@ Installation
 With Composer
 ^^^^^^^^^^^^^
 
-If you've never used Composer, you'll want to head over to `getcomposer.org <https://www.getcomposer.org>`_ and follow their installation instructions first. Once Composer has been successfully installed, you may use the following command to install CSVelte within your Composer package/project.
+If you've never used Composer, you'll want to head over to `getcomposer.org <https://www.getcomposer.org>`_ and follow the installation instructions on their `download page <https://getcomposer.org/download/>`_ first. Once Composer has been successfully installed, you may use the following command to install CSVelte within your Composer package/project.
 
 .. code-block:: bash
 
