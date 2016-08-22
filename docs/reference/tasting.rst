@@ -9,9 +9,9 @@ How does it work?
 
 It's actually magic. I figured out how to do magic.
 
-.. note::
+..  note::
 
-    **Is it *really* magic?**
+    **Is it really magic?**
 
     Yes.
 
@@ -20,13 +20,13 @@ Using flavor auto-detection
 
 Using the auto-detect feature is so easy, you won't even know you're using it. Any time you instantiate a ``CSVelte\Reader`` object without providing an explicit ``CSVelte\Flavor`` object, the library will analyze a sample of the data you're trying to read and build a flavor object *for* you, behind the scenes.
 
-.. code-block:: php
+..  code-block:: php
 
     <?php
     // flavor will be quietly inferred from a sample of "products.csv"
     $reader = CSVelte::reader("./files/products.csv");
 
-.. see-also::
+..  see-also::
 
     There will be a more detailed explanation of this when we get to the section on :doc:`reading`. But for now, all you need to know is that CSVelte will *always* try to figure out the CSV flavor on its own unless you explicitly provide one.
 
@@ -35,7 +35,7 @@ Analyzing CSV data manually
 
 Behind the scenes, CSVelte's auto-detect feature ultimately boils down to a single method of a single class called ``CSVelte\Taster``. To manually run the data analyzer (flavor taster), you must instantiate a ``CSVelte\Taster`` object. To do this, you'll need a source of CSV data. Let's take a look at how this might look.
 
-.. code-block:: php
+..  code-block:: php
 
     <?php
     // create an input source object that points to a CSV file
@@ -49,7 +49,7 @@ Behind the scenes, CSVelte's auto-detect feature ultimately boils down to a sing
 
 This will work for the overwhelming majority of datasets, but if your data is too uniform or your sample too small ``CSVelte\Taster`` will issue an exception. The exception's message will contain a short explanation of why the taster failed to produce a flavor object. This allows your script to recover from such a failure and rather than display some arcane error page, perhaps prompt your end-user to provide this information or failing that, just proceeding with a sane default. Let's see what that might look like.
 
-.. code-block:: php
+..  code-block:: php
 
     <?php
     // this time we wrap our tasting code in a try/catch

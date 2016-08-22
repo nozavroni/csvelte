@@ -15,6 +15,8 @@ Features
 
 Although eventually this library's scope will widen to include much of the `CSV on the Web Working Group <https://www.w3.org/2013/csvw/wiki/Main_Page>`_'s recommendations, for now (and probably until at least v1.0), its aim is to read and write CSV data in as simple and concise a manner as possible. It's object-oriented design relies on well-known design patterns and best practices so that it can remain flexible and easy to use regardless of what features I may add in the future. As of now, its feature set is limited.
 
+..  highlights::
+
     :doc:`reference/flavors`
         Due to CSV's lack of an established standard, numerous "flavors" or "dialects" of the format can be found "in the wild".
 
@@ -45,8 +47,6 @@ Ready to get started using CSVelte? Check out the :doc:`getting_started/index` g
 
     getting_started/index
 
-.. include:: getting_started/map.rst.inc
-
 API Documentation
 =================
 
@@ -56,7 +56,7 @@ You can find CSVelte's API documentation at http://phpcsv.com/csvelte/apidocs/
 
 ..  note::
 
-    The API documentation is generated automatically by `ApiGen <http://www.apigen.org>`_ and reads as such. For more detailed, human-friendly documentation, take a look at the reference guides and tutorials sections.
+    The API documentation is generated automatically by `ApiGen <http://www.apigen.org>`_ and reads as such. For more detailed, human-friendly documentation, take a look at the :doc:`reference/index` and :doc:`tutorials/index` sections.
 
 Reference Guides
 ================
@@ -68,8 +68,6 @@ The reference guides are somewhere between API docs and tutorials. They are esse
 
     reference/index
 
-..  include:: reference/map.rst.inc
-
 Tutorials
 =========
 
@@ -79,5 +77,3 @@ Tutorials address a specific problem and walk you through each step of its solut
     :hidden:
 
     tutorials/index
-
-..  include:: reference/map.rst.inc
