@@ -102,7 +102,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
 #
-# default_role = None
+default_role = "php"
 
 # If true, '()' will be appended to :func: etc. cross-reference text.
 #
@@ -128,7 +128,7 @@ pygments_style = 'sphinx'
 # keep_warnings = False
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+todo_include_todos = False
 
 apigen_docs_uri = 'http://phpcsv.com/apidocs'
 
