@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/nozavroni/csvelte.svg?branch=master)](https://travis-ci.org/nozavroni/csvelte)
 [![Coverage Status](https://coveralls.io/repos/github/nozavroni/csvelte/badge.svg?branch=master)](https://coveralls.io/github/nozavroni/csvelte?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nozavroni/csvelte/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nozavroni/csvelte/?branch=master)
+[![License](https://poser.pugx.org/nozavroni/csvelte/license)](https://packagist.org/packages/nozavroni/csvelte)
 
 ![screen shot 2016-07-13 at 10 18 42 am](https://cloud.githubusercontent.com/assets/17840996/16812744/5b92f468-48e3-11e6-9d2a-5c735b1596c6.png)
 
@@ -17,10 +18,10 @@ CSVelte requires at least PHP5.3
 
 #### With Composer
 
-To install using composer, just use the following command. That's it. Happy coding.
+To install using Composer, just use the following command. Once CSVelte reaches a stable version, it will be simply a matter of ``composer require nozavroni/csvelte`` but for the time being you will need the ``@dev-master`` flag (or you can [lower your minimum-stability setting](https://getcomposer.org/doc/04-schema.md#minimum-stability)) or Composer will complain and refuse to install.
 
 ```bash
-$ composer install nozavroni/csvelte
+$ php composer.phar require nozavroni/csvelte @dev-master
 ```
 
 #### Without Composer (direct download)
