@@ -212,8 +212,6 @@ In order to be able to use column header values rather than numeric indexes, you
 
     You must remember to use the exact spelling and capitalization that the header row uses. "Album" is not the same as "album". If you use the latter, it will trigger an exception. You don't want that. In the future, I will likely relax this to allow any capitalization but for now, you must remember to use the header value exactly as it appears in the data.
 
-
-
 ..  _composition over inheritance: https://en.wikipedia.org/wiki/Composition_over_inheritance
 
 ..  _PHP streams: http://php.net/manual/en/book.stream.php
