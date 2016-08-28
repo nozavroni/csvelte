@@ -10,7 +10,7 @@
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
- * @internal 
+ * @internal
  */
 namespace CSVelte\Reader;
 
@@ -58,6 +58,7 @@ class FilteredIterator extends FilterIterator
      * not include this row in the iteration.
      *
      * @return boolean
+     * @todo filter functions should accept current row, index, AND ref to reader 
      */
     public function accept()
     {

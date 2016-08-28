@@ -1,4 +1,4 @@
-<?php
+                 <?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
  *
@@ -294,6 +294,9 @@ class Reader implements \Iterator
         return $this->header;
     }
 
+    /**
+     * @todo Closure should be changed to "Callable" (php5.4+)
+     */
     public function addFilter(Closure $filter)
     {
         array_push($this->filters, $filter);
