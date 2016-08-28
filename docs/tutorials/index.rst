@@ -2,9 +2,8 @@
 Tutorials
 #########
 
-.. toctree::
-    :hidden:
+..  admonition:: Coming Soon
 
-    importing_csv_into_database
+    This section has not yet been written. You can expect tutorials to be added as I have time to write them. 
 
-.. include:: map.rst.inc
+..  include:: map.rst.inc
