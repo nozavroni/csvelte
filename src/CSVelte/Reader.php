@@ -1,4 +1,4 @@
-                 <?php
+<?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
  *
