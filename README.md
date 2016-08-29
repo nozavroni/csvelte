@@ -1,6 +1,7 @@
 [![Build Status](https://travis-ci.org/nozavroni/csvelte.svg?branch=master)](https://travis-ci.org/nozavroni/csvelte)
 [![Coverage Status](https://coveralls.io/repos/github/nozavroni/csvelte/badge.svg?branch=master)](https://coveralls.io/github/nozavroni/csvelte?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nozavroni/csvelte/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nozavroni/csvelte/?branch=master)
+[![Documentation Status](https://readthedocs.org/projects/csvelte-for-php/badge/?version=latest)](http://csvelte.phpcsv.com/en/latest/?badge=latest)
 [![License](https://poser.pugx.org/nozavroni/csvelte/license)](https://packagist.org/packages/nozavroni/csvelte)
 
 ![screen shot 2016-07-13 at 10 18 42 am](https://cloud.githubusercontent.com/assets/17840996/16812744/5b92f468-48e3-11e6-9d2a-5c735b1596c6.png)
@@ -133,7 +134,7 @@ $writer->writeRow(array(1,'PNUL1937u','Some Product', 'A product that does stuff
 
 ### Official Documentation
 
-Head on over to the [documentation site](http://csvelte.phpcsv.com/) for instructions on reading and writing CSV files, auto-detecting CSV format, and more. You can also peruse the [API documentation](http://csvelte.phpcsv.com/apidocs/index.html) to discover all kinds of neato features I don't have time to fully document.
+Head on over to the [documentation site](http://csvelte.phpcsv.com/) for instructions on reading and writing CSV files, auto-detecting CSV format, and more. You can also peruse the [API documentation](http://phpcsv.com/csvelte/apidocs/index.html) to discover all kinds of neato features I don't have time to fully document.
 
 ### Mailing List
 
