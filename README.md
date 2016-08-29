@@ -133,7 +133,7 @@ $writer->writeRow(array(1,'PNUL1937u','Some Product', 'A product that does stuff
 
 ### Official Documentation
 
-Head on over to the [documentation site](http://csvelte.phpcsv.com/) for instructions on reading and writing CSV files, auto-detecting CSV format, and more. You can also peruse the [API documentation](http://csvelte.phpcsv.com/apidocs/index.html) to discover all kinds of neato features I don't have time to fully document.
+Head on over to the [documentation site](http://csvelte.phpcsv.com/) for instructions on reading and writing CSV files, auto-detecting CSV format, and more. You can also peruse the [API documentation](http://phpcsv.com/csvelte/apidocs/index.html) to discover all kinds of neato features I don't have time to fully document.
 
 ### Mailing List
 
