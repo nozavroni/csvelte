@@ -23,6 +23,7 @@ use CSVelte\Contract\Writable;
 // convention (traits will start with verb such as Is/Does/Will/Etc.)
 use CSVelte\IO\IsReadable;
 use CSVelte\IO\IsWritable;
+use CSVelte\Exception\FileNotFoundException;
 
 /**
  * CSVelte File.
@@ -40,6 +41,16 @@ use CSVelte\IO\IsWritable;
 class File extends SplFileObject implements Readable, Writable
 {
     use IsReadable, IsWritable;
+
+    /**
+     * @var constant Used as code for exception thrown for missing file
+     */
+    const ERR_FILENOTFOUND = 1;
+
+    /**
+     * @var constant Used as code for exception thrown for missing directory
+     */
+    const ERR_DIRNOTFOUND = 2;
 
     /**
      * Initialization options for this file
@@ -68,11 +79,19 @@ class File extends SplFileObject implements Readable, Writable
     public function __construct($filename, array $options = [])
     {
         $this->options = array_merge($this->options, $options);
-        if (!file_exists($filename) && $this->options['create']) {
-            if (!is_dir($dirname = basename($filename)) && $this->options['parents']) {
-                mkdir($dirname, $this->options['mode'], true);
+        if (!file_exists($filename)) {
+            if ($this->options['create']) {
+                if (!is_dir($dirname = dirname($filename))) {
+                    if ($this->options['parents']) {
+                        mkdir($dirname, $this->options['mode'], true);
+                    } else {
+                        throw new FileNotFoundException("Directory not found: ". $dirname, self::ERR_DIRNOTFOUND);
+                    }
+                }
+                touch($filename);
+            } else {
+                throw new FileNotFoundException("File not found: ". $filename, self::ERR_FILENOTFOUND);
             }
-            touch($filename);
         }
         parent::__construct($filename);
     }

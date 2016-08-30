@@ -29,9 +29,13 @@ use CSVelte\IO\File;
  * @package   CSVelte Unit Tests
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @coversDefaultClass CSVelte\IO\File
  */
 class FileTest extends IOTest
 {
+    /**
+     * @covers ::__construct()
+     */
     public function testInstantiateIOFileCreatesFile()
     {
         $filename = $this->root->url() . '/deleteme.csv';
@@ -40,21 +44,40 @@ class FileTest extends IOTest
         $this->assertFileExists($filename);
     }
 
-    // /**
-    //  * @expectedException CSVelte\Exception\FileNotFoundException
-    //  */
-    // public function testInstantiateIOFileInNonExistantDirectoryThrowsException()
-    // {
-    //     $filename = $this->root->url() . '/makethisdir/deleteme.csv';
-    //     $file = new File($filename);
-    // }
-    //
-    // public function testInsantiateIOFileInNonExistantDirectoryCreatesDirectoryAndFileIfMkDirOptionIsTrue()
-    // {
-    //     $filename = $this->root->url() . '/makethisdir/deleteme.csv';
-    //     $file = new File($filename, ['parents' => true]);
-    // }
-    //
+    /**
+     * @expectedException CSVelte\Exception\FileNotFoundException
+     * @expectedExceptionCode 1
+     * @covers ::__construct()
+     */
+    public function testInstantiateIOFileInNonExistantFileThrowsExceptionIfCreateOptionIsFalse()
+    {
+        $filename = $this->root->url() . '/deletemetoo.csv';
+        $file = new File($filename, ['create' => false]);
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\FileNotFoundException
+     * @expectedExceptionCode 2
+     * @covers ::__construct()
+     */
+    public function testInstantiateIOFileInNonExistantDirectoryThrowsException()
+    {
+        $filename = $this->root->url() . '/makethisdir/deleteme.csv';
+        $file = new File($filename);
+    }
+
+    /**
+     * @covers ::__construct()
+     */
+    public function testInsantiateIOFileInNonExistantDirectoryCreatesDirectoryAndFileIfParentsOptionIsTrue()
+    {
+        $filename = $this->root->url() . '/makethisdir/deleteme.csv';
+        $dirname = dirname($filename);
+        $this->assertFileNotExists($dirname);
+        $file = new File($filename, ['parents' => true]);
+        $this->assertFileExists($dirname);
+    }
+
     // public function testInstantiateIOFileAllowsSettingMode()
     // {
     //     $filename = $this->root->url() . '/makethisdir/deleteme.csv';
