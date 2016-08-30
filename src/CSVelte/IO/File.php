@@ -89,6 +89,7 @@ class File extends SplFileObject implements Readable, Writable
                     }
                 }
                 touch($filename);
+                chmod($filename, $this->options['mode']);
             } else {
                 throw new FileNotFoundException("File not found: ". $filename, self::ERR_FILENOTFOUND);
             }

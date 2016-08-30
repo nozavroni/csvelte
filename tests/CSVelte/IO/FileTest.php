@@ -78,9 +78,47 @@ class FileTest extends IOTest
         $this->assertFileExists($dirname);
     }
 
-    // public function testInstantiateIOFileAllowsSettingMode()
-    // {
-    //     $filename = $this->root->url() . '/makethisdir/deleteme.csv';
-    //     $file = new File($filename, ['mode' => 0755]);
-    // }
+    /**
+     * @covers ::__construct()
+     */
+    public function testInstantiateIOFileModeDefaultsTo0644()
+    {
+        $filename = $this->root->url() . '/deleteme.csv';
+        $file = new File($filename);
+        $perms = substr(sprintf('%o', fileperms($filename)), -4);
+        $this->assertEquals($expected = '0644', $perms);
+    }
+
+    /**
+     * @covers ::__construct()
+     */
+    public function testInstantiateIOFileAllowsSettingModeForFile()
+    {
+        $filename = $this->root->url() . '/deleteme.csv';
+        $file = new File($filename, ['mode' => 0777]);
+        $perms = substr(sprintf('%o', fileperms($filename)), -4);
+        $this->assertEquals($expected = '0777', $perms);
+    }
+
+    /**
+     * @covers ::__construct()
+     */
+    public function testInstantiateIOFileModeDefaultsTo0644ForCreatedParentDirs()
+    {
+        $filename = $this->root->url() . '/makethisdir/deleteme.csv';
+        $file = new File($filename, ['parents' => true]);
+        $perms = substr(sprintf('%o', fileperms(dirname($filename))), -4);
+        $this->assertEquals($expected = '0644', $perms);
+    }
+
+    /**
+     * @covers ::__construct()
+     */
+    public function testInstantiateIOFileAllowsSettingModeForCreatedParentDirs()
+    {
+        $filename = $this->root->url() . '/makethisdir/deleteme.csv';
+        $file = new File($filename, ['mode' => 0777, 'parents' => true]);
+        $perms = substr(sprintf('%o', fileperms(dirname($filename))), -4);
+        $this->assertEquals($expected = '0777', $perms);
+    }
 }
