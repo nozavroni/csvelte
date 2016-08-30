@@ -21,5 +21,5 @@
 
 ## [v0.2 Release](https://github.com/nozavroni/csvelte/milestone/4)
 
-I want to include a link to each item's Github issue (if possible) next to each
-item listed on this log. 
+I want to include links to each item's Github issue (if possible) next to each
+item listed on this log.
