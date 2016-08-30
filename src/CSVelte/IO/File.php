@@ -115,10 +115,13 @@ class File extends SplFileObject implements Readable, Writable
      * Returns multiple lines if newline character(s) fall within a quoted string.
      *
      * @return string A single line read from the file.
+     * @todo I'm going to leave this be for now, but if issues pop up with line
+     *       endings, look into using ``stream_get_line`` rather than fgets. It
+     *       allows you to specify the line terminator.
      */
     public function readLine()
     {
-        return $this->fgets();
+        return rtrim($this->fgets(), "\r\n");
     }
 
     /**
@@ -132,11 +135,6 @@ class File extends SplFileObject implements Readable, Writable
     {
         return $this->eof();
     }
-
-    // public function rewind()
-    // {
-    //
-    // }
 
     /**
      * Write to file.

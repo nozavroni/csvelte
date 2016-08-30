@@ -144,12 +144,12 @@ class FileTest extends IOTest
     /**
      * @covers ::readLine()
      */
-    public function testReadLineReadsNextLine()
+    public function testReadLineReadsNextLineWithoutTrailingNewline()
     {
         $file = new File($this->getFilePathFor('veryShort'));
-        $this->assertEquals("foo,bar,baz\n", $file->readLine());
-        $this->assertEquals("bin,boz,bork\n", $file->readLine());
-        $this->assertEquals("lib,bil,ilb\n", $file->readLine());
+        $this->assertEquals("foo,bar,baz", $file->readLine());
+        $this->assertEquals("bin,boz,bork", $file->readLine());
+        $this->assertEquals("lib,bil,ilb", $file->readLine());
     }
 
     /**
@@ -159,9 +159,9 @@ class FileTest extends IOTest
     public function testReadLineThrowsRuntimeExceptionIfEofReached()
     {
         $file = new File($this->getFilePathFor('veryShort'));
-        $this->assertEquals("foo,bar,baz\n", $file->readLine());
-        $this->assertEquals("bin,boz,bork\n", $file->readLine());
-        $this->assertEquals("lib,bil,ilb\n", $file->readLine());
+        $this->assertEquals("foo,bar,baz", $file->readLine());
+        $this->assertEquals("bin,boz,bork", $file->readLine());
+        $this->assertEquals("lib,bil,ilb", $file->readLine());
         $file->readLine(); // this should trigger an exception
     }
 
@@ -172,26 +172,25 @@ class FileTest extends IOTest
     {
         $file = new File($this->getFilePathFor('veryShort'));
         $this->assertFalse($file->isEof());
-        $this->assertEquals("foo,bar,baz\n", $file->readLine());
+        $this->assertEquals("foo,bar,baz", $file->readLine());
         $this->assertFalse($file->isEof());
-        $this->assertEquals("bin,boz,bork\n", $file->readLine());
+        $this->assertEquals("bin,boz,bork", $file->readLine());
         $this->assertFalse($file->isEof());
-        $this->assertEquals("lib,bil,ilb\n", $file->readLine());
+        $this->assertEquals("lib,bil,ilb", $file->readLine());
         $this->assertTrue($file->isEof());
     }
 
-    // /**
-    //  * @covers ::readLine()
-    //  * @todo I commented this out because I can't figure out why in the world
-    //  *       I would have put this functionality in the "stupid" reader class
-    //  *       when it clearly belongs in the "smart" reader.
-    //  */
-    // public function testReadLineReadsNextLineIncludingQuotedNewLines()
-    // {
-    //     $file = new File($this->getFilePathFor('shortQuotedNewlines'));
-    //     $this->assertEquals("foo,bar,baz\n", $file->readLine());
-    //     $this->assertEquals("bin,\"boz,bork\nlib,bil,ilb\",bon\n", $file->readLine());
-    //     $this->assertEquals("bib,bob,\"boob\nboober\"\n", $file->readLine());
-    //     $this->assertEquals("cool,pool,wool\n", $file->readLine());
-    // }
+    /**
+     * @covers ::readLine()
+     */
+    public function testReadLineReadsLinesWithoutRespectToQuotedNewlines()
+    {
+        $file = new File($this->getFilePathFor('shortQuotedNewlines'));
+        $this->assertEquals("foo,bar,baz", $file->readLine());
+        $this->assertEquals("bin,\"boz,bork", $file->readLine());
+        $this->assertEquals("lib,bil,ilb\",bon", $file->readLine());
+        $this->assertEquals("bib,bob,\"boob", $file->readLine());
+        $this->assertEquals("boober\"", $file->readLine());
+        $this->assertEquals("cool,pool,wool", $file->readLine());
+    }
 }
