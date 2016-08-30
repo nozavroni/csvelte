@@ -14,6 +14,7 @@
         <file>tests/CSVelte/CSVelteTest.php</file>
         <file>tests/CSVelte/AutoloaderTest.php</file>
         <file>tests/CSVelte/FlavorTest.php</file>
+        <file>tests/CSVelte/IO/FileTest.php</file>
         <file>tests/CSVelte/InputStringTest.php</file>
         <file>tests/CSVelte/InputTest.php</file>
         <file>tests/CSVelte/TasterTest.php</file>

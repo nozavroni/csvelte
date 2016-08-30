@@ -1,9 +1,9 @@
 <?php
 /**
  * CSVelte
- * Slender, elegant CSV for PHP5.3+
+ * Slender, elegant CSV for PHP
  *
- * @version v0.1
+ * @version v0.2
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @license See LICENSE file
@@ -25,7 +25,7 @@ interface Writable
      *
      * @param string The data to write
      * @return int The number of bytes written
-     * @access public 
+     * @access public
      */
     public function write($data);
 }

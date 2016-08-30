@@ -1,6 +1,7 @@
 <?php
 /**
- * CSVelte: Slender, elegant CSV for PHP
+ * CSVelte: Slender, elegant CSV for PHP.
+ *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
@@ -10,24 +11,20 @@
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
-namespace CSVelte\Input;
-
-use CSVelte\Contract\Readable;
-use CSVelte\Contract\Seekable;
+namespace CSVelte\IO;
 
 /**
- * CSVelte\Input\SeekableStream
- * Represents a stream source for CSV data
+ * Is Readable Trait.
  *
- * @package CSVelte
- * @subpackage Input/Output
+ * Use this trait to make a class readable by ``CSVelte\Reader``.
+ *
+ * @package    CSVelte
+ * @subpackage CSVelte\Reader
+ * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
+ * @author     Luke Visinoni <luke.visinoni@gmail.com>
+ * @since      v0.2
  */
-class SeekableStream extends Stream implements Seekable
+trait IsReadable
 {
-    public function seek($pos)
-    {
-        fseek($this->source, $pos);
-        $this->updateInfo();
-        return $this;
-    }
+
 }

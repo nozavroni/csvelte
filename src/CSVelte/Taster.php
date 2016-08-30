@@ -5,7 +5,7 @@
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   v0.1
+ * @version   v0.2
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
@@ -36,6 +36,8 @@ use CSVelte\Exception\TasteDelimiterException;
  *            whether it makes sense to ask for the data as a param rather than
  *            just pulling it from source. I don't think it makes sense... it
  *            was just easier to write the methods that way during testing.
+ * @todo      There are at least portions of this class that could use the
+ *            Reader class rather than working directly with data. 
  */
 class Taster
 {

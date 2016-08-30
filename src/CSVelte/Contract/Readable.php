@@ -1,9 +1,10 @@
 <?php
 /**
- * CSVelte
- * Slender, elegant CSV for PHP5.3+
+ * CSVelte.
  *
- * @version v0.1
+ * Slender, elegant CSV for PHP
+ *
+ * @version v0.2
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @license See LICENSE file

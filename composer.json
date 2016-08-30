@@ -28,7 +28,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "org\\": ["vendor/mikey179/vfsStream/src/main/php"]
+            "org\\": ["vendor/mikey179/vfsStream/src/main/php"],
+            "CSVelteTest\\": ["tests/CSVelte"]
         }
     }
 }

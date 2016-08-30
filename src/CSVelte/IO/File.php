@@ -1,0 +1,132 @@
+<?php
+/**
+ * CSVelte: Slender, elegant CSV for PHP.
+ *
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
+ *
+ * @version   v0.2
+ * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ */
+namespace CSVelte\IO;
+
+use \SplFileObject;
+// use \SplFileInfo;
+
+use CSVelte\Contract\Readable;
+use CSVelte\Contract\Writable;
+
+// Considering adding the following traits as well as adopting such a naming
+// convention (traits will start with verb such as Is/Does/Will/Etc.)
+use CSVelte\IO\IsReadable;
+use CSVelte\IO\IsWritable;
+
+/**
+ * CSVelte File.
+ *
+ * Represents a file for reading/writing. Implements both readable and writable
+ * interfaces so that it can be passed to either ``CSVelte\Reader`` or
+ * ``CSVelte\Writer``.
+ *
+ * @package    CSVelte
+ * @subpackage CSVelte\Contract
+ * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
+ * @author     Luke Visinoni <luke.visinoni@gmail.com>
+ * @since      v0.2
+ */
+class File extends SplFileObject implements Readable, Writable
+{
+    use IsReadable, IsWritable;
+
+    /**
+     * Initialization options for this file
+     * @var array These options are set when instantiating this file object.
+     *            These values are just defaults.
+     *      create:  If set to true, CSVelte will attempt to create the file if
+     *               it doesn't exist.
+     *      parents: Set to true to enable creation of any parent
+     *               directories of the file.
+     *      mode:    Set the mode for this file and parent directories
+     *               (if any) that were created.
+     */
+    protected $options = [
+        'create' => true,
+        'parents' => false,
+        'mode' => 0644
+    ];
+
+    /**
+     * File Object Constructor.
+     *
+     * @param string $filename The path and name of the file
+     * @param array $options An array of any/none of the following options
+     *                          (see $options var above for more details)
+     */
+    public function __construct($filename, array $options = [])
+    {
+        $this->options = array_merge($this->options, $options);
+        if (!file_exists($filename) && $this->options['create']) {
+            if (!is_dir($dirname = basename($filename)) && $this->options['parents']) {
+                mkdir($dirname, $this->options['mode'], true);
+            }
+            touch($filename);
+        }
+        parent::__construct($filename);
+    }
+
+    /**
+     * Read from file.
+     * Read $chars number of characters from file
+     *
+     * @param int $chars Number of characters to read from the file
+     * @return string Up to $chars characters read from the file
+     */
+    public function read($chars)
+    {
+
+    }
+
+    /**
+     * Read single line.
+     * Read the next line from the file (moving the internal pointer down a line).
+     *
+     * @return string A single line read from the file.
+     */
+    public function readLine()
+    {
+
+    }
+
+    /**
+     * Is end of file?
+     *
+     * If the end of the file has been reached, this should return true.
+     *
+     * @return boolean True if end of file has been reached
+     */
+    public function isEof()
+    {
+
+    }
+
+    // public function rewind()
+    // {
+    //
+    // }
+
+    /**
+     * Write to file.
+     * Write $data to the file.
+     *
+     * @param mixed Anything that can be cast to a string can be written
+     * @return int The number of bytes written to the file
+     */
+    public function write($data)
+    {
+
+    }
+
+}
