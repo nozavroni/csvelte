@@ -71,6 +71,16 @@ class Reader implements \Iterator
     protected $filters = array();
 
     /**
+     * @var bool True if current line ended while inside a quoted string
+     */
+    protected $open = false;
+
+    /**
+     * @var bool True if last character read was the escape character
+     */
+    protected $escape = false;
+
+    /**
      * Reader Constructor.
      * Initializes a reader object using an input source and optionally a flavor
      *
@@ -109,7 +119,7 @@ class Reader implements \Iterator
     {
         if (is_null($this->current)) {
             try {
-                $line = $this->source->readLine(null, $this->getFlavor()->lineTerminator);
+                $line = $this->readLine();
                 $this->line++;
                 $parsed = $this->parse($line);
                 if ($this->hasHeader() && $this->line === 1) {
@@ -122,6 +132,60 @@ class Reader implements \Iterator
                 $this->current = false;
             }
         }
+    }
+
+    /**
+     * Read single line from CSV data source (stream, file, etc.), taking into
+     * account CSV's de-facto quoting rules with respect to designated line
+     * terminator character when they fall within quoted strings.
+     *
+     * @param int
+     * @param char
+     * @return string
+     * @access public
+     * @see README file for more about CSV de-facto standard
+     * @todo This should probably just accept a Flavor as its only argument
+     */
+    protected function readLine()
+    {
+        $f = $this->getFlavor();
+        $eol = $f->lineTerminator;
+        try {
+            do {
+                if (!isset($lines)) $lines = array();
+                array_push($lines, $this->source->readLine());
+            } while ($this->inQuotedString(end($lines), $f->quoteChar, $f->escapeChar));
+        } catch (EndOfFileException $e) {
+            // only throw the exception if we don't already have lines in the buffer
+            if (!count($lines)) throw $e;
+        }
+        return rtrim(implode($eol, $lines), $eol);
+    }
+
+    /**
+     * Determine whether last line ended while a quoted string was still "open"
+     *
+     * @param string Line of csv to analyze
+     * @return bool
+     * @access protected
+     */
+    protected function inQuotedString($line, $quoteChar, $escapeChar)
+    {
+        // dd($line, false, "line");
+        // dd($quoteChar, false, "quoteChar");
+        if (!empty($line)) {
+            do {
+                if (!isset($i)) $i = 0;
+                $c = $line[$i++];
+                if ($this->escape) {
+                    $this->escape = false;
+                    continue;
+                }
+                $this->escape = ($c == $escapeChar);
+                if ($c == $quoteChar) $this->open = !$this->open;
+            } while ($i < strlen($line));
+        }
+        return $this->open;
     }
 
     /**

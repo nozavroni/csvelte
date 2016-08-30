@@ -1,9 +1,9 @@
 <?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
- * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV 
- * standardization efforts, CSVelte was written in an effort to take all the 
- * suck out of working with CSV. 
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
  *
  * @version   v0.2
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
@@ -15,7 +15,6 @@ namespace CSVelte\Input;
 use CSVelte\Traits\StreamIO;
 use CSVelte\Contract\Readable;
 use CSVelte\Exception\EndOfFileException;
-use CSVelte\Traits\HandlesQuotedLineTerminators;
 use CSVelte\Exception\InvalidStreamResourceException;
 use CSVelte\Exception\InvalidStreamUriException;
 
@@ -30,7 +29,7 @@ use CSVelte\Exception\InvalidStreamUriException;
  */
 class Stream implements Readable
 {
-    use HandlesQuotedLineTerminators, StreamIO;
+    use StreamIO;
 
     /**
      * @const string
@@ -74,7 +73,7 @@ class Stream implements Readable
     /**
      * @inheritDoc
      */
-    public function nextLine($max = null, $eol = PHP_EOL)
+    public function readLine($max = null, $eol = PHP_EOL)
     {
         $this->assertStreamExistsAndIsReadable();
         if (false === ($line = stream_get_line($this->source, $max ?: self::MAX_LINE_LENGTH, $eol))) {

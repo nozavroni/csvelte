@@ -123,14 +123,17 @@ class InputTest extends TestCase
         $this->assertEquals($first150, $stream->read(150));
     }
 
-    public function testHandlesQuotedLineTerminatorsTrait()
-    {
-        $filename = realpath(__DIR__ . '/../files/banklist-qsc-sm.csv');
-        $stream = new Stream($filename);
-        $stream->readLine();
-        $stream->readLine();
-        $this->assertEquals($expected = "Trust Company Bank,Memphis,TN,9956,\"The Bank of\r\n\r\n\r\nAnother line of stuff\r\n And another line\r\n Fayette County\",29-Apr-16,25-May-16", $stream->readLine(null, "\r\n"));
-    }
+    // Some tests got commented out because they test and/or rely on functionality
+    // that has been moved into the reader (quoted newlines)
+
+    // public function testHandlesQuotedLineTerminatorsTrait()
+    // {
+    //     $filename = realpath(__DIR__ . '/../files/banklist-qsc-sm.csv');
+    //     $stream = new Stream($filename);
+    //     $stream->readLine();
+    //     $stream->readLine();
+    //     $this->assertEquals($expected = "Trust Company Bank,Memphis,TN,9956,\"The Bank of\r\n\r\n\r\nAnother line of stuff\r\n And another line\r\n Fayette County\",29-Apr-16,25-May-16", $stream->readLine(null, "\r\n"));
+    // }
 
     /**
      * 3xpectedException CSVelte\Exception\

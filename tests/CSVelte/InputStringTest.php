@@ -26,52 +26,60 @@ class InputStringTest extends TestCase
         $this->assertEquals($expected = "Bank Name,City,", $str->read(15));
     }
 
+    // All these tests got commented out because they test and/or rely on functionality
+    // that has been moved into the reader (quoted newlines)
+
     public function testNewInputStringFromVariableReadLine()
     {
         $str = new String($this->CSVstrings['QuoteMinimal']);
         $this->assertEquals("Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date", $str->readLine(null, "\n"));
-        $this->assertEquals("First CornerStone Bank,\"King of\nPrussia\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $str->readLine(null, "\n"));
+        $this->assertEquals("First CornerStone Bank,\"King of", $str->readLine(null, "\n"));
+        $this->assertEquals("Prussia\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $str->readLine(null, "\n"));
         $this->assertEquals("Trust Company Bank,Memphis,TN,9956,The Bank of Fayette County,29-Apr-16,25-May-16", $str->readLine(null, "\n"));
         $this->assertEquals("North Milwaukee State Bank,Milwaukee,WI,20364,First-Citizens Bank & Trust Company,11-Mar-16,16-Jun-16", $str->readLine(null, "\n"));
     }
-
-    public function testStringHandlesQuotedLineTerminatorsTrait()
-    {
-        $stream = new String($this->CSVstrings['QuoteMinimal']);
-        $stream->readLine(null, "\n");
-        $this->assertEquals($expected = "First CornerStone Bank,\"King of\nPrussia\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $stream->readLine(null, "\n"));
-    }
-
-    public function testInputHandlesLineTerminatorsWithinDoubleDoubleQuotedStringsWithinSingleDoubleQuotedStrings()
-    {
-        $stream = new String($this->CSVstrings['DoubleQuotes']);
-        $stream->readLine(null, "\n");
-        $this->assertEquals($expected = "First CornerStone Bank,\"The Very Holiest \"\"King\nof\nPrussia\"\" and all his goons\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $stream->readLine(null, "\n"));
-    }
-
-    // also need to test the opposite, double quoted strings within single quoted strings
-    public function testInputHandlesSingleQuotesAndApostrophesCorrectWithRespectToLineTerminators()
-    {
-        $stream = new String($this->CSVstrings['DoubleQuotes']);
-        $stream->readLine(null, "\n");
-        $stream->readLine(null, "\n");
-        $this->assertEquals($expected = "Trust Company Bank,Memphis,TN,9956,\"The 'Bank\nof\nFayette' County\",29-Apr-16,25-May-16", $stream->readLine(null, "\n"), "Ensure single-single-quoted newlines are handled properly");
-        $this->assertEquals($expected = "North Milwaukee State Bank,Milwaukee,WI,20364,\"First-Citizens\"\" Bank & Trust Company\",11-Mar-16,16-Jun-16", $stream->readLine(null, "\n"), "Ensure double-double quotes work as expected even if there is no closing double-double quote");
-        $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,\"Twin City's Bank\",2-Oct-15,13-Apr-16", $stream->readLine(null, "\n"), "Ensure single single quote (apostrophe) is handled properly");
-        $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,'Twin ''Citys'' Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'"), "Ensure double-single quoted strings within strings quoted by single-single quotes work as expected");
-        $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,'Twin ''Citys\nNew line\nDoodad'' Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'"), "Ensure that newlines that fall within double-single quoted strings within strings quoted by single-single quotes work as expected");
-        $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,'Twin \"Citys\nNew line\nDoodad\" Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'"), "Ensure that single double quoted newlines work as expected within single single quoted strings.");
-        // @todo this is actually testing escape character and should be moved into its own test method
-        $this->assertEquals($expected = "'Hometown \"National Bank\"',Longview,WA,35156,'Twin City\'s\nNew line\nDoodad Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'", '\\'), "Ensure that backslash escapes single double/single-quotes that fall within their same quote type. Although I'm not entirely sure this is expected behavior and will need to consult the RFC. UPDATE: Consulted and it is expected so long as escapeChar is set and doubleQuote is false.");
-    }
+    //
+    // public function testStringHandlesQuotedLineTerminatorsTrait()
+    // {
+    //     $stream = new String($this->CSVstrings['QuoteMinimal']);
+    //     $stream->readLine(null, "\n");
+    //     $this->assertEquals($expected = "First CornerStone Bank,\"King of\nPrussia\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $stream->readLine(null, "\n"));
+    // }
+    //
+    // public function testInputHandlesLineTerminatorsWithinDoubleDoubleQuotedStringsWithinSingleDoubleQuotedStrings()
+    // {
+    //     $stream = new String($this->CSVstrings['DoubleQuotes']);
+    //     $stream->readLine(null, "\n");
+    //     $this->assertEquals($expected = "First CornerStone Bank,\"The Very Holiest \"\"King\nof\nPrussia\"\" and all his goons\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $stream->readLine(null, "\n"));
+    // }
+    //
+    // // also need to test the opposite, double quoted strings within single quoted strings
+    // public function testInputHandlesSingleQuotesAndApostrophesCorrectWithRespectToLineTerminators()
+    // {
+    //     $stream = new String($this->CSVstrings['DoubleQuotes']);
+    //     $stream->readLine(null, "\n");
+    //     $stream->readLine(null, "\n");
+    //     $this->assertEquals($expected = "Trust Company Bank,Memphis,TN,9956,\"The 'Bank\nof\nFayette' County\",29-Apr-16,25-May-16", $stream->readLine(null, "\n"), "Ensure single-single-quoted newlines are handled properly");
+    //     $this->assertEquals($expected = "North Milwaukee State Bank,Milwaukee,WI,20364,\"First-Citizens\"\" Bank & Trust Company\",11-Mar-16,16-Jun-16", $stream->readLine(null, "\n"), "Ensure double-double quotes work as expected even if there is no closing double-double quote");
+    //     $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,\"Twin City's Bank\",2-Oct-15,13-Apr-16", $stream->readLine(null, "\n"), "Ensure single single quote (apostrophe) is handled properly");
+    //     $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,'Twin ''Citys'' Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'"), "Ensure double-single quoted strings within strings quoted by single-single quotes work as expected");
+    //     $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,'Twin ''Citys\nNew line\nDoodad'' Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'"), "Ensure that newlines that fall within double-single quoted strings within strings quoted by single-single quotes work as expected");
+    //     $this->assertEquals($expected = "Hometown National Bank,Longview,WA,35156,'Twin \"Citys\nNew line\nDoodad\" Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'"), "Ensure that single double quoted newlines work as expected within single single quoted strings.");
+    //     // @todo this is actually testing escape character and should be moved into its own test method
+    //     $this->assertEquals($expected = "'Hometown \"National Bank\"',Longview,WA,35156,'Twin City\'s\nNew line\nDoodad Bank',2-Oct-15,13-Apr-16", $stream->readLine(null, "\n", "'", '\\'), "Ensure that backslash escapes single double/single-quotes that fall within their same quote type. Although I'm not entirely sure this is expected behavior and will need to consult the RFC. UPDATE: Consulted and it is expected so long as escapeChar is set and doubleQuote is false.");
+    // }
 
     public function testInputReadLineUsesPhpEolConstantAsDefaultLineTerminator()
     {
         $csv = implode(PHP_EOL, preg_split("/(\r\n|\r|\n)/", $this->CSVstrings['DoubleQuotes']));
         $stream = new String($this->CSVstrings['DoubleQuotes']);
         $this->assertEquals($expected = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date", $stream->readLine());
-        $this->assertEquals($expected = "First CornerStone Bank,\"The Very Holiest \"\"King\nof\nPrussia\"\" and all his goons\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $stream->readLine());
-        $this->assertEquals($expected = "Trust Company Bank,Memphis,TN,9956,\"The 'Bank\nof\nFayette' County\",29-Apr-16,25-May-16", $stream->readLine());
+        $this->assertEquals($expected = "First CornerStone Bank,\"The Very Holiest \"\"King", $stream->readLine());
+        $this->assertEquals($expected = "of", $stream->readLine());
+        $this->assertEquals($expected = "Prussia\"\" and all his goons\",PA,35312,First-Citizens Bank & Trust Company,6-May-16,25-May-16", $stream->readLine());
+        $this->assertEquals($expected = "Trust Company Bank,Memphis,TN,9956,\"The 'Bank", $stream->readLine());
+        $this->assertEquals($expected = "of", $stream->readLine());
+        $this->assertEquals($expected = "Fayette' County\",29-Apr-16,25-May-16", $stream->readLine());
     }
 
     public function testOnlyQuoteCharFromFlavorObjectAffectsOpenCloseQuotedString()
@@ -104,16 +112,19 @@ class InputStringTest extends TestCase
             $stream->readLine(null, PHP_EOL, "'", '\\'),
             "Ensure double-quotes don't need to be escaped when single-quote is the quote character as long as they're enclosed by single-quotes"
         );
-        $this->assertEquals(
-            $expected = "'Millennium Bank, National\n Association',Sterling,VA,35096,'Washington-First Bank',28-Feb-14,3-Mar-15",
-            $stream->readLine(null, PHP_EOL, "'", '\\'),
-            "Ensure newlines don't need to be escaped when single-quote is the quote character as long as they're enclosed by single-quotes"
-        );
-        // @todo Had to scrap this for now, the trait I'm testing only works when columns are quoted.
+        // I added these two lines and commented out the ones below because I have
+        // moved the "smart" line-reading functionality from the "readables" to
+        // the reader (where it belongs/makes sense)
+        // So now the "dumb" readables, when asked to read a single line, actually
+        // only read a single line. They stop when they reach a newline char regardless
+        // of where it is. The reader class takes the responsibility of joining
+        // together lines that are separated within a quoted string (see issue #91)
+        $stream->readLine();
+        $stream->readLine();
         // $this->assertEquals(
-        //     $expected = "Syringa Bank,Boise,ID,34296,Big Boys\\\nSunwest\\\nBizzity Bank,31-Jan-14,12-Apr-16",
+        //     $expected = "'Millennium Bank, National\n Association',Sterling,VA,35096,'Washington-First Bank',28-Feb-14,3-Mar-15",
         //     $stream->readLine(null, PHP_EOL, "'", '\\'),
-        //     "Ensure newlines are allowed without enclosing quotes as long as they're escaped"
+        //     "Ensure newlines don't need to be escaped when single-quote is the quote character as long as they're enclosed by single-quotes"
         // );
         $this->assertEquals(
             $expected = "Syringa Bank,Boise,ID,34296,\"Big Boys &\"Sunwest Bizzity Bank\",31-Jan-14,12-Apr-16",
