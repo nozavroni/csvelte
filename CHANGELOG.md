@@ -1,4 +1,6 @@
-v0.1 Release
+# CHANGE LOG
+
+## [v0.1 Release](https://github.com/nozavroni/csvelte/milestone/1?closed=1)
 
  * Reader Class
      * "Readables" - Implementors of the CSVelte\Contracts\Readable interface.
@@ -17,4 +19,7 @@ v0.1 Release
  * Autoloader - Automatically loads class files for those who aren't using PHP's
        de facto package manager, Composer.
 
-v0.2 Release
+## [v0.2 Release](https://github.com/nozavroni/csvelte/milestone/4)
+
+I want to include a link to each item's Github issue (if possible) next to each
+item listed on this log. 
