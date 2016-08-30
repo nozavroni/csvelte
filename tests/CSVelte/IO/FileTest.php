@@ -140,4 +140,58 @@ class FileTest extends IOTest
         $file = new File($this->getFilePathFor('veryShort'));
         $this->assertEquals("foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\n", $file->read(250));
     }
+
+    /**
+     * @covers ::readLine()
+     */
+    public function testReadLineReadsNextLine()
+    {
+        $file = new File($this->getFilePathFor('veryShort'));
+        $this->assertEquals("foo,bar,baz\n", $file->readLine());
+        $this->assertEquals("bin,boz,bork\n", $file->readLine());
+        $this->assertEquals("lib,bil,ilb\n", $file->readLine());
+    }
+
+    /**
+     * @covers ::readLine()
+     * @expectedException \RuntimeException
+     */
+    public function testReadLineThrowsRuntimeExceptionIfEofReached()
+    {
+        $file = new File($this->getFilePathFor('veryShort'));
+        $this->assertEquals("foo,bar,baz\n", $file->readLine());
+        $this->assertEquals("bin,boz,bork\n", $file->readLine());
+        $this->assertEquals("lib,bil,ilb\n", $file->readLine());
+        $file->readLine(); // this should trigger an exception
+    }
+
+    /**
+     * @covers ::isEof()
+     */
+    public function testIsEofReturnsFalseUntilEofIsReached()
+    {
+        $file = new File($this->getFilePathFor('veryShort'));
+        $this->assertFalse($file->isEof());
+        $this->assertEquals("foo,bar,baz\n", $file->readLine());
+        $this->assertFalse($file->isEof());
+        $this->assertEquals("bin,boz,bork\n", $file->readLine());
+        $this->assertFalse($file->isEof());
+        $this->assertEquals("lib,bil,ilb\n", $file->readLine());
+        $this->assertTrue($file->isEof());
+    }
+
+    // /**
+    //  * @covers ::readLine()
+    //  * @todo I commented this out because I can't figure out why in the world
+    //  *       I would have put this functionality in the "stupid" reader class
+    //  *       when it clearly belongs in the "smart" reader.
+    //  */
+    // public function testReadLineReadsNextLineIncludingQuotedNewLines()
+    // {
+    //     $file = new File($this->getFilePathFor('shortQuotedNewlines'));
+    //     $this->assertEquals("foo,bar,baz\n", $file->readLine());
+    //     $this->assertEquals("bin,\"boz,bork\nlib,bil,ilb\",bon\n", $file->readLine());
+    //     $this->assertEquals("bib,bob,\"boob\nboober\"\n", $file->readLine());
+    //     $this->assertEquals("cool,pool,wool\n", $file->readLine());
+    // }
 }

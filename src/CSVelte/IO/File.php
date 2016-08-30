@@ -112,12 +112,13 @@ class File extends SplFileObject implements Readable, Writable
     /**
      * Read single line.
      * Read the next line from the file (moving the internal pointer down a line).
+     * Returns multiple lines if newline character(s) fall within a quoted string.
      *
      * @return string A single line read from the file.
      */
     public function readLine()
     {
-
+        return $this->fgets();
     }
 
     /**
@@ -129,7 +130,7 @@ class File extends SplFileObject implements Readable, Writable
      */
     public function isEof()
     {
-
+        return $this->eof();
     }
 
     // public function rewind()
