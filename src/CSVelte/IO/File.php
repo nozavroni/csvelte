@@ -99,14 +99,14 @@ class File extends SplFileObject implements Readable, Writable
 
     /**
      * Read from file.
-     * Read $chars number of characters from file
+     * Read $length number of characters from file
      *
-     * @param int $chars Number of characters to read from the file
-     * @return string Up to $chars characters read from the file
+     * @param int $length Number of characters to read from the file
+     * @return string Up to $length characters read from the file
      */
-    public function read($chars)
+    public function read($length)
     {
-
+        return $this->fread($length);
     }
 
     /**

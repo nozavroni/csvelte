@@ -23,6 +23,7 @@ namespace CSVelteTest\IO;
  * and the taster. And probably the factory/facade as well.
  */
 use CSVelte\IO\File;
+use org\bovigo\vfs\vfsStream;
 /**
  * CSVelte\IO Tests
  *
@@ -120,5 +121,23 @@ class FileTest extends IOTest
         $file = new File($filename, ['mode' => 0777, 'parents' => true]);
         $perms = substr(sprintf('%o', fileperms(dirname($filename))), -4);
         $this->assertEquals($expected = '0777', $perms);
+    }
+
+    /**
+     * @covers ::read()
+     */
+    public function testReadGetsCorrectNumberOfChars()
+    {
+        $file = new File($this->getFilePathFor('commaNewlineHeader'));
+        $this->assertEquals("Bank Name,City,ST,CERT,Ac", $file->read(25));
+    }
+
+    /**
+     * @covers ::read()
+     */
+    public function testReadGetsAllCharsIfMoreAreRequestedThanAreAvailable()
+    {
+        $file = new File($this->getFilePathFor('veryShort'));
+        $this->assertEquals("foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\n", $file->read(250));
     }
 }
