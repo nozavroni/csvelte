@@ -185,4 +185,32 @@ class FileTest extends IOTest
         $this->assertEquals(strlen($data), $file->write($data));
         $this->assertEquals($data, file_get_contents($fn));
     }
+
+    /**
+     * @covers ::write()
+     */
+    public function testAppendFileWrite()
+    {
+        $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), ['open_mode' => 'a']);
+        $data = "\"foo, bar\",boo,far\n";
+        $this->assertEquals(strlen($data), $file->write($data));
+        $this->assertEquals(
+            "foo,bar,baz\nbin,\"boz,bork\nlib,bil,ilb\",bon\nbib,bob,\"boob\nboober\"\ncool,pool,wool\n" . $data,
+            file_get_contents($fn)
+        );
+    }
+
+    /**
+     * @covers ::write()
+     */
+    public function testFileOverWrite()
+    {
+        $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), ['open_mode' => 'w']);
+        $data = "\"foo, bar\",boo,far\n";
+        $this->assertEquals(strlen($data), $file->write($data));
+        $this->assertEquals(
+            $data, 
+            file_get_contents($fn)
+        );
+    }
 }
