@@ -4,23 +4,35 @@
 	<meta charset="utf-8">
 	<meta name="robots" content="noindex">
 
-	<title>File CSVelte/Reader.php | CSVelte API Level Documentation</title>
+	<title>File CSVelte/Reader.php | CSVelte v0.1 API Documentation</title>
 
 	<link rel="stylesheet" href="resources/bootstrap.min.css?973e37a8502921d56bc02bb55321f45b072b6f71">
 	<link rel="stylesheet" href="resources/style.css?49f43d3208c5d7e33fa16d36107a345bf11cc00d">
+	<link rel="search" type="application/opensearchdescription+xml" title="CSVelte v0.1 API Documentation" href="/opensearch.xml">
 
+	<script>
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', "UA-83431108-1"]);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
 </head>
 
 <body>
 	<nav id="navigation" class="navbar navbar-default navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">
-				<a href="index.html" class="navbar-brand">CSVelte API Level Documentation</a>
+				<a href="index.html" class="navbar-brand">CSVelte v0.1 API Documentation</a>
 			</div>
 			<div class="collapse navbar-collapse">
 
-                <form id="search" class="navbar-form navbar-left" role="search">
-                    <input type="hidden" name="cx" value="">
+                <form action="http://www.google.com/cse" id="search" class="navbar-form navbar-left" role="search">
+                    <input type="hidden" name="cx" value="002645647446389662336:uolgqyfdbkq">
                     <input type="hidden" name="ie" value="UTF-8">
                     <div class="form-group">
                         <input type="text" name="q" class="search-query form-control" placeholder="Search">
@@ -459,31 +471,34 @@
 </span><span id="294" class="l"><a href="#294">294 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;<span class="php-keyword2">header</span>;
 </span><span id="295" class="l"><a href="#295">295 </a>    }
 </span><span id="296" class="l"><a href="#296">296 </a>
-</span><span id="297" class="l"><a href="#297">297 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> addFilter(Closure <span class="php-var">$filter</span>)
-</span><span id="298" class="l"><a href="#298">298 </a>    {
-</span><span id="299" class="l"><a href="#299">299 </a>        <span class="php-keyword2">array_push</span>(<span class="php-var">$this</span>-&gt;filters, <span class="php-var">$filter</span>);
-</span><span id="300" class="l"><a href="#300">300 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>;
-</span><span id="301" class="l"><a href="#301">301 </a>    }
-</span><span id="302" class="l"><a href="#302">302 </a>
-</span><span id="303" class="l"><a href="#303">303 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> addFilters(<span class="php-keyword1">array</span> <span class="php-var">$filters</span>)
-</span><span id="304" class="l"><a href="#304">304 </a>    {
-</span><span id="305" class="l"><a href="#305">305 </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$filters</span> <span class="php-keyword1">as</span> <span class="php-var">$filter</span>) {
-</span><span id="306" class="l"><a href="#306">306 </a>            <span class="php-var">$this</span>-&gt;addFilter(<span class="php-var">$filter</span>);
-</span><span id="307" class="l"><a href="#307">307 </a>        }
-</span><span id="308" class="l"><a href="#308">308 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>;
-</span><span id="309" class="l"><a href="#309">309 </a>    }
-</span><span id="310" class="l"><a href="#310">310 </a>
-</span><span id="311" class="l"><a href="#311">311 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> filter()
-</span><span id="312" class="l"><a href="#312">312 </a>    {
-</span><span id="313" class="l"><a href="#313">313 </a>        <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> FilteredReader(<span class="php-var">$this</span>, <span class="php-var">$this</span>-&gt;filters);
-</span><span id="314" class="l"><a href="#314">314 </a>    }
-</span><span id="315" class="l"><a href="#315">315 </a>
-</span><span id="316" class="l"><a href="#316">316 </a>}
-</span><span id="317" class="l"><a href="#317">317 </a></span></code></pre>
+</span><span id="297" class="l"><a href="#297">297 </a>    <span class="php-comment">/**
+</span></span><span id="298" class="l"><a href="#298">298 </a><span class="php-comment">     * @todo Closure should be changed to &quot;Callable&quot; (php5.4+)
+</span></span><span id="299" class="l"><a href="#299">299 </a><span class="php-comment">     */</span>
+</span><span id="300" class="l"><a href="#300">300 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> addFilter(Closure <span class="php-var">$filter</span>)
+</span><span id="301" class="l"><a href="#301">301 </a>    {
+</span><span id="302" class="l"><a href="#302">302 </a>        <span class="php-keyword2">array_push</span>(<span class="php-var">$this</span>-&gt;filters, <span class="php-var">$filter</span>);
+</span><span id="303" class="l"><a href="#303">303 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>;
+</span><span id="304" class="l"><a href="#304">304 </a>    }
+</span><span id="305" class="l"><a href="#305">305 </a>
+</span><span id="306" class="l"><a href="#306">306 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> addFilters(<span class="php-keyword1">array</span> <span class="php-var">$filters</span>)
+</span><span id="307" class="l"><a href="#307">307 </a>    {
+</span><span id="308" class="l"><a href="#308">308 </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$filters</span> <span class="php-keyword1">as</span> <span class="php-var">$filter</span>) {
+</span><span id="309" class="l"><a href="#309">309 </a>            <span class="php-var">$this</span>-&gt;addFilter(<span class="php-var">$filter</span>);
+</span><span id="310" class="l"><a href="#310">310 </a>        }
+</span><span id="311" class="l"><a href="#311">311 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>;
+</span><span id="312" class="l"><a href="#312">312 </a>    }
+</span><span id="313" class="l"><a href="#313">313 </a>
+</span><span id="314" class="l"><a href="#314">314 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> filter()
+</span><span id="315" class="l"><a href="#315">315 </a>    {
+</span><span id="316" class="l"><a href="#316">316 </a>        <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> FilteredReader(<span class="php-var">$this</span>, <span class="php-var">$this</span>-&gt;filters);
+</span><span id="317" class="l"><a href="#317">317 </a>    }
+</span><span id="318" class="l"><a href="#318">318 </a>
+</span><span id="319" class="l"><a href="#319">319 </a>}
+</span><span id="320" class="l"><a href="#320">320 </a></span></code></pre>
 	</div>
 
 	<div id="footer">
-		CSVelte API Level Documentation API documentation generated by <a href="http://apigen.org">ApiGen</a>
+		CSVelte v0.1 API Documentation API documentation generated by <a href="http://apigen.org">ApiGen</a>
 	</div>
 </div>
 <script src="resources/combined.js?533e23ef2f02bd4b20548834a028566b6eb403e0"></script>
