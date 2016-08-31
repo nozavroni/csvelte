@@ -19,7 +19,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^5.4",
-        "mikey179/vfsStream": "^1.6"
+        "mikey179/vfsStream": "^1.6",
+        "sphpdox/sphpdox": "dev-master"
     },
     "autoload": {
         "psr-4": {
