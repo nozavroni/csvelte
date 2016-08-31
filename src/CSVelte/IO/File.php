@@ -21,8 +21,8 @@ use CSVelte\Contract\Writable;
 
 // Considering adding the following traits as well as adopting such a naming
 // convention (traits will start with verb such as Is/Does/Will/Etc.)
-use CSVelte\IO\IsReadable;
-use CSVelte\IO\IsWritable;
+// use CSVelte\IO\IsReadable;
+// use CSVelte\IO\IsWritable;
 use CSVelte\Exception\FileNotFoundException;
 
 /**
@@ -40,7 +40,7 @@ use CSVelte\Exception\FileNotFoundException;
  */
 class File extends SplFileObject implements Readable, Writable
 {
-    use IsReadable, IsWritable;
+    // use IsReadable, IsWritable;
 
     /**
      * @var constant Used as code for exception thrown for missing file
