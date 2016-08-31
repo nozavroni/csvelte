@@ -102,7 +102,7 @@ class Reader implements \Iterator
         } finally {
             if (is_null($hasHeader)) {
                 // Flavor is immutable, give me a new one with header set to lickHeader return val
-                $flavor = $flavor->copy(array('header' => $taster->lickHeader($this->source->read(Taster::SAMPLE_SIZE), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator)));
+                $flavor = $flavor->copy(array('header' => $taster->lickHeader($this->source->fread(Taster::SAMPLE_SIZE), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator)));
             }
         }
         $this->flavor = $flavor;
@@ -153,7 +153,7 @@ class Reader implements \Iterator
         try {
             do {
                 if (!isset($lines)) $lines = array();
-                array_push($lines, $this->source->readLine());
+                array_push($lines, $this->source->fgets());
             } while ($this->inQuotedString(end($lines), $f->quoteChar, $f->escapeChar));
         } catch (EndOfFileException $e) {
             // only throw the exception if we don't already have lines in the buffer
@@ -171,8 +171,6 @@ class Reader implements \Iterator
      */
     protected function inQuotedString($line, $quoteChar, $escapeChar)
     {
-        // dd($line, false, "line");
-        // dd($quoteChar, false, "quoteChar");
         if (!empty($line)) {
             do {
                 if (!isset($i)) $i = 0;

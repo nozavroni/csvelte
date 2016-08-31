@@ -116,10 +116,10 @@ class File extends SplFileObject implements Readable, Writable
      * @param int $length Number of characters to read from the file
      * @return string Up to $length characters read from the file
      */
-    public function read($length)
-    {
-        return $this->fread($length);
-    }
+    // public function read($length)
+    // {
+    //     return $this->fread($length);
+    // }
 
     /**
      * Read single line.
@@ -131,9 +131,9 @@ class File extends SplFileObject implements Readable, Writable
      *       endings, look into using ``stream_get_line`` rather than fgets. It
      *       allows you to specify the line terminator.
      */
-    public function readLine()
+    public function fgets()
     {
-        return rtrim($this->fgets(), "\r\n");
+        return rtrim(parent::fgets(), "\r\n");
     }
 
     /**
@@ -143,10 +143,10 @@ class File extends SplFileObject implements Readable, Writable
      *
      * @return boolean True if end of file has been reached
      */
-    public function isEof()
-    {
-        return $this->eof();
-    }
+    // public function isEof()
+    // {
+    //     return $this->eof();
+    // }
 
     /**
      * Write to file.

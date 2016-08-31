@@ -105,74 +105,74 @@ class FileTest extends IOTest
     }
 
     /**
-     * @covers ::read()
+     * @covers ::fread()
      */
-    public function testReadGetsCorrectNumberOfChars()
+    public function testFreadGetsCorrectNumberOfChars()
     {
         $file = new File($this->getFilePathFor('commaNewlineHeader'));
-        $this->assertEquals("Bank Name,City,ST,CERT,Ac", $file->read(25));
+        $this->assertEquals("Bank Name,City,ST,CERT,Ac", $file->fread(25));
     }
 
     /**
-     * @covers ::read()
+     * @covers ::fread()
      */
-    public function testReadGetsAllCharsIfMoreAreRequestedThanAreAvailable()
+    public function testFreadGetsAllCharsIfMoreAreRequestedThanAreAvailable()
     {
         $file = new File($this->getFilePathFor('veryShort'));
-        $this->assertEquals("foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\n", $file->read(250));
+        $this->assertEquals("foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\n", $file->fread(250));
     }
 
     /**
-     * @covers ::readLine()
+     * @covers ::fgets()
      */
-    public function testReadLineReadsNextLineWithoutTrailingNewline()
+    public function testFgetsReadsNextLineWithoutTrailingNewline()
     {
         $file = new File($this->getFilePathFor('veryShort'));
-        $this->assertEquals("foo,bar,baz", $file->readLine());
-        $this->assertEquals("bin,boz,bork", $file->readLine());
-        $this->assertEquals("lib,bil,ilb", $file->readLine());
+        $this->assertEquals("foo,bar,baz", $file->fgets());
+        $this->assertEquals("bin,boz,bork", $file->fgets());
+        $this->assertEquals("lib,bil,ilb", $file->fgets());
     }
 
     /**
-     * @covers ::readLine()
+     * @covers ::fgets()
      * @expectedException \RuntimeException
      */
-    public function testReadLineThrowsRuntimeExceptionIfEofReached()
+    public function testFgetsThrowsRuntimeExceptionIfEofReached()
     {
         $file = new File($this->getFilePathFor('veryShort'));
-        $this->assertEquals("foo,bar,baz", $file->readLine());
-        $this->assertEquals("bin,boz,bork", $file->readLine());
-        $this->assertEquals("lib,bil,ilb", $file->readLine());
-        $file->readLine(); // this should trigger an exception
+        $this->assertEquals("foo,bar,baz", $file->fgets());
+        $this->assertEquals("bin,boz,bork", $file->fgets());
+        $this->assertEquals("lib,bil,ilb", $file->fgets());
+        $file->fgets(); // this should trigger an exception
     }
 
     /**
-     * @covers ::isEof()
+     * @covers ::eof()
      */
-    public function testIsEofReturnsFalseUntilEofIsReached()
+    public function testEofReturnsFalseUntilEofIsReached()
     {
         $file = new File($this->getFilePathFor('veryShort'));
-        $this->assertFalse($file->isEof());
-        $this->assertEquals("foo,bar,baz", $file->readLine());
-        $this->assertFalse($file->isEof());
-        $this->assertEquals("bin,boz,bork", $file->readLine());
-        $this->assertFalse($file->isEof());
-        $this->assertEquals("lib,bil,ilb", $file->readLine());
-        $this->assertTrue($file->isEof());
+        $this->assertFalse($file->eof());
+        $this->assertEquals("foo,bar,baz", $file->fgets());
+        $this->assertFalse($file->eof());
+        $this->assertEquals("bin,boz,bork", $file->fgets());
+        $this->assertFalse($file->eof());
+        $this->assertEquals("lib,bil,ilb", $file->fgets());
+        $this->assertTrue($file->eof());
     }
 
     /**
-     * @covers ::readLine()
+     * @covers ::fgets()
      */
-    public function testReadLineReadsLinesWithoutRespectToQuotedNewlines()
+    public function testFgetsReadsLinesWithoutRespectToQuotedNewlines()
     {
         $file = new File($this->getFilePathFor('shortQuotedNewlines'));
-        $this->assertEquals("foo,bar,baz", $file->readLine());
-        $this->assertEquals("bin,\"boz,bork", $file->readLine());
-        $this->assertEquals("lib,bil,ilb\",bon", $file->readLine());
-        $this->assertEquals("bib,bob,\"boob", $file->readLine());
-        $this->assertEquals("boober\"", $file->readLine());
-        $this->assertEquals("cool,pool,wool", $file->readLine());
+        $this->assertEquals("foo,bar,baz", $file->fgets());
+        $this->assertEquals("bin,\"boz,bork", $file->fgets());
+        $this->assertEquals("lib,bil,ilb\",bon", $file->fgets());
+        $this->assertEquals("bib,bob,\"boob", $file->fgets());
+        $this->assertEquals("boober\"", $file->fgets());
+        $this->assertEquals("cool,pool,wool", $file->fgets());
     }
 
     /**
@@ -209,7 +209,7 @@ class FileTest extends IOTest
         $data = "\"foo, bar\",boo,far\n";
         $this->assertEquals(strlen($data), $file->write($data));
         $this->assertEquals(
-            $data, 
+            $data,
             file_get_contents($fn)
         );
     }

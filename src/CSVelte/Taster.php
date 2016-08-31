@@ -37,7 +37,7 @@ use CSVelte\Exception\TasteDelimiterException;
  *            just pulling it from source. I don't think it makes sense... it
  *            was just easier to write the methods that way during testing.
  * @todo      There are at least portions of this class that could use the
- *            Reader class rather than working directly with data. 
+ *            Reader class rather than working directly with data.
  */
 class Taster
 {
@@ -122,7 +122,7 @@ class Taster
     public function __construct(Readable $input)
     {
         $this->input = $input;
-        $this->sample = $input->read(self::SAMPLE_SIZE);
+        $this->sample = $input->fread(self::SAMPLE_SIZE);
     }
 
     /**

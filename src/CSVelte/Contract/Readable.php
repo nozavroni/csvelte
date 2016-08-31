@@ -30,7 +30,7 @@ interface Readable
      * @access public
      * @todo Renaming this method "readChars" might be a little more consistent..
      */
-    public function read($chars);
+    public function fread($chars);
 
     /**
      * Read a single line from input source and return it (and move pointer to )
@@ -39,8 +39,14 @@ interface Readable
      * @param void
      * @return string The next line from the input source
      * @access public
+     * @todo Torn whether I should call this fgets or getCurrentLine. Either are
+     *     acceptible, as SplFileObject has both (they even do the same thing).
+     *     fgets has the advantage of being the standard "get line from file"
+     *     function name, but getCurrentLine is certainly a lot more clear. I
+     *     am going with fgets for now simply because it is consistent with the
+     *     rest of the methods in this interface.
      */
-    public function readLine();
+    public function fgets();
 
     /**
      * Determine whether the end of the readable resource has been reached
@@ -49,7 +55,7 @@ interface Readable
      * @return boolean
      * @access public
      */
-    public function isEof();
+    public function eof();
 
     /**
      * File must be able to be rewound when the end is reached
