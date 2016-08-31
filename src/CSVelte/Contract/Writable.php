@@ -27,5 +27,5 @@ interface Writable
      * @return int The number of bytes written
      * @access public
      */
-    public function write($data);
+    public function fwrite($data);
 }

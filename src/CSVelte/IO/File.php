@@ -130,6 +130,8 @@ class File extends SplFileObject implements Readable, Writable
      * @todo I'm going to leave this be for now, but if issues pop up with line
      *       endings, look into using ``stream_get_line`` rather than fgets. It
      *       allows you to specify the line terminator.
+     * @todo I'm not sure if this should be stripping line endings or not. Maybe
+     *       I should have a separate method that gets a line w/out line ending?
      */
     public function fgets()
     {
@@ -155,9 +157,9 @@ class File extends SplFileObject implements Readable, Writable
      * @param mixed Anything that can be cast to a string can be written
      * @return int The number of bytes written to the file
      */
-    public function write($str)
-    {
-        return $this->fwrite($str);
-    }
+    // public function write($str)
+    // {
+    //     return $this->fwrite($str);
+    // }
 
 }
