@@ -27,7 +27,7 @@ use CSVelte\Exception\FileNotFoundException;
  * ``CSVelte\Writer``.
  *
  * @package    CSVelte
- * @subpackage CSVelte\Contract
+ * @subpackage CSVelte\IO
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  * @since      v0.2
