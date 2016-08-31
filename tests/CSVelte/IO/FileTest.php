@@ -174,4 +174,15 @@ class FileTest extends IOTest
         $this->assertEquals("boober\"", $file->readLine());
         $this->assertEquals("cool,pool,wool", $file->readLine());
     }
+
+    /**
+     * @covers ::write()
+     */
+    public function testCreateNewFileAndWriteToIt()
+    {
+        $data = $this->getFileContentFor('veryShort');
+        $file = new File($fn = $this->root->url() ."/tempfile1.csv", ['open_mode' => 'w']);
+        $this->assertEquals(strlen($data), $file->write($data));
+        $this->assertEquals($data, file_get_contents($fn));
+    }
 }

@@ -62,11 +62,18 @@ class File extends SplFileObject implements Readable, Writable
      *               directories of the file.
      *      mode:    Set the mode for this file and parent directories
      *               (if any) that were created.
+     *      open_mode: Same as mode for fopen
+     *      use_include_path: Search include path for $filename
+     *      context: See stream_context_create()
+     *               http://php.net/manual/en/function.stream-context-create.php
      */
     protected $options = [
         'create' => true,
         'parents' => false,
-        'mode' => 0644
+        'mode' => 0644,
+        'open_mode' => 'rb+',
+        'use_include_path' => false,
+        'context' => null
     ];
 
     /**
@@ -94,7 +101,12 @@ class File extends SplFileObject implements Readable, Writable
                 throw new FileNotFoundException("File not found: ". $filename, self::ERR_FILENOTFOUND);
             }
         }
-        parent::__construct($filename);
+        parent::__construct(
+            $filename,
+            $this->options['open_mode'],
+            $this->options['use_include_path'],
+            $this->options['context']
+        );
     }
 
     /**
@@ -143,9 +155,9 @@ class File extends SplFileObject implements Readable, Writable
      * @param mixed Anything that can be cast to a string can be written
      * @return int The number of bytes written to the file
      */
-    public function write($data)
+    public function write($str)
     {
-
+        return $this->fwrite($str);
     }
 
 }
