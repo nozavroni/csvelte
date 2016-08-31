@@ -14,15 +14,9 @@
 namespace CSVelte\IO;
 
 use \SplFileObject;
-// use \SplFileInfo;
-
 use CSVelte\Contract\Readable;
 use CSVelte\Contract\Writable;
-
-// Considering adding the following traits as well as adopting such a naming
-// convention (traits will start with verb such as Is/Does/Will/Etc.)
-// use CSVelte\IO\IsReadable;
-// use CSVelte\IO\IsWritable;
+use CSVelte\Contract\Seekable;
 use CSVelte\Exception\FileNotFoundException;
 
 /**
@@ -38,10 +32,8 @@ use CSVelte\Exception\FileNotFoundException;
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  * @since      v0.2
  */
-class File extends SplFileObject implements Readable, Writable
+class File extends SplFileObject implements Readable, Writable, Seekable
 {
-    // use IsReadable, IsWritable;
-
     /**
      * @var constant Used as code for exception thrown for missing file
      */
@@ -86,6 +78,9 @@ class File extends SplFileObject implements Readable, Writable
     public function __construct($filename, array $options = [])
     {
         $this->options = array_merge($this->options, $options);
+        if ($this->options['use_include_path']) {
+            $filename = stream_resolve_include_path($filename);
+        }
         if (!file_exists($filename)) {
             if ($this->options['create']) {
                 if (!is_dir($dirname = dirname($filename))) {
@@ -104,22 +99,10 @@ class File extends SplFileObject implements Readable, Writable
         parent::__construct(
             $filename,
             $this->options['open_mode'],
-            $this->options['use_include_path'],
+            $this->options['use_include_path'], // this isnt necessary
             $this->options['context']
         );
     }
-
-    /**
-     * Read from file.
-     * Read $length number of characters from file
-     *
-     * @param int $length Number of characters to read from the file
-     * @return string Up to $length characters read from the file
-     */
-    // public function read($length)
-    // {
-    //     return $this->fread($length);
-    // }
 
     /**
      * Read single line.
@@ -132,34 +115,11 @@ class File extends SplFileObject implements Readable, Writable
      *       allows you to specify the line terminator.
      * @todo I'm not sure if this should be stripping line endings or not. Maybe
      *       I should have a separate method that gets a line w/out line ending?
+     * @todo Decided to just kill this for now... if I need it Ill bring it back
      */
     public function fgets()
     {
         return rtrim(parent::fgets(), "\r\n");
     }
-
-    /**
-     * Is end of file?
-     *
-     * If the end of the file has been reached, this should return true.
-     *
-     * @return boolean True if end of file has been reached
-     */
-    // public function isEof()
-    // {
-    //     return $this->eof();
-    // }
-
-    /**
-     * Write to file.
-     * Write $data to the file.
-     *
-     * @param mixed Anything that can be cast to a string can be written
-     * @return int The number of bytes written to the file
-     */
-    // public function write($str)
-    // {
-    //     return $this->fwrite($str);
-    // }
 
 }

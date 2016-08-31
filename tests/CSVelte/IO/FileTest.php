@@ -105,6 +105,31 @@ class FileTest extends IOTest
     }
 
     /**
+     * @covers ::__construct()
+     */
+    public function testUseIncludePathOptionTrue()
+    {
+        $filename = 'incpathtmp.csv';
+        touch($filepath = $this->tmpdir . DIRECTORY_SEPARATOR . $filename);
+        file_put_contents($filepath, $this->getFileContentFor('veryShort'));
+        set_include_path(
+            $this->tmpdir . PATH_SEPARATOR .
+            get_include_path()
+        );
+        $file = new File($filename, ['use_include_path' => true, 'create' => false, 'open_mode' => 'r+']);
+        $this->assertEquals("foo,bar,baz\nbin,boz,bork\n", $file->fread(25));
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\FileNotFoundException
+     * @covers ::__construct()
+     */
+    public function testUseIncludePathOptionFalseThrowsExceptionIfNoFile()
+    {
+        $file = new File('doesntexist.csv', ['use_include_path' => false, 'create' => false, 'open_mode' => 'r+']);
+    }
+
+    /**
      * @covers ::fread()
      */
     public function testFreadGetsCorrectNumberOfChars()
@@ -176,7 +201,7 @@ class FileTest extends IOTest
     }
 
     /**
-     * @covers ::write()
+     * @covers ::fwrite()
      */
     public function testCreateNewFileAndWriteToIt()
     {
@@ -187,7 +212,7 @@ class FileTest extends IOTest
     }
 
     /**
-     * @covers ::write()
+     * @covers ::fwrite()
      */
     public function testAppendFileWrite()
     {
@@ -201,7 +226,7 @@ class FileTest extends IOTest
     }
 
     /**
-     * @covers ::write()
+     * @covers ::fwrite()
      */
     public function testFileOverWrite()
     {
@@ -212,5 +237,23 @@ class FileTest extends IOTest
             $data,
             file_get_contents($fn)
         );
+    }
+
+    /**
+     * @covers ::fseek()
+     */
+    public function testFseekReturnsZeroOnSuccess()
+    {
+        $file = new File($this->getFilePathFor('shortQuotedNewlines'));
+        $this->assertEquals(0, $file->fseek(10));
+    }
+
+    public function testFseekPlacesPointerInPositionForReadAndWriteIfOpenModeIsRPlus()
+    {
+        $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), ['open_mode' => 'r+']);
+        $this->assertEquals(0, $file->fseek(10), 'CSVelte\\IO\\File::fseek() should return zero on success.');
+        $this->assertEquals("z\nbin,\"boz", $file->fread(10), 'CSVelte\\IO\\File::fseek() should cause fread() to start form sought position.');
+        $this->assertEquals(10, $file->fwrite('skaggzilla'));
+        $this->assertEquals("foo,bar,baz\nbin,\"bozskaggzillabil,ilb\",bon\nbib,bob,\"boob\nboober\"\ncool,pool,wool\n", file_get_contents($fn), 'CSVelte\\IO\\File::fwrite() should start overwriting wherever it\'s seek\'d to if open mode is r+.');
     }
 }

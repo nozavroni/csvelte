@@ -11,7 +11,7 @@
 namespace CSVelte\Contract;
 /**
  * Seekable interface
- * 
+ *
  * Implement this interface to be "seekable"
  *
  * @package CSVelte
@@ -27,5 +27,5 @@ interface Seekable
      * @return boolean True if seek was successful
      * @access public
      */
-    public function seek($pos);
+    public function fseek($pos);
 }
