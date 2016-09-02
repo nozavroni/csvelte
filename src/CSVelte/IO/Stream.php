@@ -152,7 +152,14 @@ class Stream implements Readable, Writable/*, Seekable*/
         return $this->meta['uri'];
     }
 
-    
+    /**
+     * Read $length bytes from stream.
+     *
+     * Reads $length bytes (number of characters) from the stream
+     *
+     * @param int $length Number of bytes to read from stream
+     * @return string The data read from stream
+     */
     public function fread($length)
     {
         return fread($this->stream, $length);
@@ -171,16 +178,39 @@ class Stream implements Readable, Writable/*, Seekable*/
         return stream_get_line($this->stream, 0, $eol);
     }
 
+    /**
+     * Is file pointer at the end of the stream?
+     *
+     * Returns true if internal pointer has reached the end of the stream.
+     *
+     * @return boolean True if end of stream has been reached
+     */
     public function eof()
     {
         return feof($this->stream);
     }
 
+    /**
+     * Rewind pointer to beginning of stream.
+     *
+     * Rewinds the stream, meaning it returns the pointer to the beginning of the
+     * stream as if it had just been initialized.
+     *
+     * @return boolean True on success
+     */
     public function rewind()
     {
         return rewind($this->stream);
     }
 
+    /**
+     * Write to stream
+     *
+     * Writes a string to the stream (if it is writable)
+     *
+     * @param string The data to be written to the stream
+     * @return int The number of bytes written to the stream
+     */
     public function fwrite($str)
     {
         return fwrite($this->stream, $str);
