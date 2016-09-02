@@ -216,4 +216,18 @@ class Stream implements Readable, Writable/*, Seekable*/
         return fwrite($this->stream, $str);
     }
 
+    /**
+     * Seek to position.
+     *
+     * Seek to a specific position within the stream (if seekable).
+     *
+     * @param int The position to seek to
+     * @param int fseek flags (see http://php.net/manual/en/function.fseek.php)
+     * @return int Returns 0 on success, and -1 on failure
+     */
+    public function fseek($pos, $flags = null)
+    {
+        return fseek($this->stream, $pos, $flags);
+    }
+
 }

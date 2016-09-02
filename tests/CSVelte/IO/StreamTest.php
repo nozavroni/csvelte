@@ -187,12 +187,17 @@ class StreamTest extends IOTest
         $this->assertEquals("foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\nthisisten!", $stream->fread(50));
     }
 
-    // public function testInstantiateIOStreamWithURIAndAPlusOpenModeCausesAppendAndRead()
-    // {
-    //     $uri = $this->getFilePathFor('veryShort');
-    //     $stream = new Stream($uri, [
-    //         'open_mode' => 'a+' // write mode (append) + read
-    //     ]);
-    //
-    // }
+    /**
+     * @covers ::fseek()
+     */
+    public function testSeekableStreamCanBeSeekd()
+    {
+        $stream = new Stream($this->getFilePathFor('veryShort'), ['open_mode' => 'rb+']);
+        $this->assertEquals(0, $stream->fseek(10, SEEK_SET));
+        $this->assertEquals("z\nbin,boz,", $stream->fread(10));
+        $this->assertEquals(0, $stream->fseek(5, SEEK_CUR));
+        $this->assertEquals("lib,b", $stream->fread(5));
+        $this->assertEquals(0, $stream->fseek(-15, SEEK_END));
+        $this->assertEquals("rk\nlib,bil", $stream->fread(10));
+    }
 }
