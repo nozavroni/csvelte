@@ -28,4 +28,16 @@ interface Writable
      * @access public
      */
     public function fwrite($data);
+
+    /**
+     * Returns true if file is writable.
+     *
+     * Although this interface is called "Writable", implementing it is no
+     * guarantee that the resource it represents will be writable. It is possible
+     * to open an otherwise "writable" file in "read mode", rendering it
+     * unwritable. This method will tell you if a resource is, indeed, writable.
+     *
+     * @return boolean True if writable, false otherwise
+     */
+    public function isWritable();
 }

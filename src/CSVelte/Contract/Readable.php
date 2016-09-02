@@ -65,4 +65,16 @@ interface Readable
      * @access public
      */
     public function rewind();
+
+    /**
+     * Returns true if file is readable.
+     *
+     * Although this interface is called "Readable", implementing it is no
+     * guarantee that the resource it represents will be readable. It is possible
+     * to open an otherwise "readable" file in "write mode", rendering it
+     * unreadable. This method will tell you if a resource is, indeed, readable.
+     *
+     * @return boolean True if readable, false otherwise
+     */
+    public function isReadable();
 }
