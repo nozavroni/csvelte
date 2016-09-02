@@ -35,16 +35,6 @@ use CSVelte\Exception\FileNotFoundException;
 class File extends SplFileObject implements Readable, Writable, Seekable
 {
     /**
-     * @var constant Used as code for exception thrown for missing file
-     */
-    const ERR_FILENOTFOUND = 1;
-
-    /**
-     * @var constant Used as code for exception thrown for missing directory
-     */
-    const ERR_DIRNOTFOUND = 2;
-
-    /**
      * Initialization options for this file
      * @var array These options are set when instantiating this file object.
      *            These values are just defaults.
@@ -87,13 +77,13 @@ class File extends SplFileObject implements Readable, Writable, Seekable
                     if ($this->options['parents']) {
                         mkdir($dirname, $this->options['mode'], true);
                     } else {
-                        throw new FileNotFoundException("Directory not found: ". $dirname, self::ERR_DIRNOTFOUND);
+                        throw new FileNotFoundException("Directory not found: ". $dirname, FileNotFoundException::ERR_DIR_NOT_FOUND);
                     }
                 }
                 touch($filename);
                 chmod($filename, $this->options['mode']);
             } else {
-                throw new FileNotFoundException("File not found: ". $filename, self::ERR_FILENOTFOUND);
+                throw new FileNotFoundException("File not found: ". $filename, FileNotFoundException::ERR_FILE_NOT_FOUND);
             }
         }
         parent::__construct(
