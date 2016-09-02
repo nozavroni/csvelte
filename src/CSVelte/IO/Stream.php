@@ -64,18 +64,20 @@ class Stream implements Readable/*, Writable, Seekable*/
     public function __construct($stream, array $options = [])
     {
         $this->options = array_merge($this->options, $options);
-        if (is_string($stream)) {
+        if (is_string($uri = $stream)) {
             if (false === ($stream = @fopen($stream, $this->options['open_mode']))) {
-                throw new InvalidStreamException("Invalid stream URI: " . $stream, InvalidStreamException::ERR_INVALID_URI);
+                throw new InvalidStreamException("Invalid stream URI: " . $uri, InvalidStreamException::ERR_INVALID_URI);
             }
         }
         if (is_resource($stream) && get_resource_type($stream) == 'stream') {
             $this->stream = $stream;
+        } else {
+            throw new InvalidStreamException("Expected stream resource, got: " . gettype($stream), InvalidStreamException::ERR_INVALID_RESOURCE);
         }
         $this->meta = stream_get_meta_data($this->stream);
     }
 
-    /**1`
+    /**
      * Accessor for internal stream resource.
      *
      * Returns the internal stream resource pointer
@@ -101,7 +103,7 @@ class Stream implements Readable/*, Writable, Seekable*/
 
     public function fread($length)
     {
-
+        return fread($this->stream, $length);
     }
 
     /**

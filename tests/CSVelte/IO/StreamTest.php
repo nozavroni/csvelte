@@ -44,14 +44,14 @@ class StreamTest extends IOTest
         $stream = new Stream('foo');
     }
 
-    // /**
-    //  * @expectedException CSVelte\Exception\InvalidStreamUriException
-    //  * @expectedExceptionCode 2
-    //  */
-    // public function testInstantiateThrowsExceptionIfInvalidStreamResource()
-    // {
-    //     $stream = new Stream('foo');
-    // }
+    /**
+     * @expectedException CSVelte\Exception\InvalidStreamException
+     * @expectedExceptionCode 2
+     */
+    public function testInstantiateThrowsExceptionIfInvalidStreamResource()
+    {
+        $stream = new Stream(new \stdClass());
+    }
 
     /**
      * @covers ::getUri()
@@ -62,16 +62,18 @@ class StreamTest extends IOTest
         $this->assertEquals("vfs://root/testfiles/veryShort.csv", $stream->getUri());
     }
 
-    /**
-     * @covers ::__construct()
-     */
-    // public function testInstantiateIOStreamWithURIAndOpenMode()
+    public function testFreadGetsRightNumChars()
+    {
+        $stream = new Stream($this->getFilePathFor('veryShort'));
+        $this->assertEquals("foo,bar,ba", $stream->fread(10));
+    }
+
+    // public function testInstantiateIOStreamWithURIAndAPlusOpenModeCausesAppendAndRead()
     // {
     //     $uri = $this->getFilePathFor('veryShort');
     //     $stream = new Stream($uri, [
     //         'open_mode' => 'a+' // write mode (append) + read
     //     ]);
     //
-    //     $this->assertSame(, $stream->getResource());
     // }
 }
