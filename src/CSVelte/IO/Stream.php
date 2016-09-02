@@ -52,6 +52,13 @@ class Stream implements Readable/*, Writable, Seekable*/
     ];
 
     /**
+     * Meta data about stream resource.
+     * Just contains the return value of stream_get_meta_data.
+     * @var array The return value of stream_get_meta_data
+     */
+    protected $meta;
+
+    /**
      * Stream Object Constructor.
      *
      * Instantiates the stream object
@@ -112,20 +119,21 @@ class Stream implements Readable/*, Writable, Seekable*/
      * Returns multiple lines if newline character(s) fall within a quoted string.
      *
      * @return string A single line read from the file.
+     * @todo Should this accept line terminator? I think it should...
      */
-    public function fgets()
+    public function fgets($eol = PHP_EOL)
     {
-
+        return stream_get_line($this->stream, 0, $eol);
     }
 
     public function eof()
     {
-
+        return feof($this->stream);
     }
 
     public function rewind()
     {
-
+        return rewind($this->stream);
     }
 
 }

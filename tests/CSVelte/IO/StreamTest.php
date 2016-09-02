@@ -62,10 +62,66 @@ class StreamTest extends IOTest
         $this->assertEquals("vfs://root/testfiles/veryShort.csv", $stream->getUri());
     }
 
+    /**
+     * @covers ::fread()
+     */
     public function testFreadGetsRightNumChars()
     {
         $stream = new Stream($this->getFilePathFor('veryShort'));
         $this->assertEquals("foo,bar,ba", $stream->fread(10));
+    }
+
+    /**
+     * @covers ::fgets()
+     */
+    public function testFgetsReturnsCurrentLineAndAdvancesToNext()
+    {
+        $stream = new Stream($this->getFilePathFor('veryShort'));
+        $this->assertEquals("foo,bar,baz", $stream->fgets());
+        $this->assertEquals("bin,boz,bork", $stream->fgets());
+        $this->assertEquals("lib,bil,ilb", $stream->fgets());
+    }
+
+    /**
+     * @covers ::eof()
+     */
+    public function testEofReturnsTrueWhenAtEndOfFile()
+    {
+        $stream = new Stream($this->getFilePathFor('veryShort'));
+        $this->assertFalse($stream->eof());
+        $stream->fgets();
+        $this->assertFalse($stream->eof());
+        $stream->fgets();
+        $this->assertFalse($stream->eof());
+        $stream->fgets();
+        $this->assertTrue($stream->eof());
+    }
+
+    /**
+     * @covers ::eof()
+     */
+    public function testEofAcceptsArbitraryLineTerminator()
+    {
+        $stream = new Stream($this->getFilePathFor('veryShort'));
+        $this->assertEquals('foo', $stream->fgets(","));
+        $this->assertEquals('bar', $stream->fgets(","));
+        $this->assertEquals("baz\nbin", $stream->fgets(","));
+        $this->assertEquals('boz', $stream->fgets(","));
+        $this->assertEquals("bork\nlib", $stream->fgets(","));
+        $this->assertEquals('bil', $stream->fgets(","));
+        $this->assertEquals("ilb\n", $stream->fgets(","));
+    }
+
+    /**
+     * @covers ::rewind()
+     */
+    public function testRewindReturnsPointerToBeginning()
+    {
+        $stream = new Stream($this->getFilePathFor('veryShort'));
+        $stream->fread(15);
+        $this->assertEquals(",boz,bork", $stream->fgets(), "Just make sure we are somewhere in the middle of the stream.");
+        $this->assertTrue($stream->rewind(), "Stream::rewind should return true on success.");
+        $this->assertEquals("foo,bar,baz", $stream->fgets(), "Now we should be at the beginning again.");
     }
 
     // public function testInstantiateIOStreamWithURIAndAPlusOpenModeCausesAppendAndRead()
