@@ -14,9 +14,9 @@
 namespace CSVelte\IO;
 
 use CSVelte\Contract\Readable;
+use CSVelte\Exception\InvalidStreamException;
 //use CSVelte\Contract\Writable;
 //use CSVelte\Contract\Seekable;
-//use CSVelte\Exception\FileNotFoundException;
 
 /**
  * CSVelte Stream.
@@ -39,24 +39,43 @@ class Stream implements Readable/*, Writable, Seekable*/
     protected $stream;
 
     /**
+     * Initialization options for this stream
+     * @var array These options are set when instantiating this stream object.
+     *            These values are just defaults.
+     *      open_mode: Same as mode for fopen
+     *      context: See stream_context_create()
+     *               http://php.net/manual/en/function.stream-context-create.php
+     */
+    protected $options = [
+        'open_mode' => 'rb+',
+        'context' => null
+    ];
+
+    /**
      * Stream Object Constructor.
      *
      * Instantiates the stream object
      *
      * @param string|resource $stream Either a valid stream URI or an open
      *     stream resource (using fopen, fsockopen, et al.)
+     * @param array $options An array of any/none of the following options
+     *                          (see $options var above for more details)
      */
-    public function __construct($stream)
+    public function __construct($stream, array $options = [])
     {
+        $this->options = array_merge($this->options, $options);
         if (is_string($stream)) {
-            $stream = fopen($stream, 'r+');
+            if (false === ($stream = @fopen($stream, $this->options['open_mode']))) {
+                throw new InvalidStreamException("Invalid stream URI: " . $stream, InvalidStreamException::ERR_INVALID_URI);
+            }
         }
         if (is_resource($stream) && get_resource_type($stream) == 'stream') {
             $this->stream = $stream;
         }
+        $this->meta = stream_get_meta_data($this->stream);
     }
 
-    /**
+    /**1`
      * Accessor for internal stream resource.
      *
      * Returns the internal stream resource pointer
@@ -66,6 +85,18 @@ class Stream implements Readable/*, Writable, Seekable*/
     public function getResource()
     {
         return $this->stream;
+    }
+
+    /**1`
+     * Accessor for stream URI.
+     *
+     * Returns the stream URI
+     *
+     * @return string The URI for the stream
+     */
+    public function getUri()
+    {
+        return $this->meta['uri'];
     }
 
     public function fread($length)

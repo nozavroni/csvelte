@@ -16,23 +16,62 @@ use org\bovigo\vfs\visitor\vfsStreamPrintVisitor;
  */
 class StreamTest extends IOTest
 {
+
+    public function testInstantiateIOStreamAcceptsStreamResource()
+    {
+        $resource = fopen($this->getFilePathFor('veryShort'), 'rb+');
+        $stream = new Stream($resource);
+        $this->assertSame($resource, $stream->getResource());
+    }
+
     /**
      * @covers ::__construct()
      */
     public function testInstantiateIOStreamAcceptsStreamURI()
     {
         $stream = new Stream($this->getFilePathFor('veryShort'));
-        $this->assertTrue(is_resource($stream->getResource()));
-        $this->assertEquals("stream", get_resource_type($stream->getResource()));
+        $res = $stream->getResource();
+        $this->assertTrue(is_resource($res));
+        $this->assertEquals("stream", get_resource_type($res));
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\InvalidStreamException
+     * @expectedExceptionCode 1
+     */
+    public function testInstantiateThrowsExceptionIfInvalidStreamURI()
+    {
+        $stream = new Stream('foo');
+    }
+
+    // /**
+    //  * @expectedException CSVelte\Exception\InvalidStreamUriException
+    //  * @expectedExceptionCode 2
+    //  */
+    // public function testInstantiateThrowsExceptionIfInvalidStreamResource()
+    // {
+    //     $stream = new Stream('foo');
+    // }
+
+    /**
+     * @covers ::getUri()
+     */
+    public function testStreamGetURI()
+    {
+        $stream = new Stream($this->getFilePathFor('veryShort'));
+        $this->assertEquals("vfs://root/testfiles/veryShort.csv", $stream->getUri());
     }
 
     /**
      * @covers ::__construct()
      */
-    public function testInstantiateIOStreamAcceptsStreamResource()
-    {
-        $resource = fopen($this->getFilePathFor('veryShort'), 'r+');
-        $stream = new Stream($resource);
-        $this->assertSame($resource, $stream->getResource());
-    }
+    // public function testInstantiateIOStreamWithURIAndOpenMode()
+    // {
+    //     $uri = $this->getFilePathFor('veryShort');
+    //     $stream = new Stream($uri, [
+    //         'open_mode' => 'a+' // write mode (append) + read
+    //     ]);
+    //
+    //     $this->assertSame(, $stream->getResource());
+    // }
 }
