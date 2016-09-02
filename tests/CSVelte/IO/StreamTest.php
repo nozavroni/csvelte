@@ -19,7 +19,7 @@ class StreamTest extends IOTest
 
     public function testInstantiateIOStreamAcceptsStreamResource()
     {
-        $resource = fopen($this->getFilePathFor('veryShort'), 'rb+');
+        $resource = fopen($this->getFilePathFor('veryShort'), 'r+b');
         $stream = new Stream($resource);
         $this->assertSame($resource, $stream->getResource());
     }
@@ -86,7 +86,7 @@ class StreamTest extends IOTest
     // I made close() protected because I dont really want userland to call it
     // public function testCloseKillsConnection()
     // {
-    //     $res = fopen($this->getFilePathFor('veryShort'), 'rb+');
+    //     $res = fopen($this->getFilePathFor('veryShort'), 'r+b');
     //     $stream = new Stream($res);
     //     $this->assertEquals("stream", get_resource_type($stream->getResource()));
     //     $this->assertEquals("stream", get_resource_type($res));
@@ -97,7 +97,7 @@ class StreamTest extends IOTest
 
     public function testDestructKillsConnection()
     {
-        $res = fopen($this->getFilePathFor('veryShort'), 'rb+');
+        $res = fopen($this->getFilePathFor('veryShort'), 'r+b');
         $stream = new Stream($res);
         $this->assertEquals("stream", get_resource_type($res));
         $stream = null;
@@ -192,12 +192,21 @@ class StreamTest extends IOTest
      */
     public function testSeekableStreamCanBeSeekd()
     {
-        $stream = new Stream($this->getFilePathFor('veryShort'), ['open_mode' => 'rb+']);
-        $this->assertEquals(0, $stream->fseek(10, SEEK_SET));
+        $stream = new Stream($this->getFilePathFor('veryShort'), ['open_mode' => 'r+b']);
+        $this->assertTrue($stream->fseek(10, SEEK_SET));
         $this->assertEquals("z\nbin,boz,", $stream->fread(10));
-        $this->assertEquals(0, $stream->fseek(5, SEEK_CUR));
+        $this->assertTrue($stream->fseek(5, SEEK_CUR));
         $this->assertEquals("lib,b", $stream->fread(5));
-        $this->assertEquals(0, $stream->fseek(-15, SEEK_END));
+        $this->assertTrue($stream->fseek(-15, SEEK_END));
         $this->assertEquals("rk\nlib,bil", $stream->fread(10));
     }
+
+    // /**
+    //  * @covers ::fseek()
+    //  */
+    // public function testSeekableStreamCanBeSeekd()
+    // {
+    //     $stream = new Stream('php://input', ['open_mode' => 'rb+']);
+    //     $stream->fseek(1010);
+    // }
 }

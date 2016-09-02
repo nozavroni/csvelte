@@ -15,7 +15,7 @@ namespace CSVelte\IO;
 
 use CSVelte\Contract\Readable;
 use CSVelte\Contract\Writable;
-//use CSVelte\Contract\Seekable;
+use CSVelte\Contract\Seekable;
 
 use \InvalidArgumentException;
 use CSVelte\Exception\InvalidStreamException;
@@ -33,7 +33,7 @@ use CSVelte\Exception\InvalidStreamException;
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  * @since      v0.2
  */
-class Stream implements Readable, Writable/*, Seekable*/
+class Stream implements Readable, Writable, Seekable
 {
     /**
      * @var resource An open stream resource
@@ -49,8 +49,35 @@ class Stream implements Readable, Writable/*, Seekable*/
      *               http://php.net/manual/en/function.stream-context-create.php
      */
     protected $options = [
-        'open_mode' => 'rb+',
+        'open_mode' => 'r+b',
         'context' => null
+    ];
+
+    /**
+     * Hash of readable/writable stream open mode types.
+     *
+     * Mercilessly stolen from:
+     * https://github.com/guzzle/streams/blob/master/src/Stream.php
+     *
+     * My kudos and sincere thanks go out to Michael Dowling and Graham Campbell
+     * of the guzzle/streams PHP package. Thanks for the inspiration (in some cases)
+     * and the not suing me for outright theft (in this case).
+     *
+     * @var array Hash of readable and writable stream types
+     */
+    protected static $readWriteHash = [
+        'read' => [
+            'r' => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
+            'rb' => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
+            'c+b' => true, 'rt' => true, 'w+t' => true, 'r+t' => true,
+            'x+t' => true, 'c+t' => true, 'a+' => true,
+        ],
+        'write' => [
+            'w' => true, 'w+' => true, 'rw' => true, 'r+' => true, 'x+' => true,
+            'c+' => true, 'wb' => true, 'w+b' => true, 'r+b' => true,
+            'x+b' => true, 'c+b' => true, 'w+t' => true, 'r+t' => true,
+            'x+t' => true, 'c+t' => true, 'a' => true, 'a+' => true,
+        ],
     ];
 
     /**
@@ -59,6 +86,10 @@ class Stream implements Readable, Writable/*, Seekable*/
      * @var array The return value of stream_get_meta_data
      */
     protected $meta;
+
+    protected $seekable;
+    protected $readable;
+    protected $writable;
 
     /**
      * Stream Object Constructor.
@@ -74,7 +105,15 @@ class Stream implements Readable, Writable/*, Seekable*/
     {
         $this->setOptions($options);
         $this->stream = $this->open($stream, $this->options['open_mode'], $this->options['context']);
-        $this->meta = stream_get_meta_data($this->stream);
+        $this->setMetaData($this->stream);
+    }
+
+    protected function setMetaData($stream)
+    {
+        $this->meta = stream_get_meta_data($stream);
+        $this->seekable = $this->meta['seekable'];
+        $this->readable = isset(self::$readWriteHash['read'][$this->meta['mode']]);
+        $this->writable = isset(self::$readWriteHash['write'][$this->meta['mode']]);
     }
 
     /**
@@ -216,18 +255,26 @@ class Stream implements Readable, Writable/*, Seekable*/
         return fwrite($this->stream, $str);
     }
 
+    public function isSeekable()
+    {
+        return $this->seekable;
+    }
+
     /**
      * Seek to position.
      *
      * Seek to a specific position within the stream (if seekable).
      *
-     * @param int The position to seek to
-     * @param int fseek flags (see http://php.net/manual/en/function.fseek.php)
-     * @return int Returns 0 on success, and -1 on failure
+     * @param int $offset The position to seek to
+     * @param int $whence (see http://php.net/manual/en/function.fseek.php)
+     * @return boolean True on success false on failure
      */
-    public function fseek($pos, $flags = null)
+    public function fseek($offset, $whence = null)
     {
-        return fseek($this->stream, $pos, $flags);
+        if ($this->isSeekable()) {
+            return fseek($this->stream, $offset, $whence) === 0;
+        }
+        return false;
     }
 
 }
