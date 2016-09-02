@@ -14,9 +14,11 @@
 namespace CSVelte\IO;
 
 use CSVelte\Contract\Readable;
-use CSVelte\Exception\InvalidStreamException;
 use CSVelte\Contract\Writable;
 //use CSVelte\Contract\Seekable;
+
+use \InvalidArgumentException;
+use CSVelte\Exception\InvalidStreamException;
 
 /**
  * CSVelte Stream.
@@ -70,9 +72,20 @@ class Stream implements Readable, Writable/*, Seekable*/
      */
     public function __construct($stream, array $options = [])
     {
+        if (array_key_exists('context', $options) && !is_null($options['context'])) {
+            if (!is_array($options['context'])) {
+                throw new InvalidArgumentException("\"context\" option must me an array, got: " . gettype($options['context']));
+            }
+            $options['context'] = stream_context_create($options['context']);
+        }
         $this->options = array_merge($this->options, $options);
         if (is_string($uri = $stream)) {
-            if (false === ($stream = @fopen($stream, $this->options['open_mode']))) {
+            if (is_null($this->options['context'])) {
+                $stream = @fopen($stream, $this->options['open_mode']);
+            } else {
+                $stream = @fopen($stream, $this->options['open_mode'], false, $this->options['context']);
+            }
+            if (false === $stream) {
                 throw new InvalidStreamException("Invalid stream URI: " . $uri, InvalidStreamException::ERR_INVALID_URI);
             }
         }

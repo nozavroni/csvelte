@@ -36,6 +36,36 @@ class StreamTest extends IOTest
     }
 
     /**
+     * @covers ::__construct()
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInstantiateWithContextNotArrayThrowsException()
+    {
+        $stream = new Stream('php://input', [
+            'context' => 'not an array'
+        ]);
+    }
+
+    // /**
+    //  * @covers ::__construct()
+    //  */
+    // public function testInstantiateStreamWithContextOptionsAndStringURI()
+    // {
+    //     $data = 'SomeData';
+    //     $stream = new Stream('http://www.example.com/', [
+    //         'open_mode' => 'rb',
+    //         'context' => [
+    //             'http' => [
+    //                 'method' => 'POST',
+    //                 'header' => 'Content-Type: application/x-www-form-urlencoded',
+    //                 'content' => $data
+    //             ]
+    //         ]
+    //     ]);
+    //     dd($stream->getResource());
+    // }
+
+    /**
      * @expectedException CSVelte\Exception\InvalidStreamException
      * @expectedExceptionCode 1
      */
