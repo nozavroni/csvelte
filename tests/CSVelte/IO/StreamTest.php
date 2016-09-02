@@ -124,6 +124,16 @@ class StreamTest extends IOTest
         $this->assertEquals("foo,bar,baz", $stream->fgets(), "Now we should be at the beginning again.");
     }
 
+    /**
+     * @covers ::fwrite()
+     */
+    public function testFwriteWritesDataAndReturnsNumBytesWritten()
+    {
+        $stream = new Stream($this->getFilePathFor('veryShort'));
+        $data = "thisisten!";
+        $this->assertEquals(strlen($data), $stream->fwrite($data));
+    }
+
     // public function testInstantiateIOStreamWithURIAndAPlusOpenModeCausesAppendAndRead()
     // {
     //     $uri = $this->getFilePathFor('veryShort');

@@ -15,7 +15,7 @@ namespace CSVelte\IO;
 
 use CSVelte\Contract\Readable;
 use CSVelte\Exception\InvalidStreamException;
-//use CSVelte\Contract\Writable;
+use CSVelte\Contract\Writable;
 //use CSVelte\Contract\Seekable;
 
 /**
@@ -31,7 +31,7 @@ use CSVelte\Exception\InvalidStreamException;
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  * @since      v0.2
  */
-class Stream implements Readable/*, Writable, Seekable*/
+class Stream implements Readable, Writable/*, Seekable*/
 {
     /**
      * @var resource An open stream resource
@@ -134,6 +134,11 @@ class Stream implements Readable/*, Writable, Seekable*/
     public function rewind()
     {
         return rewind($this->stream);
+    }
+
+    public function fwrite($str)
+    {
+        return fwrite($this->stream, $str);
     }
 
 }
