@@ -83,6 +83,27 @@ class StreamTest extends IOTest
         $stream = new Stream(new \stdClass());
     }
 
+    // I made close() protected because I dont really want userland to call it
+    // public function testCloseKillsConnection()
+    // {
+    //     $res = fopen($this->getFilePathFor('veryShort'), 'rb+');
+    //     $stream = new Stream($res);
+    //     $this->assertEquals("stream", get_resource_type($stream->getResource()));
+    //     $this->assertEquals("stream", get_resource_type($res));
+    //     $stream->close();
+    //     $this->assertNotEquals("stream", get_resource_type($stream->getResource()));
+    //     $this->assertNotEquals("stream", get_resource_type($res));
+    // }
+
+    public function testDestructKillsConnection()
+    {
+        $res = fopen($this->getFilePathFor('veryShort'), 'rb+');
+        $stream = new Stream($res);
+        $this->assertEquals("stream", get_resource_type($res));
+        $stream = null;
+        $this->assertNotEquals("stream", get_resource_type($res));
+    }
+
     /**
      * @covers ::getUri()
      */

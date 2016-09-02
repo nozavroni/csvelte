@@ -77,6 +77,18 @@ class Stream implements Readable, Writable/*, Seekable*/
         $this->meta = stream_get_meta_data($this->stream);
     }
 
+    /**
+     * Stream Object Destructor.
+     *
+     * Closes stream connection.
+     */
+    public function __destruct()
+    {
+        if (is_resource($this->stream)) {
+            $this->close();
+        }
+    }
+
     protected function open($stream, $mode = null, $context = null)
     {
         if (is_string($uri = $stream)) {
@@ -93,6 +105,16 @@ class Stream implements Readable, Writable/*, Seekable*/
             throw new InvalidStreamException("Expected stream resource, got: " . gettype($stream), InvalidStreamException::ERR_INVALID_RESOURCE);
         }
         return $stream;
+    }
+
+    /**
+     * Close stream resource.
+     *
+     * @return boolean True on success or false on failure
+     */
+    protected function close()
+    {
+        return fclose($this->stream);
     }
 
     protected function setOptions(array $options)
@@ -130,6 +152,7 @@ class Stream implements Readable, Writable/*, Seekable*/
         return $this->meta['uri'];
     }
 
+    
     public function fread($length)
     {
         return fread($this->stream, $length);
