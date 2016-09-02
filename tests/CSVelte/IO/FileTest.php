@@ -1,6 +1,7 @@
 <?php
 namespace CSVelteTest\IO;
 
+use \SplFileObject;
 use CSVelte\IO\File;
 use org\bovigo\vfs\vfsStream;
 /**

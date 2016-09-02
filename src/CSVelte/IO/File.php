@@ -64,6 +64,8 @@ class File extends SplFileObject implements Readable, Writable, Seekable
      * @param string $filename The path and name of the file
      * @param array $options An array of any/none of the following options
      *                          (see $options var above for more details)
+     * @todo This should not accept directory or various other things that
+     *       SplFileObject accepts
      */
     public function __construct($filename, array $options = [])
     {
@@ -102,7 +104,9 @@ class File extends SplFileObject implements Readable, Writable, Seekable
      * @return string A single line read from the file.
      * @todo I'm going to leave this be for now, but if issues pop up with line
      *       endings, look into using ``stream_get_line`` rather than fgets. It
-     *       allows you to specify the line terminator.
+     *       allows you to specify the line terminator. UPDATE: Looked into it.
+     *       It appears there is no way to get access to the internal stream
+     *       resource so I cannot use stream_get_line :(
      * @todo I'm not sure if this should be stripping line endings or not. Maybe
      *       I should have a separate method that gets a line w/out line ending?
      * @todo Decided to just kill this for now... if I need it Ill bring it back
