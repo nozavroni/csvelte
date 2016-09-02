@@ -88,7 +88,9 @@ class Stream implements Readable, Writable, Seekable
     protected $meta;
 
     protected $seekable;
+
     protected $readable;
+
     protected $writable;
 
     /**
@@ -106,14 +108,6 @@ class Stream implements Readable, Writable, Seekable
         $this->setOptions($options);
         $this->stream = $this->open($stream, $this->options['open_mode'], $this->options['context']);
         $this->setMetaData($this->stream);
-    }
-
-    protected function setMetaData($stream)
-    {
-        $this->meta = stream_get_meta_data($stream);
-        $this->seekable = $this->meta['seekable'];
-        $this->readable = isset(self::$readWriteHash['read'][$this->meta['mode']]);
-        $this->writable = isset(self::$readWriteHash['write'][$this->meta['mode']]);
     }
 
     /**
@@ -165,6 +159,50 @@ class Stream implements Readable, Writable, Seekable
             $options['context'] = stream_context_create($options['context']);
         }
         $this->options = array_merge($this->options, $options);
+    }
+
+    protected function setMetaData($stream)
+    {
+        $this->meta = stream_get_meta_data($stream);
+        $this->seekable = $this->meta['seekable'];
+        $this->readable = isset(self::$readWriteHash['read'][$this->meta['mode']]);
+        $this->writable = isset(self::$readWriteHash['write'][$this->meta['mode']]);
+    }
+
+    /**
+     * Accessor for seekability.
+     *
+     * Returns true if possible to seek to a certain position within this stream
+     *
+     * @return boolean True if stream is seekable
+     */
+    public function isSeekable()
+    {
+        return $this->seekable;
+    }
+
+    /**
+     * Accessor for readability.
+     *
+     * Returns true if possible to read from this stream
+     *
+     * @return boolean True if stream is readable
+     */
+    public function isReadable()
+    {
+        return $this->readable;
+    }
+
+    /**
+     * Accessor for writability.
+     *
+     * Returns true if possible to write to this stream
+     *
+     * @return boolean True if stream is writable
+     */
+    public function isWritable()
+    {
+        return $this->writable;
     }
 
     /**
@@ -253,11 +291,6 @@ class Stream implements Readable, Writable, Seekable
     public function fwrite($str)
     {
         return fwrite($this->stream, $str);
-    }
-
-    public function isSeekable()
-    {
-        return $this->seekable;
     }
 
     /**

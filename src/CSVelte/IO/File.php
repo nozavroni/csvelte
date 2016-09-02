@@ -111,9 +111,9 @@ class File extends SplFileObject implements Readable, Writable, Seekable
      *       I should have a separate method that gets a line w/out line ending?
      * @todo Decided to just kill this for now... if I need it Ill bring it back
      */
-    public function fgets()
+    public function fgets($eol = PHP_EOL)
     {
-        return rtrim(parent::fgets(), "\r\n");
+        return rtrim(parent::fgets(), $eol);
     }
 
 }

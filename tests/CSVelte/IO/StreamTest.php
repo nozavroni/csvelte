@@ -201,12 +201,36 @@ class StreamTest extends IOTest
         $this->assertEquals("rk\nlib,bil", $stream->fread(10));
     }
 
-    // /**
-    //  * @covers ::fseek()
-    //  */
-    // public function testSeekableStreamCanBeSeekd()
-    // {
-    //     $stream = new Stream('php://input', ['open_mode' => 'rb+']);
-    //     $stream->fseek(1010);
-    // }
+    /**
+     * @covers ::isSeekable()
+     */
+    public function testSeekableStreamsReturnTrueOnIsSeekable()
+    {
+        $seekableStream = new Stream($this->getFilePathFor('veryShort'), ['open_mode' => 'r+b']);
+        $this->assertTrue($seekableStream->isSeekable());
+        $nonSeekableStream = new Stream('php://output', ['open_mode' => 'w']);
+        $this->assertFalse($nonSeekableStream->isSeekable());
+    }
+
+    /**
+     * @covers ::isReadable()
+     */
+    public function testSeekableStreamsReturnTrueOnIsReadable()
+    {
+        $readableStream = new Stream($this->getFilePathFor('veryShort'), ['open_mode' => 'r+b']);
+        $this->assertTrue($readableStream->isReadable());
+        $nonReadableStream = new Stream('php://output', ['open_mode' => 'w']);
+        $this->assertFalse($nonReadableStream->isReadable());
+    }
+
+    /**
+     * @covers ::isWritable()
+     */
+    public function testSeekableStreamsReturnTrueOnIsWritable()
+    {
+        $writableStream = new Stream('php://output', ['open_mode' => 'w']);
+        $this->assertTrue($writableStream->isWritable());
+        $nonWritableStream = new Stream($this->getFilePathFor('veryShort'), ['open_mode' => 'rb']);
+        $this->assertFalse($nonWritableStream->isWritable());
+    }
 }
