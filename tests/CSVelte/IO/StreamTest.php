@@ -129,9 +129,11 @@ class StreamTest extends IOTest
      */
     public function testFwriteWritesDataAndReturnsNumBytesWritten()
     {
-        $stream = new Stream($this->getFilePathFor('veryShort'));
+        $stream = new Stream($fn = $this->getFilePathFor('veryShort'), ['open_mode' => 'a+']);
         $data = "thisisten!";
         $this->assertEquals(strlen($data), $stream->fwrite($data));
+        $stream->rewind();
+        $this->assertEquals("foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\nthisisten!", $stream->fread(50));
     }
 
     // public function testInstantiateIOStreamWithURIAndAPlusOpenModeCausesAppendAndRead()
