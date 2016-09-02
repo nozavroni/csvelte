@@ -72,6 +72,31 @@ class Stream implements Readable, Writable/*, Seekable*/
      */
     public function __construct($stream, array $options = [])
     {
+        $this->setOptions($options);
+        $this->stream = $this->open($stream, $this->options['open_mode'], $this->options['context']);
+        $this->meta = stream_get_meta_data($this->stream);
+    }
+
+    protected function open($stream, $mode = null, $context = null)
+    {
+        if (is_string($uri = $stream)) {
+            if (is_null($context)) {
+                $stream = @fopen($stream, $mode);
+            } else {
+                $stream = @fopen($stream, $mode, false, $context);
+            }
+            if (false === $stream) {
+                throw new InvalidStreamException("Invalid stream URI: " . $uri, InvalidStreamException::ERR_INVALID_URI);
+            }
+        }
+        if (!is_resource($stream) || get_resource_type($stream) != 'stream') {
+            throw new InvalidStreamException("Expected stream resource, got: " . gettype($stream), InvalidStreamException::ERR_INVALID_RESOURCE);
+        }
+        return $stream;
+    }
+
+    protected function setOptions(array $options)
+    {
         if (array_key_exists('context', $options) && !is_null($options['context'])) {
             if (!is_array($options['context'])) {
                 throw new InvalidArgumentException("\"context\" option must me an array, got: " . gettype($options['context']));
@@ -79,22 +104,6 @@ class Stream implements Readable, Writable/*, Seekable*/
             $options['context'] = stream_context_create($options['context']);
         }
         $this->options = array_merge($this->options, $options);
-        if (is_string($uri = $stream)) {
-            if (is_null($this->options['context'])) {
-                $stream = @fopen($stream, $this->options['open_mode']);
-            } else {
-                $stream = @fopen($stream, $this->options['open_mode'], false, $this->options['context']);
-            }
-            if (false === $stream) {
-                throw new InvalidStreamException("Invalid stream URI: " . $uri, InvalidStreamException::ERR_INVALID_URI);
-            }
-        }
-        if (is_resource($stream) && get_resource_type($stream) == 'stream') {
-            $this->stream = $stream;
-        } else {
-            throw new InvalidStreamException("Expected stream resource, got: " . gettype($stream), InvalidStreamException::ERR_INVALID_RESOURCE);
-        }
-        $this->meta = stream_get_meta_data($this->stream);
     }
 
     /**
