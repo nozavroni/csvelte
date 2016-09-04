@@ -106,7 +106,7 @@ class Reader implements \Iterator
         } finally { // @todo get rid of this
             if (is_null($hasHeader)) {
                 // Flavor is immutable, give me a new one with header set to lickHeader return val
-                $flavor = $flavor->copy(array('header' => $taster->lickHeader($this->source->fread(Taster::SAMPLE_SIZE), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator)));
+                $flavor = $flavor->copy(array('header' => $taster->lickHeader($this->source->read(Taster::SAMPLE_SIZE), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator)));
             }
         }
         $this->flavor = $flavor;
