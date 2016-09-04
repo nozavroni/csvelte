@@ -165,7 +165,7 @@ class Taster
          * @todo Should this be null? Because doubleQuote = true means this = null
          */
         $escapeChar = '\\';
-        $quoteStyle = $this->lickQuotingStyle($this->sample, $quoteChar, $delimiter, $lineTerminator);
+        $quoteStyle = $this->lickQuotingStyle($quoteChar, $delimiter, $lineTerminator);
         $header = $this->lickHeader($this->sample, $quoteChar, $delimiter, $lineTerminator);
         return new Flavor(compact('quoteChar', 'escapeChar', 'delimiter', 'lineTerminator', 'quoteStyle', 'header'));
     }
@@ -343,9 +343,9 @@ class Taster
      *     are many performance and logic improvements that could be made. This
      *     is essentially a first draft.
      */
-    protected function lickQuotingStyle($data, $quote, $delim, $eol)
+    protected function lickQuotingStyle($quote, $delim, $eol)
     {
-        $data = $this->replaceQuotedSpecialChars($data, $delim);
+        $data = $this->replaceQuotedSpecialChars($this->sample, $delim);
 
         $quoting_styles = array(
             Flavor::QUOTE_ALL => 0,
