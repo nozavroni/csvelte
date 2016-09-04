@@ -94,6 +94,41 @@ class Stream implements Readable, Writable, Seekable
     protected $writable;
 
     /**
+     * Converts object/string to a usable stream
+     *
+     * Mercilessly stolen from:
+     * https://github.com/guzzle/streams/blob/master/src/Stream.php
+     *
+     * My kudos and sincere thanks go out to Michael Dowling and Graham Campbell
+     * of the guzzle/streams PHP package. Thanks for the inspiration (in some cases)
+     * and the not suing me for outright theft (in this case).
+     *
+     * @param string|object The string/object to convert to a stream
+     * @param array Options to pass to the newly created stream
+     * @return \CSVelte\IO\Stream
+     * @throws \InvalidArgumentException
+     */
+    public static function streamize($resource = '', $options = [])
+    {
+        $type = gettype($resource);
+
+        if ($type == 'string') {
+            $stream = fopen('php://temp', 'r+');
+            if ($resource !== '') {
+                fwrite($stream, $resource);
+                fseek($stream, 0);
+            }
+            return new self($stream, $options);
+        }
+
+        if ($type == 'object' && method_exists($resource, '__toString')) {
+            return self::streamize((string) $resource, $options);
+        }
+
+        throw new InvalidArgumentException('Invalid resource type: ' . $type);
+    }
+
+    /**
      * Stream Object Constructor.
      *
      * Instantiates the stream object

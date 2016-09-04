@@ -233,4 +233,43 @@ class StreamTest extends IOTest
         $nonWritableStream = new Stream($this->getFilePathFor('veryShort'), ['open_mode' => 'rb']);
         $this->assertFalse($nonWritableStream->isWritable());
     }
+
+    /**
+     * @covers ::streamize()
+     */
+    public function testStreamCanConvertStringIntoStreamWithStreamize()
+    {
+        $csv_string = $this->getFileContentFor('veryShort');
+        $csv_stream = Stream::streamize($csv_string);
+        $this->assertEquals($csv_string, $csv_stream->fread(37));
+    }
+
+    /**
+     * @covers ::streamize()
+     */
+    public function testStreamCanConvertEmptyStringIntoStreamWithStreamizeWithNoParams()
+    {
+        $csv_stream = Stream::streamize();
+        $this->assertEquals('', $csv_stream->fread(10));
+    }
+
+    /**
+     * @covers ::streamize()
+     */
+    public function testStreamCanConvertObjectWithToStringMethodIntoStreamWithStreamize()
+    {
+        // Create a stub for non-existant StreamableClass.
+        $csv_obj = $this->getMockBuilder('StreamableClass')
+                        ->setMethods(['__toString'])
+                        ->getMock();
+
+        // Configure the stub.
+        $csv_obj->method('__toString')
+             ->willReturn($csv_string = $this->getFileContentFor('veryShort'));
+
+        // test it
+        $csv_stream = Stream::streamize($csv_obj);
+        $this->assertEquals($csv_string, $csv_stream->fread(37));
+    }
+
 }
