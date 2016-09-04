@@ -202,24 +202,24 @@ class FileTest extends IOTest
     }
 
     /**
-     * @covers ::fwrite()
+     * @covers ::write()
      */
     public function testCreateNewFileAndWriteToIt()
     {
         $data = $this->getFileContentFor('veryShort');
         $file = new File($fn = $this->root->url() ."/tempfile1.csv", ['open_mode' => 'w']);
-        $this->assertEquals(strlen($data), $file->fwrite($data));
+        $this->assertEquals(strlen($data), $file->write($data));
         $this->assertEquals($data, file_get_contents($fn));
     }
 
     /**
-     * @covers ::fwrite()
+     * @covers ::write()
      */
     public function testAppendFileWrite()
     {
         $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), ['open_mode' => 'a']);
         $data = "\"foo, bar\",boo,far\n";
-        $this->assertEquals(strlen($data), $file->fwrite($data));
+        $this->assertEquals(strlen($data), $file->write($data));
         $this->assertEquals(
             "foo,bar,baz\nbin,\"boz,bork\nlib,bil,ilb\",bon\nbib,bob,\"boob\nboober\"\ncool,pool,wool\n" . $data,
             file_get_contents($fn)
@@ -227,13 +227,13 @@ class FileTest extends IOTest
     }
 
     /**
-     * @covers ::fwrite()
+     * @covers ::write()
      */
     public function testFileOverWrite()
     {
         $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), ['open_mode' => 'w']);
         $data = "\"foo, bar\",boo,far\n";
-        $this->assertEquals(strlen($data), $file->fwrite($data));
+        $this->assertEquals(strlen($data), $file->write($data));
         $this->assertEquals(
             $data,
             file_get_contents($fn)
@@ -241,20 +241,20 @@ class FileTest extends IOTest
     }
 
     /**
-     * @covers ::fseek()
+     * @covers ::seek()
      */
-    public function testFseekReturnsZeroOnSuccess()
+    public function testseekReturnsZeroOnSuccess()
     {
         $file = new File($this->getFilePathFor('shortQuotedNewlines'));
-        $this->assertEquals(0, $file->fseek(10));
+        $this->assertEquals(0, $file->seek(10));
     }
 
-    public function testFseekPlacesPointerInPositionForReadAndWriteIfOpenModeIsRPlus()
+    public function testseekPlacesPointerInPositionForReadAndWriteIfOpenModeIsRPlus()
     {
         $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), ['open_mode' => 'r+']);
-        $this->assertEquals(0, $file->fseek(10), 'CSVelte\\IO\\File::fseek() should return zero on success.');
-        $this->assertEquals("z\nbin,\"boz", $file->fread(10), 'CSVelte\\IO\\File::fseek() should cause fread() to start form sought position.');
-        $this->assertEquals(10, $file->fwrite('skaggzilla'));
-        $this->assertEquals("foo,bar,baz\nbin,\"bozskaggzillabil,ilb\",bon\nbib,bob,\"boob\nboober\"\ncool,pool,wool\n", file_get_contents($fn), 'CSVelte\\IO\\File::fwrite() should start overwriting wherever it\'s seek\'d to if open mode is r+.');
+        $this->assertEquals(0, $file->seek(10), 'CSVelte\\IO\\File::seek() should return zero on success.');
+        $this->assertEquals("z\nbin,\"boz", $file->fread(10), 'CSVelte\\IO\\File::seek() should cause fread() to start form sought position.');
+        $this->assertEquals(10, $file->write('skaggzilla'));
+        $this->assertEquals("foo,bar,baz\nbin,\"bozskaggzillabil,ilb\",bon\nbib,bob,\"boob\nboober\"\ncool,pool,wool\n", file_get_contents($fn), 'CSVelte\\IO\\File::write() should start overwriting wherever it\'s seek\'d to if open mode is r+.');
     }
 }

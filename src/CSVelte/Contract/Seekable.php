@@ -23,9 +23,10 @@ interface Seekable
     /**
      * Seek to a position within an input
      *
-     * @param integer Position to seek to
+     * @param integer Offset to seek to
+     * @param integer Position from whence the offset should be applied
      * @return boolean True if seek was successful
      * @access public
      */
-    public function fseek($pos);
+    public function seek($offset, $whence);
 }

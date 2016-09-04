@@ -27,7 +27,7 @@ interface Writable
      * @return int The number of bytes written
      * @access public
      */
-    public function fwrite($data);
+    public function write($data);
 
     /**
      * Returns true if file is writable.

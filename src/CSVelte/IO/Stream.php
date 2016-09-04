@@ -299,7 +299,7 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getContents()
     {
-        
+
     }
 
     /**
@@ -335,7 +335,7 @@ class Stream implements Readable, Writable, Seekable
      * @param string The data to be written to the stream
      * @return int The number of bytes written to the stream
      */
-    public function fwrite($str)
+    public function write($str)
     {
         return fwrite($this->stream, $str);
     }
@@ -346,10 +346,10 @@ class Stream implements Readable, Writable, Seekable
      * Seek to a specific position within the stream (if seekable).
      *
      * @param int $offset The position to seek to
-     * @param int $whence (see http://php.net/manual/en/function.fseek.php)
+     * @param int $whence (see http://php.net/manual/en/function.seek.php)
      * @return boolean True on success false on failure
      */
-    public function fseek($offset, $whence = null)
+    public function seek($offset, $whence = SEEK_SET)
     {
         if ($this->isSeekable()) {
             return fseek($this->stream, $offset, $whence) === 0;

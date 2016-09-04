@@ -140,4 +140,29 @@ class File extends SplFileObject implements Readable, Writable, Seekable
         return $this->read(parent::getSize());
     }
 
+    /**
+     * Write data to the output
+     *
+     * @param string The data to write
+     * @return int The number of bytes written
+     * @access public
+     */
+    public function write($data)
+    {
+        return parent::fwrite($data);
+    }
+
+    /**
+     * Seek to a position within an input
+     *
+     * @param integer Offset to seek to
+     * @param integer Position from whence the offset should be applied
+     * @return boolean True if seek was successful
+     * @access public
+     */
+    public function seek($pos, $whence = SEEK_SET)
+    {
+        return parent::fseek($pos, $whence);
+    }
+
 }

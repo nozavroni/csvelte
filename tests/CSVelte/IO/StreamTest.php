@@ -176,28 +176,28 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @covers ::fwrite()
+     * @covers ::write()
      */
-    public function testFwriteWritesDataAndReturnsNumBytesWritten()
+    public function testwriteWritesDataAndReturnsNumBytesWritten()
     {
         $stream = new Stream($fn = $this->getFilePathFor('veryShort'), ['open_mode' => 'a+']);
         $data = "thisisten!";
-        $this->assertEquals(strlen($data), $stream->fwrite($data));
+        $this->assertEquals(strlen($data), $stream->write($data));
         $stream->rewind();
         $this->assertEquals("foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\nthisisten!", $stream->read(50));
     }
 
     /**
-     * @covers ::fseek()
+     * @covers ::seek()
      */
     public function testSeekableStreamCanBeSeekd()
     {
         $stream = new Stream($this->getFilePathFor('veryShort'), ['open_mode' => 'r+b']);
-        $this->assertTrue($stream->fseek(10, SEEK_SET));
+        $this->assertTrue($stream->seek(10, SEEK_SET));
         $this->assertEquals("z\nbin,boz,", $stream->read(10));
-        $this->assertTrue($stream->fseek(5, SEEK_CUR));
+        $this->assertTrue($stream->seek(5, SEEK_CUR));
         $this->assertEquals("lib,b", $stream->read(5));
-        $this->assertTrue($stream->fseek(-15, SEEK_END));
+        $this->assertTrue($stream->seek(-15, SEEK_END));
         $this->assertEquals("rk\nlib,bil", $stream->read(10));
     }
 
