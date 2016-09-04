@@ -89,7 +89,7 @@ class Reader implements \Iterator
      * @param \CSVelte\Contract\Readable The source of our CSV data
      * @param \CSVelte\Flavor The "flavor" or format specification object
      * @todo Write a method to set flavor or automatically determine it. This can
-     *       wait until I refactor the taster and flavor classes. 
+     *       wait until I refactor the taster and flavor classes.
      */
     public function __construct($input, Flavor $flavor = null)
     {
@@ -177,7 +177,7 @@ class Reader implements \Iterator
         try {
             do {
                 if (!isset($lines)) $lines = array();
-                array_push($lines, $this->source->fgets());
+                array_push($lines, $this->source->getLine());
             } while ($this->inQuotedString(end($lines), $f->quoteChar, $f->escapeChar));
         } catch (EndOfFileException $e) {
             // only throw the exception if we don't already have lines in the buffer

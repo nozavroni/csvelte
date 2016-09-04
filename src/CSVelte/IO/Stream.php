@@ -272,7 +272,7 @@ class Stream implements Readable, Writable, Seekable
      * @param int $length Number of bytes to read from stream
      * @return string The data read from stream
      */
-    public function fread($length)
+    public function read($length)
     {
         return fread($this->stream, $length);
     }
@@ -285,9 +285,21 @@ class Stream implements Readable, Writable, Seekable
      * @return string A single line read from the file.
      * @todo Should this accept line terminator? I think it should...
      */
-    public function fgets($eol = PHP_EOL)
+    public function getLine($eol = PHP_EOL)
     {
         return stream_get_line($this->stream, 0, $eol);
+    }
+
+    /**
+     * Read the entire contents of file
+     *
+     * @param void
+     * @return string The entire file contents
+     * @access public
+     */
+    public function getContents()
+    {
+        
     }
 
     /**

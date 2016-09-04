@@ -119,7 +119,7 @@ class StreamTest extends IOTest
     public function testFreadGetsRightNumChars()
     {
         $stream = new Stream($this->getFilePathFor('veryShort'));
-        $this->assertEquals("foo,bar,ba", $stream->fread(10));
+        $this->assertEquals("foo,bar,ba", $stream->read(10));
     }
 
     /**
@@ -128,9 +128,9 @@ class StreamTest extends IOTest
     public function testFgetsReturnsCurrentLineAndAdvancesToNext()
     {
         $stream = new Stream($this->getFilePathFor('veryShort'));
-        $this->assertEquals("foo,bar,baz", $stream->fgets());
-        $this->assertEquals("bin,boz,bork", $stream->fgets());
-        $this->assertEquals("lib,bil,ilb", $stream->fgets());
+        $this->assertEquals("foo,bar,baz", $stream->getLine());
+        $this->assertEquals("bin,boz,bork", $stream->getLine());
+        $this->assertEquals("lib,bil,ilb", $stream->getLine());
     }
 
     /**
@@ -140,11 +140,11 @@ class StreamTest extends IOTest
     {
         $stream = new Stream($this->getFilePathFor('veryShort'));
         $this->assertFalse($stream->eof());
-        $stream->fgets();
+        $stream->getLine();
         $this->assertFalse($stream->eof());
-        $stream->fgets();
+        $stream->getLine();
         $this->assertFalse($stream->eof());
-        $stream->fgets();
+        $stream->getLine();
         $this->assertTrue($stream->eof());
     }
 
@@ -154,13 +154,13 @@ class StreamTest extends IOTest
     public function testEofAcceptsArbitraryLineTerminator()
     {
         $stream = new Stream($this->getFilePathFor('veryShort'));
-        $this->assertEquals('foo', $stream->fgets(","));
-        $this->assertEquals('bar', $stream->fgets(","));
-        $this->assertEquals("baz\nbin", $stream->fgets(","));
-        $this->assertEquals('boz', $stream->fgets(","));
-        $this->assertEquals("bork\nlib", $stream->fgets(","));
-        $this->assertEquals('bil', $stream->fgets(","));
-        $this->assertEquals("ilb\n", $stream->fgets(","));
+        $this->assertEquals('foo', $stream->getLine(","));
+        $this->assertEquals('bar', $stream->getLine(","));
+        $this->assertEquals("baz\nbin", $stream->getLine(","));
+        $this->assertEquals('boz', $stream->getLine(","));
+        $this->assertEquals("bork\nlib", $stream->getLine(","));
+        $this->assertEquals('bil', $stream->getLine(","));
+        $this->assertEquals("ilb\n", $stream->getLine(","));
     }
 
     /**
@@ -169,10 +169,10 @@ class StreamTest extends IOTest
     public function testRewindReturnsPointerToBeginning()
     {
         $stream = new Stream($this->getFilePathFor('veryShort'));
-        $stream->fread(15);
-        $this->assertEquals(",boz,bork", $stream->fgets(), "Just make sure we are somewhere in the middle of the stream.");
+        $stream->read(15);
+        $this->assertEquals(",boz,bork", $stream->getLine(), "Just make sure we are somewhere in the middle of the stream.");
         $this->assertTrue($stream->rewind(), "Stream::rewind should return true on success.");
-        $this->assertEquals("foo,bar,baz", $stream->fgets(), "Now we should be at the beginning again.");
+        $this->assertEquals("foo,bar,baz", $stream->getLine(), "Now we should be at the beginning again.");
     }
 
     /**
@@ -184,7 +184,7 @@ class StreamTest extends IOTest
         $data = "thisisten!";
         $this->assertEquals(strlen($data), $stream->fwrite($data));
         $stream->rewind();
-        $this->assertEquals("foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\nthisisten!", $stream->fread(50));
+        $this->assertEquals("foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\nthisisten!", $stream->read(50));
     }
 
     /**
@@ -194,11 +194,11 @@ class StreamTest extends IOTest
     {
         $stream = new Stream($this->getFilePathFor('veryShort'), ['open_mode' => 'r+b']);
         $this->assertTrue($stream->fseek(10, SEEK_SET));
-        $this->assertEquals("z\nbin,boz,", $stream->fread(10));
+        $this->assertEquals("z\nbin,boz,", $stream->read(10));
         $this->assertTrue($stream->fseek(5, SEEK_CUR));
-        $this->assertEquals("lib,b", $stream->fread(5));
+        $this->assertEquals("lib,b", $stream->read(5));
         $this->assertTrue($stream->fseek(-15, SEEK_END));
-        $this->assertEquals("rk\nlib,bil", $stream->fread(10));
+        $this->assertEquals("rk\nlib,bil", $stream->read(10));
     }
 
     /**
@@ -241,7 +241,7 @@ class StreamTest extends IOTest
     {
         $csv_string = $this->getFileContentFor('veryShort');
         $csv_stream = Stream::streamize($csv_string);
-        $this->assertEquals($csv_string, $csv_stream->fread(37));
+        $this->assertEquals($csv_string, $csv_stream->read(37));
     }
 
     /**
@@ -250,7 +250,7 @@ class StreamTest extends IOTest
     public function testStreamCanConvertEmptyStringIntoStreamWithStreamizeWithNoParams()
     {
         $csv_stream = Stream::streamize();
-        $this->assertEquals('', $csv_stream->fread(10));
+        $this->assertEquals('', $csv_stream->read(10));
     }
 
     /**
@@ -269,7 +269,7 @@ class StreamTest extends IOTest
 
         // test it
         $csv_stream = Stream::streamize($csv_obj);
-        $this->assertEquals($csv_string, $csv_stream->fread(37));
+        $this->assertEquals($csv_string, $csv_stream->read(37));
     }
 
 }

@@ -122,7 +122,7 @@ class Taster
     public function __construct(Readable $input)
     {
         $this->input = $input;
-        $this->sample = $input->fread(self::SAMPLE_SIZE);
+        $this->sample = $input->read(self::SAMPLE_SIZE);
     }
 
     /**
