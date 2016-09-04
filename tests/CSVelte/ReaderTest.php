@@ -27,4 +27,15 @@ class ReaderTest extends UnitTestCase
         $this->assertEquals(['bin',"boz,bork\nlib,bil,ilb",'bon'], $reader->next()->toArray());
     }
 
+    /**
+     * @covers ::__construct()
+     */
+    public function testReaderCanUseStraightPHPString()
+    {
+        $readable = $this->getFileContentFor('shortQuotedNewlines');
+        $reader = new Reader($readable);
+        $this->assertEquals(['foo','bar','baz'], $reader->current()->toArray());
+        $this->assertEquals(['bin',"boz,bork\nlib,bil,ilb",'bon'], $reader->next()->toArray());
+    }
+
 }

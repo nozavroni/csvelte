@@ -14,7 +14,9 @@
 namespace CSVelte;
 
 use \Closure;
+use \InvalidArgumentException;
 use \FilterIterator;
+use CSVelte\IO\Stream;
 use CSVelte\Contract\Readable;
 use CSVelte\Table\Row;
 use CSVelte\Table\HeaderRow;
@@ -88,9 +90,9 @@ class Reader implements \Iterator
      * @param \CSVelte\Flavor The "flavor" or format specification object
      * @todo Maybe allow SplFileObj as first arg and then do if ($input instanceof SplFileObjs)
      */
-    public function __construct(Readable $input, Flavor $flavor = null)
+    public function __construct($input, Flavor $flavor = null)
     {
-        $this->source = $input;
+        $this->setSource($input);
         $taster = new Taster($this->source);
         // @todo put this inside a try/catch
         if (is_null($flavor)) {
@@ -108,6 +110,26 @@ class Reader implements \Iterator
         }
         $this->flavor = $flavor;
         $this->rewind();
+    }
+
+    /**
+     * Set the reader source.
+     *
+     * The reader can accept anything that implements Readable and is actually
+     * readable (can be read). This will make sure that whatever is passed to
+     * the reader meets these expectations and set $this->source.
+     *
+     * @param mixed See description
+     * @return $this 
+     */
+    protected function setSource($input)
+    {
+        if ($input instanceof Readable && $input->isReadable()) {
+            $this->source = $input;
+        } else {
+            $this->source = Stream::streamize($input);
+        }
+        return $this;
     }
 
     /**
