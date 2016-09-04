@@ -88,7 +88,8 @@ class Reader implements \Iterator
      *
      * @param \CSVelte\Contract\Readable The source of our CSV data
      * @param \CSVelte\Flavor The "flavor" or format specification object
-     * @todo Maybe allow SplFileObj as first arg and then do if ($input instanceof SplFileObjs)
+     * @todo Write a method to set flavor or automatically determine it. This can
+     *       wait until I refactor the taster and flavor classes. 
      */
     public function __construct($input, Flavor $flavor = null)
     {
@@ -120,7 +121,7 @@ class Reader implements \Iterator
      * the reader meets these expectations and set $this->source.
      *
      * @param mixed See description
-     * @return $this 
+     * @return $this
      */
     protected function setSource($input)
     {
