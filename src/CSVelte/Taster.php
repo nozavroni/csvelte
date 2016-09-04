@@ -166,7 +166,7 @@ class Taster
          */
         $escapeChar = '\\';
         $quoteStyle = $this->lickQuotingStyle($quoteChar, $delimiter, $lineTerminator);
-        $header = $this->lickHeader($this->sample, $quoteChar, $delimiter, $lineTerminator);
+        $header = $this->lickHeader($quoteChar, $delimiter, $lineTerminator);
         return new Flavor(compact('quoteChar', 'escapeChar', 'delimiter', 'lineTerminator', 'quoteStyle', 'header'));
     }
 
@@ -570,9 +570,9 @@ class Taster
      *     data sample provided in the first argument. Also, I could actually
      *     create a Reader object to read the data here.
      */
-    public function lickHeader($data, $quote, $delim, $eol)
+    public function lickHeader($quote, $delim, $eol)
     {
-        $data = $this->replaceQuotedSpecialChars($data, $delim);
+        $data = $this->replaceQuotedSpecialChars($this->sample, $delim);
         $lines = explode($eol, $data);
         $types = array();
         foreach ($lines as $line_no => $line) {

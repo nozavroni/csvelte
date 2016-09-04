@@ -17,9 +17,6 @@ use CSVelte\IO\Stream;
  */
 class TasterTest extends UnitTestCase
 {
-    /**
-     * @covers ::lickQuotingStyle()
-     */
     public function testLickQuotingStyleDoesntNeedSampleInParams()
     {
         $stream = Stream::streamize($this->getFileContentFor('headerDoubleQuote'));
@@ -48,6 +45,15 @@ class TasterTest extends UnitTestCase
      */
     public function testLickHeaderNowAcceptsReader()
     {
+        $header_stream = Stream::streamize($this->getFileContentFor('headerDoubleQuote'));
+        $no_header_stream = $stream = Stream::streamize($this->getFileContentFor('noHeaderCommaNoQuotes'));
 
+        $header_taster = new Taster($header_stream);
+        $header_flavor = $header_taster->lick();
+        $this->assertTrue($header_flavor->header);
+
+        $no_header_taster = new Taster($no_header_stream);
+        $no_header_flavor = $no_header_taster->lick();
+        $this->assertFalse($no_header_flavor->header);
     }
 }

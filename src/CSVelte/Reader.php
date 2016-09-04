@@ -88,29 +88,27 @@ class Reader implements \Iterator
      *
      * @param \CSVelte\Contract\Readable The source of our CSV data
      * @param \CSVelte\Flavor The "flavor" or format specification object
-     * @todo Write a method to set flavor or automatically determine it. This can
-     *       wait until I refactor the taster and flavor classes.
      */
     public function __construct($input, Flavor $flavor = null)
     {
-        $this->setSource($input);
+        $this->setSource($input)
+             ->setFlavor($flavor)
+             ->rewind();
+    }
+
+    protected function setFlavor($flavor)
+    {
         $taster = new Taster($this->source);
         // @todo put this inside a try/catch
         if (is_null($flavor)) {
             $flavor = $taster->lick();
         }
-        try {
-            $hasHeader = $flavor->header;
-        } catch (\OutOfBoundsException $e) {
-            $hasHeader = null;
-        } finally { // @todo get rid of this
-            if (is_null($hasHeader)) {
-                // Flavor is immutable, give me a new one with header set to lickHeader return val
-                $flavor = $flavor->copy(array('header' => $taster->lickHeader($this->source->read(Taster::SAMPLE_SIZE), $flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator)));
-            }
+        if (is_null($flavor->header)) {
+            // Flavor is immutable, give me a new one with header set to lickHeader return val
+            $flavor = $flavor->copy(['header' => $taster->lickHeader($flavor->quoteChar, $flavor->delimiter, $flavor->lineTerminator)]);
         }
         $this->flavor = $flavor;
-        $this->rewind();
+        return $this;
     }
 
     /**
