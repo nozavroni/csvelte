@@ -1,28 +1,22 @@
 <?php
+namespace CSVelteTest\Table;
 
-use PHPUnit\Framework\TestCase;
-use CSVelte\Input\String;
-use CSVelte\Flavor;
-use CSVelte\Reader;
-use CSVelte\Table\Row;
+use CSVelteTest\UnitTestCase;
+use CSVelte\Table\AbstractRow;
 use CSVelte\Table\HeaderRow;
-use CSVelte\Exception\ImmutableException;
-use CSVelte\Exception\InvalidHeaderException;
+use CSVelte\Table\Row;
 
 /**
- * CSVelte\Table\Row Tests
+ * CSVelte\Table\Row Tests.
+ * New Format for refactored tests -- see issue #11
  *
  * @package   CSVelte Unit Tests
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo      Move all of the tests from OldReaderTest.php into this class
  */
-class TableRowTest extends TestCase
+class RowTest extends UnitTestCase
 {
-    public function testJustToKillWarningFromPHPUnit()
-    {
-        $this->assertTrue(true);
-    }
-
     public function testInitializeRowWithStrings()
     {
         $row = new Row($expected = array(1, 'foo', 'bar', 'baz', 'biz', 25));
@@ -244,9 +238,8 @@ class TableRowTest extends TestCase
             'sixth' => null
         );
 
-        $flavor = new Flavor(array('delimiter' => "\t", 'lineTerminator' => "\n", 'header' => true));
-        $hrow = new HeaderRow($expected_header, $flavor);
-        $shortrow = new Row($expected_shortvalues, $flavor);
+        $hrow = new HeaderRow($expected_header);
+        $shortrow = new Row($expected_shortvalues);
         $shortrow->setHeaderRow($hrow);
         $this->assertEquals($expected_shortvalues, $shortrow->toArray());
     }
@@ -255,15 +248,6 @@ class TableRowTest extends TestCase
     {
         $row = new Row($cols = array('one', 'two', 'three'));
         $this->assertEquals($expected = "one,two,three", (string) $row);
-    }
-
-    public function testRowInheritsReaderFlavor()
-    {
-        $data = "one|two|three\r\nfour|five|six\r\nseven|eight|nine\r\n";
-        $flavor = new Flavor(array('delimiter' => '|'));
-        $reader = new Reader(new String($data), $flavor);
-        $row = $reader->current();
-        $this->assertEquals($expected = "one|two|three", (string) $row);
     }
 
     // public function testSetHeadersDirectlyInConstructorArray()
