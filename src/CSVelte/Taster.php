@@ -211,6 +211,7 @@ class Taster
         ];
 
         $curCount = 0;
+        // @todo This should return a default maybe?
         $curEol = '';
         foreach($eols as $k => $eol) {
             if( ($count = substr_count($str, $eol)) > $curCount) {

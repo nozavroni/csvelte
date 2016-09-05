@@ -73,117 +73,19 @@ class WriterTest extends TestCase
     //     // dd(fgets($handle), false, "line 4");
     // }
 
-    public function testWriterCustomFlavor()
-    {
-        $out = new Stream('php://memory');
-        $writer = new Writer($out, $expectedFlavor = new Flavor(array('delimiter' => '|')));
-        $this->assertSame($expectedFlavor, $writer->getFlavor());
-    }
 
-    public function testWriterWriteWriteSingleRowUsingArray()
-    {
-        $out = new Stream('php://memory');
-        $writer = new Writer($out);
-        $data = array('one','two', 'three');
-        $this->assertEquals(strlen(implode(',', $data)) + strlen("\r\n"), $writer->writeRow($data));
-    }
 
-    public function testWriterWriteWriteSingleRowUsingIterator()
-    {
-        $out = new Stream('php://memory');
-        $writer = new Writer($out);
-        $data = new ArrayIterator(array('one','two', 'three'));
-        $this->assertEquals(strlen(implode(',', $data->getArrayCopy())) + strlen("\r\n"), $writer->writeRow($data));
-    }
 
-    // // @todo I can't finish this until some bugs int he reader are worked out... See Github issue #45
-    public function testWriterWriteHeaderRow()
-    {
-        $out = new Stream('file://' . $this->tmpdir . '/deleteme.csv');
-        $writer = new Writer($out, $flavor = new Flavor(array(
-            'header' => true,
-            'doubleQuote' => true,
-            'lineTerminator' => "\n"
-        )));
-        $stream = $out->getStreamResource();
-        $headers = $this->testdata[0];
-        $data = array_slice($this->testdata, 1); // should use array pop
-        $writer->setHeaderRow($headers);
-        $writer->writeRows($data);
-        $in = new \CSVelte\Input\Stream('file://' . $this->tmpdir . '/deleteme.csv');
-        $reader = new Reader($in, $flavor);
-        // dd($reader->current());
-        $this->assertEquals($expected = $headers, $reader->header()->toArray());
-        $this->assertEquals($line1 = $data[0], array_values($reader->current()->toArray()));
-        // @todo this is going to be incorrect until I fix the reader... it should be removing escape quotes
-        /* $this->assertEquals($line1 = $data[1], array_values(*/ $reader->next() /*->toArray()))*/;
-        $reader->next();
-        $this->assertEquals($line1 = $data[2], array_values($reader->current()->toArray()));
-    }
 
-    /**
-     * @expectedException CSVelte\Exception\WriterException
-     */
-    public function testWriterThrowsExceptionIfUserAttemptsToSetHeaderAfterRowsHaveBeenWritten()
-    {
-        $writer = CSVelte::writer($this->tmpdir . '/deleteme.csv');
-        $writer->writeRow(array('foo','bar','baz'));
-        $writer->setHeaderRow(array('this','shouldnt','work'));
-    }
 
-    public function testWriterWriteWriteSingleRowUsingCSVReader()
-    {
-        $out = new Stream('php://memory');
-        $in = new String($string = "foo,bar,baz\r\nbar,bin,boz\r\nboo,bat,biz\r\n");
-        $writer = new Writer($out);
-        $data = new Reader($in, new Flavor);
-        $this->assertEquals(strlen("foo,bar,baz\r\n"), $writer->writeRow($data->current()));
-    }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testWriterWriteRowsThrowsExceptionIfPassedNonIterable()
-    {
-        $out = new Stream('php://memory');
-        $writer = new Writer($out);
-        $writer->writeRows('foo');
-    }
 
-    public function testWriterWriteMultipleRows()
-    {
-        $out = new Stream('php://memory');
-        $writer = new Writer($out);
-        $reader = new Reader(new \CSVelte\Input\Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')));
-        $data = array();
-        $i = 0;
-        foreach ($reader as $row) {
-            if ($i == 10) break;
-            $data []= $row->toArray();
-            $i++;
-        }
-        $written_rows = $writer->writeRows($data);
-        $this->assertEquals(10, $written_rows);
-    }
 
-    public function testWriteWriteRowsAcceptsReader()
-    {
-        $flavor = new Flavor(array('lineTerminator' => "\r\n"));
-        $out = new Stream('php://memory');
-        // $outFlavor = new Flavor([
-        //     'lineTerminator' => "\n",
-        //     'delimiter' => "|",
-        //     'quoteChar' => '*',
-        //     'escapeChar' => null,
-        //     'doubleQuote' => true,
-        //     'quoteStyle' => Flavor::QUOTE_NONNUMERIC
-        // ]);
-        // $out = new Stream('file:///Users/luke/test.csv');
-        $writer = new Writer($out);
-        $reader = new Reader(new \CSVelte\Input\Stream('file://' . realpath(__DIR__ . '/../files/banklist.csv')), $flavor);
-        $written_rows = $writer->writeRows($reader);
-        $this->assertEquals(545, $written_rows);
-    }
+
+
+
+
+
 
     public function testWriterWritesHeaderFromReader()
     {
