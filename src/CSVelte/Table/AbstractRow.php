@@ -33,75 +33,59 @@ use CSVelte\Exception\ImmutableException;
 abstract class AbstractRow implements Iterator, Countable, ArrayAccess
 {
     /**
-     * @var array The columns within the row
-     * @todo Technically a row doesn't contain "columns". It contains "data" or
-     *     "datum" if we want to really get down to semantics. But I'm not sure
-     *     whether that would be a better name for this or not...
+     * An array of fields for this row
+     * @var array
      */
-    protected $columns;
+    protected $fields;
 
     /**
-     * @var integer The current position within $columns
+     * Iterator position
+     * @var int
      */
     protected $position;
 
     /**
-     * @var HeaderRow The header row
-     */
-    protected $headers;
-
-    /**
-     * @var CSVelte\Flavor The flavor for this row
-     * @todo I really don't want to have every object in the libary carry around
-     *     a Flavor object. In fact, I would prefer it if only one did. The Reader
-     *     or the Writer or whatever the action I'm performing's main class is.
-     *     I need to find a solution that allows me to keep the Flavor in one
-     *     place and have anything else that needs to know about it, either NOT
-     *     need to know about it, or get it from somewhere else (rather than )
-     *     storing it, itself).
-     */
-    protected $flavor;
-
-    /**
      * Class constructor
      *
-     * @param array An array (or anything that looks like one) of data (columns)
-     * @param CSVelte\Flavor
+     * @param array|Iterator An array (or anything that looks like one) of data (fields)
      * @access public
-     * @todo This doesn't really need to be passed $flavor
-     * @todo Look into SplFixedArray for csv sources w/out a header row.
      */
-    public function __construct(array $columns, Flavor $flavor = null)
+    public function __construct($fields)
     {
-        if (is_null($flavor)) $flavor = new Flavor;
-        $this->flavor = $flavor;
-        $this->columns = array_values($columns);
-        $this->rewind();
+        $this->setFields($fields)
+             ->rewind();
     }
 
-    /**
-     * String overloading
-     *
-     * @return string representation of this object
-     * @access public
-     * @todo Should this end with a lineTerminator? I think it probably should...
-     */
+    protected function setFields($fields)
+    {
+        if (!is_array($fields)) {
+            if (is_object($fields) && method_exists($fields, 'toArray')) {
+                $fields = $fields->toArray();
+            } elseif ($fields instanceof Iterator) {
+                $fields = iterator_to_array($fields);
+            } else {
+                throw new InvalidArgumentException(__CLASS__ . " requires an array, got: " . gettype($fields));
+            }
+        }
+        $this->fields = array_values($fields);
+        return $this;
+    }
+
     public function __toString()
     {
         return $this->join();
     }
 
     /**
-     * Join columns together using specified delimiter
+     * Join fields together using specified delimiter
      *
      * @param char The delimiter character
      * @return string
      * @access public
      */
-    public function join($delimiter = null)
+    public function join($delimiter = ',')
     {
-        if (is_null($delimiter)) $delimiter = $this->flavor->delimiter;
-        return implode($delimiter, $this->columns);
+        return implode($delimiter, $this->fields);
     }
 
     /**
@@ -118,14 +102,14 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /** Begin SPL Countable Interface Method **/
 
     /**
-     * Count columns within the row
+     * Count fields within the row
      *
-     * @return integer The amount of columns
+     * @return integer The amount of fields
      * @access public
      */
     public function count()
     {
-        return count($this->columns);
+        return count($this->fields);
     }
 
     /** Begin SPL Iterator Interface Methods **/
@@ -138,10 +122,10 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function current()
     {
-        if (!array_key_exists($this->position, $this->columns)) {
+        if (!array_key_exists($this->position, $this->fields)) {
             throw new \OutOfBoundsException("Undefined index: " . $this->position);
         }
-        return $this->columns[$this->position];
+        return $this->fields[$this->position];
     }
 
     /**
@@ -154,7 +138,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function key()
     {
-        return isset($this->headers[$this->position]) ? $this->headers[$this->position] : $this->position;
+        return $this->position;
     }
 
     /**
@@ -183,14 +167,14 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     }
 
     /**
-     * Is the current position within the row's data columns valid?
+     * Is the current position within the row's data fields valid?
      *
      * @return boolean
      * @access public
      */
     public function valid()
     {
-        return array_key_exists($this->position, $this->columns);
+        return array_key_exists($this->position, $this->fields);
     }
 
     /** Begin SPL ArrayAccess Methods **/
@@ -205,9 +189,8 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     public function offsetExists($offset)
     {
         try {
-            Utils::array_get($this->columns, $offset, null, true);
+            Utils::array_get($this->fields, $offset, null, true);
         } catch (\OutOfBoundsException $e) {
-            // now check $this->properties?
             return false;
         }
         return true;
@@ -223,11 +206,11 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     public function offsetGet($offset)
     {
         $this->assertOffsetExists($offset);
-        return $this->columns[$offset];
+        return $this->fields[$offset];
     }
 
     /**
-     * Set offset at specified position or by header name
+     * Set offset at specified position
      *
      * @param integer|string Offset/index
      * @param CSVelte\Table\Data
@@ -237,7 +220,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        // columns are immutable, cannot be set
+        // fields are immutable, cannot be set
         $this->raiseImmutableException();
     }
 
@@ -280,7 +263,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     protected function raiseImmutableException($msg = null)
     {
-        // columns are immutable, cannot be set
+        // fields are immutable, cannot be set
         throw new ImmutableException($msg ?: 'Cannot change immutable column data');
     }
 }

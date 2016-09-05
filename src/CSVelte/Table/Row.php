@@ -27,9 +27,27 @@ use CSVelte\Exception\InvalidHeaderException;
 class Row extends AbstractRow
 {
     /**
-     * @var array Same as columns only indexed using headers rather than numbers
+     * @var array Same as fields only indexed using headers rather than numbers
      */
-    protected $assocCols = array();
+    protected $assocCols = [];
+
+    /**
+     * @var array The headers for this row
+     */
+    protected $headers = [];
+
+    /**
+     * Get the current key (column number or header, if available)
+     *
+     * @return string The "current" key
+     * @access public
+     * @todo Figure out if this can return a CSVelte\Table\HeaderData object so long as it
+     *     has a __toString() method that generated the right key...
+     */
+    public function key()
+    {
+        return isset($this->headers[$this->position]) ? $this->headers[$this->position] : $this->position;
+    }
 
     /**
      * Set the header row (so that it can be used to index the row)
@@ -47,7 +65,7 @@ class Row extends AbstractRow
         if (($hcount = $headers->count()) !== ($rcount = $this->count())) {
             if ($hcount > $rcount) {
                 // header count is long, could be an error, but lets just fill in the short row with null values...
-                $this->columns = array_pad($this->columns, $hcount, null);
+                $this->fields = array_pad($this->fields, $hcount, null);
             } else {
                 // @todo This is too strict. I need a way to recover from this a little better...
                 // header count is short, this is likely an error...
@@ -55,7 +73,7 @@ class Row extends AbstractRow
             }
         }
         $this->headers = $headers;
-        $this->assocCols = array_combine($headerArray, $this->columns);
+        $this->assocCols = array_combine($headerArray, $this->fields);
     }
 
     /**
