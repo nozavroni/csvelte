@@ -120,6 +120,21 @@ class ReaderTest extends UnitTestCase
         $this->assertCount(4, iterator_to_array($reader->filter()));
     }
 
+    public function testReaderFilteredIteratorWithMultipleFiltersAddedAtOnce()
+    {
+        $reader = new Reader($this->getFileContentFor('commaNewlineHeader'));
+        $reader->addFilters([function($row){
+            return $row['CERT'] > 55000;
+        }, function($row){
+            return stripos($row['Bank Name'], 'bank') !== false;
+        }]);
+        foreach ($reader->filter() as $line_no => $row) {
+            $this->assertGreaterThan(55000, $row['CERT'], "Ensure \"CERT\" field from row #{$line_no} is greater than 55000.");
+            $this->assertContains('bank', $row['Bank Name'], "Ensure \"Bank Name\" field from row #{$line_no} contains the word \"bank\".", true);
+        }
+        $this->assertCount(4, iterator_to_array($reader->filter()));
+    }
+
     public function testReaderKeyReturnsLine()
     {
         $reader = new Reader($this->getFileContentFor('commaNewlineHeader'));
