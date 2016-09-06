@@ -178,7 +178,8 @@ class RowTest extends UnitTestCase
     }
 
     /**
-     * @expectedException CSVelte\Exception\InvalidHeaderException
+     * @expectedException CSVelte\Exception\HeaderException
+     * @expectedExceptionCode CSVelte\Exception\HeaderException::ERR_HEADER_COUNT
      */
     public function testIncorrectHeaderCountThrowsException()
     {

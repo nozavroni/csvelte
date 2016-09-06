@@ -4,9 +4,10 @@ namespace CSVelteTest;
 use CSVelte\IO\File;
 use CSVelte\IO\Stream;
 use CSVelte\Reader;
+use CSVelte\Writer;
 use CSVelte\Flavor;
 use CSVelte\Table\Row;
-//use org\bovigo\vfs\vfsStream;
+
 /**
  * CSVelte\Reader Tests.
  * New Format for refactored tests -- see issue #11
@@ -19,6 +20,17 @@ use CSVelte\Table\Row;
  */
 class ReaderTest extends UnitTestCase
 {
+    public function testReaderCanAcceptArrayForFlavor()
+    {
+        $flavorArr = (new Flavor())->toArray();
+        $flavorArr['delimiter'] = "\t";
+        $flavorArr['lineTerminator'] = "\n";
+        $flavorArr['quoteChar'] = "'";
+        $flavorArr['quoteStyle'] = Flavor::QUOTE_ALL;
+        $reader = new Reader($this->getFilePathFor('veryShort'), $flavorArr);
+        $this->assertEquals($flavorArr, $reader->getFlavor()->toArray());
+    }
+
     /**
      * @covers ::__construct()
      */
@@ -87,10 +99,20 @@ class ReaderTest extends UnitTestCase
 
     public function testReaderCurrent()
     {
-        $flavor = new Flavor(array('header' => false));
+        $flavor = new Flavor(array('header' => false, 'lineTerminator' => "\n"));
         $reader = new Reader($this->getFileContentFor('noHeaderCommaNoQuotes'), $flavor);
         $this->assertInstanceOf($expected = Row::class, $reader->current());
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
+    }
+
+    public function testWriterCanWriteReader()
+    {
+        $stream = new Stream($this->getFilePathFor('headerDoubleQuote'));
+        $file = new File('file:///var/www/csvelte/tests/files/banklist.csv');
+        $reader = new Reader($stream, new Flavor(['lineTerminator' => "\n"]));
+        $writer = new Writer($temp = new Stream($this->root->url() . "/temp.csv", 'w+'));
+        $writer->writeRows($reader);
+        $this->assertEquals($this->getFileContentFor('headerDoubleQuote'), file_get_contents($temp->getUri()));
     }
 
 }

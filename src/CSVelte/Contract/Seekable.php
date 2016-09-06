@@ -21,7 +21,7 @@ namespace CSVelte\Contract;
 interface Seekable
 {
     /**
-     * Seek to a position within an input
+     * Seek to specified offset.
      *
      * @param integer Offset to seek to
      * @param integer Position from whence the offset should be applied
@@ -29,4 +29,14 @@ interface Seekable
      * @access public
      */
     public function seek($offset, $whence);
+
+    /**
+     * Seek to specified line offset.
+     *
+     * @param int Offset to seek to
+     * @param int Position from whence to seek from
+     * @param string The line terminator string/char
+     * @return boolean True if successful
+     */
+    public function seekLine($offset, $whence, $eol);
 }

@@ -89,7 +89,7 @@ class Reader implements \Iterator
      * @param \CSVelte\Contract\Readable The source of our CSV data
      * @param \CSVelte\Flavor The "flavor" or format specification object
      */
-    public function __construct($input, Flavor $flavor = null)
+    public function __construct($input, $flavor = null)
     {
         $this->setSource($input)
              ->setFlavor($flavor)
@@ -98,6 +98,7 @@ class Reader implements \Iterator
 
     protected function setFlavor($flavor)
     {
+        if (is_array($flavor)) $flavor = new Flavor($flavor);
         $taster = new Taster($this->source);
         // @todo put this inside a try/catch
         if (is_null($flavor)) {
@@ -145,9 +146,9 @@ class Reader implements \Iterator
                 $this->line++;
                 $parsed = $this->parse($line);
                 if ($this->hasHeader() && $this->line === 1) {
-                    $this->header = new HeaderRow($parsed, $this->flavor);
+                    $this->header = new HeaderRow($parsed);
                 } else {
-                    $this->current = new Row($parsed, $this->flavor);
+                    $this->current = new Row($parsed);
                     if ($this->header) $this->current->setHeaderRow($this->header);
                 }
             } catch (EndOfFileException $e) {
@@ -175,7 +176,10 @@ class Reader implements \Iterator
         try {
             do {
                 if (!isset($lines)) $lines = array();
-                array_push($lines, $this->source->getLine());
+                if (false === ($line = $this->source->readLine($eol))) {
+                    throw new EndOfFileException("End of file reached: " . $this->source->getName());
+                }
+                array_push($lines, rtrim($line, $eol));
             } while ($this->inQuotedString(end($lines), $f->quoteChar, $f->escapeChar));
         } catch (EndOfFileException $e) {
             // only throw the exception if we don't already have lines in the buffer

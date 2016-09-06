@@ -23,6 +23,12 @@ namespace CSVelte\Contract;
 interface Readable
 {
     /**
+     * Return some type of identifying information about this readable
+     * @return string Typicallly a file name or stream uri
+     */
+    public function getName();
+
+    /**
      * Read in the specified amount of characters from the input source
      *
      * @param integer Amount of characters to read from input source
@@ -39,7 +45,7 @@ interface Readable
      * @return string The next line from the input source
      * @access public
      */
-    public function getLine();
+    public function readLine();
 
     /**
      * Read the entire contents of stream/file

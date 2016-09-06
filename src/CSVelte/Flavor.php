@@ -13,8 +13,7 @@
  */
 namespace CSVelte;
 
-use CSVelte\Exception\UnknownAttributeException;
-use CSVelte\Exception\UnknownFlavorException;
+use \InvalidArgumentException;
 use CSVelte\Exception\ImmutableException;
 
 /**
@@ -105,7 +104,7 @@ class Flavor
      * Not yet implemented
      * @ignore
      */
-    protected $skipInitialSpace = false;
+    // protected $skipInitialSpace = false;
 
     /**
      * Quoting style.
@@ -185,7 +184,7 @@ class Flavor
      * @param string The attribute to check validity of
      * @return void
      * @access protected
-     * @throws UnknownAttributeException
+     * @throws InvalidArgumentException
      * @internal
      * @todo This should accept a second parameter for value that asserts the value
      *     is a valid value
@@ -193,7 +192,7 @@ class Flavor
     protected function assertValidAttribute($attr)
     {
         if (!property_exists(self::class, $attr))
-            throw new UnknownAttributeException("Unknown attribute: " . $attr);
+            throw new InvalidArgumentException("Unknown attribute: " . $attr);
     }
 
     /**
@@ -211,8 +210,7 @@ class Flavor
      */
     public function copy(array $attribs = array())
     {
-        $attributes = get_object_vars($this);
-        return new Flavor(array_merge($attributes, $attribs));
+        return new Flavor(array_merge($this->toArray(), $attribs));
     }
 
     /**
@@ -222,7 +220,7 @@ class Flavor
      * @return string The attribute value
      * @access public
      * @internal
-     * @throws CSVelte\Exception\UnknownAttributeException
+     * @throws InvalidArgumentException
      */
     public function __get($attr)
     {
@@ -244,6 +242,11 @@ class Flavor
     public function __set($attr, $val)
     {
         throw new ImmutableException("Cannot change attributes on an immutable object: " . self::class . "::\$" . $attr);
+    }
+
+    public function toArray()
+    {
+        return get_object_vars($this);
     }
 
 }

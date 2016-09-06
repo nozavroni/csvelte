@@ -38,12 +38,12 @@ class FlavorTest extends TestCase
         $this->assertEquals($lineTerminator = "\r\n", $flavor->lineTerminator);
         $this->assertEquals($quoting = Flavor::QUOTE_MINIMAL, $flavor->quoteStyle);
         $this->assertTrue($flavor->doubleQuote);
-        $this->assertFalse($flavor->skipInitialSpace);
+        //$this->assertFalse($flavor->skipInitialSpace);
         $this->assertNull($flavor->header);
     }
 
     /**
-     * @expectedException CSVelte\Exception\UnknownAttributeException
+     * @expectedException \InvalidArgumentException
      */
     public function testCSVelteFlavorGetNonExistAttributeThrowsException()
     {
@@ -84,14 +84,14 @@ class FlavorTest extends TestCase
 
     public function testFlavorCanCopyItself()
     {
-        $flavor = new Flavor($exp_attribs = array('delimiter' => '|', 'quoteChar' => "'", 'escapeChar' => '&', 'doubleQuote' => true, 'skipInitialSpace' => true, 'quoteStyle' => Flavor::QUOTE_NONE, 'lineTerminator' => "\r", 'header' => null));
+        $flavor = new Flavor($exp_attribs = array('delimiter' => '|', 'quoteChar' => "'", 'escapeChar' => '&', 'doubleQuote' => true, /*'skipInitialSpace' => true,*/ 'quoteStyle' => Flavor::QUOTE_NONE, 'lineTerminator' => "\r", 'header' => null));
         $this->assertEquals($flavor, $flavor->copy());
         $this->assertNotSame($flavor, $flavor->copy());
     }
 
     public function testFlavorCanCopyItselfWithAlteredAttribs()
     {
-        $flavor = new Flavor($attribs = array('delimiter' => '|', 'quoteChar' => "'", 'escapeChar' => '&', 'doubleQuote' => true, 'skipInitialSpace' => true, 'quoteStyle' => Flavor::QUOTE_NONE, 'lineTerminator' => "\r", 'header' => null));
+        $flavor = new Flavor($attribs = array('delimiter' => '|', 'quoteChar' => "'", 'escapeChar' => '&', 'doubleQuote' => true, /*'skipInitialSpace' => true,*/ 'quoteStyle' => Flavor::QUOTE_NONE, 'lineTerminator' => "\r", 'header' => null));
 
         $new_attribs = array(
             'header' => true,
@@ -169,8 +169,21 @@ class FlavorTest extends TestCase
         $this->assertEquals(",", $excel->delimiter);
         $this->assertEquals(Flavor::QUOTE_MINIMAL, $excel->quoteStyle);
         $this->assertTrue($excel->doubleQuote);
-        $this->assertFalse($excel->skipInitialSpace);
+        //$this->assertFalse($excel->skipInitialSpace);
         $this->assertNull($excel->escapeChar);
+    }
+
+    public function testFlavorToArray()
+    {
+        $flavor = new Flavor();
+        $arr = $flavor->toArray();
+        $this->assertEquals(",", $arr['delimiter']);
+        $this->assertEquals('"', $arr['quoteChar']);
+        $this->assertEquals('\\', $arr['escapeChar']);
+        $this->assertTrue($arr['doubleQuote']);
+        $this->assertEquals(Flavor::QUOTE_MINIMAL, $arr['quoteStyle']);
+        $this->assertEquals("\r\n", $arr['lineTerminator']);
+        $this->assertNull($arr['header']);
     }
 
 }

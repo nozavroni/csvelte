@@ -10,25 +10,17 @@
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
-namespace CSVelte\Output;
-
-use CSVelte\Contract\Writable as Writable;
-
+namespace CSVelte\Exception;
 /**
- * CSVelte Stream Writer
+ * CSVelte\Exception\FlavorException
+ * Thrown when a non-existant flavor is requested from Flavor::create()
  *
- * @package   CSVelte
- * @subpackage CSVelte\Writable
+ * @package   CSVelte\Exception
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @since     v0.2
  */
-class File extends Stream
+class FlavorException extends CSVelteException
 {
-    public function __construct($stream)
-    {
-        if (false === ($stream = @fopen($stream, 'w'))) {
-            throw new \Exception('Cannot write to ' . $stream);
-        }
-        $this->source = $stream;
-    }
+
 }

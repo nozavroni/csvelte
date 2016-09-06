@@ -14,8 +14,7 @@ namespace CSVelte;
 
 use Carbon\Carbon;
 use CSVelte\Contract\Readable;
-use CSVelte\Exception\TasteQuoteAndDelimException;
-use CSVelte\Exception\TasteDelimiterException;
+use CSVelte\Exception\TasterException;
 
 /**
  * CSVelte\Taster
@@ -157,7 +156,8 @@ class Taster
         $lineTerminator = $this->lickLineEndings();
         try {
             list($quoteChar, $delimiter) = $this->lickQuoteAndDelim();
-        } catch (TasteQuoteAndDelimException $e) {
+        } catch (TasterException $e) {
+            if ($e->getCode() !== TasterException::ERR_QUOTE_AND_DELIM) throw $e;
             $quoteChar = '"';
             $delimiter = $this->lickDelimiter($lineTerminator);
         }
@@ -263,7 +263,7 @@ class Taster
                 return array($theQuote, $theDelim);
             }
         }
-        throw new TasteQuoteAndDelimException("quoteChar and delimiter cannot be determined");
+        throw new TasterException("quoteChar and delimiter cannot be determined", TasterException::ERR_QUOTE_AND_DELIM);
     }
 
      /**
@@ -313,7 +313,7 @@ class Taster
             }
         }
         if (empty($consistencies)) {
-            throw new TasteDelimiterException('Cannot determine delimiter character');
+            throw new TasterException('Cannot determine delimiter character', TasterException::ERR_DELIMITER);
         }
         arsort($consistencies);
         return key($consistencies);
