@@ -83,7 +83,7 @@ class CSVelte
      */
     public static function writer($filename, $flavor = null)
     {
-        $file = new File($filename, 'w+');
+        $file = new Stream($filename, 'w+');
         return new Writer($file, $flavor);
     }
 
@@ -101,7 +101,7 @@ class CSVelte
      */
     public static function export($filename, $data, $flavor = null)
     {
-        $file = new File($filename);
+        $file = new Stream($filename, 'w+');
         $writer = new Writer($file, $flavor);
         return $writer->writeRows($data);
     }
