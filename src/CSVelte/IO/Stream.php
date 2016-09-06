@@ -241,7 +241,7 @@ class Stream implements Readable, Writable, Seekable
      * Get either the entire stream metadata array or a single value from it by key.
      *
      * @param string $key If set, must be one of ``stream_get_meta_data`` array keys
-     * @return array|string Either a single value or whole array returned by ``stream_get_meta_data``
+     * @return string|array Either a single value or whole array returned by ``stream_get_meta_data``
      * @see http://php.net/manual/en/function.stream-get-meta-data.php
      */
     public function getMetaData($key = null)
@@ -328,7 +328,8 @@ class Stream implements Readable, Writable, Seekable
      * Reads $length bytes (number of characters) from the stream
      *
      * @param int $length Number of bytes to read from stream
-     * @return string The data read from stream
+     * @return string|boolean The data read from stream or false if at end of
+     *     file or some other problem. 
      * @throws CSVelte\Exception\IOException
      */
     public function read($length)
