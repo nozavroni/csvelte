@@ -116,11 +116,33 @@ class WriterTest extends UnitTestCase
         $this->assertEquals(10, $written_rows);
     }
 
-    // public function testWriteWriteRowsAcceptsReader()
-    // {
-    //     $out = new Stream('php://temp');
-    //     $writer = new Writer($out);
-    //     $reader = new Reader(new Stream($this->getFilePathFor('headerDoubleQuote')));
-    //     $this->assertEquals(10, $writer->writeRows($reader));
-    // }
+    public function testWriterWriteRowsAcceptsReader()
+    {
+        $out = new Stream($fname = $this->root->url() . '/reader2writer.csv', 'w');
+        $writer = new Writer($out, ['lineTerminator' => "\n"]);
+        $in = new Stream($this->getFilePathFor('headerDoubleQuote'), 'r+b');
+        $reader = new Reader($in, ['lineTerminator' => "\n"]);
+        $this->assertEquals(29, $writer->writeRows($reader));
+        $this->assertEquals($this->getFileContentFor('headerDoubleQuote'), file_get_contents($fname));
+    }
+
+    public function testWriterWriteRowsAcceptsReaderToReformat()
+    {
+        $out = new Stream($fname = $this->root->url() . '/reformatme.csv', 'w');
+        $in = new Stream($this->getFilePathFor('headerDoubleQuote'));
+        $writer = new Writer($out, [
+            'delimiter' => '|',
+            'quoteStyle' => Flavor::QUOTE_NONNUMERIC,
+            'lineTerminator' => "\r\n",
+            'doubleQuote' => false,
+            'escapeChar' => '\\'
+        ]);
+        $reader = new Reader($in, ['lineTerminator' => "\n"]);
+        $writer->writeRows($reader);
+        $lines = file($fname);
+        $this->assertEquals("\"Bank Name\"|\"City\"|\"ST\"|\"CERT\"|\"Acquiring Institution\"|\"Closing Date\"|\"Updated Date\"\r\n", $lines[0]);
+        $this->assertEquals("\"First CornerStone Bank\"|\"King of\n\\\"Prussia\\\"\"|\"PA\"|35312|\"First-Citizens Bank & Trust Company\"|\"6-May-16\"|\"25-May-16\"\r\n", $lines[1] . $lines[2]);
+        $out->close();
+        unlink($fname);
+    }
 }

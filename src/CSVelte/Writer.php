@@ -12,13 +12,17 @@
  */
 namespace CSVelte;
 
-use CSVelte\Exception\WriterException;
+use \Iterator;
+use \ArrayIterator;
 use CSVelte\Contract\Writable;
 use CSVelte\Table\Data;
 use CSVelte\Table\HeaderRow;
 use CSVelte\Table\Row;
 use CSVelte\Flavor;
 use CSVelte\Reader;
+
+use \InvalidArgumentException;
+use CSVelte\Exception\WriterException;
 
 /**
  * CSVelte Writer Base Class
@@ -94,7 +98,7 @@ class Writer
         if ($this->written) {
             throw new WriterException("Cannot set header row once data has already been written. ");
         }
-        if (is_array($headers)) $headers = new \ArrayIterator($headers);
+        if (is_array($headers)) $headers = new ArrayIterator($headers);
         $this->headers = $headers;
     }
 
@@ -107,13 +111,15 @@ class Writer
      */
     public function writeRow($row)
     {
+        $eol = $this->getFlavor()->lineTerminator;
+        $delim = $this->getFlavor()->delimiter;
         if (!$this->written && $this->headers) {
             $headerRow = new HeaderRow((array) $this->headers);
             $this->writeHeaderRow($headerRow);
         }
-        if (is_array($row)) $row = new \ArrayIterator($row);
+        if (is_array($row)) $row = new ArrayIterator($row);
         $row = $this->prepareRow($row);
-        if ($count = $this->output->write((string) $row . $this->getFlavor()->lineTerminator)) {
+        if ($count = $this->output->writeLine($row->join($delim), $eol)) {
             $this->written++;
             return $count;
         }
@@ -121,7 +127,11 @@ class Writer
 
     protected function writeHeaderRow(HeaderRow $row)
     {
-        return $this->output->write((string) $row . $this->getFlavor()->lineTerminator);
+        $eol = $this->getFlavor()->lineTerminator;
+        $delim = $this->getFlavor()->delimiter;
+        $row = $this->prepareRow($row);
+        $header = new HeaderRow($row->toArray());
+        return $this->output->writeLine($row->join($delim), $eol);
     }
 
     /**
@@ -133,13 +143,12 @@ class Writer
      */
     public function writeRows($rows)
     {
-        if (is_array($rows)) $rows = new \ArrayIterator($rows);
-        if (!($rows instanceof \Iterator)) {
-            throw new \InvalidArgumentException('First argument for ' . __METHOD__ . ' must be iterable');
+        if (is_array($rows)) $rows = new ArrayIterator($rows);
+        if (!($rows instanceof Iterator)) {
+            throw new InvalidArgumentException('First argument for ' . __METHOD__ . ' must be iterable');
         }
         $written = 0;
         if ($rows instanceof Reader) {
-            $this->flavor = $rows->getFlavor();
             $this->writeHeaderRow($rows->header());
         }
         foreach ($rows as $row) {
@@ -156,13 +165,13 @@ class Writer
      * @return CSVelte\Table\AbstractRow
      * @access protected
      */
-    protected function prepareRow(\Iterator $row)
+    protected function prepareRow(Iterator $row)
     {
         $items = array();
         foreach ($row as $data) {
             $items []= $this->prepareData($data);
         }
-        $row = new Row($items, $this->getFlavor());
+        $row = new Row($items);
         return $row;
     }
 
