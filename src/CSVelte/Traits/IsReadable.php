@@ -13,18 +13,20 @@
  */
 namespace CSVelte\Traits;
 
+use CSVelte\Exception\IOException;
+
 /**
- * IO ReadLine Trait.
+ * IO IsReadable Trait.
  *
- * Readline method shared between various IO classes.
+ * Read methods shared between CSVelte\IO classes.
  *
  * @package    CSVelte
- * @subpackage CSVelte\IO
+ * @subpackage CSVelte\Traits
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  * @since      v0.2
  */
-trait ReadLine
+trait IsReadable
 {
     /**
      * Read single line.
@@ -63,6 +65,23 @@ trait ReadLine
         }
         return $buffer;
     }
+
+    /**
+     * Assert that this file/stream object is readable.
+     *
+     * @return void
+     * @throws CSVelte\Exception\IOException if stream isn't readable
+     */
+    protected function assertIsReadable()
+    {
+        if (!$this->isReadable()) {
+            throw new IOException("Stream not readable: " . $this->getName(), IOException::ERR_NOT_READABLE);
+        }
+    }
+
+    abstract public function getName();
+
+    abstract public function isReadable();
 
     abstract public function read($length);
 

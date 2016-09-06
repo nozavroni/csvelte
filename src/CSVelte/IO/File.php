@@ -13,7 +13,9 @@
  */
 namespace CSVelte\IO;
 
-use CSVelte\Traits\ReadLine;
+use CSVelte\Traits\IsReadable;
+use CSVelte\Traits\IsWritable;
+use CSVelte\Traits\IsSeekable;
 
 use \SplFileObject;
 use CSVelte\Contract\Readable;
@@ -37,22 +39,63 @@ use CSVelte\Exception\NotYetImplementedException;
  */
 class File extends SplFileObject implements Readable, Writable, Seekable
 {
-    use ReadLine;
+    use IsReadable, IsWritable, IsSeekable;
 
+    protected $seekable = true;
+
+    /**
+     * File Constructor
+     *
+     * Exactly the same as native SplFileObject constructor except that first it
+     * resolves the filename if $use_include_path == true, to avoid weird
+     * behavior with isReadable and isWritable.
+     *
+     * @param string  $filename         The filename to open
+     * @param string  $open_mode        The fopen mode
+     * @param boolean $use_include_path Should fopen search the include path
+     * @param array   $context          An array of context options
+     */
+    public function __construct($filename, $open_mode = 'r', $use_include_path = false, $context = null)
+    {
+        /**
+         * @note This fixes a possible bug? that causes SplFileObject to return
+         *     false for isReadable() and isWritable() when $use_include_path
+         *     is true, even if file exists and is both.
+         */
+        if ($use_include_path) {
+            $filename = stream_resolve_include_path($filename);
+        }
+        parent::__construct(
+            $filename,
+            $open_mode,
+            $use_include_path,
+            $context
+        );
+    }
+
+    /**
+     * Get the file name.
+     *
+     * Return the entire file path and name of this file.
+     *
+     * @return string The file path and name
+     */
     public function getName()
     {
         return $this->getPath();
     }
 
     /**
-     * Read in the specified amount of characters from the file
+     * Read in the specified amount of characters from the file.
      *
-     * @param integer Amount of characters to read from file
+     * Read $length characters from the file and return the resulting string.
+     *
+     * @param integer $length Amount of characters to read from file
      * @return string The specified amount of characters read from file
-     * @access public
      */
     public function read($length)
     {
+        $this->assertIsReadable();
         return $this->fread($length);
     }
 
@@ -77,19 +120,20 @@ class File extends SplFileObject implements Readable, Writable, Seekable
      */
     public function write($data)
     {
+        $this->assertIsWritable();
         return $this->fwrite($data);
     }
 
     /**
-     * Write data to the output
+     * Accessor for seekability.
      *
-     * @param string The data to write
-     * @return int The number of bytes written
-     * @access public
+     * Returns true if possible to seek to a certain position within this file.
+     *
+     * @return boolean True if stream is seekable
      */
-    public function writeLine($line, $eol = PHP_EOL)
+    public function isSeekable()
     {
-        return $this->write($line . $eol);
+        return $this->seekable;
     }
 
     /**
@@ -102,20 +146,7 @@ class File extends SplFileObject implements Readable, Writable, Seekable
      */
     public function seek($pos, $whence = SEEK_SET)
     {
+        $this->assertIsSeekable();
         return $this->fseek($pos, $whence);
     }
-
-    /**
-     * Seek to specific line (beginning)
-     * @param int Offset to seek to
-     * @param int Position from whence to seek from (only SEEK_SET and SEEK_CUR supported)
-     * @param string The line terminator string/char
-     * @return boolean True if successful
-     * @todo Add to interface?
-     */
-    public function seekLine($offset, $whence = SEEK_SET, $eol = PHP_EOL)
-    {
-        throw new NotYetImplementedException("This method not yet implemented.");
-    }
-
 }
