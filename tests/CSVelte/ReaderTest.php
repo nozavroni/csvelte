@@ -4,6 +4,7 @@ namespace CSVelteTest;
 use CSVelte\IO\File;
 use CSVelte\IO\Stream;
 use CSVelte\Reader;
+use CSVelte\Writer;
 use CSVelte\Flavor;
 use CSVelte\Table\Row;
 //use org\bovigo\vfs\vfsStream;
@@ -93,11 +94,14 @@ class ReaderTest extends UnitTestCase
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
     }
 
-    public function testReaderForeach()
+    public function testWriterCanWriteReader()
     {
         $stream = new Stream($this->getFilePathFor('headerDoubleQuote'));
         $file = new File('file:///var/www/csvelte/tests/files/banklist.csv');
         $reader = new Reader($stream, new Flavor(['lineTerminator' => "\n"]));
+        $writer = new Writer($temp = new Stream($this->root->url() . "/temp.csv", 'w+'));
+        $writer->writeRows($reader);
+        $this->assertEquals($this->getFileContentFor('headerDoubleQuote'), file_get_contents($temp->getUri()));
     }
 
 }

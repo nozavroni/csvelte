@@ -139,6 +139,7 @@ class Writer
         }
         $written = 0;
         if ($rows instanceof Reader) {
+            $this->flavor = $rows->getFlavor();
             $this->writeHeaderRow($rows->header());
         }
         foreach ($rows as $row) {

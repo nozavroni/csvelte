@@ -169,7 +169,7 @@ class StreamTest extends IOTest
     public function testReadReturnsFalseAtEof()
     {
         $stream = new Stream($this->getFilePathFor('headerDoubleQuote'));
-        $stream->read(2532);
+        $stream->read(2534);
         $this->assertFalse($stream->read(1));
     }
 
