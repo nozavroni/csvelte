@@ -97,7 +97,7 @@ class Taster
     const TYPE_ALPHA = 'alpha';
 
     /**
-     * @var CSVelte\Contract\Readable The source of data to examine
+     * @var \CSVelte\Contract\Readable The source of data to examine
      * @access protected
      */
     protected $input;
@@ -153,8 +153,8 @@ class Taster
          * @todo Should this be null? Because doubleQuote = true means this = null
          */
         $escapeChar = '\\';
-        $quoteStyle = $this->lickQuotingStyle($quoteChar, $delimiter, $lineTerminator);
-        $header = $this->lickHeader($quoteChar, $delimiter, $lineTerminator);
+        $quoteStyle = $this->lickQuotingStyle($delimiter, $lineTerminator);
+        $header = $this->lickHeader($delimiter, $lineTerminator);
         return new Flavor(compact('quoteChar', 'escapeChar', 'delimiter', 'lineTerminator', 'quoteStyle', 'header'));
     }
 
@@ -326,10 +326,8 @@ class Taster
      * (QUOTE_NONNUMERIC). Then there are CSV files that quote all columns
      * (QUOTE_ALL) and those that quote none (QUOTE_NONE).
      *
-     * @param string The data to examime for "quoting style"
-     * @param string The type of quote character being used (single or double)
-     * @param string The character used as the column delimiter
-     * @param string The character used for newlines
+     * @param string $delim The character used as the column delimiter
+     * @param string $eol The character used for newlines
      * @return string One of four "QUOTING_" constants defined above--see this
      *     method's description for more info.
      * @access protected
@@ -338,7 +336,7 @@ class Taster
      *     are many performance and logic improvements that could be made. This
      *     is essentially a first draft.
      */
-    protected function lickQuotingStyle($quote, $delim, $eol)
+    protected function lickQuotingStyle($delim, $eol)
     {
         $data = $this->replaceQuotedSpecialChars($this->sample, $delim);
 
@@ -545,11 +543,8 @@ class Taster
      * determine 100% whether a CSV file has a header. The format does not
      * provide metadata such as that.
      *
-     * @param string The CSV data to examine (only 20 rows will be examined so )
-     *     there is no need to provide any more data than that)
-     * @param string The CSV data's quoting char (either double or single quote)
-     * @param string The CSV data's delimiting char (can be a variety of chars but)
-     *     typically is either a comma or a tab, sometimes a pipe)
+     * @param string $delim The CSV data's delimiting char (can be a variety of chars but)
+     *     typically $eol is either a comma or a tab, sometimes a pipe)
      * @param string The CSV data's end-of-line char(s) (\n \r or \r\n)
      * @return boolean True if the data (most likely) contains a header row
      * @access public
@@ -565,7 +560,7 @@ class Taster
      *     data sample provided in the first argument. Also, I could actually
      *     create a Reader object to read the data here.
      */
-    public function lickHeader($quote, $delim, $eol)
+    public function lickHeader($delim, $eol)
     {
         $data = $this->replaceQuotedSpecialChars($this->sample, $delim);
         $lines = explode($eol, $data);
