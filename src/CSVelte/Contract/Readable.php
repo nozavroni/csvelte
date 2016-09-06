@@ -32,7 +32,7 @@ interface Readable
      * Read in the specified amount of characters from the input source
      *
      * @param integer Amount of characters to read from input source
-     * @return string The specified amount of characters read from input source
+     * @return string|boolean The specified amount of characters read from input source
      * @access public
      */
     public function read($chars);

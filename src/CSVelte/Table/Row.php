@@ -72,7 +72,7 @@ class Row extends AbstractRow
                 throw new HeaderException("Header count ({$hcount}) does not match column count ({$rcount}).", HeaderException::ERR_HEADER_COUNT);
             }
         }
-        $this->headers = $headers;
+        $this->headers = $headerArray;
         $this->assocCols = array_combine($headerArray, $this->fields);
     }
 

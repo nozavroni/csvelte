@@ -1,7 +1,7 @@
 <?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
- * 
+ *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
@@ -75,7 +75,7 @@ class Autoloader
      * Simply returns the array containing all the paths that will be searched
      * when attempting to load a class.
      *
-     * @return [type] [description]
+     * @return array An array of paths to search for classes
      */
     public function getPaths()
     {

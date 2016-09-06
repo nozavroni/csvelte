@@ -61,8 +61,6 @@ class Writer
      *
      * @param \CSVelte\Contract\Writable $output An output source to write to
      * @param \CSVelte\Flavor|array $flavor A flavor or set of formatting params
-     * @return void
-     * @access public
      */
     public function __construct(Writable $output, $flavor = null)
     {
@@ -129,7 +127,6 @@ class Writer
         $eol = $this->getFlavor()->lineTerminator;
         $delim = $this->getFlavor()->delimiter;
         $row = $this->prepareRow($row);
-        $header = new HeaderRow($row->toArray());
         return $this->output->writeLine($row->join($delim), $eol);
     }
 
