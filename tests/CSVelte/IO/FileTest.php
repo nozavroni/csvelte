@@ -117,6 +117,12 @@ class FileTest extends IOTest
         $this->assertEquals("cool,pool,wool\n", $file->readLine("\n"));
     }
 
+    public function testFileGetContentsGetsAllFile()
+    {
+        $file = new File($fname = $this->getFilePathFor('veryShort'));
+        $this->assertStringEqualsFile($fname, $file->getContents());
+    }
+
     /**
      * @covers ::write()
      */
