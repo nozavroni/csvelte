@@ -23,86 +23,8 @@ class FileTest extends IOTest
     {
         $filename = $this->root->url() . '/deleteme.csv';
         $this->assertFileNotExists($filename);
-        $file = new File($filename);
+        $file = new File($filename, 'w+');
         $this->assertFileExists($filename);
-    }
-
-    /**
-     * @expectedException CSVelte\Exception\FileNotFoundException
-     * @expectedExceptionCode 1
-     * @covers ::__construct()
-     */
-    public function testInstantiateIOFileInNonExistantFileThrowsExceptionIfCreateOptionIsFalse()
-    {
-        $filename = $this->root->url() . '/deletemetoo.csv';
-        $file = new File($filename, ['create' => false]);
-    }
-
-    /**
-     * @expectedException CSVelte\Exception\FileNotFoundException
-     * @expectedExceptionCode 2
-     * @covers ::__construct()
-     */
-    public function testInstantiateIOFileInNonExistantDirectoryThrowsException()
-    {
-        $filename = $this->root->url() . '/makethisdir/deleteme.csv';
-        $file = new File($filename);
-    }
-
-    /**
-     * @covers ::__construct()
-     */
-    public function testInsantiateIOFileInNonExistantDirectoryCreatesDirectoryAndFileIfParentsOptionIsTrue()
-    {
-        $filename = $this->root->url() . '/makethisdir/deleteme.csv';
-        $dirname = dirname($filename);
-        $this->assertFileNotExists($dirname);
-        $file = new File($filename, ['parents' => true]);
-        $this->assertFileExists($dirname);
-    }
-
-    /**
-     * @covers ::__construct()
-     */
-    public function testInstantiateIOFileModeDefaultsTo0644()
-    {
-        $filename = $this->root->url() . '/deleteme.csv';
-        $file = new File($filename);
-        $perms = substr(sprintf('%o', fileperms($filename)), -4);
-        $this->assertEquals($expected = '0644', $perms);
-    }
-
-    /**
-     * @covers ::__construct()
-     */
-    public function testInstantiateIOFileAllowsSettingModeForFile()
-    {
-        $filename = $this->root->url() . '/deleteme.csv';
-        $file = new File($filename, ['mode' => 0777]);
-        $perms = substr(sprintf('%o', fileperms($filename)), -4);
-        $this->assertEquals($expected = '0777', $perms);
-    }
-
-    /**
-     * @covers ::__construct()
-     */
-    public function testInstantiateIOFileModeDefaultsTo0644ForCreatedParentDirs()
-    {
-        $filename = $this->root->url() . '/makethisdir/deleteme.csv';
-        $file = new File($filename, ['parents' => true]);
-        $perms = substr(sprintf('%o', fileperms(dirname($filename))), -4);
-        $this->assertEquals($expected = '0644', $perms);
-    }
-
-    /**
-     * @covers ::__construct()
-     */
-    public function testInstantiateIOFileAllowsSettingModeForCreatedParentDirs()
-    {
-        $filename = $this->root->url() . '/makethisdir/deleteme.csv';
-        $file = new File($filename, ['mode' => 0777, 'parents' => true]);
-        $perms = substr(sprintf('%o', fileperms(dirname($filename))), -4);
-        $this->assertEquals($expected = '0777', $perms);
     }
 
     /**
@@ -117,17 +39,8 @@ class FileTest extends IOTest
             $this->tmpdir . PATH_SEPARATOR .
             get_include_path()
         );
-        $file = new File($filename, ['use_include_path' => true, 'create' => false, 'open_mode' => 'r+']);
+        $file = new File($filename, 'r+', true);
         $this->assertEquals("foo,bar,baz\nbin,boz,bork\n", $file->read(25));
-    }
-
-    /**
-     * @expectedException CSVelte\Exception\FileNotFoundException
-     * @covers ::__construct()
-     */
-    public function testUseIncludePathOptionFalseThrowsExceptionIfNoFile()
-    {
-        $file = new File('doesntexist.csv', ['use_include_path' => false, 'create' => false, 'open_mode' => 'r+']);
     }
 
     /**
@@ -151,12 +64,12 @@ class FileTest extends IOTest
     /**
      * @covers ::fgets()
      */
-    public function testFgetsReadsNextLineWithoutTrailingNewline()
+    public function testFgetsReadsNextLineWithTrailingNewline()
     {
         $file = new File($this->getFilePathFor('veryShort'));
-        $this->assertEquals("foo,bar,baz", $file->getLine());
-        $this->assertEquals("bin,boz,bork", $file->getLine());
-        $this->assertEquals("lib,bil,ilb", $file->getLine());
+        $this->assertEquals("foo,bar,baz\n", $file->readLine("\n"));
+        $this->assertEquals("bin,boz,bork\n", $file->readLine("\n"));
+        $this->assertEquals("lib,bil,ilb\n", $file->readLine("\n"));
     }
 
     /**
@@ -166,9 +79,9 @@ class FileTest extends IOTest
     public function testFgetsThrowsRuntimeExceptionIfEofReached()
     {
         $file = new File($this->getFilePathFor('veryShort'));
-        $this->assertEquals("foo,bar,baz", $file->getLine());
-        $this->assertEquals("bin,boz,bork", $file->getLine());
-        $this->assertEquals("lib,bil,ilb", $file->getLine());
+        $this->assertEquals("foo,bar,baz\n", $file->readLine("\n"));
+        $this->assertEquals("bin,boz,bork\n", $file->readLine("\n"));
+        $this->assertEquals("lib,bil,ilb\n", $file->readLine("\n"));
         $file->fgets(); // this should trigger an exception
     }
 
@@ -179,11 +92,11 @@ class FileTest extends IOTest
     {
         $file = new File($this->getFilePathFor('veryShort'));
         $this->assertFalse($file->eof());
-        $this->assertEquals("foo,bar,baz", $file->getLine());
+        $this->assertEquals("foo,bar,baz\n", $file->readLine("\n"));
         $this->assertFalse($file->eof());
-        $this->assertEquals("bin,boz,bork", $file->getLine());
+        $this->assertEquals("bin,boz,bork\n", $file->readLine("\n"));
         $this->assertFalse($file->eof());
-        $this->assertEquals("lib,bil,ilb", $file->getLine());
+        $this->assertEquals("lib,bil,ilb\n", $file->readLine("\n"));
         $this->assertTrue($file->eof());
     }
 
@@ -193,12 +106,12 @@ class FileTest extends IOTest
     public function testFgetsReadsLinesWithoutRespectToQuotedNewlines()
     {
         $file = new File($this->getFilePathFor('shortQuotedNewlines'));
-        $this->assertEquals("foo,bar,baz", $file->getLine());
-        $this->assertEquals("bin,\"boz,bork", $file->getLine());
-        $this->assertEquals("lib,bil,ilb\",bon", $file->getLine());
-        $this->assertEquals("bib,bob,\"boob", $file->getLine());
-        $this->assertEquals("boober\"", $file->getLine());
-        $this->assertEquals("cool,pool,wool", $file->getLine());
+        $this->assertEquals("foo,bar,baz\n", $file->readLine("\n"));
+        $this->assertEquals("bin,\"boz,bork\n", $file->readLine("\n"));
+        $this->assertEquals("lib,bil,ilb\",bon\n", $file->readLine("\n"));
+        $this->assertEquals("bib,bob,\"boob\n", $file->readLine("\n"));
+        $this->assertEquals("boober\"\n", $file->readLine("\n"));
+        $this->assertEquals("cool,pool,wool\n", $file->readLine("\n"));
     }
 
     /**
@@ -207,7 +120,7 @@ class FileTest extends IOTest
     public function testCreateNewFileAndWriteToIt()
     {
         $data = $this->getFileContentFor('veryShort');
-        $file = new File($fn = $this->root->url() ."/tempfile1.csv", ['open_mode' => 'w']);
+        $file = new File($fn = $this->root->url() ."/tempfile1.csv", 'w');
         $this->assertEquals(strlen($data), $file->write($data));
         $this->assertEquals($data, file_get_contents($fn));
     }
@@ -217,7 +130,7 @@ class FileTest extends IOTest
      */
     public function testAppendFileWrite()
     {
-        $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), ['open_mode' => 'a']);
+        $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), 'a');
         $data = "\"foo, bar\",boo,far\n";
         $this->assertEquals(strlen($data), $file->write($data));
         $this->assertEquals(
@@ -231,7 +144,7 @@ class FileTest extends IOTest
      */
     public function testFileOverWrite()
     {
-        $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), ['open_mode' => 'w']);
+        $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), 'w');
         $data = "\"foo, bar\",boo,far\n";
         $this->assertEquals(strlen($data), $file->write($data));
         $this->assertEquals(
@@ -251,7 +164,7 @@ class FileTest extends IOTest
 
     public function testseekPlacesPointerInPositionForReadAndWriteIfOpenModeIsRPlus()
     {
-        $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), ['open_mode' => 'r+']);
+        $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), 'r+');
         $this->assertEquals(0, $file->seek(10), 'CSVelte\\IO\\File::seek() should return zero on success.');
         $this->assertEquals("z\nbin,\"boz", $file->fread(10), 'CSVelte\\IO\\File::seek() should cause fread() to start form sought position.');
         $this->assertEquals(10, $file->write('skaggzilla'));

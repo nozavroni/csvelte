@@ -21,13 +21,24 @@ namespace CSVelte\Contract;
 interface Writable
 {
     /**
-     * Write data to the output
+     * Write data to the output.
      *
      * @param string The data to write
      * @return int The number of bytes written
      * @access public
      */
     public function write($data);
+
+    /**
+     * Write single line to output.
+     *
+     * Writes a line to the output (including end of line char/str).
+     *
+     * @param string The line to be written to the stream
+     * @param string The end of line string
+     * @return int The number of bytes written to the stream
+     */
+    public function writeLine($line, $eol);
 
     /**
      * Returns true if file is writable.

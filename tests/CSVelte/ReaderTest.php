@@ -87,10 +87,17 @@ class ReaderTest extends UnitTestCase
 
     public function testReaderCurrent()
     {
-        $flavor = new Flavor(array('header' => false));
+        $flavor = new Flavor(array('header' => false, 'lineTerminator' => "\n"));
         $reader = new Reader($this->getFileContentFor('noHeaderCommaNoQuotes'), $flavor);
         $this->assertInstanceOf($expected = Row::class, $reader->current());
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
+    }
+
+    public function testReaderForeach()
+    {
+        $stream = new Stream($this->getFilePathFor('headerDoubleQuote'));
+        $file = new File('file:///var/www/csvelte/tests/files/banklist.csv');
+        $reader = new Reader($stream, new Flavor(['lineTerminator' => "\n"]));
     }
 
 }

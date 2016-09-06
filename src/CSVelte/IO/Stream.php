@@ -13,11 +13,16 @@
  */
 namespace CSVelte\IO;
 
+use CSVelte\Traits\ReadLine;
+
 use CSVelte\Contract\Readable;
 use CSVelte\Contract\Writable;
 use CSVelte\Contract\Seekable;
 
 use \InvalidArgumentException;
+use CSVelte\Exception\NotYetImplementedException;
+use CSVelte\Exception\EndOfFileException;
+use CSVelte\Exception\IOException;
 use CSVelte\Exception\InvalidStreamException;
 
 /**
@@ -35,24 +40,7 @@ use CSVelte\Exception\InvalidStreamException;
  */
 class Stream implements Readable, Writable, Seekable
 {
-    /**
-     * @var resource An open stream resource
-     */
-    protected $stream;
-
-    /**
-     * Initialization options for this stream
-     * @var array These options are set when instantiating this stream object.
-     *            These values are just defaults.
-     *      open_mode: Same as mode for fopen
-     *      context: See stream_context_create()
-     *               http://php.net/manual/en/function.stream-context-create.php
-     */
-    protected $options = [
-        'open_mode' => 'r+b',
-        'context' => null
-    ];
-
+    use ReadLine;
     /**
      * Hash of readable/writable stream open mode types.
      *
@@ -81,16 +69,33 @@ class Stream implements Readable, Writable, Seekable
     ];
 
     /**
+     * @var resource An open stream resource
+     */
+    protected $stream;
+
+    /**
      * Meta data about stream resource.
      * Just contains the return value of stream_get_meta_data.
      * @var array The return value of stream_get_meta_data
      */
     protected $meta;
 
+    /**
+     * Is stream seekable
+     * @var boolean True if stream is seekable, false otherwise
+     */
     protected $seekable;
 
+    /**
+     * Is stream readable
+     * @var boolean True if stream is readable, false otherwise
+     */
     protected $readable;
 
+    /**
+     * Is stream writable
+     * @var boolean True if stream is writable, false otherwise
+     */
     protected $writable;
 
     /**
@@ -108,21 +113,21 @@ class Stream implements Readable, Writable, Seekable
      * @return \CSVelte\IO\Stream
      * @throws \InvalidArgumentException
      */
-    public static function streamize($resource = '', $options = [])
+    public static function streamize($resource = '')
     {
         $type = gettype($resource);
 
         if ($type == 'string') {
-            $stream = fopen('php://temp', 'r+');
+            $stream = self::open('php://temp', 'r+');
             if ($resource !== '') {
                 fwrite($stream, $resource);
                 fseek($stream, 0);
             }
-            return new self($stream, $options);
+            return new self($stream);
         }
 
         if ($type == 'object' && method_exists($resource, '__toString')) {
-            return self::streamize((string) $resource, $options);
+            return self::streamize((string) $resource);
         }
 
         throw new InvalidArgumentException('Invalid resource type: ' . $type);
@@ -138,10 +143,9 @@ class Stream implements Readable, Writable, Seekable
      * @param array $options An array of any/none of the following options
      *                          (see $options var above for more details)
      */
-    public function __construct($stream, array $options = [])
+    public function __construct($stream, $mode = null, $context = null)
     {
-        $this->setOptions($options);
-        $this->stream = $this->open($stream, $this->options['open_mode'], $this->options['context']);
+        $this->stream = self::open($stream, $mode, $context);
         $this->setMetaData($this->stream);
     }
 
@@ -152,18 +156,21 @@ class Stream implements Readable, Writable, Seekable
      */
     public function __destruct()
     {
-        if (is_resource($this->stream)) {
-            $this->close();
-        }
+        $this->close();
     }
 
-    protected function open($stream, $mode = null, $context = null)
+    protected static function open($stream, $mode = null, $context = null)
     {
+        if (is_null($mode)) $mode = 'r+b';
         if (is_string($uri = $stream)) {
             if (is_null($context)) {
-                $stream = @fopen($stream, $mode);
+                $stream = @fopen($uri, $mode);
             } else {
-                $stream = @fopen($stream, $mode, false, $context);
+                if (!is_array($context)) {
+                    throw new InvalidArgumentException("Invalid argument for context. Expected array, got: " . gettype($context));
+                }
+                $context = stream_context_create($context);
+                $stream = @fopen($uri, $mode, false, $context);
             }
             if (false === $stream) {
                 throw new InvalidStreamException("Invalid stream URI: " . $uri, InvalidStreamException::ERR_INVALID_URI);
@@ -180,28 +187,32 @@ class Stream implements Readable, Writable, Seekable
      *
      * @return boolean True on success or false on failure
      */
-    protected function close()
+    public function close()
     {
-        return fclose($this->stream);
-    }
-
-    protected function setOptions(array $options)
-    {
-        if (array_key_exists('context', $options) && !is_null($options['context'])) {
-            if (!is_array($options['context'])) {
-                throw new InvalidArgumentException("\"context\" option must me an array, got: " . gettype($options['context']));
-            }
-            $options['context'] = stream_context_create($options['context']);
+        if (is_resource($this->stream)) {
+            return fclose($this->stream);
         }
-        $this->options = array_merge($this->options, $options);
+        return false;
     }
 
     protected function setMetaData($stream)
     {
         $this->meta = stream_get_meta_data($stream);
-        $this->seekable = $this->meta['seekable'];
+        $this->seekable = (bool) $this->meta['seekable'];
         $this->readable = isset(self::$readWriteHash['read'][$this->meta['mode']]);
         $this->writable = isset(self::$readWriteHash['write'][$this->meta['mode']]);
+    }
+
+    /**
+     * Get stream metadata (all or certain value)
+     * @param  string $key  If set, must be one of stream_get_meta_data array keys
+     * @return array|string Either a single value or whole array returned by stream_get_meta_data
+     * @see http://php.net/manual/en/function.stream-get-meta-data.php
+     */
+    public function getMetaData($key = null)
+    {
+        if (is_null($key)) return $this->meta;
+        return (array_key_exists($key, $this->meta)) ? $this->meta[$key] : null;
     }
 
     /**
@@ -261,7 +272,12 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getUri()
     {
-        return $this->meta['uri'];
+        return $this->getMetaData('uri');
+    }
+
+    public function getName()
+    {
+        return $this->getUri();
     }
 
     /**
@@ -271,23 +287,34 @@ class Stream implements Readable, Writable, Seekable
      *
      * @param int $length Number of bytes to read from stream
      * @return string The data read from stream
+     * @throws CSVelte\Exception\IOException
      */
     public function read($length)
     {
+        $this->assertIsReadable();
+        if ($this->eof()) return false;
         return fread($this->stream, $length);
     }
 
-    /**
-     * Read single line.
-     * Read the next line from the file (moving the internal pointer down a line).
-     * Returns multiple lines if newline character(s) fall within a quoted string.
-     *
-     * @return string A single line read from the file.
-     * @todo Should this accept line terminator? I think it should...
-     */
-    public function getLine($eol = PHP_EOL)
+    protected function assertIsReadable()
     {
-        return stream_get_line($this->stream, 0, $eol);
+        if (!$this->isReadable()) {
+            throw new IOException("Stream not readable: " . $this->getUri(), IOException::ERR_NOT_READABLE);
+        }
+    }
+
+    protected function assertIsWritable()
+    {
+        if (!$this->isWritable()) {
+            throw new IOException("Stream not writable: " . $this->getUri(), IOException::ERR_NOT_WRITABLE);
+        }
+    }
+
+    protected function assertIsSeekable()
+    {
+        if (!$this->isSeekable()) {
+            throw new IOException("Stream not seekable: " . $this->getUri(), IOException::ERR_NOT_SEEKABLE);
+        }
     }
 
     /**
@@ -296,6 +323,7 @@ class Stream implements Readable, Writable, Seekable
      * @param void
      * @return string The entire file contents
      * @access public
+     * @throws CSVelte\Exception\IOException
      */
     public function getContents()
     {
@@ -334,10 +362,28 @@ class Stream implements Readable, Writable, Seekable
      *
      * @param string The data to be written to the stream
      * @return int The number of bytes written to the stream
+     * @throws CSVelte\Exception\IOException
      */
     public function write($str)
     {
+        $this->assertIsWritable();
         return fwrite($this->stream, $str);
+    }
+
+    /**
+     * Write single line to stream
+     *
+     * Writes a line to the stream (if it is writable)
+     *
+     * @param string The line to be written to the stream
+     * @param string The end of line string
+     * @return int The number of bytes written to the stream
+     * @throws CSVelte\Exception\IOException
+     * @todo Add this to the Interface?
+     */
+    public function writeLine($line, $eol = PHP_EOL)
+    {
+        return $this->write($line . $eol);
     }
 
     /**
@@ -348,13 +394,25 @@ class Stream implements Readable, Writable, Seekable
      * @param int $offset The position to seek to
      * @param int $whence (see http://php.net/manual/en/function.seek.php)
      * @return boolean True on success false on failure
+     * @throws CSVelte\Exception\IOException
      */
     public function seek($offset, $whence = SEEK_SET)
     {
-        if ($this->isSeekable()) {
-            return fseek($this->stream, $offset, $whence) === 0;
-        }
-        return false;
+        $this->assertIsSeekable();
+        return fseek($this->stream, $offset, $whence) === 0;
+    }
+
+    /**
+     * Seek to specific line (beginning)
+     * @param int Offset to seek to
+     * @param int Position from whence to seek from
+     * @param string The line terminator string/char
+     * @return boolean True if successful
+     * @todo Add to interface?
+     */
+    public function seekLine($offset, $whence = SEEK_SET, $eol = PHP_EOL)
+    {
+        throw new NotYetImplementedException("This method not yet implemented.");
     }
 
 }
