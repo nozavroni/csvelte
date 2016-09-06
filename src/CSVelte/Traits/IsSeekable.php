@@ -14,6 +14,7 @@
 namespace CSVelte\Traits;
 
 use CSVelte\Exception\IOException;
+use CSVelte\Exception\NotYetImplementedException;
 
 /**
  * IO IsSeekable Trait.

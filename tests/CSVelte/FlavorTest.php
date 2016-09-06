@@ -185,4 +185,20 @@ class FlavorTest extends UnitTestCase
         $this->assertNull($arr['header']);
     }
 
+    public function testInstantiateWithInvalidArg()
+    {
+        $flavor = new Flavor("fooey gooey bars!");
+        $this->assertEquals(new Flavor, $flavor);
+    }
+
+    public function testHasHeader()
+    {
+        $headerNull = new Flavor();
+        $this->assertFalse($headerNull->hasHeader());
+        $headerTrue = new Flavor(['header' => true]);
+        $this->assertTrue($headerTrue->hasHeader());
+        $headerFalse = new Flavor(['header' => false]);
+        $this->assertFalse($headerFalse->hasHeader());
+    }
+
 }

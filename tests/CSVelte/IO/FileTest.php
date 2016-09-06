@@ -4,6 +4,9 @@ namespace CSVelteTest\IO;
 use \SplFileObject;
 use CSVelte\IO\File;
 use org\bovigo\vfs\vfsStream;
+
+use CSVelte\Exception\NotYetImplementedException;
+
 /**
  * CSVelte\IO\File Tests.
  * This tests the new IO\File class that will be replacing CSVelte\Input\File and
@@ -169,5 +172,24 @@ class FileTest extends IOTest
         $this->assertEquals("z\nbin,\"boz", $file->fread(10), 'CSVelte\\IO\\File::seek() should cause fread() to start form sought position.');
         $this->assertEquals(10, $file->write('skaggzilla'));
         $this->assertEquals("foo,bar,baz\nbin,\"bozskaggzillabil,ilb\",bon\nbib,bob,\"boob\nboober\"\ncool,pool,wool\n", file_get_contents($fn), 'CSVelte\\IO\\File::write() should start overwriting wherever it\'s seek\'d to if open mode is r+.');
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\NotYetImplementedException
+     */
+    public function testSeekLineThrowsExceptionForNow()
+    {
+        $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), 'r+');
+        $file->seekLine(10, SEEK_CUR, "\r\n");
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\IOException
+     * @expectedExceptionCode CSVelte\Exception\IOException::ERR_NOT_SEEKABLE
+     */
+    public function testNonSeekableFileWillThrowExceptionIfAttemptToSeek()
+    {
+        $file = new File('php://output', 'r+');
+        $file->seek(10, SEEK_CUR, "\r\n");
     }
 }

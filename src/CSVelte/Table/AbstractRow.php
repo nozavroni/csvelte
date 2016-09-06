@@ -120,14 +120,11 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * Get the current column's data object
      *
-     * @return CSVelte\Table\Data
+     * @return string
      * @access public
      */
     public function current()
     {
-        if (!array_key_exists($this->position, $this->fields)) {
-            throw new OutOfBoundsException("Undefined index: " . $this->position);
-        }
         return $this->fields[$this->position];
     }
 

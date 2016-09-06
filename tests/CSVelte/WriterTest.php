@@ -145,4 +145,24 @@ class WriterTest extends UnitTestCase
         $out->close();
         unlink($fname);
     }
+
+    public function testWriterWritesCorrectOutputForFlavorWithQuoteAll()
+    {
+        $stream = new Stream('php://temp');
+        $writer = new Writer($stream, ['quoteStyle' => Flavor::QUOTE_ALL]);
+        $this->assertEquals(24, $writer->writeRow(['bacon','cheese','ham']));
+        $this->assertEquals(3, $writer->writeRows([['monkey','lettuce','spam'],['table','hair','blam'],['chalk','talk','caulk']]));
+        $stream->rewind();
+        $this->assertEquals("\"bacon\",\"cheese\",\"ha", $stream->read(20));
+    }
+
+    public function testWriterWritesCorrectOutputForFlavorWithQuoteNone()
+    {
+        $stream = new Stream('php://temp');
+        $writer = new Writer($stream, ['quoteStyle' => Flavor::QUOTE_NONE]);
+        $this->assertEquals(18, $writer->writeRow(['bacon','cheese','ham']));
+        $this->assertEquals(3, $writer->writeRows([['monkey','lettuce','spam'],['table','hair','blam'],['chalk','talk','caulk']]));
+        $stream->rewind();
+        $this->assertEquals("bacon,cheese,ham\r\nmo", $stream->read(20));
+    }
 }

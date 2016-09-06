@@ -1,6 +1,7 @@
 <?php
 namespace CSVelteTest\Table;
 
+use \ArrayIterator;
 use CSVelteTest\UnitTestCase;
 use CSVelte\Table\AbstractRow;
 use CSVelte\Table\HeaderRow;
@@ -262,5 +263,53 @@ class RowTest extends UnitTestCase
         $headers = new HeaderRow($keys = array('first','second','third','fourth','fifth'));
         $row->setHeaderRow($headers);
         $this->assertEquals($expected = array_combine($keys, $vals), $row->toArray());
+    }
+
+    public function testSetHeadersUsingNonHeaderRow()
+    {
+        $row = new Row($vals = array('aone','atwo','athree','anda','four'));
+        $headers = new Row($keys = array('first','second','third','fourth','fifth'));
+        $row->setHeaderRow($headers);
+        $this->assertEquals($expected = array_combine($keys, $vals), $row->toArray());
+    }
+
+    public function testSetHeadersUsingShortRow()
+    {
+        $row = new Row($vals = array('aone','atwo','athree'));
+        $headers = new HeaderRow($keys = array('first','second','third','fourth','fifth'));
+        $row->setHeaderRow($headers);
+        $this->assertEquals($expected = array_combine($keys, array('aone','atwo','athree', null, null)), $row->toArray());
+    }
+
+    public function testInstantiateRowWithAnyObjectThatHasToArray()
+    {
+        // Create a stub for non-existant StreamableClass.
+        $array_obj = $this->getMockBuilder('ArrClass')
+                        ->setMethods(['toArray'])
+                        ->getMock();
+
+        // Configure the stub.
+        $array_obj->method('toArray')
+             ->willReturn($arr = ['won', 'to', 'three', 'fore']);
+
+        $row = new Row($array_obj);
+        $this->assertEquals($arr, $row->toArray());
+    }
+
+    public function testInstantiateRowWithAnythingIterable()
+    {
+        $arr = ['won', 'to', 'free', 'for'];
+        $iter = new ArrayIterator($arr);
+        $row = new Row($iter);
+        $this->assertEquals($arr, $row->toArray());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInstantiateRowWithAnythingElseWillCauseAnException()
+    {
+        $str = 'won,to,free,for';
+        $row = new Row($str);
     }
 }

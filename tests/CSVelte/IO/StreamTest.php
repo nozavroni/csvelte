@@ -60,9 +60,6 @@ class StreamTest extends IOTest
         $stream = new Stream('php://input', null, 'foo');
     }
 
-    /**
-     * @covers ::__construct()
-     */
     public function testInstantiateStreamWithContextOptionsAndStringURI()
     {
         $stream = new Stream('http://www.example.com/', 'rb', $expContext = [
@@ -349,6 +346,30 @@ class StreamTest extends IOTest
         // test it
         $csv_stream = Stream::streamize($csv_obj);
         $this->assertEquals($csv_string, $csv_stream->read(37));
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\IOException
+     * @expectedExceptionCode CSVelte\Exception\IOException::ERR_NOT_WRITABLE
+     */
+    public function testWriteToNonWritableStreamThrowsIOException()
+    {
+        $stream = new Stream('php://input', 'r');
+        $stream->write('foo');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testStreamThrowsExceptionIfContextIsNotAnArray()
+    {
+        $stream = new Stream('php://input', 'r', 'hamburgers');
+    }
+
+    public function testStreamGetContents()
+    {
+        $stream = new Stream($filename = $this->getFilePathFor('headerDoubleQuote'));
+        $this->assertStringEqualsFile($filename, $stream->getContents());
     }
 
 }

@@ -52,7 +52,7 @@ class Row extends AbstractRow
     /**
      * Set the header row (so that it can be used to index the row)
      *
-     * @param \CSVelte\Table\HeaderRow $headers Header row to set 
+     * @param \CSVelte\Table\HeaderRow $headers Header row to set
      * @return void (return $this?)
      * @access public
      */

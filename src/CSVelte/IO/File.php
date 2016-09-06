@@ -41,7 +41,7 @@ class File extends SplFileObject implements Readable, Writable, Seekable
 {
     use IsReadable, IsWritable, IsSeekable;
 
-    protected $seekable = true;
+    protected $seekable = null;
 
     /**
      * File Constructor
@@ -133,6 +133,14 @@ class File extends SplFileObject implements Readable, Writable, Seekable
      */
     public function isSeekable()
     {
+        if (is_null($this->seekable)) {
+            /**
+             * @note This is the only way I could determine whether the file is
+             *     seekable or not.
+             */
+            $pos = $this->ftell();
+            $this->seekable = (0 === @$this->fseek($pos, SEEK_SET));
+        }
         return $this->seekable;
     }
 

@@ -120,4 +120,11 @@ class ReaderTest extends UnitTestCase
         $this->assertCount(4, iterator_to_array($reader->filter()));
     }
 
+    public function testReaderKeyReturnsLine()
+    {
+        $reader = new Reader($this->getFileContentFor('commaNewlineHeader'));
+        // @todo This should be 1 since the first row was the header, but ill get to that later
+        $this->assertEquals(2, $reader->key());
+    }
+
 }

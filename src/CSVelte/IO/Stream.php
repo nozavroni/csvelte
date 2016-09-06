@@ -350,7 +350,11 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getContents()
     {
-
+        $buffer = '';
+        while ($chunk = $this->read(1024)) {
+            $buffer .= $chunk;
+        }
+        return $buffer;
     }
 
     /**
