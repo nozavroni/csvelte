@@ -91,4 +91,16 @@ class CSVelteTest extends UnitTestCase
          $this->assertEquals("foo\tbar\tbaz\n1\tluke\tvisinoni\n2\tmargaret\tkelly\n3\tjerry\trafferty\n", file_get_contents($filename));
      }
 
+     /**
+      * @expectedException CSVelte\Exception\IOException
+      * @expectedExceptionCode CSVelte\Exception\IOException::ERR_FILE_PERMISSION_DENIED
+      */
+     public function testNonExistantFileForReaderThrowsException()
+     {
+         $file = $this->root->url() . '/permission-denied.csv';
+         touch($file);
+         chmod($file, 0000);
+         $reader = CSVelte::reader($file);
+     }
+
 }
