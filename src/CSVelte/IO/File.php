@@ -147,6 +147,6 @@ class File extends SplFileObject implements Readable, Writable, Seekable
     public function seek($pos, $whence = SEEK_SET)
     {
         $this->assertIsSeekable();
-        return $this->fseek($pos, $whence);
+        return $this->fseek($pos, $whence) === 0;
     }
 }

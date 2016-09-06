@@ -156,16 +156,16 @@ class FileTest extends IOTest
     /**
      * @covers ::seek()
      */
-    public function testseekReturnsZeroOnSuccess()
+    public function testseekReturnsTrueOnSuccess()
     {
         $file = new File($this->getFilePathFor('shortQuotedNewlines'));
-        $this->assertEquals(0, $file->seek(10));
+        $this->assertTrue($file->seek(10));
     }
 
     public function testseekPlacesPointerInPositionForReadAndWriteIfOpenModeIsRPlus()
     {
         $file = new File($fn = $this->getFilePathFor('shortQuotedNewlines'), 'r+');
-        $this->assertEquals(0, $file->seek(10), 'CSVelte\\IO\\File::seek() should return zero on success.');
+        $this->assertTrue($file->seek(10), 'CSVelte\\IO\\File::seek() should return zero on success.');
         $this->assertEquals("z\nbin,\"boz", $file->fread(10), 'CSVelte\\IO\\File::seek() should cause fread() to start form sought position.');
         $this->assertEquals(10, $file->write('skaggzilla'));
         $this->assertEquals("foo,bar,baz\nbin,\"bozskaggzillabil,ilb\",bon\nbib,bob,\"boob\nboober\"\ncool,pool,wool\n", file_get_contents($fn), 'CSVelte\\IO\\File::write() should start overwriting wherever it\'s seek\'d to if open mode is r+.');
