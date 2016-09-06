@@ -277,7 +277,6 @@ class Taster
     {
         $delimiters = array(",", "\t", "|", ":", ";", "/", '\\');
         $lines = explode($eol, $this->removeQuotedStrings($this->sample));
-        $modes = array();
         $start = 0;
         $charFrequency = array();
         while ($start < count($lines)) {
@@ -361,7 +360,7 @@ class Taster
             foreach ($cols as $colkey => $col) {
                 // now we can sub back in the correct delim characters
                 $col = str_replace(self::PLACEHOLDER_DELIM, $delim, $col);
-                if ($isQuoted = $this->isQuoted($col)) {
+                if ($this->isQuoted($col)) {
                     $col = $this->unQuote($col);
                     $type = $this->lickDataType($col);
                     // we can remove this guy all together since at lease one column is quoted
@@ -386,7 +385,7 @@ class Taster
             if (array_key_exists(self::DATA_NONNUMERIC, array_flip($types))) {
                 // allow for a SMALL amount of error here
                 $counts = array(self::DATA_SPECIAL => 0, self::DATA_NONNUMERIC => 0);
-                array_walk($freq['quoted'], function ($val, $key) use (&$counts) {
+                array_walk($freq['quoted'], function ($val) use (&$counts) {
                     $counts[$val]++;
                 });
                 arsort($counts);
@@ -573,7 +572,6 @@ class Taster
             // now we can sub back in the correct newlines
             $line = str_replace(self::PLACEHOLDER_NEWLINE, $eol, $line);
             $cols = explode($delim, $line);
-            $col_count = count($cols);
             foreach ($cols as $col_no => $col) {
                 // now we can sub back in the correct delim characters
                 $col = str_replace(self::PLACEHOLDER_DELIM, $delim, $col);
