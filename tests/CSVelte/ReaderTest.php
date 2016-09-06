@@ -20,6 +20,17 @@ use CSVelte\Table\Row;
  */
 class ReaderTest extends UnitTestCase
 {
+    public function testReaderCanAcceptArrayForFlavor()
+    {
+        $flavorArr = (new Flavor())->toArray();
+        $flavorArr['delimiter'] = "\t";
+        $flavorArr['lineTerminator'] = "\n";
+        $flavorArr['quoteChar'] = "'";
+        $flavorArr['quoteStyle'] = Flavor::QUOTE_ALL;
+        $reader = new Reader($this->getFilePathFor('veryShort'), $flavorArr);
+        $this->assertEquals($flavorArr, $reader->getFlavor()->toArray());
+    }
+
     /**
      * @covers ::__construct()
      */

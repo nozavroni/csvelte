@@ -46,7 +46,7 @@ class CSVelte
      * @throws CSVelte\Exception\FileNotFoundException
      * @access public
      */
-    public static function reader($filename, Flavor $flavor = null)
+    public static function reader($filename, $flavor = null)
     {
         self::assertFileIsReadable($filename);
         $file = new File($filename);
@@ -64,7 +64,7 @@ class CSVelte
      * @return CSVelte\Reader An iterator for provided CSV data
      * @access public
      */
-    public static function stringReader($str, Flavor $flavor = null)
+    public static function stringReader($str, $flavor = null)
     {
         return new Reader($str, $flavor);
     }
@@ -81,7 +81,7 @@ class CSVelte
      * @return CSVelte\Writer A writer object for writing to given filename
      * @access public
      */
-    public static function writer($filename, Flavor $flavor = null)
+    public static function writer($filename, $flavor = null)
     {
         $file = new File($filename, 'w+');
         return new Writer($file, $flavor);
@@ -99,7 +99,7 @@ class CSVelte
      * @return int Number of rows written
      * @access public
      */
-    public static function export($filename, $data, Flavor $flavor = null)
+    public static function export($filename, $data, $flavor = null)
     {
         $file = new File($filename);
         $writer = new Writer($file, $flavor);

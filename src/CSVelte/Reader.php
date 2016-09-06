@@ -89,7 +89,7 @@ class Reader implements \Iterator
      * @param \CSVelte\Contract\Readable The source of our CSV data
      * @param \CSVelte\Flavor The "flavor" or format specification object
      */
-    public function __construct($input, Flavor $flavor = null)
+    public function __construct($input, $flavor = null)
     {
         $this->setSource($input)
              ->setFlavor($flavor)
@@ -98,6 +98,7 @@ class Reader implements \Iterator
 
     protected function setFlavor($flavor)
     {
+        if (is_array($flavor)) $flavor = new Flavor($flavor);
         $taster = new Taster($this->source);
         // @todo put this inside a try/catch
         if (is_null($flavor)) {

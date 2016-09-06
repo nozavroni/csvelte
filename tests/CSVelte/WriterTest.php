@@ -80,6 +80,17 @@ class WriterTest extends TestCase
         $this->assertSame($expectedFlavor, $writer->getFlavor());
     }
 
+    public function testWriterCanAcceptArrayForFlavor()
+    {
+        $flavorArr = (new Flavor())->toArray();
+        $flavorArr['delimiter'] = "\t";
+        $flavorArr['lineTerminator'] = "\n";
+        $flavorArr['quoteChar'] = "'";
+        $flavorArr['quoteStyle'] = Flavor::QUOTE_ALL;
+        $writer = new Writer(new Stream($this->getFilePathFor('veryShort'), 'a+'), $flavorArr);
+        $this->assertEquals($flavorArr, $writer->getFlavor()->toArray());
+    }
+
     public function testWriterWriteWriteSingleRowUsingArray()
     {
         $out = new Stream('php://memory');

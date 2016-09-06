@@ -60,9 +60,9 @@ class Writer
      * @return void
      * @access public
      */
-    public function __construct(Writable $output, Flavor $flavor = null)
+    public function __construct(Writable $output, $flavor = null)
     {
-        if (is_null($flavor)) $flavor = new Flavor;
+        if (!($flavor instanceof Flavor)) $flavor = new Flavor($flavor);
         $this->flavor = $flavor;
         $this->output = $output;
     }

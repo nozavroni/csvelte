@@ -104,7 +104,7 @@ class Flavor
      * Not yet implemented
      * @ignore
      */
-    protected $skipInitialSpace = false;
+    // protected $skipInitialSpace = false;
 
     /**
      * Quoting style.
@@ -210,8 +210,7 @@ class Flavor
      */
     public function copy(array $attribs = array())
     {
-        $attributes = get_object_vars($this);
-        return new Flavor(array_merge($attributes, $attribs));
+        return new Flavor(array_merge($this->toArray(), $attribs));
     }
 
     /**
@@ -243,6 +242,11 @@ class Flavor
     public function __set($attr, $val)
     {
         throw new ImmutableException("Cannot change attributes on an immutable object: " . self::class . "::\$" . $attr);
+    }
+
+    public function toArray()
+    {
+        return get_object_vars($this);
     }
 
 }
