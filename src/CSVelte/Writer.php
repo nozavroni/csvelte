@@ -42,7 +42,7 @@ class Writer
     protected $flavor;
 
     /**
-     * @var \CSVelte\Contracts\Writable
+     * @var \CSVelte\Contract\Writable
      */
     protected $output;
 
@@ -59,8 +59,8 @@ class Writer
     /**
      * Class Constructor
      *
-     * @param \CSVelte\Contract\Writable
-     * @param \CSVelte\Flavor|array
+     * @param \CSVelte\Contract\Writable $output An output source to write to
+     * @param \CSVelte\Flavor|array $flavor A flavor or set of formatting params
      * @return void
      * @access public
      */
@@ -178,7 +178,7 @@ class Writer
      * Prepare a cell of data to be written (convert to Data object)
      *
      * @param string $data A string containing cell data
-     * @return string quoted string data 
+     * @return string quoted string data
      * @access protected
      */
     protected function prepareData($data)
