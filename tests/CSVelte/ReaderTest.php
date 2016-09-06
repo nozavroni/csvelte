@@ -105,4 +105,19 @@ class ReaderTest extends UnitTestCase
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
     }
 
+    public function testReaderFilteredIterator()
+    {
+        $reader = new Reader($this->getFileContentFor('commaNewlineHeader'));
+        $reader->addFilter(function($row){
+            return $row['CERT'] > 55000;
+        })->addFilter(function($row){
+            return stripos($row['Bank Name'], 'bank') !== false;
+        });
+        foreach ($reader->filter() as $line_no => $row) {
+            $this->assertGreaterThan(55000, $row['CERT'], "Ensure \"CERT\" field from row #{$line_no} is greater than 55000.");
+            $this->assertContains('bank', $row['Bank Name'], "Ensure \"Bank Name\" field from row #{$line_no} contains the word \"bank\".", true);
+        }
+        $this->assertCount(4, iterator_to_array($reader->filter()));
+    }
+
 }

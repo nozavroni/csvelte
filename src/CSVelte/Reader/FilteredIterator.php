@@ -43,8 +43,8 @@ class FilteredIterator extends FilterIterator
      * Initializes the iterator using the CSV reader and its array of callback
      * filter functions/callables.
      *
-     * @param CsvReader $reader  The CSV reader being iterated
-     * @param array     $filters The list of callbacks
+     * @param \CSVelte\Reader $reader  The CSV reader being iterated
+     * @param array $filters The list of callbacks
      */
     public function __construct(CsvReader $reader, array $filters)
     {
@@ -58,7 +58,7 @@ class FilteredIterator extends FilterIterator
      * not include this row in the iteration.
      *
      * @return boolean
-     * @todo filter functions should accept current row, index, AND ref to reader 
+     * @todo filter functions should accept current row, index, AND ref to reader
      */
     public function accept()
     {

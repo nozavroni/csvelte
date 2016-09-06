@@ -112,8 +112,6 @@ class Taster
      * Class constructor--accepts a CSV input source
      *
      * @param \CSVelte\Contract\Readable The source of CSV data
-     * @return void
-     * @access public
      * @todo It may be a good idea to skip the first line or two for the sample
      *     so that the header line(s) don't throw things off (with the exception
      *     of lickHeader() obviously)
