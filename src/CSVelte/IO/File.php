@@ -41,7 +41,7 @@ class File extends SplFileObject implements Readable, Writable, Seekable
 
     public function getName()
     {
-        return parent::getPath();
+        return $this->getPath();
     }
 
     /**
@@ -53,7 +53,7 @@ class File extends SplFileObject implements Readable, Writable, Seekable
      */
     public function read($length)
     {
-        return parent::fread($length);
+        return $this->fread($length);
     }
 
     /**
@@ -65,7 +65,7 @@ class File extends SplFileObject implements Readable, Writable, Seekable
      */
     public function getContents()
     {
-        return $this->read(parent::getSize());
+        return $this->read($this->getSize());
     }
 
     /**
@@ -77,7 +77,7 @@ class File extends SplFileObject implements Readable, Writable, Seekable
      */
     public function write($data)
     {
-        return parent::fwrite($data);
+        return $this->fwrite($data);
     }
 
     /**
@@ -102,13 +102,13 @@ class File extends SplFileObject implements Readable, Writable, Seekable
      */
     public function seek($pos, $whence = SEEK_SET)
     {
-        return parent::fseek($pos, $whence);
+        return $this->fseek($pos, $whence);
     }
 
     /**
      * Seek to specific line (beginning)
      * @param int Offset to seek to
-     * @param int Position from whence to seek from
+     * @param int Position from whence to seek from (only SEEK_SET and SEEK_CUR supported)
      * @param string The line terminator string/char
      * @return boolean True if successful
      * @todo Add to interface?
