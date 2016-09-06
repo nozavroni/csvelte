@@ -1,6 +1,8 @@
 <?php
-use PHPUnit\Framework\TestCase;
+namespace CSVelteTest;
+
 use CSVelte\Autoloader;
+
 /**
  * CSVelte\Autoloader Tests
  *
@@ -8,7 +10,7 @@ use CSVelte\Autoloader;
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-class AutoloaderTest extends TestCase
+class AutoloaderTest extends UnitTestCase
 {
     public function testAddPathsUsingConstructor()
     {
