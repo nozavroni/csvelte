@@ -43,17 +43,17 @@ class Reader implements \Iterator
      * This class supports any sources of input that implements this interface.
      * This way I can read from local files, streams, FTP, any class that implements
      * the "Readable" interface
-     * @var CSVelte\Contract\Readable
+     * @var \CSVelte\Contract\Readable
      */
     protected $source;
 
     /**
-     * @var CSVelte\Flavor The "flavor" or format of the CSV being read
+     * @var \CSVelte\Flavor The "flavor" or format of the CSV being read
      */
     protected $flavor;
 
     /**
-     * @var CSVelte\Table\AbstractRow Row currently loaded into memory
+     * @var \CSVelte\Table\Row|boolean Row currently loaded into memory
      */
     protected $current;
 
@@ -63,7 +63,7 @@ class Reader implements \Iterator
     protected $line = 0;
 
     /**
-     * @var CSVelte\Table\HeaderRow The header row (if any)
+     * @var \CSVelte\Table\HeaderRow The header row (if any)
      */
     protected $header;
 
@@ -86,8 +86,8 @@ class Reader implements \Iterator
      * Reader Constructor.
      * Initializes a reader object using an input source and optionally a flavor
      *
-     * @param \CSVelte\Contract\Readable The source of our CSV data
-     * @param \CSVelte\Flavor The "flavor" or format specification object
+     * @param \CSVelte\Contract\Readable $input The source of our CSV data
+     * @param \CSVelte\Flavor $flavor The "flavor" or format specification object
      */
     public function __construct($input, $flavor = null)
     {
@@ -96,6 +96,13 @@ class Reader implements \Iterator
              ->rewind();
     }
 
+    /**
+     * Set the flavor.
+     *
+     * Set the ``CSVelte\Flavor`` object, used to determine CSV format.
+     *
+     * @param \CSVelte\Flavor|array $flavor Either an array or a flavor object
+     */
     protected function setFlavor($flavor)
     {
         if (is_array($flavor)) $flavor = new Flavor($flavor);
@@ -119,7 +126,7 @@ class Reader implements \Iterator
      * readable (can be read). This will make sure that whatever is passed to
      * the reader meets these expectations and set $this->source.
      *
-     * @param mixed See description
+     * @param \CSVelte\Contract\Readable|object|string $input See description
      * @return $this
      */
     protected function setSource($input)
@@ -162,12 +169,10 @@ class Reader implements \Iterator
      * account CSV's de-facto quoting rules with respect to designated line
      * terminator character when they fall within quoted strings.
      *
-     * @param int
-     * @param char
-     * @return string
-     * @access public
-     * @see README file for more about CSV de-facto standard
-     * @todo This should probably just accept a Flavor as its only argument
+     * @return string A CSV row (could possibly span multiple lines depending on
+     *     quoting and escaping)
+     * @throws \CSVelte\Exception\EndOfFileException when eof has been reached
+     *     and the read buffer has all been returned
      */
     protected function readLine()
     {
@@ -191,9 +196,13 @@ class Reader implements \Iterator
     /**
      * Determine whether last line ended while a quoted string was still "open"
      *
-     * @param string Line of csv to analyze
-     * @return bool
-     * @access protected
+     * This method is used in a loop to determine if each line being read ends
+     * while a quoted string is still "open".
+     *
+     * @param string $line Line of csv to analyze
+     * @param string $quoteChar The quote/enclosure character to use
+     * @param string $escapeChar The escape char/sequence to use
+     * @return bool True if currently within a quoted string
      */
     protected function inQuotedString($line, $quoteChar, $escapeChar)
     {
@@ -214,9 +223,10 @@ class Reader implements \Iterator
 
     /**
      * Flavor Getter.
+     *
      * Retreive the "flavor" object being used by the reader
      *
-     * @return CSVelte\Flavor
+     * @return \CSVelte\Flavor
      * @access public
      */
     public function getFlavor()
@@ -225,7 +235,7 @@ class Reader implements \Iterator
     }
 
     /**
-     * Check if flavor object defines header
+     * Check if flavor object defines header.
      *
      * Determine whether or not the input source's CSV data contains a header
      * row or not. Unless you explicitly specify so within your Flavor object,
@@ -234,7 +244,6 @@ class Reader implements \Iterator
      *
      * @return boolean True if the input source has a header row (or, to be more )
      *     accurate, if the flavor SAYS it has a header row)
-     * @access public
      * @todo Rather than always reading in Taster::SAMPLE_SIZE, read in ten lines at a time until
      *     whatever method it is has enough data to make a reliable decision/guess
      */
@@ -253,10 +262,10 @@ class Reader implements \Iterator
      * on delimiters or newlines within quotes. Once I have exploded, I typically
      * sub back in the real characters before doing anything else.
      *
-     * @param string The string to do the replacements on
-     * @param char The delimiter character to replace
-     * @param char The quote character
-     * @param string Line terminator sequence
+     * @param string $data The string to do the replacements on
+     * @param string $delim The delimiter character to replace
+     * @param string $quo The quote character
+     * @param string $eol Line terminator character/sequence
      * @return string The data with replacements performed
      * @access protected
      * @internal
@@ -299,7 +308,7 @@ class Reader implements \Iterator
     /**
      * Remove quotes wrapping text.
      *
-     * @param string The data to unquote
+     * @param string $data The data to unquote
      * @return string The data with quotes stripped from the outside of it
      * @internal
      */

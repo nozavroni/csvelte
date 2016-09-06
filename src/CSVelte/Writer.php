@@ -37,12 +37,12 @@ use CSVelte\Exception\WriterException;
 class Writer
 {
     /**
-     * @var CSVelte\Flavor
+     * @var \CSVelte\Flavor
      */
     protected $flavor;
 
     /**
-     * @var CSVelte\Contracts\Writable
+     * @var \CSVelte\Contracts\Writable
      */
     protected $output;
 
@@ -59,8 +59,8 @@ class Writer
     /**
      * Class Constructor
      *
-     * @param CSVelte\Contract\Writable
-     * @param CSVelte\Flavor
+     * @param \CSVelte\Contract\Writable
+     * @param \CSVelte\Flavor|array
      * @return void
      * @access public
      */
@@ -75,7 +75,7 @@ class Writer
      * Get the CSV flavor (or dialect) for this writer
      *
      * @param void
-     * @return CSVelte\Flavor
+     * @return \CSVelte\Flavor
      * @access public
      */
     public function getFlavor()
@@ -91,7 +91,7 @@ class Writer
      *
      * @param \Iterator|array A list of header values
      * @return boolean
-     * @throws CSVelte\Exception\WriteBufferException
+     * @throws \CSVelte\Exception\WriterException
      */
     public function setHeaderRow($headers)
     {
@@ -105,9 +105,8 @@ class Writer
     /**
      * Write a single row
      *
-     * @param \Iterator|array
-     * @return int
-     * @access public
+     * @param \Iterator|array $row The row to write to source
+     * @return int The number or bytes written
      */
     public function writeRow($row)
     {
@@ -137,7 +136,7 @@ class Writer
     /**
      * Write multiple rows
      *
-     * @param \Iterable|array of \Iterable|array
+     * @param \Iterable|array $rows List of \Iterable|array
      * @return int number of lines written
      * @access public
      */
@@ -178,8 +177,8 @@ class Writer
     /**
      * Prepare a cell of data to be written (convert to Data object)
      *
-     * @param mixed Any value that can be converted to a CSVelte\Table\Data object
-     * @return CSVelte\Table\Data
+     * @param string $data A string containing cell data
+     * @return string quoted string data 
      * @access protected
      */
     protected function prepareData($data)

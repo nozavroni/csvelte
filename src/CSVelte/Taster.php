@@ -111,7 +111,7 @@ class Taster
     /**
      * Class constructor--accepts a CSV input source
      *
-     * @param CSVelte\Contract\Readable The source of CSV data
+     * @param \CSVelte\Contract\Readable The source of CSV data
      * @return void
      * @access public
      * @todo It may be a good idea to skip the first line or two for the sample
@@ -125,25 +125,13 @@ class Taster
     }
 
     /**
-     * I'm not sure what this is for...
-     * @param  Readable $input The input source
-     * @return CSVelte\Taster
-     * @todo Get rid of this unless there is a good reason for having it...?
-     * @ignore
-     */
-    public static function create(Readable $input)
-    {
-        return new Taster($input);
-    }
-
-    /**
      * Examine the input source and determine what "Flavor" of CSV it contains.
      * The CSV format, while having an RFC (https://tools.ietf.org/html/rfc4180),
      * doesn't necessarily always conform to it. And it doesn't provide meta such as the delimiting character, quote character, or what types of data are quoted.
      * such as the delimiting character, quote character, or what types of data are quoted.
      * are quoted.
      *
-     * @return CSVelte\Flavor The metadata that the CSV format doesn't provide
+     * @return \CSVelte\Flavor The metadata that the CSV format doesn't provide
      * @access public
      * @todo Implement a lickQuote method for when lickQuoteAndDelim method fails
      * @todo Should there bea lickEscapeChar method? the python module that inspired
@@ -191,7 +179,7 @@ class Taster
      * Examine the input source to determine which character(s) are being used
      * as the end-of-line character
      *
-     * @return char The end-of-line char for the input data
+     * @return string The end-of-line char for the input data
      * @access protected
      * @credit pulled from stackoverflow thread *tips hat to username "Harm"*
      * @todo This should throw an exception if it cannot determine the line ending
@@ -237,7 +225,14 @@ class Taster
      */
     protected function lickQuoteAndDelim()
     {
-        $patterns = array();
+        /**
+         * @var array An array of pattern matches
+         */
+        $matches = null;
+        /**
+         * @var array An array of patterns (regex)
+         */
+        $patterns = [];
         // delim can be anything but line breaks, quotes, alphanumeric, underscore, backslash, or any type of spaces
         $antidelims = implode(array("\r", "\n", "\w", preg_quote('"', '/'), preg_quote("'", '/')/*, preg_quote('\\', '/')*/, preg_quote(chr(self::SPACE), '/')));
         $delim = '(?P<delim>[^' . $antidelims . '])';
@@ -272,7 +267,7 @@ class Taster
       *
       * @param string The character(s) used for newlines
       * @return string One of four Flavor::QUOTING_* constants
-      * @see CSVelte\Flavor for possible quote style constants
+      * @see \CSVelte\Flavor for possible quote style constants
       * @access protected
       * @todo Refactor this method--It needs more thorough testing against a wider
       *     variety of CSV data to be sure it works reliably. And I'm sure there
@@ -333,9 +328,9 @@ class Taster
      * (QUOTE_ALL) and those that quote none (QUOTE_NONE).
      *
      * @param string The data to examime for "quoting style"
-     * @param char The type of quote character being used (single or double)
-     * @param char The character used as the column delimiter
-     * @param char The character used for newlines
+     * @param string The type of quote character being used (single or double)
+     * @param string The character used as the column delimiter
+     * @param string The character used for newlines
      * @return string One of four "QUOTING_" constants defined above--see this
      *     method's description for more info.
      * @access protected
@@ -471,7 +466,7 @@ class Taster
      * currently there is no dedicated method for doing so I just use str_replace
      *
      * @param string The string to do the replacements on
-     * @param char The delimiter character to replace
+     * @param string The delimiter character to replace
      * @return string The data with replacements performed
      * @access protected
      * @todo I could probably pass in (maybe optionally) the newline character I
@@ -500,7 +495,7 @@ class Taster
      * @param string The string of data to check the type of
      * @return string One of the TYPE_ string constants above
      * @access protected
-     * @uses Carbon/Carbon date/time ilbrary/class
+     * @uses \Carbon\Carbon date/time ilbrary/class
      */
     protected function lickType($data)
     {
@@ -553,10 +548,10 @@ class Taster
      *
      * @param string The CSV data to examine (only 20 rows will be examined so )
      *     there is no need to provide any more data than that)
-     * @param char The CSV data's quoting char (either double or single quote)
-     * @param char The CSV data's delimiting char (can be a variety of chars but)
+     * @param string The CSV data's quoting char (either double or single quote)
+     * @param string The CSV data's delimiting char (can be a variety of chars but)
      *     typically is either a comma or a tab, sometimes a pipe)
-     * @param char The CSV data's end-of-line char(s) (\n \r or \r\n)
+     * @param string The CSV data's end-of-line char(s) (\n \r or \r\n)
      * @return boolean True if the data (most likely) contains a header row
      * @access public
      * @todo This method needs a total refactor. It's not necessary to loop twice
