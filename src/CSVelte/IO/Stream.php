@@ -111,7 +111,7 @@ class Stream implements Readable, Writable, Seekable
      *
      * @param string|object The string/object to convert to a stream
      * @param array Options to pass to the newly created stream
-     * @return CSVelte\IO\Stream
+     * @return \CSVelte\IO\Stream
      * @throws \InvalidArgumentException
      */
     public static function streamize($resource = '')
