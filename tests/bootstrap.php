@@ -8,7 +8,6 @@
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/CSVelte/TestFiles.php';
 
 function dd($input, $exit = true, $label = null)
 {

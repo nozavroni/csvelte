@@ -1,4 +1,6 @@
 <?php
+namespace CSVelteTest;
+
 /**
  * CSVelte\Utils Tests
  *
@@ -6,10 +8,9 @@
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-use PHPUnit\Framework\TestCase;
 use CSVelte\Utils;
 
-class UtilsTest extends TestCase
+class UtilsTest extends UnitTestCase
 {
     protected $dummydata = array(
         array('foo','bar','baz'),
@@ -26,16 +27,6 @@ class UtilsTest extends TestCase
         'boo' => 'baz',
         'too' => 'maz'
     );
-
-    public function setUp()
-    {
-
-    }
-
-    public function tearDown()
-    {
-
-    }
 
     public function testArrayGetGetsValueOrDefault()
     {

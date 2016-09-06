@@ -1,7 +1,6 @@
 <?php
+namespace CSVelteTest;
 
-use PHPUnit\Framework\TestCase;
-use CSVelte\Exception\UnknownFlavorException;
 use CSVelte\Flavor;
 use CSVelte\Flavor\Excel;
 use CSVelte\Flavor\ExcelTab;
@@ -15,7 +14,7 @@ use CSVelte\Flavor\UnixTab;
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  */
-class FlavorTest extends TestCase
+class FlavorTest extends UnitTestCase
 {
     /**
      * This is just a really simple test to get things started...
@@ -163,7 +162,7 @@ class FlavorTest extends TestCase
 
     public function testConcreteFlavors()
     {
-        $excel = new CSVelte\Flavor\Excel;
+        $excel = new Excel;
         $this->assertEquals("\r\n", $excel->lineTerminator);
         $this->assertEquals('"', $excel->quoteChar);
         $this->assertEquals(",", $excel->delimiter);
