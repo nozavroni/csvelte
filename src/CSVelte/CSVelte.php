@@ -15,11 +15,10 @@ namespace CSVelte;
 
 use CSVelte\Reader;
 use CSVelte\Flavor;
-use CSVelte\Input\File as InFile;
-use CSVelte\Output\File as OutFile;
-use CSVelte\Input\String;
-use CSVelte\Excaption\PermissionDeniedException;
-use CSVelte\Exception\FileNotFoundException;
+use CSVelte\IO\File;
+use CSVelte\IO\Stream;
+
+use CSVelte\Exception\IOException;
 
 /**
  * CSVelte Facade
@@ -50,8 +49,8 @@ class CSVelte
     public static function reader($filename, Flavor $flavor = null)
     {
         self::assertFileIsReadable($filename);
-        $infile = new InFile($filename);
-        return new Reader($infile, $flavor);
+        $file = new File($filename);
+        return new Reader($file, $flavor);
     }
 
     /**
@@ -67,8 +66,7 @@ class CSVelte
      */
     public static function stringReader($str, Flavor $flavor = null)
     {
-        $infile = new String($str);
-        return new Reader($infile, $flavor);
+        return new Reader($str, $flavor);
     }
 
     /**
@@ -85,8 +83,8 @@ class CSVelte
      */
     public static function writer($filename, Flavor $flavor = null)
     {
-        $outfile = new OutFile($filename);
-        return new Writer($outfile, $flavor);
+        $file = new File($filename, 'w+');
+        return new Writer($file, $flavor);
     }
 
     /**
@@ -103,8 +101,8 @@ class CSVelte
      */
     public static function export($filename, $data, Flavor $flavor = null)
     {
-        $outfile = new OutFile($filename);
-        $writer = new Writer($outfile, $flavor);
+        $file = new File($filename);
+        $writer = new Writer($file, $flavor);
         return $writer->writeRows($data);
     }
 
@@ -117,14 +115,14 @@ class CSVelte
      * @param string The name of the file you wish to check
      * @return void
      * @access protected
-     * @throws CSVelte\Exception\PermissionDeniedException
+     * @throws CSVelte\Exception\IOException
      * @internal
      */
     protected static function assertFileIsReadable($filename)
     {
         self::assertFileExists($filename);
         if (!is_readable($filename)) {
-            throw new PermissionDeniedException('Permission denied for: ' . $filename);
+            throw new IOException('Permission denied for: ' . $filename, IOException::ERR_FILE_PERMISSION_DENIED);
         }
     }
 
@@ -134,13 +132,13 @@ class CSVelte
      * @param string The name of the file you wish to check
      * @return void
      * @access protected
-     * @throws CSVelte\Exception\FileNotFoundException
+     * @throws CSVelte\Exception\IOException
      * @internal
      */
     protected static function assertFileExists($filename)
     {
         if (!file_exists($filename)) {
-            throw new FileNotFoundException('File does not exist: ' . $filename);
+            throw new IOException('File does not exist: ' . $filename, IOException::ERR_FILE_NOT_FOUND);
         }
     }
 }

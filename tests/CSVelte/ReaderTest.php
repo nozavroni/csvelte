@@ -7,7 +7,7 @@ use CSVelte\Reader;
 use CSVelte\Writer;
 use CSVelte\Flavor;
 use CSVelte\Table\Row;
-//use org\bovigo\vfs\vfsStream;
+
 /**
  * CSVelte\Reader Tests.
  * New Format for refactored tests -- see issue #11

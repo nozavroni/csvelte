@@ -23,7 +23,6 @@ use \InvalidArgumentException;
 use CSVelte\Exception\NotYetImplementedException;
 use CSVelte\Exception\EndOfFileException;
 use CSVelte\Exception\IOException;
-use CSVelte\Exception\InvalidStreamException;
 
 /**
  * CSVelte Stream.
@@ -173,11 +172,11 @@ class Stream implements Readable, Writable, Seekable
                 $stream = @fopen($uri, $mode, false, $context);
             }
             if (false === $stream) {
-                throw new InvalidStreamException("Invalid stream URI: " . $uri, InvalidStreamException::ERR_INVALID_URI);
+                throw new IOException("Invalid stream URI: " . $uri, IOException::ERR_INVALID_STREAM_URI);
             }
         }
         if (!is_resource($stream) || get_resource_type($stream) != 'stream') {
-            throw new InvalidStreamException("Expected stream resource, got: " . gettype($stream), InvalidStreamException::ERR_INVALID_RESOURCE);
+            throw new IOException("Expected stream resource, got: " . gettype($stream), IOException::ERR_INVALID_STREAM_RESOURCE);
         }
         return $stream;
     }

@@ -78,8 +78,8 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException CSVelte\Exception\InvalidStreamException
-     * @expectedExceptionCode CSVelte\Exception\InvalidStreamException::ERR_INVALID_URI
+     * @expectedException CSVelte\Exception\IOException
+     * @expectedExceptionCode CSVelte\Exception\IOException::ERR_INVALID_STREAM_URI
      */
     public function testInstantiateThrowsExceptionIfInvalidStreamURI()
     {
@@ -87,8 +87,8 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException CSVelte\Exception\InvalidStreamException
-     * @expectedExceptionCode CSVelte\Exception\InvalidStreamException::ERR_INVALID_RESOURCE
+     * @expectedException CSVelte\Exception\IOException
+     * @expectedExceptionCode CSVelte\Exception\IOException::ERR_INVALID_STREAM_RESOURCE
      */
     public function testInstantiateThrowsExceptionIfInvalidStreamResource()
     {

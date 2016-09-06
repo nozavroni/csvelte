@@ -1,9 +1,9 @@
 <?php
 /**
  * CSVelte: Slender, elegant CSV for PHP
- * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV 
- * standardization efforts, CSVelte was written in an effort to take all the 
- * suck out of working with CSV. 
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
  *
  * @version   v0.2
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
@@ -21,5 +21,13 @@ namespace CSVelte\Exception;
  */
 class TasterException extends CSVelteException
 {
+    /**
+     * @var const Could not determine delimiter
+     */
+    const ERR_DELIMITER = 1;
 
+    /**
+     * @var const Could not determine quote and delimiter at the same time
+     */
+    const ERR_QUOTE_AND_DELIM = 2;
 }

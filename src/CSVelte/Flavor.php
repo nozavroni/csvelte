@@ -13,8 +13,7 @@
  */
 namespace CSVelte;
 
-use CSVelte\Exception\UnknownAttributeException;
-use CSVelte\Exception\UnknownFlavorException;
+use \InvalidArgumentException;
 use CSVelte\Exception\ImmutableException;
 
 /**
@@ -185,7 +184,7 @@ class Flavor
      * @param string The attribute to check validity of
      * @return void
      * @access protected
-     * @throws UnknownAttributeException
+     * @throws InvalidArgumentException
      * @internal
      * @todo This should accept a second parameter for value that asserts the value
      *     is a valid value
@@ -193,7 +192,7 @@ class Flavor
     protected function assertValidAttribute($attr)
     {
         if (!property_exists(self::class, $attr))
-            throw new UnknownAttributeException("Unknown attribute: " . $attr);
+            throw new InvalidArgumentException("Unknown attribute: " . $attr);
     }
 
     /**
@@ -222,7 +221,7 @@ class Flavor
      * @return string The attribute value
      * @access public
      * @internal
-     * @throws CSVelte\Exception\UnknownAttributeException
+     * @throws InvalidArgumentException
      */
     public function __get($attr)
     {

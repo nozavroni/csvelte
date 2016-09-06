@@ -20,7 +20,7 @@ use CSVelte\Contract\Readable;
 use CSVelte\Contract\Writable;
 use CSVelte\Contract\Seekable;
 
-use CSVelte\Exception\FileNotFoundException;
+use CSVelte\Exception\NotYetImplementedException;
 
 /**
  * CSVelte File.

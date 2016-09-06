@@ -13,7 +13,7 @@
 namespace CSVelte\Table;
 
 use CSVelte\Utils;
-use CSVelte\Exception\InvalidHeaderException;
+use CSVelte\Exception\HeaderException;
 
 /**
  * Table Row Class
@@ -69,7 +69,7 @@ class Row extends AbstractRow
             } else {
                 // @todo This is too strict. I need a way to recover from this a little better...
                 // header count is short, this is likely an error...
-                throw new InvalidHeaderException("Header count ({$hcount}) does not match column count ({$rcount}).");
+                throw new HeaderException("Header count ({$hcount}) does not match column count ({$rcount}).", HeaderException::ERR_HEADER_COUNT);
             }
         }
         $this->headers = $headers;

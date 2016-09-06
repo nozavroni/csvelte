@@ -17,6 +17,9 @@ use \Countable;
 use \ArrayAccess;
 use CSVelte\Utils;
 use CSVelte\Flavor;
+
+use \OutOfBoundsException;
+use \InvalidArgumentException;
 use CSVelte\Exception\ImmutableException;
 
 /**
@@ -123,7 +126,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     public function current()
     {
         if (!array_key_exists($this->position, $this->fields)) {
-            throw new \OutOfBoundsException("Undefined index: " . $this->position);
+            throw new OutOfBoundsException("Undefined index: " . $this->position);
         }
         return $this->fields[$this->position];
     }
@@ -190,7 +193,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     {
         try {
             Utils::array_get($this->fields, $offset, null, true);
-        } catch (\OutOfBoundsException $e) {
+        } catch (OutOfBoundsException $e) {
             return false;
         }
         return true;
@@ -249,7 +252,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     protected function assertOffsetExists($offset)
     {
         if (!$this->offsetExists($offset)) {
-            throw new \OutOfBoundsException("Undefined offset: " . $offset);
+            throw new OutOfBoundsException("Undefined offset: " . $offset);
         }
     }
 

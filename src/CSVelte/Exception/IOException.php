@@ -18,6 +18,7 @@ namespace CSVelte\Exception;
  * @package   CSVelte\Exception
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @since     v0.2
  */
 class IOException extends CSVelteException
 {
@@ -35,4 +36,24 @@ class IOException extends CSVelteException
      * @var constant Used as code for exception thrown for unseekable stream
      */
     const ERR_NOT_SEEKABLE = 103;
+
+    /**
+     * @var constant Used as code for exception thrown for missing file
+     */
+    const ERR_INVALID_STREAM_URI = 201;
+
+    /**
+     * @var constant Used as code for exception thrown for missing directory
+     */
+    const ERR_INVALID_STREAM_RESOURCE = 202;
+
+    /**
+     * @var constant Used as code for exception thrown for missing file
+     */
+    const ERR_FILE_PERMISSION_DENIED = 301;
+
+    /**
+     * @var constant Used as code for exception thrown for missing directory
+     */
+    const ERR_FILE_NOT_FOUND = 302;
 }
