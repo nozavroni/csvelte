@@ -109,7 +109,7 @@ class Stream implements Readable, Writable, Seekable
      * of the guzzle/streams PHP package. Thanks for the inspiration (in some cases)
      * and the not suing me for outright theft (in this case).
      *
-     * @param string|object The string/object to convert to a stream
+     * @param object|string The string/object to convert to a stream
      * @param array Options to pass to the newly created stream
      * @return \CSVelte\IO\Stream
      * @throws \InvalidArgumentException

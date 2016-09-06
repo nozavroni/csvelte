@@ -103,7 +103,7 @@ class Reader implements \Iterator
      *
      * @param \CSVelte\Flavor|array $flavor Either an array or a flavor object
      */
-    protected function setFlavor($flavor)
+    protected function setFlavor($flavor = null)
     {
         if (is_array($flavor)) $flavor = new Flavor($flavor);
         $taster = new Taster($this->source);

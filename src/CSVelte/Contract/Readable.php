@@ -41,11 +41,12 @@ interface Readable
      * Read a single line from input source and return it (and move pointer to )
      * the beginning of the next line)
      *
-     * @param void
+     * @param string $eol Line terminator sequence/character
+     * @param int $maxLength The maximum line length to return
      * @return string The next line from the input source
      * @access public
      */
-    public function readLine();
+    public function readLine($eol = PHP_EOL, $maxLength = null);
 
     /**
      * Read the entire contents of stream/file
