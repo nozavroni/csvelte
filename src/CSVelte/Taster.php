@@ -119,7 +119,9 @@ class Taster
     public function __construct(Readable $input)
     {
         $this->input = $input;
-        $this->sample = $input->read(self::SAMPLE_SIZE);
+        if (!$this->sample = $input->read(self::SAMPLE_SIZE)) {
+            throw new TasterException("Invalid input, cannot read sample.", TasterException::ERR_INVALID_SAMPLE);
+        }
     }
 
     /**

@@ -56,4 +56,14 @@ class TasterTest extends UnitTestCase
         $no_header_flavor = $no_header_taster->lick();
         $this->assertFalse($no_header_flavor->header);
     }
+
+    /**
+     * @expectedException CSVelte\Exception\TasterException
+     * @expectedExceptionCode CSVelte\Exception\TasterException::ERR_INVALID_SAMPLE
+     */
+    public function testTasterThrowsExceptionIfPassedInputWithNoData()
+    {
+        $input = Stream::streamize('');
+        $taster = new Taster($input);
+    }
 }
