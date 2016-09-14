@@ -2,8 +2,13 @@
 Tutorials
 #########
 
-..  admonition:: Coming Soon
+.. caution::
 
-    This section has not yet been written. You can expect tutorials to be added as I have time to write them. 
+    *I'm sorry!* I haven't had time to write any tutorials yet. I'm only one man and I only have so much time. Tutorials will be added as I find the time to write them. Thank you for your patience!
 
-..  include:: map.rst.inc
+.. include:: /tutorials/summary.rst.inc
+
+.. toctree::
+   :hidden:
+
+   database
