@@ -23,6 +23,8 @@ use CSVelte\Exception\HeaderException;
  * @subpackage CSVelte\Table
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo       May need to put toArray() method in here so that it uses headers
+ *             as keys here 
  */
 class Row extends AbstractRow
 {

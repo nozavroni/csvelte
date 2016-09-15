@@ -1,6 +1,7 @@
 <?php
 namespace CSVelteTest;
 
+use CSVelte\CSVelte;
 use CSVelte\IO\File;
 use CSVelte\IO\Stream;
 use CSVelte\Reader;
@@ -105,6 +106,29 @@ class ReaderTest extends UnitTestCase
         $this->assertEquals($expected = array("1","Eldon Base for stackable storage shelf platinum","Muhammed MacIntyre","3","-213.25","38.94","35","Nunavut","Storage & Organization","0.8"), $reader->current()->toArray());
     }
 
+    public function testReaderToArray()
+    {
+        $reader = new Reader($this->getFileContentFor('veryShort'));
+        $this->assertInternalType("array", $arr = $reader->toArray());
+        // "foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\n"
+        $this->assertEquals([
+            1 => ["foo","bar","baz"],
+            2 => ["bin","boz","bork"],
+            3 => ["lib","bil","ilb"]
+        ], $arr);
+    }
+
+    // /**
+    //  * Make sure that when you pass a string to Reader constructor, that it first
+    //  * tries opening that string as a file path or stream URI before attempting
+    //  * to parse it as a CSV string
+    //  */
+    // public function testReaderTriesFilePathBeforeStringParse()
+    // {
+    //     $reader = new Reader($this->getFilePathFor('veryShort'));
+    //     $this->assertEquals([], $reader->current()->toArray());
+    // }
+
     public function testReaderFilteredIterator()
     {
         $reader = new Reader($this->getFileContentFor('commaNewlineHeader'));
@@ -133,6 +157,30 @@ class ReaderTest extends UnitTestCase
             $this->assertContains('bank', $row['Bank Name'], "Ensure \"Bank Name\" field from row #{$line_no} contains the word \"bank\".", true);
         }
         $this->assertCount(4, iterator_to_array($reader->filter()));
+    }
+
+    public function testFilteredIteratorHasToArrayMethod()
+    {
+        $reader = CSVelte::reader($this->getFilePathFor('commaNewlineHeader'));
+        $reader->addFilter(function($row){
+            return ($row['CERT'] < 40000);
+        });
+        $this->assertInternalType("array", $reader->filter()->toArray());
+        $reader->addFilter(function($row){
+            return $row['Bank Name'] == "Northern Star Bank";
+        });
+        $this->assertInternalType("array", $arr = $reader->filter()->toArray());
+        $this->assertInternalType("array", current($arr));
+        $this->assertCount(1, $oneArr = $reader->filter()->toArray());
+        $this->assertEquals([13 => [
+            "Bank Name" => "Northern Star Bank",
+            "City" => "Mankato",
+            "ST" => "MN",
+            "CERT" => "34983",
+            "Acquiring Institution" => "BankVista",
+            "Closing Date" => "19-Dec-14",
+            "Updated Date" => "6-Jan-16"
+        ]], $oneArr);
     }
 
     public function testReaderKeyReturnsLine()

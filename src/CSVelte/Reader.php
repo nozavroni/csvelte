@@ -413,4 +413,11 @@ class Reader implements \Iterator
         return new FilteredReader($this, $this->filters);
     }
 
+    public function toArray()
+    {
+        return array_map(function($row){
+            return $row->toArray();
+        }, iterator_to_array($this));
+    }
+
 }

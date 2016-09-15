@@ -70,4 +70,11 @@ class FilteredIterator extends FilterIterator
         }
         return true;
     }
+
+    public function toArray()
+    {
+        return array_map(function($row){
+            return $row->toArray();
+        }, iterator_to_array($this));
+    }
 }
