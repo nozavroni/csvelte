@@ -119,10 +119,14 @@ class Stream implements Readable, Writable, Seekable
         $type = gettype($resource);
 
         if ($type == 'string') {
-            $stream = self::open('php://temp', 'r+');
-            if ($resource !== '') {
-                fwrite($stream, $resource);
-                fseek($stream, 0);
+            if (file_exists($resource)) {
+                $stream = $resource;
+            } else {
+                $stream = self::open('php://temp', 'r+');
+                if ($resource !== '') {
+                    fwrite($stream, $resource);
+                    fseek($stream, 0);
+                }
             }
             return new self($stream);
         }

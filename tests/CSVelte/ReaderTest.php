@@ -28,6 +28,7 @@ class ReaderTest extends UnitTestCase
         $flavorArr['lineTerminator'] = "\n";
         $flavorArr['quoteChar'] = "'";
         $flavorArr['quoteStyle'] = Flavor::QUOTE_ALL;
+        $flavorArr['header'] = false;
         $reader = new Reader($this->getFilePathFor('veryShort'), $flavorArr);
         $this->assertEquals($flavorArr, $reader->getFlavor()->toArray());
     }
@@ -118,16 +119,18 @@ class ReaderTest extends UnitTestCase
         ], $arr);
     }
 
-    // /**
-    //  * Make sure that when you pass a string to Reader constructor, that it first
-    //  * tries opening that string as a file path or stream URI before attempting
-    //  * to parse it as a CSV string
-    //  */
-    // public function testReaderTriesFilePathBeforeStringParse()
-    // {
-    //     $reader = new Reader($this->getFilePathFor('veryShort'));
-    //     $this->assertEquals([], $reader->current()->toArray());
-    // }
+    /**
+     * Make sure that when you pass a string to Reader constructor, that it first
+     * tries opening that string as a file path or stream URI before attempting
+     * to parse it as a CSV string
+     */
+    public function testReaderTriesFilePathBeforeStringParse()
+    {
+        $reader = new Reader($this->getFilePathFor('veryShort'));
+        $this->assertEquals(["foo","bar","baz"], $reader->current()->toArray());
+        $reader = new Reader("i,am,a\nvry,short,csv\nfile,yes,sir\n");
+        $this->assertEquals(["i","am","a"], $reader->current()->toArray());
+    }
 
     public function testReaderFilteredIterator()
     {
