@@ -6,6 +6,8 @@ API Documentation
 
 .. todo::
 
+    **Issue #85**
+
     * Need to customize and complete your fork of ``sphpdox/sphpdox`` so that you can auto-generate your API docs entirely within Sphinx
     * Write custom stylesheet to improve the pages produced by sphpdox library
     * Clean up the template being used by sphpdox library
@@ -24,6 +26,8 @@ API Documentation
 You can find CSVelte's external API documentation at http://phpcsv.com/csvelte/apidocs/
 
 .. todo::
+
+    **Issue #111**
 
     In the mean time, while you're waiting for the sphpdox upgrade mentioned above...
 

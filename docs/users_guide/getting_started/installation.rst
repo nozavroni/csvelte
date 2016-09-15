@@ -4,6 +4,8 @@ Installation
 
 .. todo::
 
+    **Issue #109**
+
     * Need to add ``CSVelte\Exception\DependencyException`` class
     * Need to implement a ``CSVelte::assertDependenciesAvailable()`` method (or something similar)
     * Need to document the use of aforementioned exception class

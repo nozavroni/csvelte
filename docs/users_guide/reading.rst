@@ -14,7 +14,7 @@ Reading CSV Data
         * Once this happens, you will need to change the :apidoc: references to point to new location
     * Figure out how to do URI short-references so that instead of always doing `Some PHP page <http://php.net/manual/en/some.php.page.php>`_ I can simply do :php:`Some PHP page`
     * Do the same thing as above only with Wikipedia entries or any other site I want
-    * Go back and get rid of all :file:`some/file.csv` references. I was using it incorrectly. That syntax should only be used when the filename has actual semantic value for the library
+    * Go back and get rid of all :file:`some/file.csv` references. I was using it incorrectly. That syntax should only be used when the filename has actual semantic value for the library - see issue #95
 
 Instantiating a :php:class:`Reader` object
 ==========================================
@@ -213,6 +213,14 @@ In order to be able to use column header values rather than numeric indexes, you
 .. attention::
 
     You must remember to use the exact spelling and capitalization that the header row uses. "Album" is not the same as "album". If you use the latter, it will trigger an exception. You don't want that. In the future, I will likely relax this to allow any capitalization but for now, you must remember to use the header value exactly as it appears in the data.
+
+.. todo::
+
+    Make sure the FilteredReader class has a toArray() method. - see issue #110
+
+.. todo::
+
+    The callback used for Reader::addFilter() should accept an instance of the reader itself, the current row, and the current key (line number) instead of just the row.
 
 .. _composition over inheritance: https://en.wikipedia.org/wiki/Composition_over_inheritance
 

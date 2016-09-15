@@ -87,13 +87,13 @@ The :php:class:`CSVelte` class also provides the following facade methods [#]_.
 
 .. todo::
 
-    Once you have a little more time, elaborate on the trade-off concept and provide some examples of when each interface is appropriate (facade or plain object instantiation). Don't forget there is half a page of text I wrote for this just dumped into the examples file.
+    Once you have a little more time, elaborate on the trade-off concept and provide some examples of when each interface is appropriate (facade or plain object instantiation). Don't forget there is half a page of text I wrote for this just dumped into the examples file. - issue #95
 
 .. todo::
 
-    * Need to refactor ``CSVelte`` class. It should be using ``IO\Stream`` rather than ``IO\File``. ``IO\File`` is going to be deleted anyway I believe.
-    * Update API docs for ``CSVelte`` methods. Flavor param accepts array or flavor now
-    * Now throws IOException rather than the ones it mentions
+    * Need to refactor ``CSVelte`` class. It should be using ``IO\Stream`` rather than ``IO\File``. ``IO\File`` is going to be deleted anyway I believe. - see issue #108
+    * Update API docs for ``CSVelte`` methods. Flavor param accepts array or flavor now - see issue #54
+    * Now throws IOException rather than the ones it mentions - see issue #108
 
 .. tip::
 
