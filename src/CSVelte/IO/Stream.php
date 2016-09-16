@@ -76,6 +76,11 @@ class Stream implements Readable, Writable, Seekable
     protected $stream;
 
     /**
+     * @var int The total size (in bytes) of the stream
+     */
+    protected $size;
+
+    /**
      * Meta data about stream resource.
      * Just contains the return value of stream_get_meta_data.
      * @var array The return value of stream_get_meta_data
@@ -372,10 +377,13 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getSize()
     {
-        $stats = fstat($this->stream);
-        if (array_key_exists('size', $stats)) {
-            return $stats['size'];
+        if (is_null($this->size)) {
+            $stats = fstat($this->stream);
+            if (array_key_exists('size', $stats)) {
+                $this->size = $stats['size'];
+            }
         }
+        return $this->size;
     }
 
     /**

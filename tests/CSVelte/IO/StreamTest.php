@@ -410,7 +410,9 @@ class StreamTest extends IOTest
     public function testStreamCanGetSize()
     {
         $stream = new Stream($filename = $this->getFilePathFor('veryShort'));
-        $this->assertEquals(filesize($filename), $stream->getSize());
+        $this->assertEquals($expected = filesize($filename), $stream->getSize());
+        // requires a second call to getSize() in order to get full test coverage
+        $this->assertEquals($expected, $stream->getSize());
     }
 
 }
