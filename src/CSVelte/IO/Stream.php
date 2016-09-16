@@ -184,7 +184,7 @@ class Stream implements Readable, Writable, Seekable
     {
         $string = '';
         try {
-            $pos = ftell($this->stream);/*$this->tell();*/
+            $pos = $this->tell();
             $this->rewind();
             $string .= $this->getContents();
             $this->seek($pos);
@@ -383,7 +383,7 @@ class Stream implements Readable, Writable, Seekable
      */
     public function tell()
     {
-
+        return ftell($this->stream);
     }
 
     /**

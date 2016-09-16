@@ -400,4 +400,11 @@ class StreamTest extends IOTest
         $this->assertEquals($expected, $stream->getContents(), "Ensure that stream internal pointer was returned to its original position after retrieving entire contents with __toString()");
     }
 
+    public function testStreamCanGetPositionWithTell()
+    {
+        $stream = new Stream($filename = $this->getFilePathFor('headerDoubleQuote'));
+        $stream->seek($onehundred = 100);
+        $this->assertEquals($onehundred, $stream->tell());
+    }
+
 }
