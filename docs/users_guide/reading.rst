@@ -216,10 +216,6 @@ In order to be able to use column header values rather than numeric indexes, you
 
 .. todo::
 
-    Make sure the FilteredReader class has a toArray() method. - see issue #110
-
-.. todo::
-
     The callback used for Reader::addFilter() should accept an instance of the reader itself, the current row, and the current key (line number) instead of just the row.
 
 .. _composition over inheritance: https://en.wikipedia.org/wiki/Composition_over_inheritance
