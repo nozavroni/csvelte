@@ -147,6 +147,7 @@ rst_prolog = """
 ..  _streams: http://php.net/manual/en/book.stream.php
 ..  _fopen file modes: http://php.net/manual/en/function.fopen.php
 ..  _traversable: http://php.net/manual/en/class.traversable.php
+..  _magic methods: http://php.net/manual/en/language.oop5.magic.php
 
 ..  _latest version of CSVelte: https://github.com/deni-zen/csvelte/releases
 ..  _GitHub: https://github.com/
