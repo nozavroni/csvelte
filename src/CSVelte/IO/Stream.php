@@ -147,9 +147,9 @@ class Stream implements Readable, Writable, Seekable
      *
      * @param string|object|resource $stream Either a valid stream URI or an open
      *     stream resource (using fopen, fsockopen, et al.)
-     * @param string file/stream open mode as passed to native php
+     * @param string $mode file/stream open mode as passed to native php
      *     ``fopen`` function
-     * @param array Stream context options array as passed to native php
+     * @param array $context Stream context options array as passed to native php
      *     ``stream_context_create`` function
      * @see http://php.net/manual/en/function.fopen.php
      * @see http://php.net/manual/en/function.stream-context-create.php
@@ -189,7 +189,7 @@ class Stream implements Readable, Writable, Seekable
     {
         $string = '';
         try {
-            $pos = $this->tell();
+            $pos = (int) $this->tell();
             $this->rewind();
             $string .= $this->getContents();
             $this->seek($pos);
@@ -205,12 +205,12 @@ class Stream implements Readable, Writable, Seekable
      * Pass in either a valid stream URI or a stream resource and this will
      * return a stream resource object.
      *
-     * @param string|resource $stream Either stream URI or resource object
+     * @param string|resource|object $stream Either stream URI or resource object
      * @param string $mode File/stream open mode (as passed to native php
      *     ``fopen`` function)
      * @param array $context Stream context options array as passed to native
      *     php ``stream_context_create`` function
-     * @return stream resource object
+     * @return resource Stream resource object
      * @throws CSVelte\Exception\IOException on invalid stream uri/resource
      * @throws \InvalidArgumentException if context param is not an array
      * @see http://php.net/manual/en/function.fopen.php
@@ -408,9 +408,9 @@ class Stream implements Readable, Writable, Seekable
      * Reads $length bytes (number of characters) from the stream
      *
      * @param int $length Number of bytes to read from stream
-     * @return string|boolean The data read from stream or false if at end of
+     * @return string|false The data read from stream or false if at end of
      *     file or some other problem.
-     * @throws CSVelte\Exception\IOException
+     * @throws CSVelte\Exception\IOException if stream not readable
      */
     public function read($length)
     {
@@ -459,13 +459,11 @@ class Stream implements Readable, Writable, Seekable
      *
      * Rewinds the stream, meaning it returns the pointer to the beginning of the
      * stream as if it had just been initialized.
-     *
-     * @return boolean True on success
      */
     public function rewind()
     {
         if (is_resource($this->stream)) {
-            return rewind($this->stream);
+            rewind($this->stream);
         }
     }
 
