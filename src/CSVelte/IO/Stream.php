@@ -125,7 +125,7 @@ class Stream implements Readable, Writable, Seekable
      */
     public static function streamize($resource = '')
     {
-        if ($resource instanceof SplFileObject && $resource->getType() == 'file') {
+        if ($resource instanceof SplFileObject) {
             return new self($resource->getPathName());
         }
 

@@ -505,4 +505,41 @@ class StreamTest extends IOTest
         $stream->seek(10);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testStreamizeWithIntegerThrowsInvalidArgumentException()
+    {
+        $intval = 1;
+        Stream::streamize($intval);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testStreamizeWithNonStringObjectThrowsInvalidArgumentException()
+    {
+        $obj = new \stdClass;
+        Stream::streamize($obj);
+    }
+
+    public function testStreamizeWithNoArguments()
+    {
+        $stream = Stream::streamize();
+        $this->assertTrue($stream->isReadable());
+        $this->assertTrue($stream->isWritable());
+        $this->assertTrue($stream->isSeekable());
+        $this->assertEquals("", $stream->read(10));
+        $this->assertTrue($stream->eof());
+        $this->assertEquals(10, $stream->write("helloworld"));
+        $this->assertEquals("helloworld", (string) $stream);
+    }
+
+    public function testStreamizeStream()
+    {
+        $stream = Stream::streamize("helloworld");
+        $streamcopy = Stream::streamize($stream);
+        $this->assertEquals((string) $stream, (string) $streamcopy);
+    }
+
 }

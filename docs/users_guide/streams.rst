@@ -114,7 +114,7 @@ Although CSVelte cannot work with the ``SplFileObject`` class directly, it *can*
 
 .. warning::
 
-    The :php:class:`SplFileObject` class does not have any way to access its underlying stream resource, so although :php:meth:`IO\\Stream::streamize()` can accept an :php:class:`SplFileObject`, it's pretty limited in that it will always open the file in ``r+b`` (binary-safe read + write) mode, regardless of what mode was used to open the :php:class:`SplFileObject`. As a result, the internal file pointer will be moved to the beginning of the stream. You must also make sure that the :php:class:`SplFileObject` represents a file rather than a directory [#]_, or an InvalidArgumentException will be thrown. 
+    The :php:class:`SplFileObject` class does not have any way to access its underlying stream resource, so although :php:meth:`IO\\Stream::streamize()` can accept an :php:class:`SplFileObject`, it's pretty limited in that it will always open the file in ``r+b`` (binary-safe read + write) mode, regardless of what mode was used to open the :php:class:`SplFileObject`. As a result, the internal file pointer will be moved to the beginning of the stream. 
 
 Create a stream from a standard PHP string
 ------------------------------------------
@@ -151,4 +151,3 @@ If you already have a stream resource that you've opened using :php:func:`fopen`
 .. [#] PHP defines stream wrappers as "additional code which tells the stream how to handle specific protocols/encodings". See `PHP streams documentation`_ for a more complete description.
 .. [#] File access mode strings are a short (typically 1-3 characters) string containing very concise instructions about how a file or stream should be opened. See `fopen file modes`_ for a more detailed explanation.
 .. [#] Standard input and standard output are preconnected I/O channels, input typically being a data stream going into a program from the user and output being the stream where a program writes its output. See `standard streams`_ Wikipedia page for more on stdin/stdout.
-.. [#] See :php:meth:`SplFileObject::getType()` for how to determine whether :php:class:`SplFileObject` represents a file or a directory -- http://php.net/manual/en/splfileinfo.gettype.php
