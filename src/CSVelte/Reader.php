@@ -13,7 +13,6 @@
  */
 namespace CSVelte;
 
-use \Closure;
 use \InvalidArgumentException;
 use \FilterIterator;
 use CSVelte\IO\Stream;
@@ -87,7 +86,7 @@ class Reader implements \Iterator
      * Initializes a reader object using an input source and optionally a flavor
      *
      * @param \CSVelte\Contract\Readable $input The source of our CSV data
-     * @param \CSVelte\Flavor $flavor The "flavor" or format specification object
+     * @param \CSVelte\Flavor|array|null $flavor The "flavor" or format specification object
      */
     public function __construct($input, $flavor = null)
     {
@@ -101,7 +100,7 @@ class Reader implements \Iterator
      *
      * Set the ``CSVelte\Flavor`` object, used to determine CSV format.
      *
-     * @param \CSVelte\Flavor|array $flavor Either an array or a flavor object
+     * @param \CSVelte\Flavor|array|null $flavor Either an array or a flavor object
      */
     protected function setFlavor($flavor = null)
     {
@@ -353,11 +352,21 @@ class Reader implements \Iterator
         }, $columns);
     }
 
+    /**
+     * Retrieve current row.
+     *
+     * @return CSVelte\Table\Row The current row
+     */
     public function current()
     {
         return $this->current;
     }
 
+    /**
+     * Advance to the next row
+     *
+     * @return CSVelte\Table\Row|null The current row (if there is one)
+     */
     public function next()
     {
 
@@ -366,16 +375,31 @@ class Reader implements \Iterator
         return $this->current;
     }
 
+    /**
+     * Determine if current position has valid row.
+     *
+     * @return boolean True if current row is valid
+     */
     public function valid()
     {
         return (bool) $this->current;
     }
 
+    /**
+     * Retrieve current row key (line number).
+     *
+     * @return int The current line number
+     */
     public function key()
     {
         return $this->line;
     }
 
+    /**
+     * Rewind to the beginning of the dataset.
+     *
+     * @return CSVelte\Table\Row|null The current row
+     */
     public function rewind()
     {
         $this->line = 0;
@@ -388,20 +412,39 @@ class Reader implements \Iterator
         return $this->current();
     }
 
+    /**
+     * Retrieve header row.
+     *
+     * @return CSVelte\Table\HeaderRow|null The header row if there is one
+     */
     public function header()
     {
         return $this->header;
     }
 
     /**
-     * @todo Closure should be changed to "Callable" (php5.4+)
+     * Add anonumous function as filter.
+     *
+     * Add an anonymous function that accepts the current row as its only argument.
+     * Return true from the function to keep that row, false otherwise.
+     *
+     * @param Callable $filter An anonymous function to filter out row by certain criteria
+     * @return $this
      */
-    public function addFilter(Closure $filter)
+    public function addFilter(Callable $filter)
     {
         array_push($this->filters, $filter);
         return $this;
     }
 
+    /**
+     * Add multiple filters at once.
+     *
+     * Add an array of anonymous functions to filter out certain rows.
+     *
+     * @param array $filters An array of anonymous functions
+     * @return $this
+     */
     public function addFilters(array $filters)
     {
         foreach ($filters as $filter) {
@@ -410,11 +453,21 @@ class Reader implements \Iterator
         return $this;
     }
 
+    /**
+     * Returns an iterator with rows from user-supplied filter functions removed
+     *
+     * @return CSVelte\Reader\FilteredReader An iterator with filtered rows
+     */
     public function filter()
     {
         return new FilteredReader($this, $this->filters);
     }
 
+    /**
+     * Retrieve the contents of the dataset as an array of arrays.
+     *
+     * @return array An array of arrays of CSV content
+     */
     public function toArray()
     {
         return array_map(function($row){

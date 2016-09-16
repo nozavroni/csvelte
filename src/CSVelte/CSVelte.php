@@ -39,11 +39,12 @@ class CSVelte
      * Used to create a local file CSV reader object.
      *
      * @param string The filename to read
-     * @param CSVelte\Flavor An explicit flavor object that will be passed to the reader
+     * @param CSVelte\Flavor|array|null An explicit flavor object that will be
+     *     passed to the reader or an array of flavor attributes to override the
+     *     default flavor attributes
      * @return CSVelte\Reader An iterator for specified CSV file
      * @throws CSVelte\Exception\PermissionDeniedException
      * @throws CSVelte\Exception\FileNotFoundException
-     * @access public
      */
     public static function reader($filename, $flavor = null)
     {
@@ -59,9 +60,10 @@ class CSVelte
      * from a PHP string
      *
      * @param string The CSV data to read
-     * @param CSVelte\Flavor An explicit flavor object that will be passed to the reader
+     * @param CSVelte\Flavor|array|null An explicit flavor object that will be
+     *     passed to the reader or an array of flavor attributes to override the
+     *     default flavor attributes
      * @return CSVelte\Reader An iterator for provided CSV data
-     * @access public
      */
     public static function stringReader($str, $flavor = null)
     {
@@ -76,9 +78,10 @@ class CSVelte
      * already contains data, it will be overwritten.
      *
      * @param string The filename to write to.
-     * @param CSVelte\Flavor An explicit flavor object for the writer to use
+     * @param CSVelte\Flavor|array|null An explicit flavor object that will be
+     *     passed to the reader or an array of flavor attributes to override the
+     *     default flavor attributes
      * @return CSVelte\Writer A writer object for writing to given filename
-     * @access public
      */
     public static function writer($filename, $flavor = null)
     {
@@ -94,9 +97,10 @@ class CSVelte
      *
      * @param string The filename to export data to
      * @param Iterator|array Data to write to CSV file
-     * @param CSVelte\Flavor An explicit flavor object that will be passed to the writer
+     * @param CSVelte\Flavor|array|null An explicit flavor object that will be
+     *     passed to the reader or an array of flavor attributes to override the
+     *     default flavor attributes
      * @return int Number of rows written
-     * @access public
      */
     public static function export($filename, $data, $flavor = null)
     {
@@ -112,8 +116,6 @@ class CSVelte
      * to read/access it)
      *
      * @param string The name of the file you wish to check
-     * @return void
-     * @access protected
      * @throws CSVelte\Exception\IOException
      * @internal
      */
@@ -129,8 +131,6 @@ class CSVelte
      * Assert that a particular file exists
      *
      * @param string The name of the file you wish to check
-     * @return void
-     * @access protected
      * @throws CSVelte\Exception\IOException
      * @internal
      */

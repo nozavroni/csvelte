@@ -247,7 +247,7 @@ class StreamTest extends IOTest
         $stream = new Stream($this->getFilePathFor('veryShort'));
         $stream->read(15);
         $this->assertEquals(",boz,bork\n", $stream->readLine("\n"), "Just make sure we are somewhere in the middle of the stream.");
-        $this->assertTrue($stream->rewind(), "Stream::rewind should return true on success.");
+        $this->assertNull($stream->rewind(), "Stream::rewind should return null.");
         $this->assertEquals("foo,bar,baz\n", $stream->readLine("\n"), "Now we should be at the beginning again.");
     }
 
