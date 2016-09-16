@@ -69,7 +69,7 @@ To install CSVelte manually, first download the `latest version of CSVelte`_ (cu
 
 .. important::
 
-    As of version |release|, CSVelte's only external dependency is Carbon_ [#]_. If you aren't using Composer_ to install CSVelte, you'll need to go to Carbon's website and follow its installation instructions to `install it manually`_ or CSVelte will complain about missing dependencies.
+    As of version |release|, CSVelte's only external dependency is Carbon_ [#]_. If you aren't using Composer_ to install CSVelte, you'll need to go to Carbon's website and follow its installation instructions to `install it manually`_ or you will encounter errors.
 
 .. _download page: https://getcomposer.org/download/
 .. _lower your minimum-stability setting: https://getcomposer.org/doc/04-schema.md#minimum-stability
