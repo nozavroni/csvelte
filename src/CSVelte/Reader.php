@@ -123,9 +123,11 @@ class Reader implements \Iterator
      *
      * The reader can accept anything that implements Readable and is actually
      * readable (can be read). This will make sure that whatever is passed to
-     * the reader meets these expectations and set $this->source.
+     * the reader meets these expectations and set $this->source. It can also
+     * accept any string (or any object with a __toString() method), or an
+     * SplFileObject, so long as it represents a file rather than a directory. 
      *
-     * @param \CSVelte\Contract\Readable|object|string $input See description
+     * @param \CSVelte\Contract\Readable|object|string|SplFileObject $input See description
      * @return $this
      */
     protected function setSource($input)

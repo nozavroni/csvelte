@@ -21,6 +21,8 @@ use CSVelte\Contract\Readable;
 use CSVelte\Contract\Writable;
 use CSVelte\Contract\Seekable;
 
+use \SplFileObject;
+
 use \Exception;
 use \InvalidArgumentException;
 use CSVelte\Exception\NotYetImplementedException;
@@ -115,13 +117,18 @@ class Stream implements Readable, Writable, Seekable
      * of the guzzle/streams PHP package. Thanks for the inspiration (in some cases)
      * and the not suing me for outright theft (in this case).
      *
-     * @param object|string The string/object to convert to a stream
+     * @param object|string|SplFileObject The string/object to convert to a stream
      * @param array Options to pass to the newly created stream
      * @return \CSVelte\IO\Stream
      * @throws \InvalidArgumentException
+     * @todo Write an IO\AccessMode class like what I talked about in issue #114
      */
     public static function streamize($resource = '')
     {
+        if ($resource instanceof SplFileObject && $resource->getType() == 'file') {
+            return new self($resource->getPathName());
+        }
+
         $type = gettype($resource);
 
         if ($type == 'string') {

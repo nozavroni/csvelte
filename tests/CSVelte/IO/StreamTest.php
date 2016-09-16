@@ -1,6 +1,7 @@
 <?php
 namespace CSVelteTest\IO;
 
+use \SplFileObject;
 use CSVelte\IO\Stream;
 use CSVelteTest\StreamWrapper\HttpStreamWrapper;
 use org\bovigo\vfs\vfsStream;
@@ -347,6 +348,22 @@ class StreamTest extends IOTest
         $csv_stream = Stream::streamize($csv_obj);
         $this->assertEquals($csv_string, $csv_stream->read(37));
     }
+
+    public function testStreamizeCanStreamSplFileObject()
+    {
+        $fileObj = new SplFileObject($fn = $this->getFilePathFor('headerCommaQuoteNonnumeric'));
+        $this->assertInstanceOf(Stream::class, $stream = Stream::streamize($fileObj));
+        $this->assertEquals(file_get_contents($fn), $stream->__toString());
+    }
+
+    // public function testStreamizeCanStreamSplFileObjectAndSetCorrectPosition()
+    // {
+    //     $fileObj = new SplFileObject($fn = $this->getFilePathFor('headerCommaQuoteNonnumeric'));
+    //     $fileObj->read($pos = 25);
+    //     $stream = Stream::streamize($fileObj);
+    //     $this->assertEquals($pos, $stream->tell());
+    //     //$this->assertEquals($pos, $fileObj->ftell());
+    // }
 
     /**
      * @expectedException CSVelte\Exception\IOException
