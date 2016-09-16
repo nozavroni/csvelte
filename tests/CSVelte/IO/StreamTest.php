@@ -458,4 +458,34 @@ class StreamTest extends IOTest
         //$this->assertFalse($stream->write("helloworld"));
     }
 
+    /**
+     * @expectedException CSVelte\Exception\IOException
+     */
+    public function testDetachedStreamThrowsExceptionOnRead()
+    {
+        $stream = new Stream($filename = $this->getFilePathFor('veryShort'));
+        $this->assertEquals($stream->getResource(), $stream->detach());
+        $stream->read(10);
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\IOException
+     */
+    public function testDetachedStreamThrowsExceptionOnWrite()
+    {
+        $stream = new Stream($filename = $this->getFilePathFor('veryShort'));
+        $this->assertEquals($stream->getResource(), $stream->detach());
+        $stream->write("helloworld");
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\IOException
+     */
+    public function testDetachedStreamThrowsExceptionOnSeek()
+    {
+        $stream = new Stream($filename = $this->getFilePathFor('veryShort'));
+        $this->assertEquals($stream->getResource(), $stream->detach());
+        $stream->seek(10);
+    }
+
 }
