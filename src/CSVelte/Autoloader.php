@@ -97,7 +97,7 @@ class Autoloader
     public function register()
     {
         set_include_path(implode(PATH_SEPARATOR, $this->getPaths()));
-        return spl_autoload_register(array($this, 'load'));
+        spl_autoload_register(array($this, 'load'));
     }
 
     /**
@@ -114,7 +114,7 @@ class Autoloader
     public function load($className)
     {
         if(class_exists($className)) {
-            return true;
+            return;
         }
         $fqcp = str_replace(self::NAMESPACE_SEPARATOR, DIRECTORY_SEPARATOR, $className);
         $paths = $this->getPaths();
@@ -122,9 +122,8 @@ class Autoloader
             $classPath = $path . DIRECTORY_SEPARATOR . $fqcp . '.php';
             if(file_exists($classPath) && is_readable($classPath)) {
                 require_once($classPath);
-                return true;
+                return;
             }
         }
-        return false;
     }
 }

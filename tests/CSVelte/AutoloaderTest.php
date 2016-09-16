@@ -58,22 +58,22 @@ class AutoloaderTest extends UnitTestCase
         $this->assertContains($fakedir, $includepaths);
     }
 
-    public function testLoadClassReturnsTrueIfClassExists()
+    public function testLoadClassReturnsNullIfClassExists()
     {
         $auto = new Autoloader;
-        $this->assertTrue($auto->load('CSVelte\Utils'));
+        $this->assertNull($auto->load('CSVelte\Utils'));
     }
 
-    public function testLoadClassReturnsFalseIfClassDoesntExistAtAll()
+    public function testLoadClassReturnsNullIfClassDoesntExistAtAll()
     {
         $auto = new Autoloader;
-        $this->assertFalse($auto->load('CSVelte\Foo'));
+        $this->assertNull($auto->load('CSVelte\Foo'));
     }
 
     public function testLoadClassLoadsClassIfItHasntBeenLoaded()
     {
         $auto = new Autoloader;
-        $this->assertTrue($auto->load($classname = 'CSVelte\Table\Row'));
+        $this->assertNull($auto->load($classname = 'CSVelte\Table\Row'));
         $this->assertTrue(class_exists($classname));
     }
 
