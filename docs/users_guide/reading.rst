@@ -14,7 +14,7 @@ Reading CSV Data
         * Once this happens, you will need to change the :apidoc: references to point to new location
     * Figure out how to do URI short-references so that instead of always doing `Some PHP page <http://php.net/manual/en/some.php.page.php>`_ I can simply do :php:`Some PHP page`
     * Do the same thing as above only with Wikipedia entries or any other site I want
-    * Go back and get rid of all :file:`some/file.csv` references. I was using it incorrectly. That syntax should only be used when the filename has actual semantic value for the library - see issue #95
+    * Go back and get rid of all ``some/file.csv`` references. I was using it incorrectly. That syntax should only be used when the filename has actual semantic value for the library - see issue #95
 
 Instantiating a :php:class:`Reader` object
 ==========================================

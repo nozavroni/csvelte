@@ -26,7 +26,7 @@ Producing a two-dimensional array from a CSV dataset
 
 During the initial research phase of writing this library, I did a Google search for "php csv" and a large portion of the results were various PHP message boards with users asking for an easy way to read a CSV file and produce a two-dimensional array containing its data. This is as good a place as any to start.
 
-Let's assume our CSV file is located on the local file system at :file:`/var/www/data/products.csv`. Our first step is going to be to create an :php:class:`IO\\Stream` object capable of reading our CSV file.
+Let's assume our CSV file is located on the local file system at ``/var/www/data/products.csv``. Our first step is going to be to create an :php:class:`IO\\Stream` object capable of reading our CSV file.
 
 .. code-block:: php
 
@@ -117,7 +117,7 @@ Well, I can't in good conscience show you how to convert a CSV file to a PHP arr
     9,Monica Federle,643,35,Nunavut,Storage & Organization
     10,Dorothy Badders,678,8.33,Nunavut,Paper
 
-Again, our first task is going to be creating an :php:class:`IO\\Stream` object. Only this time, we'll want to prepare it for writing by passing it the correct access mode string as its second constructor parameter. We want to create a new file on the local file system at :file:`/var/www/data/inventory.csv` so we'll want to use "w" to open our stream in write mode [#]_.
+Again, our first task is going to be creating an :php:class:`IO\\Stream` object. Only this time, we'll want to prepare it for writing by passing it the correct access mode string as its second constructor parameter. We want to create a new file on the local file system at ``/var/www/data/inventory.csv`` so we'll want to use "w" to open our stream in write mode [#]_.
 
 .. code-block:: php
 

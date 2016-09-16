@@ -60,7 +60,7 @@ Direct Download
     * Look into PSR-4 for autoloading. According to a book I was just reading, PSR-4 eliminates the need for me to register an autoload function. See what this is all about...
     * Look into the other PSRs and see if any of them might benefit you as well (after looking through them, PSR-7 and PSR-17 were both very interesting - see GitHub issue #107)
 
-To install CSVelte manually, first download the `latest version of CSVelte`_ (currently |release|) from GitHub_. After extracting the contents of the zip or tarball, simply include the :file:`src/autoload.php` file, which will add the :file:`src` directory to PHP's include path [#]_ and register CSVelte's autoload function [#]_ for you (obviously you'll need to change :file:`/path/to/csvelte` to wherever the :file:`src` directory is on your system).  That's it. Happy coding.
+To install CSVelte manually, first download the `latest version of CSVelte`_ (currently |release|) from GitHub_. After extracting the contents of the zip or tarball, simply include the :file:`src/autoload.php` file, which will add the :file:`src` directory to PHP's include path [#]_ and register CSVelte's autoload function [#]_ for you (obviously you'll need to change ``/path/to/csvelte`` to wherever the :file:`src` directory is on your system).  That's it. Happy coding.
 
 .. code-block:: php
 
