@@ -407,4 +407,10 @@ class StreamTest extends IOTest
         $this->assertEquals($onehundred, $stream->tell());
     }
 
+    public function testStreamCanGetSize()
+    {
+        $stream = new Stream($filename = $this->getFilePathFor('veryShort'));
+        $this->assertEquals(filesize($filename), $stream->getSize());
+    }
+
 }

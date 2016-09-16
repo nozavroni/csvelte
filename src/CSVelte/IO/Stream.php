@@ -372,7 +372,10 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getSize()
     {
-
+        $stats = fstat($this->stream);
+        if (array_key_exists('size', $stats)) {
+            return $stats['size'];
+        }
     }
 
     /**
