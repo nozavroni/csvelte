@@ -133,6 +133,8 @@ class Reader implements \Iterator
     {
         if ($input instanceof Readable && $input->isReadable()) {
             $this->source = $input;
+        } elseif (file_exists((string) $input)) {
+            $this->source = new IO\Stream($input);
         } else {
             $this->source = Stream::streamize($input);
         }
