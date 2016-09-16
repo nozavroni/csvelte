@@ -21,6 +21,7 @@ use CSVelte\Contract\Readable;
 use CSVelte\Contract\Writable;
 use CSVelte\Contract\Seekable;
 
+use \Exception;
 use \InvalidArgumentException;
 use CSVelte\Exception\NotYetImplementedException;
 use CSVelte\Exception\EndOfFileException;
@@ -161,6 +162,36 @@ class Stream implements Readable, Writable, Seekable
     public function __destruct()
     {
         $this->close();
+    }
+
+    /**
+     * Reads all data from the stream into a string, from the beginning to end.
+     *
+     * This method MUST attempt to seek to the beginning of the stream before
+     * reading data and read the stream until the end is reached.
+     *
+     * Warning: This could attempt to load a large amount of data into memory.
+     *
+     * This method MUST NOT raise an exception in order to conform with PHP's
+     * string casting operations.
+     *
+     * Returns the internal pointer to the position it was in once it's finished
+     *
+     * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
+     * @return string
+     */
+    public function __toString()
+    {
+        $string = '';
+        try {
+            $pos = ftell($this->stream);/*$this->tell();*/
+            $this->rewind();
+            $string .= $this->getContents();
+            $this->seek($pos);
+        } catch (Exception $e) {
+            // eat any exception that may be thrown...
+        }
+        return $string;
     }
 
     /**
@@ -323,6 +354,39 @@ class Stream implements Readable, Writable, Seekable
     }
 
     /**
+     * Separates any underlying resources from the stream.
+     *
+     * After the stream has been detached, the stream is in an unusable state.
+     *
+     * @return resource|null Underlying PHP stream, if any
+     */
+    public function detach()
+    {
+
+    }
+
+    /**
+     * Get the size of the stream if known.
+     *
+     * @return int|null Returns the size in bytes if known, or null if unknown.
+     */
+    public function getSize()
+    {
+
+    }
+
+    /**
+     * Returns the current position of the file read/write pointer
+     *
+     * @return int Position of the file pointer
+     * @throws \RuntimeException on error.
+     */
+    public function tell()
+    {
+
+    }
+
+    /**
      * Read $length bytes from stream.
      *
      * Reads $length bytes (number of characters) from the stream
@@ -340,12 +404,15 @@ class Stream implements Readable, Writable, Seekable
     }
 
     /**
-     * Read the entire contents of file/stream.
+     * Returns the remaining contents in a string.
      *
-     * Read and return the entire contents of the stream.
+     * Read and return the remaining contents of the stream, beginning from
+     * wherever the stream's internal pointer is when this method is called. If
+     * you want the ENTIRE stream's contents, use __toString() instead.
      *
      * @param void
-     * @return string The entire file contents
+     * @return string The remaining contents of the file, beginning at internal
+     *     pointer's current location
      * @throws CSVelte\Exception\IOException
      */
     public function getContents()

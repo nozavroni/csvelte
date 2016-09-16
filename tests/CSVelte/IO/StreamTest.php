@@ -372,4 +372,32 @@ class StreamTest extends IOTest
         $this->assertStringEqualsFile($filename, $stream->getContents());
     }
 
+    public function testStreamGetContentsReadsStartingFromPositionItsIn()
+    {
+        $stream = new Stream($filename = $this->getFilePathFor('headerDoubleQuote'));
+        $onehundred = $stream->read(100);
+        $expected = substr(file_get_contents($filename), 100);
+        $this->assertEquals($expected, $stream->getContents());
+    }
+
+    public function testStreamToStringReadsEntireStream()
+    {
+        $stream = new Stream($filename = $this->getFilePathFor('headerDoubleQuote'));
+        $onehundred = $stream->read(100);
+        $expected = file_get_contents($filename);
+        $this->assertEquals($expected, $stream->__toString());
+        $this->assertEquals($expected, (string) $stream);
+    }
+
+    public function testStreamToStringReturnsPointerToOriginalPosition()
+    {
+        $stream = new Stream($filename = $this->getFilePathFor('headerDoubleQuote'));
+        $onehundred = $stream->read(100);
+        $expected = file_get_contents($filename);
+        $this->assertEquals($expected, $stream->__toString(), "Ensure that __toString() returns entire contents of stream");
+        $this->assertEquals($expected, (string) $stream, "Ensure that casting to string eturns entire contents of stream");
+        $expected = substr($expected, 100);
+        $this->assertEquals($expected, $stream->getContents(), "Ensure that stream internal pointer was returned to its original position after retrieving entire contents with __toString()");
+    }
+
 }
