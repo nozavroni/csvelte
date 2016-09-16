@@ -139,7 +139,7 @@ class Stream implements Readable, Writable, Seekable
      *
      * Instantiates the stream object
      *
-     * @param string|resource $stream Either a valid stream URI or an open
+     * @param string|object|resource $stream Either a valid stream URI or an open
      *     stream resource (using fopen, fsockopen, et al.)
      * @param string file/stream open mode as passed to native php
      *     ``fopen`` function
