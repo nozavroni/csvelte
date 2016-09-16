@@ -282,6 +282,7 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getMetaData($key = null)
     {
+        if (!$this->stream) return null;
         if (is_null($key)) return $this->meta;
         return (array_key_exists($key, $this->meta)) ? $this->meta[$key] : null;
     }
@@ -367,7 +368,10 @@ class Stream implements Readable, Writable, Seekable
      */
     public function detach()
     {
-
+        $stream = $this->stream;
+        $this->stream = null;
+        $this->seekable = $this->readable = $this->writable = false;
+        return $stream;
     }
 
     /**
@@ -377,6 +381,7 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getSize()
     {
+        if (!$this->stream) return null;
         if (is_null($this->size)) {
             $stats = fstat($this->stream);
             if (array_key_exists('size', $stats)) {
@@ -394,7 +399,7 @@ class Stream implements Readable, Writable, Seekable
      */
     public function tell()
     {
-        return ftell($this->stream);
+        return $this->stream ? ftell($this->stream) : false;
     }
 
     /**
@@ -429,8 +434,10 @@ class Stream implements Readable, Writable, Seekable
     public function getContents()
     {
         $buffer = '';
-        while ($chunk = $this->read(1024)) {
-            $buffer .= $chunk;
+        if ($this->isReadable()) {
+            while ($chunk = $this->read(1024)) {
+                $buffer .= $chunk;
+            }
         }
         return $buffer;
     }
@@ -444,7 +451,7 @@ class Stream implements Readable, Writable, Seekable
      */
     public function eof()
     {
-        return feof($this->stream);
+        return !$this->stream || feof($this->stream);
     }
 
     /**
@@ -457,7 +464,9 @@ class Stream implements Readable, Writable, Seekable
      */
     public function rewind()
     {
-        return rewind($this->stream);
+        if (is_resource($this->stream)) {
+            return rewind($this->stream);
+        }
     }
 
     /**

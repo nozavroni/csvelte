@@ -415,4 +415,47 @@ class StreamTest extends IOTest
         $this->assertEquals($expected, $stream->getSize());
     }
 
+    public function testStreamDetachRemovesStreamFromUnderlyingStreamResourceLeavingItUnusableButNotBroken()
+    {
+        $stream = new Stream($filename = $this->getFilePathFor('veryShort'));
+        $streamResource = $stream->getResource();
+        $this->assertEquals($expectedName = "vfs://root/testfiles/veryShort.csv", $stream->getName());
+        $this->assertEquals($expectedUri = "vfs://root/testfiles/veryShort.csv", $stream->getUri());
+        $this->assertEquals($expectedSize = 37, $stream->getSize());
+        $this->assertInternalType($expectedMetaType = "array", $stream->getMetaData());
+        $this->assertTrue($stream->isSeekable());
+        $this->assertTrue($stream->isReadable());
+        $this->assertTrue($stream->isWritable());
+        $this->assertInternalType($expectedResourceType = "resource", $streamResource);
+        $this->assertEquals($expectedResourceStreamType = "stream", get_resource_type($streamResource));
+        $this->assertFalse($stream->eof());
+        $this->assertEquals($expectedStrContent = "foo,bar,ba", $stream->read(10));
+        $this->assertEquals($expectedStrContent = "z\nbin,boz,bork\nlib,bil,ilb\n", $stream->getContents());
+        $this->assertEquals($expectedStrContent = "foo,bar,baz\nbin,boz,bork\nlib,bil,ilb\n", $stream->__toString());
+        $this->assertTrue($stream->seek(25));
+        $this->assertEquals(25, $stream->tell());
+        $this->assertEquals(10, $stream->write("helloworld"));
+
+        $detachedResource = $stream->detach();
+        $this->assertEquals($streamResource, $detachedResource, "Ensure that the detach method returns the internal stream resource.");
+        $this->assertNull($stream->getResource());
+
+        $streamResource = $stream->getResource();
+        $this->assertNull($stream->getName());
+        $this->assertNull($stream->getUri());
+        $this->assertNull($stream->getSize());
+        $this->assertNull($stream->getMetaData());
+        $this->assertFalse($stream->isSeekable());
+        $this->assertFalse($stream->isReadable());
+        $this->assertFalse($stream->isWritable());
+        $this->assertNull($streamResource);
+        $this->assertTrue($stream->eof());
+        //$this->assertFalse($stream->read(10));
+        $this->assertEquals("", $stream->getContents());
+        $this->assertEquals("", $stream->__toString());
+        //$this->assertFalse($stream->seek(25));
+        $this->assertFalse($stream->tell());
+        //$this->assertFalse($stream->write("helloworld"));
+    }
+
 }
