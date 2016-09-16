@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Class CSVelte\IO\Stream | CSVelte v0.2 API Documentation</title>
+
+	<link rel="stylesheet" href="resources/bootstrap.min.css?973e37a8502921d56bc02bb55321f45b072b6f71">
+	<link rel="stylesheet" href="resources/style.css?49f43d3208c5d7e33fa16d36107a345bf11cc00d">
+	<link rel="search" type="application/opensearchdescription+xml" title="CSVelte v0.2 API Documentation" href="/opensearch.xml">
+
+	<script>
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', "UA-83431108-1"]);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+	<nav id="navigation" class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="index.html" class="navbar-brand">CSVelte v0.2 API Documentation</a>
+			</div>
+			<div class="collapse navbar-collapse">
+
+                <form action="http://www.google.com/cse" id="search" class="navbar-form navbar-left" role="search">
+                    <input type="hidden" name="cx" value="002645647446389662336:uolgqyfdbkq">
+                    <input type="hidden" name="ie" value="UTF-8">
+                    <div class="form-group">
+                        <input type="text" name="q" class="search-query form-control" placeholder="Search">
+					</div>
+				</form>
+
+				<ul class="nav navbar-nav">
+					<li>
+						<a href="namespace-CSVelte.IO.html" title="Summary of CSVelte\IO"><span>Namespace</span></a>
+					</li>
+					<li class="active">
+<span>Class</span>					</li>
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+					</li>
+
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="-API-documentation.zip" title="Download documentation as ZIP archive"><span>Download</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="left">
+	<div id="menu">
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+					<li class="active">
+						<a href="namespace-CSVelte.html">
+							CSVelte<span></span>
+						</a>
+							<ul>
+					<li>
+						<a href="namespace-CSVelte.Contract.html">
+							Contract						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Exception.html">
+							Exception						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Flavor.html">
+							Flavor						</a>
+							</li>
+					<li class="active">
+						<a href="namespace-CSVelte.IO.html">
+							IO						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Table.html">
+							Table						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Traits.html">
+							Traits						</a>
+							</li>
+								</ul></li>
+			</ul>
+		</div>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li class="active"><a href="class-CSVelte.IO.Stream.html">Stream</a></li>
+			</ul>
+
+
+
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+	<div id="rightInner">
+<div id="content" class="class">
+	<h1>Class Stream</h1>
+
+
+	<div class="description">
+	<p>CSVelte Stream.</p>
+
+<p>Represents a stream for input/output. Implements both readable and writable
+interfaces so that it can be passed to either <code>CSVelte\Reader</code> or
+<code>CSVelte\Writer</code>.</p>
+	</div>
+
+	<dl class="tree well">
+		<dd style="padding-left:0px">
+<b><span>CSVelte\IO\Stream</span></b>			
+			 implements 
+				<a href="class-CSVelte.Contract.Readable.html"><span>CSVelte\Contract\Readable</span></a>, 
+			
+				<a href="class-CSVelte.Contract.Writable.html"><span>CSVelte\Contract\Writable</span></a>, 
+			
+				<a href="class-CSVelte.Contract.Seekable.html"><span>CSVelte\Contract\Seekable</span></a>
+			
+			 uses 
+					<a href="class-CSVelte.Traits.IsReadable.html"><span>CSVelte\Traits\IsReadable</span></a>, 
+			
+					<a href="class-CSVelte.Traits.IsWritable.html"><span>CSVelte\Traits\IsWritable</span></a>, 
+			
+					<a href="class-CSVelte.Traits.IsSeekable.html"><span>CSVelte\Traits\IsSeekable</span></a>
+			
+		</dd>
+	</dl>
+
+
+
+
+
+
+
+
+	<div class="alert alert-info">
+		
+		
+		<b>Namespace:</b> <a href="namespace-CSVelte.html">CSVelte</a>\<a href="namespace-CSVelte.IO.html">IO</a><br>
+		<b>Package:</b> CSVelte\IO<br>
+
+				<b>Copyright:</b>
+				(c) 2016, Luke Visinoni <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;">&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;</a><br>
+				<b>Author:</b>
+				Luke Visinoni <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#58;&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;">&#x6c;&#117;&#x6b;&#101;.&#x76;&#105;&#x73;&#105;n&#x6f;&#110;&#x69;&#64;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#99;&#111;&#x6d;</a><br>
+				<b>Since:</b>
+				v0.2<br>
+			<b>Located at</b> <a href="source-class-CSVelte.IO.Stream.html#32-509" title="Go to source code">CSVelte/IO/Stream.php</a>
+		<br>
+	</div>
+
+
+
+		<div class="panel panel-default">
+			<div class="panel-heading"><h2>Methods summary</h2></div>
+			<table class="summary table table-bordered table-striped methods" id="methods">
+		<tr data-order="streamize" id="_streamize">
+
+			<td class="attributes"><code>
+				 public static
+				<code><a href="class-CSVelte.IO.Stream.html">CSVelte\IO\Stream</a></code>
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_streamize">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#110-148" title="Go to source code">streamize</a>( <span>object|string|SplFileObject <var>$resource</var> = <span class="php-quote">''</span></span> )</code>
+
+			<div class="description short">
+				<p>Converts object/string to a usable stream</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Converts object/string to a usable stream</p>
+
+<p>Mercilessly stolen from:
+https://github.com/guzzle/streams/blob/master/src/Stream.php</p>
+
+<p>My kudos and sincere thanks go out to Michael Dowling and Graham Campbell
+of the guzzle/streams PHP package. Thanks for the inspiration (in some cases)
+and the not suing me for outright theft (in this case).</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$resource</var></dt>
+						<dd>string/object to convert to a stream</dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						<code><a href="class-CSVelte.IO.Stream.html">CSVelte\IO\Stream</a></code>
+					</div>
+
+					<h4>Throws</h4>
+					<div class="list">
+						InvalidArgumentException
+					</div>
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="__construct" id="___construct">
+
+			<td class="attributes"><code>
+				 public 
+				
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#___construct">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#150-167" title="Go to source code">__construct</a>( <span>string|object|resource <var>$stream</var></span>, <span>string <var>$mode</var> = <span class="php-keyword1">null</span></span>, <span>array <var>$context</var> = <span class="php-keyword1">null</span></span> )</code>
+
+			<div class="description short">
+				<p>Stream Object Constructor.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Stream Object Constructor.</p>
+
+<p>Instantiates the stream object</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$stream</var></dt>
+						<dd><p>Either a valid stream URI or an open
+    stream resource (using fopen, fsockopen, et al.)</p></dd>
+						<dt><var>$mode</var></dt>
+						<dd><p>file/stream open mode as passed to native php
+    <code>fopen</code> function</p></dd>
+						<dt><var>$context</var></dt>
+						<dd><p>Stream context options array as passed to native php
+    <code>stream_context_create</code> function</p></dd>
+					</dl></div>
+
+
+
+					<h4>See</h4>
+					<div class="list">
+							http://php.net/manual/en/function.fopen.php<br>
+							http://php.net/manual/en/function.stream-context-create.php<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="__destruct" id="___destruct">
+
+			<td class="attributes"><code>
+				 public 
+				
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#___destruct">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#169-177" title="Go to source code">__destruct</a>( )</code>
+
+			<div class="description short">
+				<p>Stream Object Destructor.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Stream Object Destructor.</p>
+
+<p>Closes stream connection.</p>
+
+
+
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="__toString" id="___toString">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#___toString">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#179-207" title="Go to source code">__toString</a>( )</code>
+
+			<div class="description short">
+				<p>Reads all data from the stream into a string, from the beginning to end.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Reads all data from the stream into a string, from the beginning to end.</p>
+
+<p>This method MUST attempt to seek to the beginning of the stream before
+reading data and read the stream until the end is reached.</p>
+
+<p>Warning: This could attempt to load a large amount of data into memory.</p>
+
+<p>This method MUST NOT raise an exception in order to conform with PHP's
+string casting operations.</p>
+
+<p>Returns the internal pointer to the position it was in once it's finished</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						string
+					</div>
+
+
+					<h4>See</h4>
+					<div class="list">
+							http://php.net/manual/en/language.oop5.magic.php#object.tostring<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="close" id="_close">
+
+			<td class="attributes"><code>
+				 public 
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_close">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#249-260" title="Go to source code">close</a>( )</code>
+
+			<div class="description short">
+				<p>Close stream resource.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Close stream resource.</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean<br>True on success or false on failure
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="getMetaData" id="_getMetaData">
+
+			<td class="attributes"><code>
+				 public 
+				string|array
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_getMetaData">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#281-295" title="Go to source code">getMetaData</a>( <span>string <var>$key</var> = <span class="php-keyword1">null</span></span> )</code>
+
+			<div class="description short">
+				<p>Get stream metadata (all or certain value).</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Get stream metadata (all or certain value).</p>
+
+<p>Get either the entire stream metadata array or a single value from it by key.</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$key</var></dt>
+						<dd>If set, must be one of <code>stream_get_meta_data</code> array keys</dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string|array<br>Either a single value or whole array returned by <code>stream_get_meta_data</code>
+					</div>
+
+
+					<h4>See</h4>
+					<div class="list">
+							http://php.net/manual/en/function.stream-get-meta-data.php<br>
+					</div>
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="isSeekable" id="_isSeekable">
+
+			<td class="attributes"><code>
+				 public 
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_isSeekable">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#297-307" title="Go to source code">isSeekable</a>( )</code>
+
+			<div class="description short">
+				<p>Accessor for seekability.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Accessor for seekability.</p>
+
+<p>Returns true if possible to seek to a certain position within this stream</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean<br>True if stream is seekable
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="isReadable" id="_isReadable">
+
+			<td class="attributes"><code>
+				 public 
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_isReadable">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#309-319" title="Go to source code">isReadable</a>( )</code>
+
+			<div class="description short">
+				<p>Accessor for readability.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Accessor for readability.</p>
+
+<p>Returns true if possible to read from this stream</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean<br>True if stream is readable
+					</div>
+
+
+
+
+					<h4>Implementation of</h4>
+					<div class="list"><code><a href="class-CSVelte.Contract.Readable.html#_isReadable">CSVelte\Contract\Readable::isReadable()</a></code></div>
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="isWritable" id="_isWritable">
+
+			<td class="attributes"><code>
+				 public 
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_isWritable">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#321-331" title="Go to source code">isWritable</a>( )</code>
+
+			<div class="description short">
+				<p>Accessor for writability.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Accessor for writability.</p>
+
+<p>Returns true if possible to write to this stream</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean<br>True if stream is writable
+					</div>
+
+
+
+
+					<h4>Implementation of</h4>
+					<div class="list"><code><a href="class-CSVelte.Contract.Writable.html#_isWritable">CSVelte\Contract\Writable::isWritable()</a></code></div>
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="getResource" id="_getResource">
+
+			<td class="attributes"><code>
+				 public 
+				resource
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_getResource">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#333-343" title="Go to source code">getResource</a>( )</code>
+
+			<div class="description short">
+				<p>Accessor for internal stream resource.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Accessor for internal stream resource.</p>
+
+<p>Returns the internal stream resource pointer</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						resource<br>The open stream resource pointer
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="getUri" id="_getUri">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_getUri">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#345-355" title="Go to source code">getUri</a>( )</code>
+
+			<div class="description short">
+				<p>Accessor for stream URI.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Accessor for stream URI.</p>
+
+<p>Returns the stream URI</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						string<br>The URI for the stream
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="getName" id="_getName">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_getName">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#357-367" title="Go to source code">getName</a>( )</code>
+
+			<div class="description short">
+				<p>Accessor for stream name.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Accessor for stream name.</p>
+
+<p>Alias for <code>getUri()</code></p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						string<br>The name for this stream
+					</div>
+
+
+
+
+					<h4>Implementation of</h4>
+					<div class="list"><code><a href="class-CSVelte.Contract.Readable.html#_getName">CSVelte\Contract\Readable::getName()</a></code></div>
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="detach" id="_detach">
+
+			<td class="attributes"><code>
+				 public 
+				resource|null
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_detach">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#369-382" title="Go to source code">detach</a>( )</code>
+
+			<div class="description short">
+				<p>Separates any underlying resources from the stream.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Separates any underlying resources from the stream.</p>
+
+<p>After the stream has been detached, the stream is in an unusable state.</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						resource|null<br>Underlying PHP stream, if any
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="getSize" id="_getSize">
+
+			<td class="attributes"><code>
+				 public 
+				integer|null
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_getSize">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#384-399" title="Go to source code">getSize</a>( )</code>
+
+			<div class="description short">
+				<p>Get the size of the stream if known.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Get the size of the stream if known.</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						integer|null<br>Returns the size in bytes if known, or null if unknown.
+					</div>
+
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="tell" id="_tell">
+
+			<td class="attributes"><code>
+				 public 
+				integer
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_tell">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#401-410" title="Go to source code">tell</a>( )</code>
+
+			<div class="description short">
+				<p>Returns the current position of the file read/write pointer</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Returns the current position of the file read/write pointer</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						integer<br>Position of the file pointer
+					</div>
+
+					<h4>Throws</h4>
+					<div class="list">
+						RuntimeException<br>on error.
+					</div>
+
+
+
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="read" id="_read">
+
+			<td class="attributes"><code>
+				 public 
+				string|false
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_read">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#412-427" title="Go to source code">read</a>( <span>integer <var>$length</var></span> )</code>
+
+			<div class="description short">
+				<p>Read $length bytes from stream.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Read $length bytes from stream.</p>
+
+<p>Reads $length bytes (number of characters) from the stream</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$length</var></dt>
+						<dd>Number of bytes to read from stream</dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						string|false<br><p>The data read from stream or false if at end of
+    file or some other problem.</p>
+					</div>
+
+					<h4>Throws</h4>
+					<div class="list">
+						<code><a href="class-CSVelte.Exception.IOException.html">CSVelte\Exception\IOException</a></code><br>if stream not readable
+					</div>
+
+
+
+					<h4>Implementation of</h4>
+					<div class="list"><code><a href="class-CSVelte.Contract.Readable.html#_read">CSVelte\Contract\Readable::read()</a></code></div>
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="getContents" id="_getContents">
+
+			<td class="attributes"><code>
+				 public 
+				string
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_getContents">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#429-450" title="Go to source code">getContents</a>( )</code>
+
+			<div class="description short">
+				<p>Returns the remaining contents in a string.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Returns the remaining contents in a string.</p>
+
+<p>Read and return the remaining contents of the stream, beginning from
+wherever the stream's internal pointer is when this method is called. If
+you want the ENTIRE stream's contents, use __toString() instead.</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						string<br><p>The remaining contents of the file, beginning at internal
+    pointer's current location</p>
+					</div>
+
+					<h4>Throws</h4>
+					<div class="list">
+						<code><a href="class-CSVelte.Exception.IOException.html">CSVelte\Exception\IOException</a></code>
+					</div>
+
+
+
+					<h4>Implementation of</h4>
+					<div class="list"><code><a href="class-CSVelte.Contract.Readable.html#_getContents">CSVelte\Contract\Readable::getContents()</a></code></div>
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="eof" id="_eof">
+
+			<td class="attributes"><code>
+				 public 
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_eof">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#452-462" title="Go to source code">eof</a>( )</code>
+
+			<div class="description short">
+				<p>Is file pointer at the end of the stream?</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Is file pointer at the end of the stream?</p>
+
+<p>Returns true if internal pointer has reached the end of the stream.</p>
+
+
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean<br>True if end of stream has been reached
+					</div>
+
+
+
+
+					<h4>Implementation of</h4>
+					<div class="list"><code><a href="class-CSVelte.Contract.Readable.html#_eof">CSVelte\Contract\Readable::eof()</a></code></div>
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="rewind" id="_rewind">
+
+			<td class="attributes"><code>
+				 public 
+				
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_rewind">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#464-475" title="Go to source code">rewind</a>( )</code>
+
+			<div class="description short">
+				<p>Rewind pointer to beginning of stream.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Rewind pointer to beginning of stream.</p>
+
+<p>Rewinds the stream, meaning it returns the pointer to the beginning of the
+stream as if it had just been initialized.</p>
+
+
+
+
+
+
+
+					<h4>Implementation of</h4>
+					<div class="list"><code><a href="class-CSVelte.Contract.Readable.html#_rewind">CSVelte\Contract\Readable::rewind()</a></code></div>
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="write" id="_write">
+
+			<td class="attributes"><code>
+				 public 
+				integer
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_write">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#477-490" title="Go to source code">write</a>( <span>string <var>$str</var></span> )</code>
+
+			<div class="description short">
+				<p>Write to stream</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Write to stream</p>
+
+<p>Writes a string to the stream (if it is writable)</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$str</var></dt>
+						<dd>The data to be written to the stream</dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						integer<br>The number of bytes written to the stream
+					</div>
+
+					<h4>Throws</h4>
+					<div class="list">
+						<code><a href="class-CSVelte.Exception.IOException.html">CSVelte\Exception\IOException</a></code>
+					</div>
+
+
+
+					<h4>Implementation of</h4>
+					<div class="list"><code><a href="class-CSVelte.Contract.Writable.html#_write">CSVelte\Contract\Writable::write()</a></code></div>
+			</div>
+			</div></td>
+		</tr>
+		<tr data-order="seek" id="_seek">
+
+			<td class="attributes"><code>
+				 public 
+				boolean
+				
+				</code>
+			</td>
+
+			<td class="name"><div>
+			<a class="anchor" href="#_seek">#</a>
+			<code><a href="source-class-CSVelte.IO.Stream.html#492-507" title="Go to source code">seek</a>( <span>integer <var>$offset</var></span>, <span>integer <var>$whence</var> = SEEK_SET</span> )</code>
+
+			<div class="description short">
+				<p>Seek to position.</p>
+			</div>
+
+			<div class="description detailed hidden">
+				<p>Seek to position.</p>
+
+<p>Seek to a specific position within the stream (if seekable).</p>
+
+
+					<h4>Parameters</h4>
+					<div class="list"><dl>
+						<dt><var>$offset</var></dt>
+						<dd>The position to seek to</dd>
+						<dt><var>$whence</var></dt>
+						<dd>One of three native php <code>SEEK_</code> constants</dd>
+					</dl></div>
+
+					<h4>Returns</h4>
+					<div class="list">
+						boolean<br>True on success false on failure
+					</div>
+
+					<h4>Throws</h4>
+					<div class="list">
+						<code><a href="class-CSVelte.Exception.IOException.html">CSVelte\Exception\IOException</a></code>
+					</div>
+
+					<h4>See</h4>
+					<div class="list">
+							http://php.net/manual/en/function.seek.php<br>
+					</div>
+
+
+					<h4>Implementation of</h4>
+					<div class="list"><code><a href="class-CSVelte.Contract.Seekable.html#_seek">CSVelte\Contract\Seekable::seek()</a></code></div>
+			</div>
+			</div></td>
+		</tr>
+			</table>
+		</div>
+
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods inherited from <a href="class-CSVelte.Contract.Readable.html#methods">CSVelte\Contract\Readable</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Contract.Readable.html#_readLine">readLine()</a></code>
+			</p>
+		</div>
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods inherited from <a href="class-CSVelte.Contract.Writable.html#methods">CSVelte\Contract\Writable</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Contract.Writable.html#_writeLine">writeLine()</a></code>
+			</p>
+		</div>
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods inherited from <a href="class-CSVelte.Contract.Seekable.html#methods">CSVelte\Contract\Seekable</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Contract.Seekable.html#_seekLine">seekLine()</a></code>
+			</p>
+		</div>
+
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods used from <a href="class-CSVelte.Traits.IsReadable.html#methods">CSVelte\Traits\IsReadable</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Traits.IsReadable.html#_readLine">readLine()</a></code>
+			</p>
+		</div>
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods used from <a href="class-CSVelte.Traits.IsWritable.html#methods">CSVelte\Traits\IsWritable</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Traits.IsWritable.html#_writeLine">writeLine()</a></code>
+			</p>
+		</div>
+		<div class="panel panel-default">
+	        <div class="panel-heading"><h3>Methods used from <a href="class-CSVelte.Traits.IsSeekable.html#methods">CSVelte\Traits\IsSeekable</a></h3></div>
+			<p class="elementList">
+				<code><a href="class-CSVelte.Traits.IsSeekable.html#_seekLine">seekLine()</a></code>
+			</p>
+		</div>
+
+
+
+
+
+
+
+
+
+</div>
+	</div>
+
+	<div id="footer">
+		CSVelte v0.2 API Documentation API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+<script src="resources/combined.js"></script>
+<script src="elementlist.js"></script>
+</body>
+</html>

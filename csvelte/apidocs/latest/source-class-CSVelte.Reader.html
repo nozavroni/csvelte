@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="robots" content="noindex">
+
+	<title>File CSVelte/Reader.php | CSVelte v0.2 API Documentation</title>
+
+	<link rel="stylesheet" href="resources/bootstrap.min.css?973e37a8502921d56bc02bb55321f45b072b6f71">
+	<link rel="stylesheet" href="resources/style.css?49f43d3208c5d7e33fa16d36107a345bf11cc00d">
+	<link rel="search" type="application/opensearchdescription+xml" title="CSVelte v0.2 API Documentation" href="/opensearch.xml">
+
+	<script>
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', "UA-83431108-1"]);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+	<nav id="navigation" class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="index.html" class="navbar-brand">CSVelte v0.2 API Documentation</a>
+			</div>
+			<div class="collapse navbar-collapse">
+
+                <form action="http://www.google.com/cse" id="search" class="navbar-form navbar-left" role="search">
+                    <input type="hidden" name="cx" value="002645647446389662336:uolgqyfdbkq">
+                    <input type="hidden" name="ie" value="UTF-8">
+                    <div class="form-group">
+                        <input type="text" name="q" class="search-query form-control" placeholder="Search">
+					</div>
+				</form>
+
+				<ul class="nav navbar-nav">
+					<li>
+<span>Namespace</span>					</li>
+					<li>
+<span>Class</span>					</li>
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+					</li>
+
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="-API-documentation.zip" title="Download documentation as ZIP archive"><span>Download</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="left">
+	<div id="menu">
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+					<li>
+						<a href="namespace-CSVelte.html">
+							CSVelte<span></span>
+						</a>
+							<ul>
+					<li>
+						<a href="namespace-CSVelte.Contract.html">
+							Contract						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Exception.html">
+							Exception						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Flavor.html">
+							Flavor						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.IO.html">
+							IO						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Table.html">
+							Table						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Traits.html">
+							Traits						</a>
+							</li>
+								</ul></li>
+			</ul>
+		</div>
+
+
+		<div id="elements">
+			<h3>Classes</h3>
+			<ul>
+				<li><a href="class-CSVelte.Autoloader.html">CSVelte\Autoloader</a></li>
+				<li><a href="class-CSVelte.CSVelte.html">CSVelte\CSVelte</a></li>
+				<li><a href="class-CSVelte.Flavor.html">CSVelte\Flavor</a></li>
+				<li><a href="class-CSVelte.Flavor.Excel.html">CSVelte\Flavor\Excel</a></li>
+				<li><a href="class-CSVelte.Flavor.ExcelTab.html">CSVelte\Flavor\ExcelTab</a></li>
+				<li><a href="class-CSVelte.Flavor.Unix.html">CSVelte\Flavor\Unix</a></li>
+				<li><a href="class-CSVelte.Flavor.UnixTab.html">CSVelte\Flavor\UnixTab</a></li>
+				<li><a href="class-CSVelte.IO.Stream.html">CSVelte\IO\Stream</a></li>
+				<li><a href="class-CSVelte.Reader.html">CSVelte\Reader</a></li>
+				<li><a href="class-CSVelte.Table.AbstractRow.html">CSVelte\Table\AbstractRow</a></li>
+				<li><a href="class-CSVelte.Table.HeaderRow.html">CSVelte\Table\HeaderRow</a></li>
+				<li><a href="class-CSVelte.Table.Row.html">CSVelte\Table\Row</a></li>
+				<li><a href="class-CSVelte.Taster.html">CSVelte\Taster</a></li>
+				<li><a href="class-CSVelte.Writer.html">CSVelte\Writer</a></li>
+			</ul>
+
+			<h3>Interfaces</h3>
+			<ul>
+				<li><a href="class-CSVelte.Contract.Readable.html">CSVelte\Contract\Readable</a></li>
+				<li><a href="class-CSVelte.Contract.Seekable.html">CSVelte\Contract\Seekable</a></li>
+				<li><a href="class-CSVelte.Contract.Writable.html">CSVelte\Contract\Writable</a></li>
+			</ul>
+
+			<h3>Traits</h3>
+			<ul>
+				<li><a href="class-CSVelte.Traits.IsReadable.html">CSVelte\Traits\IsReadable</a></li>
+				<li><a href="class-CSVelte.Traits.IsSeekable.html">CSVelte\Traits\IsSeekable</a></li>
+				<li><a href="class-CSVelte.Traits.IsWritable.html">CSVelte\Traits\IsWritable</a></li>
+			</ul>
+
+			<h3>Exceptions</h3>
+			<ul>
+				<li><a href="class-CSVelte.Exception.CSVelteException.html">CSVelte\Exception\CSVelteException</a></li>
+				<li><a href="class-CSVelte.Exception.DeprecatedException.html">CSVelte\Exception\DeprecatedException</a></li>
+				<li><a href="class-CSVelte.Exception.EndOfFileException.html">CSVelte\Exception\EndOfFileException</a></li>
+				<li><a href="class-CSVelte.Exception.FlavorException.html">CSVelte\Exception\FlavorException</a></li>
+				<li><a href="class-CSVelte.Exception.HeaderException.html">CSVelte\Exception\HeaderException</a></li>
+				<li><a href="class-CSVelte.Exception.ImmutableException.html">CSVelte\Exception\ImmutableException</a></li>
+				<li><a href="class-CSVelte.Exception.IOException.html">CSVelte\Exception\IOException</a></li>
+				<li><a href="class-CSVelte.Exception.NotYetImplementedException.html">CSVelte\Exception\NotYetImplementedException</a></li>
+				<li><a href="class-CSVelte.Exception.TasterException.html">CSVelte\Exception\TasterException</a></li>
+				<li><a href="class-CSVelte.Exception.WriterException.html">CSVelte\Exception\WriterException</a></li>
+			</ul>
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+	<div id="rightInner">
+<pre id="source"><code><span id="1" class="l"><a href="#1">  1 </a><span class="xlang">&lt;?php</span>
+</span><span id="2" class="l"><a href="#2">  2 </a><span class="php-comment">/**
+</span></span><span id="3" class="l"><a href="#3">  3 </a><span class="php-comment"> * CSVelte: Slender, elegant CSV for PHP
+</span></span><span id="4" class="l"><a href="#4">  4 </a><span class="php-comment"> *
+</span></span><span id="5" class="l"><a href="#5">  5 </a><span class="php-comment"> * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+</span></span><span id="6" class="l"><a href="#6">  6 </a><span class="php-comment"> * standardization efforts, CSVelte was written in an effort to take all the
+</span></span><span id="7" class="l"><a href="#7">  7 </a><span class="php-comment"> * suck out of working with CSV.
+</span></span><span id="8" class="l"><a href="#8">  8 </a><span class="php-comment"> *
+</span></span><span id="9" class="l"><a href="#9">  9 </a><span class="php-comment"> * @version   v0.2
+</span></span><span id="10" class="l"><a href="#10"> 10 </a><span class="php-comment"> * @copyright Copyright (c) 2016 Luke Visinoni &lt;luke.visinoni@gmail.com&gt;
+</span></span><span id="11" class="l"><a href="#11"> 11 </a><span class="php-comment"> * @author    Luke Visinoni &lt;luke.visinoni@gmail.com&gt;
+</span></span><span id="12" class="l"><a href="#12"> 12 </a><span class="php-comment"> * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+</span></span><span id="13" class="l"><a href="#13"> 13 </a><span class="php-comment"> */</span>
+</span><span id="14" class="l"><a href="#14"> 14 </a><span class="php-keyword1">namespace</span> CSVelte;
+</span><span id="15" class="l"><a href="#15"> 15 </a>
+</span><span id="16" class="l"><a href="#16"> 16 </a><span class="php-keyword1">use</span> \InvalidArgumentException;
+</span><span id="17" class="l"><a href="#17"> 17 </a><span class="php-keyword1">use</span> \FilterIterator;
+</span><span id="18" class="l"><a href="#18"> 18 </a><span class="php-keyword1">use</span> CSVelte\IO\Stream;
+</span><span id="19" class="l"><a href="#19"> 19 </a><span class="php-keyword1">use</span> CSVelte\Contract\Readable;
+</span><span id="20" class="l"><a href="#20"> 20 </a><span class="php-keyword1">use</span> CSVelte\Table\Row;
+</span><span id="21" class="l"><a href="#21"> 21 </a><span class="php-keyword1">use</span> CSVelte\Table\HeaderRow;
+</span><span id="22" class="l"><a href="#22"> 22 </a><span class="php-keyword1">use</span> CSVelte\Exception\EndOfFileException;
+</span><span id="23" class="l"><a href="#23"> 23 </a><span class="php-keyword1">use</span> CSVelte\Reader\FilteredIterator <span class="php-keyword1">as</span> FilteredReader;
+</span><span id="24" class="l"><a href="#24"> 24 </a>
+</span><span id="25" class="l"><a href="#25"> 25 </a><span class="php-comment">/**
+</span></span><span id="26" class="l"><a href="#26"> 26 </a><span class="php-comment"> * CSV Reader
+</span></span><span id="27" class="l"><a href="#27"> 27 </a><span class="php-comment"> *
+</span></span><span id="28" class="l"><a href="#28"> 28 </a><span class="php-comment"> * Reads CSV data from any object that implements CSVelte\Contract\Readable.
+</span></span><span id="29" class="l"><a href="#29"> 29 </a><span class="php-comment"> *
+</span></span><span id="30" class="l"><a href="#30"> 30 </a><span class="php-comment"> * @package CSVelte
+</span></span><span id="31" class="l"><a href="#31"> 31 </a><span class="php-comment"> * @subpackage Reader
+</span></span><span id="32" class="l"><a href="#32"> 32 </a><span class="php-comment"> * @since v0.1
+</span></span><span id="33" class="l"><a href="#33"> 33 </a><span class="php-comment"> * @todo Also, is there any way to do some kind of caching or something? Probably
+</span></span><span id="34" class="l"><a href="#34"> 34 </a><span class="php-comment"> *     not but if you could that would be a cool feature...
+</span></span><span id="35" class="l"><a href="#35"> 35 </a><span class="php-comment"> */</span>
+</span><span id="36" class="l"><a href="#36"> 36 </a><span class="php-keyword1">class</span> Reader <span class="php-keyword1">implements</span> \Iterator
+</span><span id="37" class="l"><a href="#37"> 37 </a>{
+</span><span id="38" class="l"><a href="#38"> 38 </a>    <span class="php-keyword1">const</span> PLACEHOLDER_DELIM   = <span class="php-quote">'[=[__DLIM__]=]'</span>;
+</span><span id="39" class="l"><a href="#39"> 39 </a>    <span class="php-keyword1">const</span> PLACEHOLDER_NEWLINE = <span class="php-quote">'[=[__NWLN__]=]'</span>;
+</span><span id="40" class="l"><a href="#40"> 40 </a>
+</span><span id="41" class="l"><a href="#41"> 41 </a>    <span class="php-comment">/**
+</span></span><span id="42" class="l"><a href="#42"> 42 </a><span class="php-comment">     * This class supports any sources of input that implements this interface.
+</span></span><span id="43" class="l"><a href="#43"> 43 </a><span class="php-comment">     * This way I can read from local files, streams, FTP, any class that implements
+</span></span><span id="44" class="l"><a href="#44"> 44 </a><span class="php-comment">     * the &quot;Readable&quot; interface
+</span></span><span id="45" class="l"><a href="#45"> 45 </a><span class="php-comment">     * @var \CSVelte\Contract\Readable
+</span></span><span id="46" class="l"><a href="#46"> 46 </a><span class="php-comment">     */</span>
+</span><span id="47" class="l"><a href="#47"> 47 </a>    <span class="php-keyword1">protected</span> <span class="php-var">$source</span>;
+</span><span id="48" class="l"><a href="#48"> 48 </a>
+</span><span id="49" class="l"><a href="#49"> 49 </a>    <span class="php-comment">/**
+</span></span><span id="50" class="l"><a href="#50"> 50 </a><span class="php-comment">     * @var \CSVelte\Flavor The &quot;flavor&quot; or format of the CSV being read
+</span></span><span id="51" class="l"><a href="#51"> 51 </a><span class="php-comment">     */</span>
+</span><span id="52" class="l"><a href="#52"> 52 </a>    <span class="php-keyword1">protected</span> <span class="php-var">$flavor</span>;
+</span><span id="53" class="l"><a href="#53"> 53 </a>
+</span><span id="54" class="l"><a href="#54"> 54 </a>    <span class="php-comment">/**
+</span></span><span id="55" class="l"><a href="#55"> 55 </a><span class="php-comment">     * @var \CSVelte\Table\Row|boolean Row currently loaded into memory
+</span></span><span id="56" class="l"><a href="#56"> 56 </a><span class="php-comment">     */</span>
+</span><span id="57" class="l"><a href="#57"> 57 </a>    <span class="php-keyword1">protected</span> <span class="php-var">$current</span>;
+</span><span id="58" class="l"><a href="#58"> 58 </a>
+</span><span id="59" class="l"><a href="#59"> 59 </a>    <span class="php-comment">/**
+</span></span><span id="60" class="l"><a href="#60"> 60 </a><span class="php-comment">     * @var integer The current line being read (from input source)
+</span></span><span id="61" class="l"><a href="#61"> 61 </a><span class="php-comment">     */</span>
+</span><span id="62" class="l"><a href="#62"> 62 </a>    <span class="php-keyword1">protected</span> <span class="php-var">$line</span> = <span class="php-num">0</span>;
+</span><span id="63" class="l"><a href="#63"> 63 </a>
+</span><span id="64" class="l"><a href="#64"> 64 </a>    <span class="php-comment">/**
+</span></span><span id="65" class="l"><a href="#65"> 65 </a><span class="php-comment">     * @var \CSVelte\Table\HeaderRow The header row (if any)
+</span></span><span id="66" class="l"><a href="#66"> 66 </a><span class="php-comment">     */</span>
+</span><span id="67" class="l"><a href="#67"> 67 </a>    <span class="php-keyword1">protected</span> <span class="php-var">$header</span>;
+</span><span id="68" class="l"><a href="#68"> 68 </a>
+</span><span id="69" class="l"><a href="#69"> 69 </a>    <span class="php-comment">/**
+</span></span><span id="70" class="l"><a href="#70"> 70 </a><span class="php-comment">     * @var array An array of callback functions
+</span></span><span id="71" class="l"><a href="#71"> 71 </a><span class="php-comment">     */</span>
+</span><span id="72" class="l"><a href="#72"> 72 </a>    <span class="php-keyword1">protected</span> <span class="php-var">$filters</span> = <span class="php-keyword1">array</span>();
+</span><span id="73" class="l"><a href="#73"> 73 </a>
+</span><span id="74" class="l"><a href="#74"> 74 </a>    <span class="php-comment">/**
+</span></span><span id="75" class="l"><a href="#75"> 75 </a><span class="php-comment">     * @var bool True if current line ended while inside a quoted string
+</span></span><span id="76" class="l"><a href="#76"> 76 </a><span class="php-comment">     */</span>
+</span><span id="77" class="l"><a href="#77"> 77 </a>    <span class="php-keyword1">protected</span> <span class="php-var">$open</span> = <span class="php-keyword1">false</span>;
+</span><span id="78" class="l"><a href="#78"> 78 </a>
+</span><span id="79" class="l"><a href="#79"> 79 </a>    <span class="php-comment">/**
+</span></span><span id="80" class="l"><a href="#80"> 80 </a><span class="php-comment">     * @var bool True if last character read was the escape character
+</span></span><span id="81" class="l"><a href="#81"> 81 </a><span class="php-comment">     */</span>
+</span><span id="82" class="l"><a href="#82"> 82 </a>    <span class="php-keyword1">protected</span> <span class="php-var">$escape</span> = <span class="php-keyword1">false</span>;
+</span><span id="83" class="l"><a href="#83"> 83 </a>
+</span><span id="84" class="l"><a href="#84"> 84 </a>    <span class="php-comment">/**
+</span></span><span id="85" class="l"><a href="#85"> 85 </a><span class="php-comment">     * Reader Constructor.
+</span></span><span id="86" class="l"><a href="#86"> 86 </a><span class="php-comment">     * Initializes a reader object using an input source and optionally a flavor
+</span></span><span id="87" class="l"><a href="#87"> 87 </a><span class="php-comment">     *
+</span></span><span id="88" class="l"><a href="#88"> 88 </a><span class="php-comment">     * @param \CSVelte\Contract\Readable $input The source of our CSV data
+</span></span><span id="89" class="l"><a href="#89"> 89 </a><span class="php-comment">     * @param \CSVelte\Flavor|array|null $flavor The &quot;flavor&quot; or format specification object
+</span></span><span id="90" class="l"><a href="#90"> 90 </a><span class="php-comment">     */</span>
+</span><span id="91" class="l"><a href="#91"> 91 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> __construct(<span class="php-var">$input</span>, <span class="php-var">$flavor</span> = <span class="php-keyword1">null</span>)
+</span><span id="92" class="l"><a href="#92"> 92 </a>    {
+</span><span id="93" class="l"><a href="#93"> 93 </a>        <span class="php-var">$this</span>-&gt;setSource(<span class="php-var">$input</span>)
+</span><span id="94" class="l"><a href="#94"> 94 </a>             -&gt;setFlavor(<span class="php-var">$flavor</span>)
+</span><span id="95" class="l"><a href="#95"> 95 </a>             -&gt;<span class="php-keyword2">rewind</span>();
+</span><span id="96" class="l"><a href="#96"> 96 </a>    }
+</span><span id="97" class="l"><a href="#97"> 97 </a>
+</span><span id="98" class="l"><a href="#98"> 98 </a>    <span class="php-comment">/**
+</span></span><span id="99" class="l"><a href="#99"> 99 </a><span class="php-comment">     * Set the flavor.
+</span></span><span id="100" class="l"><a href="#100">100 </a><span class="php-comment">     *
+</span></span><span id="101" class="l"><a href="#101">101 </a><span class="php-comment">     * Set the ``CSVelte\Flavor`` object, used to determine CSV format.
+</span></span><span id="102" class="l"><a href="#102">102 </a><span class="php-comment">     *
+</span></span><span id="103" class="l"><a href="#103">103 </a><span class="php-comment">     * @param \CSVelte\Flavor|array|null $flavor Either an array or a flavor object
+</span></span><span id="104" class="l"><a href="#104">104 </a><span class="php-comment">     */</span>
+</span><span id="105" class="l"><a href="#105">105 </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> setFlavor(<span class="php-var">$flavor</span> = <span class="php-keyword1">null</span>)
+</span><span id="106" class="l"><a href="#106">106 </a>    {
+</span><span id="107" class="l"><a href="#107">107 </a>        <span class="php-keyword1">if</span> (<span class="php-keyword2">is_array</span>(<span class="php-var">$flavor</span>)) <span class="php-var">$flavor</span> = <span class="php-keyword1">new</span> Flavor(<span class="php-var">$flavor</span>);
+</span><span id="108" class="l"><a href="#108">108 </a>        <span class="php-var">$taster</span> = <span class="php-keyword1">new</span> Taster(<span class="php-var">$this</span>-&gt;source);
+</span><span id="109" class="l"><a href="#109">109 </a>        <span class="php-comment">// @todo put this inside a try/catch</span>
+</span><span id="110" class="l"><a href="#110">110 </a>        <span class="php-keyword1">if</span> (<span class="php-keyword2">is_null</span>(<span class="php-var">$flavor</span>)) {
+</span><span id="111" class="l"><a href="#111">111 </a>            <span class="php-var">$flavor</span> = <span class="php-var">$taster</span>-&gt;lick();
+</span><span id="112" class="l"><a href="#112">112 </a>        }
+</span><span id="113" class="l"><a href="#113">113 </a>        <span class="php-keyword1">if</span> (<span class="php-keyword2">is_null</span>(<span class="php-var">$flavor</span>-&gt;<span class="php-keyword2">header</span>)) {
+</span><span id="114" class="l"><a href="#114">114 </a>            <span class="php-comment">// Flavor is immutable, give me a new one with header set to lickHeader return val</span>
+</span><span id="115" class="l"><a href="#115">115 </a>            <span class="php-var">$flavor</span> = <span class="php-var">$flavor</span>-&gt;<span class="php-keyword2">copy</span>([<span class="php-quote">'header'</span> =&gt; <span class="php-var">$taster</span>-&gt;lickHeader(<span class="php-var">$flavor</span>-&gt;delimiter, <span class="php-var">$flavor</span>-&gt;lineTerminator)]);
+</span><span id="116" class="l"><a href="#116">116 </a>        }
+</span><span id="117" class="l"><a href="#117">117 </a>        <span class="php-var">$this</span>-&gt;flavor = <span class="php-var">$flavor</span>;
+</span><span id="118" class="l"><a href="#118">118 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>;
+</span><span id="119" class="l"><a href="#119">119 </a>    }
+</span><span id="120" class="l"><a href="#120">120 </a>
+</span><span id="121" class="l"><a href="#121">121 </a>    <span class="php-comment">/**
+</span></span><span id="122" class="l"><a href="#122">122 </a><span class="php-comment">     * Set the reader source.
+</span></span><span id="123" class="l"><a href="#123">123 </a><span class="php-comment">     *
+</span></span><span id="124" class="l"><a href="#124">124 </a><span class="php-comment">     * The reader can accept anything that implements Readable and is actually
+</span></span><span id="125" class="l"><a href="#125">125 </a><span class="php-comment">     * readable (can be read). This will make sure that whatever is passed to
+</span></span><span id="126" class="l"><a href="#126">126 </a><span class="php-comment">     * the reader meets these expectations and set $this-&gt;source. It can also
+</span></span><span id="127" class="l"><a href="#127">127 </a><span class="php-comment">     * accept any string (or any object with a __toString() method), or an
+</span></span><span id="128" class="l"><a href="#128">128 </a><span class="php-comment">     * SplFileObject, so long as it represents a file rather than a directory. 
+</span></span><span id="129" class="l"><a href="#129">129 </a><span class="php-comment">     *
+</span></span><span id="130" class="l"><a href="#130">130 </a><span class="php-comment">     * @param \CSVelte\Contract\Readable|object|string|SplFileObject $input See description
+</span></span><span id="131" class="l"><a href="#131">131 </a><span class="php-comment">     * @return $this
+</span></span><span id="132" class="l"><a href="#132">132 </a><span class="php-comment">     */</span>
+</span><span id="133" class="l"><a href="#133">133 </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> setSource(<span class="php-var">$input</span>)
+</span><span id="134" class="l"><a href="#134">134 </a>    {
+</span><span id="135" class="l"><a href="#135">135 </a>        <span class="php-keyword1">if</span> (<span class="php-var">$input</span> <span class="php-keyword1">instanceof</span> Readable &amp;&amp; <span class="php-var">$input</span>-&gt;isReadable()) {
+</span><span id="136" class="l"><a href="#136">136 </a>            <span class="php-var">$this</span>-&gt;source = <span class="php-var">$input</span>;
+</span><span id="137" class="l"><a href="#137">137 </a>        } <span class="php-keyword1">elseif</span> (<span class="php-keyword2">file_exists</span>((string) <span class="php-var">$input</span>)) {
+</span><span id="138" class="l"><a href="#138">138 </a>            <span class="php-var">$this</span>-&gt;source = <span class="php-keyword1">new</span> IO\Stream(<span class="php-var">$input</span>);
+</span><span id="139" class="l"><a href="#139">139 </a>        } <span class="php-keyword1">else</span> {
+</span><span id="140" class="l"><a href="#140">140 </a>            <span class="php-var">$this</span>-&gt;source = Stream::streamize(<span class="php-var">$input</span>);
+</span><span id="141" class="l"><a href="#141">141 </a>        }
+</span><span id="142" class="l"><a href="#142">142 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>;
+</span><span id="143" class="l"><a href="#143">143 </a>    }
+</span><span id="144" class="l"><a href="#144">144 </a>
+</span><span id="145" class="l"><a href="#145">145 </a>    <span class="php-comment">/**
+</span></span><span id="146" class="l"><a href="#146">146 </a><span class="php-comment">     * Load a line into memory
+</span></span><span id="147" class="l"><a href="#147">147 </a><span class="php-comment">     *
+</span></span><span id="148" class="l"><a href="#148">148 </a><span class="php-comment">     * @return void ($this?)
+</span></span><span id="149" class="l"><a href="#149">149 </a><span class="php-comment">     * @access protected
+</span></span><span id="150" class="l"><a href="#150">150 </a><span class="php-comment">     */</span>
+</span><span id="151" class="l"><a href="#151">151 </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> load()
+</span><span id="152" class="l"><a href="#152">152 </a>    {
+</span><span id="153" class="l"><a href="#153">153 </a>        <span class="php-keyword1">if</span> (<span class="php-keyword2">is_null</span>(<span class="php-var">$this</span>-&gt;<span class="php-keyword2">current</span>)) {
+</span><span id="154" class="l"><a href="#154">154 </a>            <span class="php-keyword1">try</span> {
+</span><span id="155" class="l"><a href="#155">155 </a>                <span class="php-var">$line</span> = <span class="php-var">$this</span>-&gt;readLine();
+</span><span id="156" class="l"><a href="#156">156 </a>                <span class="php-var">$this</span>-&gt;line++;
+</span><span id="157" class="l"><a href="#157">157 </a>                <span class="php-var">$parsed</span> = <span class="php-var">$this</span>-&gt;parse(<span class="php-var">$line</span>);
+</span><span id="158" class="l"><a href="#158">158 </a>                <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;hasHeader() &amp;&amp; <span class="php-var">$this</span>-&gt;line === <span class="php-num">1</span>) {
+</span><span id="159" class="l"><a href="#159">159 </a>                    <span class="php-var">$this</span>-&gt;<span class="php-keyword2">header</span> = <span class="php-keyword1">new</span> HeaderRow(<span class="php-var">$parsed</span>);
+</span><span id="160" class="l"><a href="#160">160 </a>                } <span class="php-keyword1">else</span> {
+</span><span id="161" class="l"><a href="#161">161 </a>                    <span class="php-var">$this</span>-&gt;<span class="php-keyword2">current</span> = <span class="php-keyword1">new</span> Row(<span class="php-var">$parsed</span>);
+</span><span id="162" class="l"><a href="#162">162 </a>                    <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;<span class="php-keyword2">header</span>) <span class="php-var">$this</span>-&gt;<span class="php-keyword2">current</span>-&gt;setHeaderRow(<span class="php-var">$this</span>-&gt;<span class="php-keyword2">header</span>);
+</span><span id="163" class="l"><a href="#163">163 </a>                }
+</span><span id="164" class="l"><a href="#164">164 </a>            } <span class="php-keyword1">catch</span> (EndOfFileException <span class="php-var">$e</span>) {
+</span><span id="165" class="l"><a href="#165">165 </a>                <span class="php-var">$this</span>-&gt;<span class="php-keyword2">current</span> = <span class="php-keyword1">false</span>;
+</span><span id="166" class="l"><a href="#166">166 </a>            }
+</span><span id="167" class="l"><a href="#167">167 </a>        }
+</span><span id="168" class="l"><a href="#168">168 </a>    }
+</span><span id="169" class="l"><a href="#169">169 </a>
+</span><span id="170" class="l"><a href="#170">170 </a>    <span class="php-comment">/**
+</span></span><span id="171" class="l"><a href="#171">171 </a><span class="php-comment">     * Read single line from CSV data source (stream, file, etc.), taking into
+</span></span><span id="172" class="l"><a href="#172">172 </a><span class="php-comment">     * account CSV's de-facto quoting rules with respect to designated line
+</span></span><span id="173" class="l"><a href="#173">173 </a><span class="php-comment">     * terminator character when they fall within quoted strings.
+</span></span><span id="174" class="l"><a href="#174">174 </a><span class="php-comment">     *
+</span></span><span id="175" class="l"><a href="#175">175 </a><span class="php-comment">     * @return string A CSV row (could possibly span multiple lines depending on
+</span></span><span id="176" class="l"><a href="#176">176 </a><span class="php-comment">     *     quoting and escaping)
+</span></span><span id="177" class="l"><a href="#177">177 </a><span class="php-comment">     * @throws \CSVelte\Exception\EndOfFileException when eof has been reached
+</span></span><span id="178" class="l"><a href="#178">178 </a><span class="php-comment">     *     and the read buffer has all been returned
+</span></span><span id="179" class="l"><a href="#179">179 </a><span class="php-comment">     */</span>
+</span><span id="180" class="l"><a href="#180">180 </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> readLine()
+</span><span id="181" class="l"><a href="#181">181 </a>    {
+</span><span id="182" class="l"><a href="#182">182 </a>        <span class="php-var">$f</span> = <span class="php-var">$this</span>-&gt;getFlavor();
+</span><span id="183" class="l"><a href="#183">183 </a>        <span class="php-var">$eol</span> = <span class="php-var">$f</span>-&gt;lineTerminator;
+</span><span id="184" class="l"><a href="#184">184 </a>        <span class="php-keyword1">try</span> {
+</span><span id="185" class="l"><a href="#185">185 </a>            <span class="php-keyword1">do</span> {
+</span><span id="186" class="l"><a href="#186">186 </a>                <span class="php-keyword1">if</span> (!<span class="php-keyword1">isset</span>(<span class="php-var">$lines</span>)) <span class="php-var">$lines</span> = <span class="php-keyword1">array</span>();
+</span><span id="187" class="l"><a href="#187">187 </a>                <span class="php-keyword1">if</span> (<span class="php-keyword1">false</span> === (<span class="php-var">$line</span> = <span class="php-var">$this</span>-&gt;source-&gt;readLine(<span class="php-var">$eol</span>))) {
+</span><span id="188" class="l"><a href="#188">188 </a>                    <span class="php-keyword1">throw</span> <span class="php-keyword1">new</span> EndOfFileException(<span class="php-quote">&quot;End of file reached: &quot;</span> . <span class="php-var">$this</span>-&gt;source-&gt;getName());
+</span><span id="189" class="l"><a href="#189">189 </a>                }
+</span><span id="190" class="l"><a href="#190">190 </a>                <span class="php-keyword2">array_push</span>(<span class="php-var">$lines</span>, <span class="php-keyword2">rtrim</span>(<span class="php-var">$line</span>, <span class="php-var">$eol</span>));
+</span><span id="191" class="l"><a href="#191">191 </a>            } <span class="php-keyword1">while</span> (<span class="php-var">$this</span>-&gt;inQuotedString(<span class="php-keyword2">end</span>(<span class="php-var">$lines</span>), <span class="php-var">$f</span>-&gt;quoteChar, <span class="php-var">$f</span>-&gt;escapeChar));
+</span><span id="192" class="l"><a href="#192">192 </a>        } <span class="php-keyword1">catch</span> (EndOfFileException <span class="php-var">$e</span>) {
+</span><span id="193" class="l"><a href="#193">193 </a>            <span class="php-comment">// only throw the exception if we don't already have lines in the buffer</span>
+</span><span id="194" class="l"><a href="#194">194 </a>            <span class="php-keyword1">if</span> (!<span class="php-keyword2">count</span>(<span class="php-var">$lines</span>)) <span class="php-keyword1">throw</span> <span class="php-var">$e</span>;
+</span><span id="195" class="l"><a href="#195">195 </a>        }
+</span><span id="196" class="l"><a href="#196">196 </a>        <span class="php-keyword1">return</span> <span class="php-keyword2">rtrim</span>(<span class="php-keyword2">implode</span>(<span class="php-var">$eol</span>, <span class="php-var">$lines</span>), <span class="php-var">$eol</span>);
+</span><span id="197" class="l"><a href="#197">197 </a>    }
+</span><span id="198" class="l"><a href="#198">198 </a>
+</span><span id="199" class="l"><a href="#199">199 </a>    <span class="php-comment">/**
+</span></span><span id="200" class="l"><a href="#200">200 </a><span class="php-comment">     * Determine whether last line ended while a quoted string was still &quot;open&quot;
+</span></span><span id="201" class="l"><a href="#201">201 </a><span class="php-comment">     *
+</span></span><span id="202" class="l"><a href="#202">202 </a><span class="php-comment">     * This method is used in a loop to determine if each line being read ends
+</span></span><span id="203" class="l"><a href="#203">203 </a><span class="php-comment">     * while a quoted string is still &quot;open&quot;.
+</span></span><span id="204" class="l"><a href="#204">204 </a><span class="php-comment">     *
+</span></span><span id="205" class="l"><a href="#205">205 </a><span class="php-comment">     * @param string $line Line of csv to analyze
+</span></span><span id="206" class="l"><a href="#206">206 </a><span class="php-comment">     * @param string $quoteChar The quote/enclosure character to use
+</span></span><span id="207" class="l"><a href="#207">207 </a><span class="php-comment">     * @param string $escapeChar The escape char/sequence to use
+</span></span><span id="208" class="l"><a href="#208">208 </a><span class="php-comment">     * @return bool True if currently within a quoted string
+</span></span><span id="209" class="l"><a href="#209">209 </a><span class="php-comment">     */</span>
+</span><span id="210" class="l"><a href="#210">210 </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> inQuotedString(<span class="php-var">$line</span>, <span class="php-var">$quoteChar</span>, <span class="php-var">$escapeChar</span>)
+</span><span id="211" class="l"><a href="#211">211 </a>    {
+</span><span id="212" class="l"><a href="#212">212 </a>        <span class="php-keyword1">if</span> (!<span class="php-keyword1">empty</span>(<span class="php-var">$line</span>)) {
+</span><span id="213" class="l"><a href="#213">213 </a>            <span class="php-keyword1">do</span> {
+</span><span id="214" class="l"><a href="#214">214 </a>                <span class="php-keyword1">if</span> (!<span class="php-keyword1">isset</span>(<span class="php-var">$i</span>)) <span class="php-var">$i</span> = <span class="php-num">0</span>;
+</span><span id="215" class="l"><a href="#215">215 </a>                <span class="php-var">$c</span> = <span class="php-var">$line</span>[<span class="php-var">$i</span>++];
+</span><span id="216" class="l"><a href="#216">216 </a>                <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;escape) {
+</span><span id="217" class="l"><a href="#217">217 </a>                    <span class="php-var">$this</span>-&gt;escape = <span class="php-keyword1">false</span>;
+</span><span id="218" class="l"><a href="#218">218 </a>                    <span class="php-keyword1">continue</span>;
+</span><span id="219" class="l"><a href="#219">219 </a>                }
+</span><span id="220" class="l"><a href="#220">220 </a>                <span class="php-var">$this</span>-&gt;escape = (<span class="php-var">$c</span> == <span class="php-var">$escapeChar</span>);
+</span><span id="221" class="l"><a href="#221">221 </a>                <span class="php-keyword1">if</span> (<span class="php-var">$c</span> == <span class="php-var">$quoteChar</span>) <span class="php-var">$this</span>-&gt;open = !<span class="php-var">$this</span>-&gt;open;
+</span><span id="222" class="l"><a href="#222">222 </a>            } <span class="php-keyword1">while</span> (<span class="php-var">$i</span> &lt; <span class="php-keyword2">strlen</span>(<span class="php-var">$line</span>));
+</span><span id="223" class="l"><a href="#223">223 </a>        }
+</span><span id="224" class="l"><a href="#224">224 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;open;
+</span><span id="225" class="l"><a href="#225">225 </a>    }
+</span><span id="226" class="l"><a href="#226">226 </a>
+</span><span id="227" class="l"><a href="#227">227 </a>    <span class="php-comment">/**
+</span></span><span id="228" class="l"><a href="#228">228 </a><span class="php-comment">     * Flavor Getter.
+</span></span><span id="229" class="l"><a href="#229">229 </a><span class="php-comment">     *
+</span></span><span id="230" class="l"><a href="#230">230 </a><span class="php-comment">     * Retreive the &quot;flavor&quot; object being used by the reader
+</span></span><span id="231" class="l"><a href="#231">231 </a><span class="php-comment">     *
+</span></span><span id="232" class="l"><a href="#232">232 </a><span class="php-comment">     * @return \CSVelte\Flavor
+</span></span><span id="233" class="l"><a href="#233">233 </a><span class="php-comment">     * @access public
+</span></span><span id="234" class="l"><a href="#234">234 </a><span class="php-comment">     */</span>
+</span><span id="235" class="l"><a href="#235">235 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> getFlavor()
+</span><span id="236" class="l"><a href="#236">236 </a>    {
+</span><span id="237" class="l"><a href="#237">237 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;flavor;
+</span><span id="238" class="l"><a href="#238">238 </a>    }
+</span><span id="239" class="l"><a href="#239">239 </a>
+</span><span id="240" class="l"><a href="#240">240 </a>    <span class="php-comment">/**
+</span></span><span id="241" class="l"><a href="#241">241 </a><span class="php-comment">     * Check if flavor object defines header.
+</span></span><span id="242" class="l"><a href="#242">242 </a><span class="php-comment">     *
+</span></span><span id="243" class="l"><a href="#243">243 </a><span class="php-comment">     * Determine whether or not the input source's CSV data contains a header
+</span></span><span id="244" class="l"><a href="#244">244 </a><span class="php-comment">     * row or not. Unless you explicitly specify so within your Flavor object,
+</span></span><span id="245" class="l"><a href="#245">245 </a><span class="php-comment">     * this method is a logical best guess. The CSV format does not
+</span></span><span id="246" class="l"><a href="#246">246 </a><span class="php-comment">     * provide metadata of any kind and therefor does not provide this info.
+</span></span><span id="247" class="l"><a href="#247">247 </a><span class="php-comment">     *
+</span></span><span id="248" class="l"><a href="#248">248 </a><span class="php-comment">     * @return boolean True if the input source has a header row (or, to be more )
+</span></span><span id="249" class="l"><a href="#249">249 </a><span class="php-comment">     *     accurate, if the flavor SAYS it has a header row)
+</span></span><span id="250" class="l"><a href="#250">250 </a><span class="php-comment">     * @todo Rather than always reading in Taster::SAMPLE_SIZE, read in ten lines at a time until
+</span></span><span id="251" class="l"><a href="#251">251 </a><span class="php-comment">     *     whatever method it is has enough data to make a reliable decision/guess
+</span></span><span id="252" class="l"><a href="#252">252 </a><span class="php-comment">     */</span>
+</span><span id="253" class="l"><a href="#253">253 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> hasHeader()
+</span><span id="254" class="l"><a href="#254">254 </a>    {
+</span><span id="255" class="l"><a href="#255">255 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;getFlavor()-&gt;<span class="php-keyword2">header</span>;
+</span><span id="256" class="l"><a href="#256">256 </a>    }
+</span><span id="257" class="l"><a href="#257">257 </a>
+</span><span id="258" class="l"><a href="#258">258 </a>    <span class="php-comment">/**
+</span></span><span id="259" class="l"><a href="#259">259 </a><span class="php-comment">     * Temporarily replace special characters within a quoted string
+</span></span><span id="260" class="l"><a href="#260">260 </a><span class="php-comment">     *
+</span></span><span id="261" class="l"><a href="#261">261 </a><span class="php-comment">     * Replace all instances of newlines and whatever character you specify (as
+</span></span><span id="262" class="l"><a href="#262">262 </a><span class="php-comment">     * the delimiter) that are contained within quoted text. The replacements are
+</span></span><span id="263" class="l"><a href="#263">263 </a><span class="php-comment">     * simply a special placeholder string. This is done so that I can use the
+</span></span><span id="264" class="l"><a href="#264">264 </a><span class="php-comment">     * very unsmart &quot;explode&quot; function and not have to worry about it exploding
+</span></span><span id="265" class="l"><a href="#265">265 </a><span class="php-comment">     * on delimiters or newlines within quotes. Once I have exploded, I typically
+</span></span><span id="266" class="l"><a href="#266">266 </a><span class="php-comment">     * sub back in the real characters before doing anything else.
+</span></span><span id="267" class="l"><a href="#267">267 </a><span class="php-comment">     *
+</span></span><span id="268" class="l"><a href="#268">268 </a><span class="php-comment">     * @param string $data The string to do the replacements on
+</span></span><span id="269" class="l"><a href="#269">269 </a><span class="php-comment">     * @param string $delim The delimiter character to replace
+</span></span><span id="270" class="l"><a href="#270">270 </a><span class="php-comment">     * @param string $quo The quote character
+</span></span><span id="271" class="l"><a href="#271">271 </a><span class="php-comment">     * @param string $eol Line terminator character/sequence
+</span></span><span id="272" class="l"><a href="#272">272 </a><span class="php-comment">     * @return string The data with replacements performed
+</span></span><span id="273" class="l"><a href="#273">273 </a><span class="php-comment">     * @access protected
+</span></span><span id="274" class="l"><a href="#274">274 </a><span class="php-comment">     * @internal
+</span></span><span id="275" class="l"><a href="#275">275 </a><span class="php-comment">     * @todo I could probably pass in (maybe optionally) the newline character I
+</span></span><span id="276" class="l"><a href="#276">276 </a><span class="php-comment">     *     want to replace as well. I'll do that if I need to.
+</span></span><span id="277" class="l"><a href="#277">277 </a><span class="php-comment">     * @todo Create a regex class so you can do $regex-&gt;escape() rather than
+</span></span><span id="278" class="l"><a href="#278">278 </a><span class="php-comment">     *     preg_quote
+</span></span><span id="279" class="l"><a href="#279">279 </a><span class="php-comment">     */</span>
+</span><span id="280" class="l"><a href="#280">280 </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> replaceQuotedSpecialChars(<span class="php-var">$data</span>, <span class="php-var">$delim</span>, <span class="php-var">$quo</span>, <span class="php-var">$eol</span>)
+</span><span id="281" class="l"><a href="#281">281 </a>    {
+</span><span id="282" class="l"><a href="#282">282 </a>        <span class="php-keyword1">return</span> <span class="php-keyword2">preg_replace_callback</span>(<span class="php-quote">'/(['</span>. <span class="php-keyword2">preg_quote</span>(<span class="php-var">$quo</span>, <span class="php-quote">'/'</span>) . <span class="php-quote">'])(.*)\1/imsU'</span>, <span class="php-keyword1">function</span>(<span class="php-var">$matches</span>) <span class="php-keyword1">use</span> (<span class="php-var">$delim</span>, <span class="php-var">$eol</span>) {
+</span><span id="283" class="l"><a href="#283">283 </a>            <span class="php-var">$ret</span> = <span class="php-keyword2">str_replace</span>(<span class="php-var">$eol</span>, self::PLACEHOLDER_NEWLINE, <span class="php-var">$matches</span>[<span class="php-num">0</span>]);
+</span><span id="284" class="l"><a href="#284">284 </a>            <span class="php-var">$ret</span> = <span class="php-keyword2">str_replace</span>(<span class="php-var">$delim</span>, self::PLACEHOLDER_DELIM, <span class="php-var">$ret</span>);
+</span><span id="285" class="l"><a href="#285">285 </a>            <span class="php-keyword1">return</span> <span class="php-var">$ret</span>;
+</span><span id="286" class="l"><a href="#286">286 </a>        }, <span class="php-var">$data</span>);
+</span><span id="287" class="l"><a href="#287">287 </a>    }
+</span><span id="288" class="l"><a href="#288">288 </a>
+</span><span id="289" class="l"><a href="#289">289 </a>    <span class="php-comment">/**
+</span></span><span id="290" class="l"><a href="#290">290 </a><span class="php-comment">     * Undo temporary special char replacements
+</span></span><span id="291" class="l"><a href="#291">291 </a><span class="php-comment">     *
+</span></span><span id="292" class="l"><a href="#292">292 </a><span class="php-comment">     * Replace the special character placeholders with the characters they
+</span></span><span id="293" class="l"><a href="#293">293 </a><span class="php-comment">     * originally substituted.
+</span></span><span id="294" class="l"><a href="#294">294 </a><span class="php-comment">     *
+</span></span><span id="295" class="l"><a href="#295">295 </a><span class="php-comment">     * @param string $data The data to undo replacements in
+</span></span><span id="296" class="l"><a href="#296">296 </a><span class="php-comment">     * @param string $delim The delimiter character
+</span></span><span id="297" class="l"><a href="#297">297 </a><span class="php-comment">     * @param string $eol The character or string of characters used to terminate lines
+</span></span><span id="298" class="l"><a href="#298">298 </a><span class="php-comment">     * @return string The data with placeholders replaced with original characters
+</span></span><span id="299" class="l"><a href="#299">299 </a><span class="php-comment">     * @internal
+</span></span><span id="300" class="l"><a href="#300">300 </a><span class="php-comment">     */</span>
+</span><span id="301" class="l"><a href="#301">301 </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> undoReplaceQuotedSpecialChars(<span class="php-var">$data</span>, <span class="php-var">$delim</span>, <span class="php-var">$eol</span>)
+</span><span id="302" class="l"><a href="#302">302 </a>    {
+</span><span id="303" class="l"><a href="#303">303 </a>        <span class="php-var">$replacements</span> = <span class="php-keyword1">array</span>(self::PLACEHOLDER_DELIM =&gt; <span class="php-var">$delim</span>, self::PLACEHOLDER_NEWLINE =&gt; <span class="php-var">$eol</span>);
+</span><span id="304" class="l"><a href="#304">304 </a>        <span class="php-keyword1">if</span> (<span class="php-keyword2">array_walk</span>(<span class="php-var">$replacements</span>, <span class="php-keyword1">function</span>(<span class="php-var">$replacement</span>, <span class="php-var">$placeholder</span>) <span class="php-keyword1">use</span> (&amp;<span class="php-var">$data</span>) {
+</span><span id="305" class="l"><a href="#305">305 </a>            <span class="php-var">$data</span> = <span class="php-keyword2">str_replace</span>(<span class="php-var">$placeholder</span>, <span class="php-var">$replacement</span>, <span class="php-var">$data</span>);
+</span><span id="306" class="l"><a href="#306">306 </a>        })) {
+</span><span id="307" class="l"><a href="#307">307 </a>            <span class="php-keyword1">return</span> <span class="php-var">$data</span>;
+</span><span id="308" class="l"><a href="#308">308 </a>        }
+</span><span id="309" class="l"><a href="#309">309 </a>    }
+</span><span id="310" class="l"><a href="#310">310 </a>
+</span><span id="311" class="l"><a href="#311">311 </a>    <span class="php-comment">/**
+</span></span><span id="312" class="l"><a href="#312">312 </a><span class="php-comment">     * Remove quotes wrapping text.
+</span></span><span id="313" class="l"><a href="#313">313 </a><span class="php-comment">     *
+</span></span><span id="314" class="l"><a href="#314">314 </a><span class="php-comment">     * @param string $data The data to unquote
+</span></span><span id="315" class="l"><a href="#315">315 </a><span class="php-comment">     * @return string The data with quotes stripped from the outside of it
+</span></span><span id="316" class="l"><a href="#316">316 </a><span class="php-comment">     * @internal
+</span></span><span id="317" class="l"><a href="#317">317 </a><span class="php-comment">     */</span>
+</span><span id="318" class="l"><a href="#318">318 </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> unQuote(<span class="php-var">$data</span>)
+</span><span id="319" class="l"><a href="#319">319 </a>    {
+</span><span id="320" class="l"><a href="#320">320 </a>        <span class="php-var">$escapeChar</span> = <span class="php-var">$this</span>-&gt;getFlavor()-&gt;doubleQuote ? <span class="php-var">$this</span>-&gt;getFlavor()-&gt;quoteChar : <span class="php-var">$this</span>-&gt;getFlavor()-&gt;escapeChar;
+</span><span id="321" class="l"><a href="#321">321 </a>        <span class="php-var">$quoteChar</span> = <span class="php-var">$this</span>-&gt;getFlavor()-&gt;quoteChar;
+</span><span id="322" class="l"><a href="#322">322 </a>        <span class="php-var">$data</span> = <span class="php-var">$this</span>-&gt;unEscape(<span class="php-var">$data</span>, <span class="php-var">$escapeChar</span>, <span class="php-var">$quoteChar</span>);
+</span><span id="323" class="l"><a href="#323">323 </a>        <span class="php-keyword1">return</span> <span class="php-keyword2">preg_replace</span>(<span class="php-quote">'/^([&quot;\'])(.*)\1$/ms'</span>, <span class="php-quote">'\2'</span>, <span class="php-var">$data</span>);
+</span><span id="324" class="l"><a href="#324">324 </a>    }
+</span><span id="325" class="l"><a href="#325">325 </a>
+</span><span id="326" class="l"><a href="#326">326 </a>    <span class="php-comment">/**
+</span></span><span id="327" class="l"><a href="#327">327 </a><span class="php-comment">     * @internal
+</span></span><span id="328" class="l"><a href="#328">328 </a><span class="php-comment">     * @todo This actually shouldn't even be necessary. Characters should be read
+</span></span><span id="329" class="l"><a href="#329">329 </a><span class="php-comment">     *     in one at a time and a quote that follows another should just be ignored
+</span></span><span id="330" class="l"><a href="#330">330 </a><span class="php-comment">     *     deeming this unnecessary.
+</span></span><span id="331" class="l"><a href="#331">331 </a><span class="php-comment">     */</span>
+</span><span id="332" class="l"><a href="#332">332 </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> unEscape(<span class="php-var">$str</span>, <span class="php-var">$esc</span>, <span class="php-var">$quo</span>)
+</span><span id="333" class="l"><a href="#333">333 </a>    {
+</span><span id="334" class="l"><a href="#334">334 </a>        <span class="php-keyword1">return</span> <span class="php-keyword2">str_replace</span>(<span class="php-var">$esc</span> . <span class="php-var">$quo</span>, <span class="php-var">$quo</span>, <span class="php-var">$str</span>);
+</span><span id="335" class="l"><a href="#335">335 </a>    }
+</span><span id="336" class="l"><a href="#336">336 </a>
+</span><span id="337" class="l"><a href="#337">337 </a>    <span class="php-comment">/**
+</span></span><span id="338" class="l"><a href="#338">338 </a><span class="php-comment">     * Parse a line of CSV data into an array of columns
+</span></span><span id="339" class="l"><a href="#339">339 </a><span class="php-comment">     *
+</span></span><span id="340" class="l"><a href="#340">340 </a><span class="php-comment">     * @param string A line of CSV data to parse
+</span></span><span id="341" class="l"><a href="#341">341 </a><span class="php-comment">     * @return array An array of columns
+</span></span><span id="342" class="l"><a href="#342">342 </a><span class="php-comment">     * @access protected
+</span></span><span id="343" class="l"><a href="#343">343 </a><span class="php-comment">     * @internal
+</span></span><span id="344" class="l"><a href="#344">344 </a><span class="php-comment">     */</span>
+</span><span id="345" class="l"><a href="#345">345 </a>    <span class="php-keyword1">protected</span> <span class="php-keyword1">function</span> parse(<span class="php-var">$line</span>)
+</span><span id="346" class="l"><a href="#346">346 </a>    {
+</span><span id="347" class="l"><a href="#347">347 </a>        <span class="php-var">$f</span> = <span class="php-var">$this</span>-&gt;getFlavor();
+</span><span id="348" class="l"><a href="#348">348 </a>        <span class="php-var">$replaced</span> = <span class="php-var">$this</span>-&gt;replaceQuotedSpecialChars(<span class="php-var">$line</span>, <span class="php-var">$f</span>-&gt;delimiter, <span class="php-var">$f</span>-&gt;quoteChar, <span class="php-var">$f</span>-&gt;lineTerminator);
+</span><span id="349" class="l"><a href="#349">349 </a>        <span class="php-var">$columns</span> = <span class="php-keyword2">explode</span>(<span class="php-var">$f</span>-&gt;delimiter, <span class="php-var">$replaced</span>);
+</span><span id="350" class="l"><a href="#350">350 </a>        <span class="php-var">$that</span> = <span class="php-var">$this</span>;
+</span><span id="351" class="l"><a href="#351">351 </a>        <span class="php-keyword1">return</span> <span class="php-keyword2">array_map</span>(<span class="php-keyword1">function</span>(<span class="php-var">$val</span>) <span class="php-keyword1">use</span> (<span class="php-var">$that</span>, <span class="php-var">$f</span>) {
+</span><span id="352" class="l"><a href="#352">352 </a>            <span class="php-var">$undone</span> = <span class="php-var">$that</span>-&gt;undoReplaceQuotedSpecialChars(<span class="php-var">$val</span>, <span class="php-var">$f</span>-&gt;delimiter, <span class="php-var">$f</span>-&gt;lineTerminator);
+</span><span id="353" class="l"><a href="#353">353 </a>            <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;unQuote(<span class="php-var">$undone</span>);
+</span><span id="354" class="l"><a href="#354">354 </a>        }, <span class="php-var">$columns</span>);
+</span><span id="355" class="l"><a href="#355">355 </a>    }
+</span><span id="356" class="l"><a href="#356">356 </a>
+</span><span id="357" class="l"><a href="#357">357 </a>    <span class="php-comment">/**
+</span></span><span id="358" class="l"><a href="#358">358 </a><span class="php-comment">     * Retrieve current row.
+</span></span><span id="359" class="l"><a href="#359">359 </a><span class="php-comment">     *
+</span></span><span id="360" class="l"><a href="#360">360 </a><span class="php-comment">     * @return CSVelte\Table\Row The current row
+</span></span><span id="361" class="l"><a href="#361">361 </a><span class="php-comment">     */</span>
+</span><span id="362" class="l"><a href="#362">362 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">current</span>()
+</span><span id="363" class="l"><a href="#363">363 </a>    {
+</span><span id="364" class="l"><a href="#364">364 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;<span class="php-keyword2">current</span>;
+</span><span id="365" class="l"><a href="#365">365 </a>    }
+</span><span id="366" class="l"><a href="#366">366 </a>
+</span><span id="367" class="l"><a href="#367">367 </a>    <span class="php-comment">/**
+</span></span><span id="368" class="l"><a href="#368">368 </a><span class="php-comment">     * Advance to the next row
+</span></span><span id="369" class="l"><a href="#369">369 </a><span class="php-comment">     *
+</span></span><span id="370" class="l"><a href="#370">370 </a><span class="php-comment">     * @return CSVelte\Table\Row|null The current row (if there is one)
+</span></span><span id="371" class="l"><a href="#371">371 </a><span class="php-comment">     */</span>
+</span><span id="372" class="l"><a href="#372">372 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">next</span>()
+</span><span id="373" class="l"><a href="#373">373 </a>    {
+</span><span id="374" class="l"><a href="#374">374 </a>
+</span><span id="375" class="l"><a href="#375">375 </a>        <span class="php-var">$this</span>-&gt;<span class="php-keyword2">current</span> = <span class="php-keyword1">null</span>;
+</span><span id="376" class="l"><a href="#376">376 </a>        <span class="php-var">$this</span>-&gt;load();
+</span><span id="377" class="l"><a href="#377">377 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;<span class="php-keyword2">current</span>;
+</span><span id="378" class="l"><a href="#378">378 </a>    }
+</span><span id="379" class="l"><a href="#379">379 </a>
+</span><span id="380" class="l"><a href="#380">380 </a>    <span class="php-comment">/**
+</span></span><span id="381" class="l"><a href="#381">381 </a><span class="php-comment">     * Determine if current position has valid row.
+</span></span><span id="382" class="l"><a href="#382">382 </a><span class="php-comment">     *
+</span></span><span id="383" class="l"><a href="#383">383 </a><span class="php-comment">     * @return boolean True if current row is valid
+</span></span><span id="384" class="l"><a href="#384">384 </a><span class="php-comment">     */</span>
+</span><span id="385" class="l"><a href="#385">385 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> valid()
+</span><span id="386" class="l"><a href="#386">386 </a>    {
+</span><span id="387" class="l"><a href="#387">387 </a>        <span class="php-keyword1">return</span> (bool) <span class="php-var">$this</span>-&gt;<span class="php-keyword2">current</span>;
+</span><span id="388" class="l"><a href="#388">388 </a>    }
+</span><span id="389" class="l"><a href="#389">389 </a>
+</span><span id="390" class="l"><a href="#390">390 </a>    <span class="php-comment">/**
+</span></span><span id="391" class="l"><a href="#391">391 </a><span class="php-comment">     * Retrieve current row key (line number).
+</span></span><span id="392" class="l"><a href="#392">392 </a><span class="php-comment">     *
+</span></span><span id="393" class="l"><a href="#393">393 </a><span class="php-comment">     * @return int The current line number
+</span></span><span id="394" class="l"><a href="#394">394 </a><span class="php-comment">     */</span>
+</span><span id="395" class="l"><a href="#395">395 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">key</span>()
+</span><span id="396" class="l"><a href="#396">396 </a>    {
+</span><span id="397" class="l"><a href="#397">397 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;line;
+</span><span id="398" class="l"><a href="#398">398 </a>    }
+</span><span id="399" class="l"><a href="#399">399 </a>
+</span><span id="400" class="l"><a href="#400">400 </a>    <span class="php-comment">/**
+</span></span><span id="401" class="l"><a href="#401">401 </a><span class="php-comment">     * Rewind to the beginning of the dataset.
+</span></span><span id="402" class="l"><a href="#402">402 </a><span class="php-comment">     *
+</span></span><span id="403" class="l"><a href="#403">403 </a><span class="php-comment">     * @return CSVelte\Table\Row|null The current row
+</span></span><span id="404" class="l"><a href="#404">404 </a><span class="php-comment">     */</span>
+</span><span id="405" class="l"><a href="#405">405 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">rewind</span>()
+</span><span id="406" class="l"><a href="#406">406 </a>    {
+</span><span id="407" class="l"><a href="#407">407 </a>        <span class="php-var">$this</span>-&gt;line = <span class="php-num">0</span>;
+</span><span id="408" class="l"><a href="#408">408 </a>        <span class="php-var">$this</span>-&gt;source-&gt;<span class="php-keyword2">rewind</span>();
+</span><span id="409" class="l"><a href="#409">409 </a>        <span class="php-var">$this</span>-&gt;<span class="php-keyword2">current</span> = <span class="php-keyword1">null</span>;
+</span><span id="410" class="l"><a href="#410">410 </a>        <span class="php-var">$this</span>-&gt;load();
+</span><span id="411" class="l"><a href="#411">411 </a>        <span class="php-keyword1">if</span> (<span class="php-var">$this</span>-&gt;hasHeader()) {
+</span><span id="412" class="l"><a href="#412">412 </a>            <span class="php-var">$this</span>-&gt;<span class="php-keyword2">next</span>();
+</span><span id="413" class="l"><a href="#413">413 </a>        }
+</span><span id="414" class="l"><a href="#414">414 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;<span class="php-keyword2">current</span>();
+</span><span id="415" class="l"><a href="#415">415 </a>    }
+</span><span id="416" class="l"><a href="#416">416 </a>
+</span><span id="417" class="l"><a href="#417">417 </a>    <span class="php-comment">/**
+</span></span><span id="418" class="l"><a href="#418">418 </a><span class="php-comment">     * Retrieve header row.
+</span></span><span id="419" class="l"><a href="#419">419 </a><span class="php-comment">     *
+</span></span><span id="420" class="l"><a href="#420">420 </a><span class="php-comment">     * @return CSVelte\Table\HeaderRow|null The header row if there is one
+</span></span><span id="421" class="l"><a href="#421">421 </a><span class="php-comment">     */</span>
+</span><span id="422" class="l"><a href="#422">422 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> <span class="php-keyword2">header</span>()
+</span><span id="423" class="l"><a href="#423">423 </a>    {
+</span><span id="424" class="l"><a href="#424">424 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>-&gt;<span class="php-keyword2">header</span>;
+</span><span id="425" class="l"><a href="#425">425 </a>    }
+</span><span id="426" class="l"><a href="#426">426 </a>
+</span><span id="427" class="l"><a href="#427">427 </a>    <span class="php-comment">/**
+</span></span><span id="428" class="l"><a href="#428">428 </a><span class="php-comment">     * Add anonumous function as filter.
+</span></span><span id="429" class="l"><a href="#429">429 </a><span class="php-comment">     *
+</span></span><span id="430" class="l"><a href="#430">430 </a><span class="php-comment">     * Add an anonymous function that accepts the current row as its only argument.
+</span></span><span id="431" class="l"><a href="#431">431 </a><span class="php-comment">     * Return true from the function to keep that row, false otherwise.
+</span></span><span id="432" class="l"><a href="#432">432 </a><span class="php-comment">     *
+</span></span><span id="433" class="l"><a href="#433">433 </a><span class="php-comment">     * @param Callable $filter An anonymous function to filter out row by certain criteria
+</span></span><span id="434" class="l"><a href="#434">434 </a><span class="php-comment">     * @return $this
+</span></span><span id="435" class="l"><a href="#435">435 </a><span class="php-comment">     */</span>
+</span><span id="436" class="l"><a href="#436">436 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> addFilter(<span class="php-keyword1">Callable</span> <span class="php-var">$filter</span>)
+</span><span id="437" class="l"><a href="#437">437 </a>    {
+</span><span id="438" class="l"><a href="#438">438 </a>        <span class="php-keyword2">array_push</span>(<span class="php-var">$this</span>-&gt;filters, <span class="php-var">$filter</span>);
+</span><span id="439" class="l"><a href="#439">439 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>;
+</span><span id="440" class="l"><a href="#440">440 </a>    }
+</span><span id="441" class="l"><a href="#441">441 </a>
+</span><span id="442" class="l"><a href="#442">442 </a>    <span class="php-comment">/**
+</span></span><span id="443" class="l"><a href="#443">443 </a><span class="php-comment">     * Add multiple filters at once.
+</span></span><span id="444" class="l"><a href="#444">444 </a><span class="php-comment">     *
+</span></span><span id="445" class="l"><a href="#445">445 </a><span class="php-comment">     * Add an array of anonymous functions to filter out certain rows.
+</span></span><span id="446" class="l"><a href="#446">446 </a><span class="php-comment">     *
+</span></span><span id="447" class="l"><a href="#447">447 </a><span class="php-comment">     * @param array $filters An array of anonymous functions
+</span></span><span id="448" class="l"><a href="#448">448 </a><span class="php-comment">     * @return $this
+</span></span><span id="449" class="l"><a href="#449">449 </a><span class="php-comment">     */</span>
+</span><span id="450" class="l"><a href="#450">450 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> addFilters(<span class="php-keyword1">array</span> <span class="php-var">$filters</span>)
+</span><span id="451" class="l"><a href="#451">451 </a>    {
+</span><span id="452" class="l"><a href="#452">452 </a>        <span class="php-keyword1">foreach</span> (<span class="php-var">$filters</span> <span class="php-keyword1">as</span> <span class="php-var">$filter</span>) {
+</span><span id="453" class="l"><a href="#453">453 </a>            <span class="php-var">$this</span>-&gt;addFilter(<span class="php-var">$filter</span>);
+</span><span id="454" class="l"><a href="#454">454 </a>        }
+</span><span id="455" class="l"><a href="#455">455 </a>        <span class="php-keyword1">return</span> <span class="php-var">$this</span>;
+</span><span id="456" class="l"><a href="#456">456 </a>    }
+</span><span id="457" class="l"><a href="#457">457 </a>
+</span><span id="458" class="l"><a href="#458">458 </a>    <span class="php-comment">/**
+</span></span><span id="459" class="l"><a href="#459">459 </a><span class="php-comment">     * Returns an iterator with rows from user-supplied filter functions removed
+</span></span><span id="460" class="l"><a href="#460">460 </a><span class="php-comment">     *
+</span></span><span id="461" class="l"><a href="#461">461 </a><span class="php-comment">     * @return CSVelte\Reader\FilteredReader An iterator with filtered rows
+</span></span><span id="462" class="l"><a href="#462">462 </a><span class="php-comment">     */</span>
+</span><span id="463" class="l"><a href="#463">463 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> filter()
+</span><span id="464" class="l"><a href="#464">464 </a>    {
+</span><span id="465" class="l"><a href="#465">465 </a>        <span class="php-keyword1">return</span> <span class="php-keyword1">new</span> FilteredReader(<span class="php-var">$this</span>, <span class="php-var">$this</span>-&gt;filters);
+</span><span id="466" class="l"><a href="#466">466 </a>    }
+</span><span id="467" class="l"><a href="#467">467 </a>
+</span><span id="468" class="l"><a href="#468">468 </a>    <span class="php-comment">/**
+</span></span><span id="469" class="l"><a href="#469">469 </a><span class="php-comment">     * Retrieve the contents of the dataset as an array of arrays.
+</span></span><span id="470" class="l"><a href="#470">470 </a><span class="php-comment">     *
+</span></span><span id="471" class="l"><a href="#471">471 </a><span class="php-comment">     * @return array An array of arrays of CSV content
+</span></span><span id="472" class="l"><a href="#472">472 </a><span class="php-comment">     */</span>
+</span><span id="473" class="l"><a href="#473">473 </a>    <span class="php-keyword1">public</span> <span class="php-keyword1">function</span> toArray()
+</span><span id="474" class="l"><a href="#474">474 </a>    {
+</span><span id="475" class="l"><a href="#475">475 </a>        <span class="php-keyword1">return</span> <span class="php-keyword2">array_map</span>(<span class="php-keyword1">function</span>(<span class="php-var">$row</span>){
+</span><span id="476" class="l"><a href="#476">476 </a>            <span class="php-keyword1">return</span> <span class="php-var">$row</span>-&gt;toArray();
+</span><span id="477" class="l"><a href="#477">477 </a>        }, <span class="php-keyword2">iterator_to_array</span>(<span class="php-var">$this</span>));
+</span><span id="478" class="l"><a href="#478">478 </a>    }
+</span><span id="479" class="l"><a href="#479">479 </a>
+</span><span id="480" class="l"><a href="#480">480 </a>}
+</span><span id="481" class="l"><a href="#481">481 </a></span></code></pre>
+	</div>
+
+	<div id="footer">
+		CSVelte v0.2 API Documentation API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+<script src="resources/combined.js?533e23ef2f02bd4b20548834a028566b6eb403e0"></script>
+<script src="elementlist.js?f00fa39e0d590f961c860bd26334bff8e3631fb9"></script>
+</body>
+</html>

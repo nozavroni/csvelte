@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>Namespace CSVelte\Exception | CSVelte v0.2 API Documentation</title>
+
+	<link rel="stylesheet" href="resources/bootstrap.min.css?973e37a8502921d56bc02bb55321f45b072b6f71">
+	<link rel="stylesheet" href="resources/style.css?49f43d3208c5d7e33fa16d36107a345bf11cc00d">
+	<link rel="search" type="application/opensearchdescription+xml" title="CSVelte v0.2 API Documentation" href="/opensearch.xml">
+
+	<script>
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', "UA-83431108-1"]);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+</head>
+
+<body>
+	<nav id="navigation" class="navbar navbar-default navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a href="index.html" class="navbar-brand">CSVelte v0.2 API Documentation</a>
+			</div>
+			<div class="collapse navbar-collapse">
+
+                <form action="http://www.google.com/cse" id="search" class="navbar-form navbar-left" role="search">
+                    <input type="hidden" name="cx" value="002645647446389662336:uolgqyfdbkq">
+                    <input type="hidden" name="ie" value="UTF-8">
+                    <div class="form-group">
+                        <input type="text" name="q" class="search-query form-control" placeholder="Search">
+					</div>
+				</form>
+
+				<ul class="nav navbar-nav">
+					<li class="active">
+<span>Namespace</span>					</li>
+					<li>
+<span>Class</span>					</li>
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="tree.html" title="Tree view of classes, interfaces, traits and exceptions"><span>Tree</span></a>
+					</li>
+
+
+					<li class="divider-vertical"></li>
+
+					<li>
+						<a href="-API-documentation.zip" title="Download documentation as ZIP archive"><span>Download</span></a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="left">
+	<div id="menu">
+
+		<div id="groups">
+				<h3>Namespaces</h3>
+			<ul>
+					<li class="active">
+						<a href="namespace-CSVelte.html">
+							CSVelte<span></span>
+						</a>
+							<ul>
+					<li>
+						<a href="namespace-CSVelte.Contract.html">
+							Contract						</a>
+							</li>
+					<li class="active">
+						<a href="namespace-CSVelte.Exception.html">
+							Exception						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Flavor.html">
+							Flavor						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.IO.html">
+							IO						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Table.html">
+							Table						</a>
+							</li>
+					<li>
+						<a href="namespace-CSVelte.Traits.html">
+							Traits						</a>
+							</li>
+								</ul></li>
+			</ul>
+		</div>
+
+
+		<div id="elements">
+
+
+
+			<h3>Exceptions</h3>
+			<ul>
+				<li><a href="class-CSVelte.Exception.CSVelteException.html">CSVelteException</a></li>
+				<li><a href="class-CSVelte.Exception.DeprecatedException.html">DeprecatedException</a></li>
+				<li><a href="class-CSVelte.Exception.EndOfFileException.html">EndOfFileException</a></li>
+				<li><a href="class-CSVelte.Exception.FlavorException.html">FlavorException</a></li>
+				<li><a href="class-CSVelte.Exception.HeaderException.html">HeaderException</a></li>
+				<li><a href="class-CSVelte.Exception.ImmutableException.html">ImmutableException</a></li>
+				<li><a href="class-CSVelte.Exception.IOException.html">IOException</a></li>
+				<li><a href="class-CSVelte.Exception.NotYetImplementedException.html">NotYetImplementedException</a></li>
+				<li><a href="class-CSVelte.Exception.TasterException.html">TasterException</a></li>
+				<li><a href="class-CSVelte.Exception.WriterException.html">WriterException</a></li>
+			</ul>
+
+
+		</div>
+	</div>
+</div>
+
+<div id="splitter"></div>
+
+<div id="right">
+	<div id="rightInner">
+<div id="content" class="namespace">
+	<h1>Namespace <a href="namespace-CSVelte.html">CSVelte</a>\Exception</h1>
+
+
+
+
+
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h2>Exceptions summary</h2></div>
+	<table class="summary table table-bordered table-striped" id="exceptions">
+<tr>
+	<td class="name"><a href="class-CSVelte.Exception.CSVelteException.html">CSVelteException</a></td>
+	<td><p>CSVelte\Exception
+A generic catch-all exception thrown whenever CSVelte doesn't have a more
+specific or more appropriate exception to throw. Also the exception all other
+exceptions in the library inherit from.</p></td>
+</tr>
+<tr>
+	<td class="name"><a href="class-CSVelte.Exception.DeprecatedException.html">DeprecatedException</a></td>
+	<td><p>CSVelte\Exception\DeprecatedException
+This exception is thrown when users attempt to use features of the library
+that have been deprecated. This allows code to not necessarily braek even when
+the feature they're trying to use no longer exists or will be removed in the
+next version.</p></td>
+</tr>
+<tr>
+	<td class="name"><a href="class-CSVelte.Exception.EndOfFileException.html">EndOfFileException</a></td>
+	<td><p>CSVelte\Exception\EndOfFileException
+Thrown when user attempts to access/read from a file/stream/resource when its
+internal pointer has already reached the end of the file.</p></td>
+</tr>
+<tr>
+	<td class="name"><a href="class-CSVelte.Exception.FlavorException.html">FlavorException</a></td>
+	<td><p>CSVelte\Exception\FlavorException
+Thrown when a non-existant flavor is requested from Flavor::create()</p></td>
+</tr>
+<tr>
+	<td class="name"><a href="class-CSVelte.Exception.HeaderException.html">HeaderException</a></td>
+	<td><p>CSVelte\Exception\HeaderException
+There are various methods throughout the library that expect a CSV source to
+have a header row. Rather than doing something like:</p></td>
+</tr>
+<tr>
+	<td class="name"><a href="class-CSVelte.Exception.ImmutableException.html">ImmutableException</a></td>
+	<td><p>CSVelte\Exception\ImmutableException
+Thrown when user tries to change an attribute of an immutable (read-only)
+object (such as a CSVelte\Flavor object)</p></td>
+</tr>
+<tr>
+	<td class="name"><a href="class-CSVelte.Exception.IOException.html">IOException</a></td>
+	<td><p>CSVelte\Exception\IOException
+Thrown when user attempts to access/read a file in a way that it doesn't allow</p></td>
+</tr>
+<tr>
+	<td class="name"><a href="class-CSVelte.Exception.NotYetImplementedException.html">NotYetImplementedException</a></td>
+	<td><p>CSVelte\Exception\NotYetImplementedException
+This is just an exception I use internally for methods that I must include due
+to inheritance or what-have-you but that I have yet to implement.</p></td>
+</tr>
+<tr>
+	<td class="name"><a href="class-CSVelte.Exception.TasterException.html">TasterException</a></td>
+	<td><p>CSVelte\Exception\TasterException
+Used by CSVelte\Taster to report errors in "flavor tasting" (format inference)</p></td>
+</tr>
+<tr>
+	<td class="name"><a href="class-CSVelte.Exception.WriterException.html">WriterException</a></td>
+	<td><p>CSVelte\Exception\WriterException
+The CSVelte\Writer class throws this exception for various issues</p></td>
+</tr>
+	</table>
+</div>
+
+
+</div>
+	</div>
+
+	<div id="footer">
+		CSVelte v0.2 API Documentation API documentation generated by <a href="http://apigen.org">ApiGen</a>
+	</div>
+</div>
+<script src="resources/combined.js?533e23ef2f02bd4b20548834a028566b6eb403e0"></script>
+<script src="elementlist.js?f00fa39e0d590f961c860bd26334bff8e3631fb9"></script>
+</body>
+</html>
