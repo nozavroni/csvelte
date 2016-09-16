@@ -128,11 +128,3 @@ class Autoloader
         return false;
     }
 }
-
-/**
- * Add this file's parent directory to list of search paths and register autoloader
- * @var Autoloader
- */
-$autoloader = new Autoloader();
-$autoloader->addPath(__DIR__ . '/../');
-$autoloader->register();

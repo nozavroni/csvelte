@@ -76,4 +76,15 @@ class AutoloaderTest extends UnitTestCase
         $this->assertTrue($auto->load($classname = 'CSVelte\Table\Row'));
         $this->assertTrue(class_exists($classname));
     }
+
+    public function testRequireSrcAutoloadClass()
+    {
+        // set include path to something meaningless first, just to make sure that
+        // including the autoload.php class fixes things...
+        $meaningless = __DIR__;
+        set_include_path($meaningless);
+        $this->assertEquals($meaningless, get_include_path(), "Just a control test to make sure that include path was messed up first");
+        require_once $meaningless . "/../../src/autoload.php";
+        $this->assertEquals($meaningless . PATH_SEPARATOR . realpath(__DIR__ . '/../../src'), get_include_path(), "Test that including the autoload file adds CSVelte's src directory to the include path");
+    }
 }
