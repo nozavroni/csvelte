@@ -2,7 +2,6 @@
 namespace CSVelteTest;
 
 use CSVelte\CSVelte;
-use CSVelte\IO\File;
 use CSVelte\IO\Stream;
 use CSVelte\Reader;
 use CSVelte\Writer;
@@ -36,9 +35,9 @@ class ReaderTest extends UnitTestCase
     /**
      * @covers ::__construct()
      */
-    public function testReaderCanUseIOFileReadable()
+    public function testReaderCanUseIOStreamForFileReadable()
     {
-        $readable = new File($this->getFilePathFor('shortQuotedNewlines'));
+        $readable = new Stream($this->getFilePathFor('shortQuotedNewlines'));
         $reader = new Reader($readable);
         $this->assertEquals(['foo','bar','baz'], $reader->current()->toArray());
         $this->assertEquals(['bin',"boz,bork\nlib,bil,ilb",'bon'], $reader->next()->toArray());

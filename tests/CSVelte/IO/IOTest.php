@@ -23,7 +23,6 @@ namespace CSVelteTest\IO;
  * and the taster. And probably the factory/facade as well.
  */
 use CSVelteTest\UnitTestCase;
-use CSVelte\IO\File;
 /**
  * CSVelte\IO Tests
  *

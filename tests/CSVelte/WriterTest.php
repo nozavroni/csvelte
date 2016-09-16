@@ -2,7 +2,6 @@
 namespace CSVelteTest;
 
 use \ArrayIterator;
-use CSVelte\IO\File;
 use CSVelte\IO\Stream;
 use CSVelte\Writer;
 use CSVelte\Reader;

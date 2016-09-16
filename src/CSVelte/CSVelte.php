@@ -15,7 +15,6 @@ namespace CSVelte;
 
 use CSVelte\Reader;
 use CSVelte\Flavor;
-use CSVelte\IO\File;
 use CSVelte\IO\Stream;
 
 use CSVelte\Exception\IOException;
@@ -49,7 +48,7 @@ class CSVelte
     public static function reader($filename, $flavor = null)
     {
         self::assertFileIsReadable($filename);
-        $file = new File($filename);
+        $file = new Stream($filename);
         return new Reader($file, $flavor);
     }
 
