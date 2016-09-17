@@ -28,4 +28,4 @@
  * Refactored Readable, Writable, and Seekable interfaces ([#97](https://github.com/nozavroni/csvelte/issues/97) and various others)
  * Reader, writer and anywhere else that accepts a ``Flavor`` object can now also accept an associative array of flavor attributes that will override the default flavor ([#54](https://github.com/nozavroni/csvelte/issues/54))
  * Documentation rewritten almost completely, many sections elaborated and clarified, as well as better organization ([#87](https://github.com/nozavroni/csvelte/issues/87) and [#95](https://github.com/nozavroni/csvelte/issues/95))
- * Various other minor bug fixes and improvements
+ * Various other minor bug fixes, additional unit tests, and code improvements
