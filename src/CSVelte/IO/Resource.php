@@ -32,6 +32,12 @@ use CSVelte\Exception\IOException;
 class Resource
 {
     /**
+     * Available base access modes
+     * @var string base access mode must be one of these letters
+     */
+    protected static $bases = "rwaxc";
+
+    /**
      * Hash of readable/writable stream open mode types.
      *
      * Mercilessly stolen from:
@@ -44,7 +50,9 @@ class Resource
      * @var array Hash of readable and writable stream types
      * @todo I think I can get rid of this by simply checking whether base is a
      *     particular letter OR plus is present... try it
-     * @todo Why are x and c not even on either of these lists?
+     * @todo Why are x and c (alone) not even on either of these lists?
+     *       I just figured out why... readable and writable default to false. So
+     *       only modes that change that default behavior are listed here
      */
     protected static $readWriteHash = [
         'read' => [
@@ -124,21 +132,35 @@ class Resource
      *
      * @var string A single character for base open mode (r, w, a, x or c)
      */
-    protected $base;
+    protected $base = '';
 
     /**
      * Plus reading or plus writing.
      *
      * @var string Either a plus or an empty string
      */
-    protected $plus;
+    protected $plus = '';
 
     /**
      * Binary or text flag.
      *
      * @var string Either "b" or "t" for binary or text
      */
-    protected $flag;
+    protected $flag = '';
+
+    /**
+     * Does access mode string indicate readability?
+     *
+     * @var string Whether access mode indicates readability
+     */
+    protected $readable = false;
+
+    /**
+     * Does access mode string indicate writability
+     *
+     * @var string Whether access mode indicates writability
+     */
+    protected $writable = false;
 
     /**
      * Resource constructor.
@@ -272,16 +294,92 @@ class Resource
         $plus = (strpos($rest, '+') !== false) ? '+' : '';
         $flag = trim($rest, '+');
 
-        if (strpos("rwaxc", $base) !== false) {
-            $this->base = $base;
-            $this->plus = $plus;
-            $this->flag = $flag;
-            $this->readable = isset(self::$readWriteHash['read'][$this->getMode()]);
-            $this->writable = isset(self::$readWriteHash['write'][$this->getMode()]);
-            return $this;
-        }
+        $this->flag = '';
+        $this->setBaseMode($base)
+             ->setIsPlus($plus == '+')
+             ->setIsText($flag == 't')
+             ->setIsBinary($flag == 'b');
 
-        throw new InvalidArgumentException("{$mode} is not a valid stream access mode.");
+        return $this;
+    }
+
+    /**
+     * Update access parameters.
+     *
+     * After changing any of the access mode parameters, this method must be
+     * called in order for readable and writable to stay accurate.
+     *
+     * @return $this
+     */
+    protected function updateAccess()
+    {
+        $this->readable = isset(self::$readWriteHash['read'][$this->getMode()]);
+        $this->writable = isset(self::$readWriteHash['write'][$this->getMode()]);
+        return $this;
+    }
+
+    /**
+     * Set base access mode character.
+     *
+     * @param string $base The base mode character (must be one of "rwaxc")
+     * @return $this
+     * @throws \InvalidArgumentException If passed invalid base char
+     * @throws \CSVelte\Exception\IOException if stream has already been opened
+     */
+    public function setBaseMode($base)
+    {
+        $this->assertNotConnected(__METHOD__);
+        if (strpos(self::$bases, $base) === false) {
+            throw new InvalidArgumentException("\"{$base}\" is not a valid base stream access mode.");
+        }
+        $this->base = $base;
+        return $this->updateAccess();
+    }
+
+    /**
+     * Set plus mode.
+     *
+     * @param boolean $isPlus Whether base access mode should include the + sign
+     * @return $this
+     * @throws \CSVelte\Exception\IOException if stream has already been opened
+     */
+    public function setIsPlus($isPlus)
+    {
+        $this->assertNotConnected(__METHOD__);
+        $this->plus = $isPlus ? '+' : '';
+        return $this->updateAccess();
+    }
+
+    /**
+     * Set binary-safe mode.
+     *
+     * @param boolean $isBinary Whether binary safe mode or not
+     * @return $this
+     * @throws \CSVelte\Exception\IOException if stream has already been opened
+     */
+    public function setIsBinary($isBinary)
+    {
+        $this->assertNotConnected(__METHOD__);
+        if ($isBinary) {
+            $this->flag = 'b';
+        }
+        return $this;
+    }
+
+    /**
+     * Set text mode.
+     *
+     * @param boolean $isText Whether text mode or not
+     * @return $this
+     * @throws \CSVelte\Exception\IOException if stream has already been opened
+     */
+    public function setIsText($isText)
+    {
+        $this->assertNotConnected(__METHOD__);
+        if ($isText) {
+            $this->flag = 't';
+        }
+        return $this;
     }
 
     /**
@@ -665,7 +763,7 @@ class Resource
      *
      * @return boolean Whether write operations ore always appended
      */
-    public function appendsWriteOperations()
+    public function appendsWriteOps()
     {
         return $this->base == 'w';
     }

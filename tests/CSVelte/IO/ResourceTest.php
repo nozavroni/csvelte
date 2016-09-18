@@ -93,9 +93,37 @@ class ResourceTest extends IOTest
         $this->assertEquals("r+b", $sr->getMode());
         $this->assertTrue($sr->isReadable());
         $this->assertTrue($sr->isWritable());
+        $this->assertTrue($sr->isBinary());
+        $this->assertFalse($sr->isCursorPositionedAtEnd());
+        $this->assertTrue($sr->isCursorPositionedAtBeginning());
+        $this->assertFalse($sr->isTruncated());
+        $this->assertFalse($sr->attemptsFileCreation());
+        $this->assertFalse($sr->rejectsExistingFiles());
+        $this->assertFalse($sr->appendsWriteOps());
         $sr->setMode('r');
         $this->assertTrue($sr->isReadable());
         $this->assertFalse($sr->isWritable());
+        $sr->setIsBinary(true);
+        $this->assertEquals("rb", $sr->getMode());
+        $this->assertTrue($sr->isReadable());
+        $this->assertFalse($sr->isWritable());
+        $sr->setIsPlus(true);
+        $this->assertEquals("r+b", $sr->getMode());
+        $sr->setBaseMode('x')
+           ->setIsPlus(true)
+           ->setIsText(true);
+        $this->assertFalse($sr->isBinary());
+        $this->assertTrue($sr->isText());
+        $this->assertFalse($sr->isCursorPositionedAtEnd());
+        $this->assertTrue($sr->isCursorPositionedAtBeginning());
+        $this->assertFalse($sr->isTruncated());
+        $this->assertTrue($sr->attemptsFileCreation());
+        $this->assertTrue($sr->rejectsExistingFiles());
+        $this->assertFalse($sr->appendsWriteOps());
+        $sr->setBaseMode('a')
+           ->connect();
+        $this->assertEquals('a+t', $sr->getMode());
+        $this->assertTrue($sr->isCursorPositionedAtEnd());
     }
 
     public function testSetContextAfterInstantiation()
