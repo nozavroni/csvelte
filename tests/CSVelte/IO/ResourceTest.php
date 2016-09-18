@@ -175,4 +175,47 @@ class ResourceTest extends IOTest
         $this->assertEquals($newoptions = ['http' => $options['http'] + $newopts], stream_context_get_options($res->getContext()));
         $this->assertEquals(["options" => $newoptions] + $newparams, stream_context_get_params($res->getContext()));
     }
+
+    public function testSetContextAfterInstantiationUsingContextResource()
+    {
+        $res = new Resource(
+            $uri = "http://www.example.com/data/foo.csv",
+            $mode = 'rb'
+        );
+        $context_options = ['http' => ['method' => 'POST']];
+        $context_params = ['notification' => 'some_func_callback'];
+        $context_resource = stream_context_create($context_options, $context_params);
+        $res->setContextResource($context_resource);
+        $this->assertEquals($context_resource, $res->getContext());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetContextResourceWithInvalidTypeThrowsException()
+    {
+        $res = new Resource(
+            $uri = "http://www.example.com/data/foo.csv",
+            $mode = 'rb'
+        );
+        $context_options = ['http' => ['method' => 'POST']];
+        $context_params = ['notification' => 'some_func_callback'];
+        $context_resource = stream_context_create($context_options, $context_params);
+        $res->setContextResource("string");
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetContextResourceWithInvalidResourceTypeThrowsException()
+    {
+        $res = new Resource(
+            $uri = "http://www.example.com/data/foo.csv",
+            $mode = 'rb'
+        );
+        $context_options = ['http' => ['method' => 'POST']];
+        $context_params = ['notification' => 'some_func_callback'];
+        $context_resource = stream_context_create($context_options, $context_params);
+        $res->setContextResource($res->getResource());
+    }
 }

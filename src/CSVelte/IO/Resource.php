@@ -173,6 +173,7 @@ class Resource
      * @param boolean $lazy Whether connection should be deferred until an I/O
      *     operation is requested (such as read or write) on the attached stream
      * @throws \CSVelte\Exception\IOException if connection fails
+     * @todo Does stream_get_meta_data belong in Stream or Resource?
      */
     public function __construct($uri, $mode = null, $lazy = null, $use_include_path = null, $context_options = null, $context_params = null)
     {
@@ -281,6 +282,7 @@ class Resource
      * @see http://php.net/manual/en/function.fopen.php
      * @see https://github.com/binsoul/io-stream/blob/master/src/AccessMode.php
      * @see https://raw.githubusercontent.com/guzzle/streams/master/src/Stream.php
+     * @todo convert $mode to lower case and test it
      */
     public function setMode($mode = null)
     {
@@ -438,6 +440,19 @@ class Resource
             $this->setContextParams($params);
         }
         return $this;
+    }
+
+    public function setContextResource($context)
+    {
+        if (!is_resource($context) || get_resource_type($context) != "stream-context") {
+            throw new InvalidArgumentException(sprintf(
+                "Invalid argument for %s. Expecting resource of type \"stream-context\" but got: \"%s\"",
+                __METHOD__,
+                gettype($context)
+            ));
+        }
+        // don't need to call updateContext() because its already a context resource 
+        $this->crh = $context;
     }
 
     /**
