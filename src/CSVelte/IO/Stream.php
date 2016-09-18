@@ -17,9 +17,7 @@ use CSVelte\Traits\IsReadable;
 use CSVelte\Traits\IsWritable;
 use CSVelte\Traits\IsSeekable;
 
-use CSVelte\Contract\Readable;
-use CSVelte\Contract\Writable;
-use CSVelte\Contract\Seekable;
+use CSVelte\Contract\Streamable;
 
 use \SplFileObject;
 
@@ -42,7 +40,7 @@ use CSVelte\Exception\IOException;
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  * @since      v0.2
  */
-class Stream implements Readable, Writable, Seekable
+class Stream implements Streamable
 {
     use IsReadable, IsWritable, IsSeekable;
     /**
