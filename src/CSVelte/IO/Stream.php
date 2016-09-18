@@ -45,37 +45,11 @@ use CSVelte\Exception\IOException;
 class Stream implements Readable, Writable, Seekable
 {
     use IsReadable, IsWritable, IsSeekable;
-    /**
-     * Hash of readable/writable stream open mode types.
-     *
-     * Mercilessly stolen from:
-     * https://github.com/guzzle/streams/blob/master/src/Stream.php
-     *
-     * My kudos and sincere thanks go out to Michael Dowling and Graham Campbell
-     * of the guzzle/streams PHP package. Thanks for the inspiration (in some cases)
-     * and the not suing me for outright theft (in this case).
-     *
-     * @var array Hash of readable and writable stream types
-     */
-    protected static $readWriteHash = [
-        'read' => [
-            'r' => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
-            'rb' => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
-            'c+b' => true, 'rt' => true, 'w+t' => true, 'r+t' => true,
-            'x+t' => true, 'c+t' => true, 'a+' => true,
-        ],
-        'write' => [
-            'w' => true, 'w+' => true, 'rw' => true, 'r+' => true, 'x+' => true,
-            'c+' => true, 'wb' => true, 'w+b' => true, 'r+b' => true,
-            'x+b' => true, 'c+b' => true, 'w+t' => true, 'r+t' => true,
-            'x+t' => true, 'c+t' => true, 'a' => true, 'a+' => true,
-        ],
-    ];
 
     /**
-     * @var resource An open stream resource
+     * @var \CSVelte\IO\Resource A stream resource object
      */
-    protected $stream;
+    protected $resource;
 
     /**
      * @var int The total size (in bytes) of the stream
@@ -86,6 +60,8 @@ class Stream implements Readable, Writable, Seekable
      * Meta data about stream resource.
      * Just contains the return value of stream_get_meta_data.
      * @var array The return value of stream_get_meta_data
+     * @todo Not sure if this belongs in this class or in Resource. I'm leaving
+     *     it here for now, simply because I'm worried Stream will become superfluous
      */
     protected $meta;
 
@@ -108,6 +84,38 @@ class Stream implements Readable, Writable, Seekable
     protected $writable;
 
     /**
+     * Instantiate a stream.
+     *
+     * Instantiate a new stream object using a stream resource object.
+     *
+     * @param \CSVelte\IO\Resource A stream resource object
+     */
+    public function __construct(Resource $resource)
+    {
+        $this->setResource($resource);
+    }
+
+    /**
+     * Set stream resource object
+     *
+     * @param \CSVelte\IO\Resource $resource A stream resource object
+     */
+    protected function setResource(Resource $resource)
+    {
+        $this->resource = $resource;
+    }
+
+    /**
+     * Stream Object Destructor.
+     *
+     * Closes stream connection.
+     */
+    public function __destruct()
+    {
+        $this->close();
+    }
+
+    /**
      * Converts object/string to a usable stream
      *
      * Mercilessly stolen from:
@@ -123,25 +131,26 @@ class Stream implements Readable, Writable, Seekable
      * @throws \InvalidArgumentException
      * @todo Write an IO\AccessMode class like what I talked about in issue #114
      */
-    public static function streamize($resource = '')
+    public static function streamize($obj = '')
     {
-        if ($resource instanceof SplFileObject) {
-            return new self($resource->getPathName());
+        if ($obj instanceof SplFileObject) {
+            return self::open($obj->getPathName());
         }
 
-        $type = gettype($resource);
+        $type = gettype($obj);
 
         if ($type == 'string') {
             $stream = self::open('php://temp', 'r+');
-            if ($resource !== '') {
-                fwrite($stream, $resource);
-                fseek($stream, 0);
+            if ($obj !== '') {
+                $res = $stream->getResource();
+                fwrite($res(), $obj);
+                fseek($res(), 0);
             }
-            return new self($stream);
+            return $stream;
         }
 
-        if ($type == 'object' && method_exists($resource, '__toString')) {
-            return self::streamize((string) $resource);
+        if ($type == 'object' && method_exists($obj, '__toString')) {
+            return self::streamize((string) $obj);
         }
 
         throw new InvalidArgumentException('Invalid resource type: ' . $type);
@@ -180,74 +189,16 @@ class Stream implements Readable, Writable, Seekable
     }
 
     /**
-     * Stream Object Constructor.
      *
-     * Instantiates the stream object
-     *
-     * @param string|object|resource $stream Either a valid stream URI or an open
-     *     stream resource (using fopen, fsockopen, et al.)
-     * @param string $mode file/stream open mode as passed to native php
-     *     ``fopen`` function
-     * @param array $context Stream context options array as passed to native php
-     *     ``stream_context_create`` function
      * @see http://php.net/manual/en/function.fopen.php
      * @see http://php.net/manual/en/function.stream-context-create.php
      */
-    public function __construct($stream, $mode = null, $context = null)
+    public static function open($uri, $mode = null, $context = null, $lazy = false)
     {
-        $this->setMetaData(
-            $this->stream = self::open($stream, $mode, $context)
-        );
-    }
-
-    /**
-     * Stream Object Destructor.
-     *
-     * Closes stream connection.
-     */
-    public function __destruct()
-    {
-        $this->close();
-    }
-
-    /**
-     * Open a new stream URI and return stream resource.
-     *
-     * Pass in either a valid stream URI or a stream resource and this will
-     * return a stream resource object.
-     *
-     * @param string|resource|object $stream Either stream URI or resource object
-     * @param string $mode File/stream open mode (as passed to native php
-     *     ``fopen`` function)
-     * @param array $context Stream context options array as passed to native
-     *     php ``stream_context_create`` function
-     * @return resource Stream resource object
-     * @throws CSVelte\Exception\IOException on invalid stream uri/resource
-     * @throws \InvalidArgumentException if context param is not an array
-     * @see http://php.net/manual/en/function.fopen.php
-     * @see http://php.net/manual/en/function.stream-context-create.php
-     */
-    protected static function open($stream, $mode = null, $context = null)
-    {
-        if (is_null($mode)) $mode = 'r+b';
-        if (is_string($uri = $stream)) {
-            if (is_null($context)) {
-                $stream = @fopen($uri, $mode);
-            } else {
-                if (!is_array($context)) {
-                    throw new InvalidArgumentException("Invalid argument for context. Expected array, got: " . gettype($context));
-                }
-                $context = stream_context_create($context);
-                $stream = @fopen($uri, $mode, false, $context);
-            }
-            if (false === $stream) {
-                throw new IOException("Invalid stream URI: " . $uri, IOException::ERR_INVALID_STREAM_URI);
-            }
-        }
-        if (!is_resource($stream) || get_resource_type($stream) != 'stream') {
-            throw new IOException("Expected stream resource, got: " . gettype($stream), IOException::ERR_INVALID_STREAM_RESOURCE);
-        }
-        return $stream;
+        $resource = (new Resource($uri, $mode))
+            ->setContextResource($context);
+        if (!$lazy) $resource->connect();
+        return new self($resource);
     }
 
     /**
@@ -257,29 +208,9 @@ class Stream implements Readable, Writable, Seekable
      */
     public function close()
     {
-        if (is_resource($this->stream)) {
-            return fclose($this->stream);
+        if ($this->resource) {
+            return $this->resource->disconnect();
         }
-        return false;
-    }
-
-    /**
-     * Set stream meta data via stream resource.
-     *
-     * Pass in stream resource to set this object's stream metadata as returned
-     * by the native php function ``stream_get_meta_data``
-     *
-     * @param resource $stream Stream resource object
-     * @return $this
-     * @see http://php.net/manual/en/function.stream-get-meta-data.php
-     */
-    protected function setMetaData($stream)
-    {
-        $this->meta = stream_get_meta_data($stream);
-        $this->seekable = (bool) $this->meta['seekable'];
-        $this->readable = isset(self::$readWriteHash['read'][$this->meta['mode']]);
-        $this->writable = isset(self::$readWriteHash['write'][$this->meta['mode']]);
-        return $this;
     }
 
     /**
@@ -293,9 +224,15 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getMetaData($key = null)
     {
-        if (!$this->stream) return null;
-        if (is_null($key)) return $this->meta;
-        return (array_key_exists($key, $this->meta)) ? $this->meta[$key] : null;
+        if ($this->resource) {
+            if (is_null($this->meta)) {
+                $this->meta = stream_get_meta_data($this->resource->getHandle());
+            }
+            // if a certain value was requested, return it
+            // otherwise, return entire array
+            if (is_null($key)) return $this->meta;
+            return (array_key_exists($key, $this->meta)) ? $this->meta[$key] : null;
+        }
     }
 
     /**
@@ -307,7 +244,10 @@ class Stream implements Readable, Writable, Seekable
      */
     public function isSeekable()
     {
-        return $this->seekable;
+        if ($this->resource) {
+            return $this->getMetaData('seekable');
+        }
+        return false;
     }
 
     /**
@@ -319,7 +259,10 @@ class Stream implements Readable, Writable, Seekable
      */
     public function isReadable()
     {
-        return $this->readable;
+        if ($this->resource) {
+            return $this->resource->isReadable();
+        }
+        return false;
     }
 
     /**
@@ -331,7 +274,10 @@ class Stream implements Readable, Writable, Seekable
      */
     public function isWritable()
     {
-        return $this->writable;
+        if ($this->resource) {
+            return $this->resource->isWritable();
+        }
+        return false;
     }
 
     /**
@@ -343,7 +289,7 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getResource()
     {
-        return $this->stream;
+        return $this->resource;
     }
 
     /**
@@ -355,7 +301,9 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getUri()
     {
-        return $this->getMetaData('uri');
+        if ($this->resource) {
+            return $this->resource->getUri();
+        }
     }
 
     /**
@@ -379,10 +327,11 @@ class Stream implements Readable, Writable, Seekable
      */
     public function detach()
     {
-        $stream = $this->stream;
-        $this->stream = null;
-        $this->seekable = $this->readable = $this->writable = false;
-        return $stream;
+        // @todo I need to get a better understanding of when and why a stream
+        // would need to be detached to properly implement this
+        $resource = $this->resource;
+        $this->resource = null;
+        return $resource;
     }
 
     /**
@@ -392,14 +341,15 @@ class Stream implements Readable, Writable, Seekable
      */
     public function getSize()
     {
-        if (!$this->stream) return null;
-        if (is_null($this->size)) {
-            $stats = fstat($this->stream);
-            if (array_key_exists('size', $stats)) {
-                $this->size = $stats['size'];
+        if ($this->resource) {
+            if (is_null($this->size)) {
+                $stats = fstat($this->resource->getHandle());
+                if (array_key_exists('size', $stats)) {
+                    $this->size = $stats['size'];
+                }
             }
+            return $this->size;
         }
-        return $this->size;
     }
 
     /**
@@ -410,7 +360,7 @@ class Stream implements Readable, Writable, Seekable
      */
     public function tell()
     {
-        return $this->stream ? ftell($this->stream) : false;
+        return $this->resource ? ftell($this->resource->getHandle()) : false;
     }
 
     /**
@@ -427,7 +377,7 @@ class Stream implements Readable, Writable, Seekable
     {
         $this->assertIsReadable();
         if ($this->eof()) return false;
-        return fread($this->stream, $length);
+        return fread($this->resource->getHandle(), $length);
     }
 
     /**
@@ -462,7 +412,7 @@ class Stream implements Readable, Writable, Seekable
      */
     public function eof()
     {
-        return !$this->stream || feof($this->stream);
+        return !$this->resource || feof($this->resource->getHandle());
     }
 
     /**
@@ -473,8 +423,8 @@ class Stream implements Readable, Writable, Seekable
      */
     public function rewind()
     {
-        if (is_resource($this->stream)) {
-            rewind($this->stream);
+        if ($this->resource) {
+            rewind($this->resource->getHandle());
         }
     }
 
@@ -490,7 +440,7 @@ class Stream implements Readable, Writable, Seekable
     public function write($str)
     {
         $this->assertIsWritable();
-        return fwrite($this->stream, $str);
+        return fwrite($this->resource->getHandle(), $str);
     }
 
     /**
@@ -507,7 +457,7 @@ class Stream implements Readable, Writable, Seekable
     public function seek($offset, $whence = SEEK_SET)
     {
         $this->assertIsSeekable();
-        return fseek($this->stream, $offset, $whence) === 0;
+        return fseek($this->resource->getHandle(), $offset, $whence) === 0;
     }
 
 }
