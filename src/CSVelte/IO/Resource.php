@@ -291,11 +291,21 @@ class Resource
     public function setUri($uri)
     {
         $this->assertNotConnected(__METHOD__);
-        if (parse_url($uri)) {
+
+        if (is_object($uri) && method_exists($uri, '__toString')) {
+            $uri = (string) $uri;
+        }
+
+        if (is_string($uri) && parse_url($uri)) {
             $this->uri = $uri;
             return $this;
         }
-        throw new InvalidArgumentException("{$uri} is not a valid stream uri.");
+
+        throw new InvalidArgumentException(sprintf(
+            'Not a valid stream uri, expected "%s", got: "%s"',
+            'string',
+            gettype($uri)
+        ));
     }
 
     /**
@@ -631,7 +641,7 @@ class Resource
      */
     public function getHandle()
     {
-        if (!$this->isConnected()) {
+        if (!$this->isConnected() && $this->isLazy()) {
             $this->connect();
         }
         return $this->conn;
