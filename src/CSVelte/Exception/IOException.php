@@ -56,4 +56,9 @@ class IOException extends CSVelteException
      * @var constant Used as code for exception thrown for missing directory
      */
     const ERR_FILE_NOT_FOUND = 302;
+
+    /**
+     * @var constant Used as code for exception thrown for connection failed
+     */
+    const ERR_STREAM_CONNECTION_FAILED = 401;
 }
