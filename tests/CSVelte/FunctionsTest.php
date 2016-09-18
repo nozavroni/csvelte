@@ -33,4 +33,26 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals($string, (string) $stream);
         $this->assertEquals('r+', $stream->getResource()->getMode());
     }
+
+    public function testStreamReturnsStreamObjectForPHPStringableObject()
+    {
+        // Create a stub for non-existant StringableClass.
+        $csv_obj = $this->getMockBuilder('StringableClass')
+                        ->setMethods(['__toString'])
+                        ->getMock();
+
+        // configure the stub to return test string...
+        $string = "All your base are belong to us";
+        $csv_obj->method('__toString')
+             ->willReturn($string);
+
+        // test it...
+        $this->assertInstanceOf(Stream::class, $stream = streamize($csv_obj));
+        $res = $stream->getResource();
+        $this->assertTrue(is_resource($res()));
+        $this->assertTrue($res->isConnected());
+        $this->assertEquals(strlen($string), $stream->getSize());
+        $this->assertEquals($string, (string) $stream);
+        $this->assertEquals('r+', $stream->getResource()->getMode());
+    }
 }

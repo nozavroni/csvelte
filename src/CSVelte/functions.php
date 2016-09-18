@@ -40,7 +40,7 @@ function streamize($obj)
     }
 
     if (is_object($obj) && method_exists($obj, '__toString')) {
-
+        $obj = (string) $obj;
     }
     if (is_string($obj)) {
         $stream = Stream::open('php://temp', 'r+');
@@ -51,6 +51,7 @@ function streamize($obj)
         }
         return $stream;
     }
+    
     if ($obj instanceof Iterator) {
 
     }
