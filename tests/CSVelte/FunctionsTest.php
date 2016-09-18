@@ -21,4 +21,16 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals($handle, $stream->getResource()->getHandle());
         $this->assertEquals($mode, $stream->getResource()->getMode());
     }
+
+    public function testStreamReturnsStreamObjectForPHPString()
+    {
+        $string = "All your base are belong to us";
+        $this->assertInstanceOf(Stream::class, $stream = streamize($string));
+        $res = $stream->getResource();
+        $this->assertTrue(is_resource($res()));
+        $this->assertTrue($res->isConnected());
+        $this->assertEquals(strlen($string), $stream->getSize());
+        $this->assertEquals($string, (string) $stream);
+        $this->assertEquals('r+', $stream->getResource()->getMode());
+    }
 }

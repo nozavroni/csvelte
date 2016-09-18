@@ -38,13 +38,20 @@ function streamize($obj)
     if (is_resource($obj) && get_resource_type($obj) == 'stream') {
         return new Stream(new Resource($obj));
     }
-    if ($obj instanceof Iterator) {
+
+    if (is_object($obj) && method_exists($obj, '__toString')) {
 
     }
     if (is_string($obj)) {
-
+        $stream = Stream::open('php://temp', 'r+');
+        if ($obj !== '') {
+            $res = $stream->getResource();
+            fwrite($res(), $obj);
+            fseek($res(), 0);
+        }
+        return $stream;
     }
-    if (is_object($obj) && method_exists($obj, '__toString')) {
+    if ($obj instanceof Iterator) {
 
     }
 
