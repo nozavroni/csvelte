@@ -61,4 +61,10 @@ class IOException extends CSVelteException
      * @var constant Used as code for exception thrown for connection failed
      */
     const ERR_STREAM_CONNECTION_FAILED = 401;
+
+    /**
+     * @var constant Used when user attempts to set a parameter on a connection
+     *     that is already opened.
+     */
+    const ERR_STREAM_ALREADY_OPEN = 402;
 }

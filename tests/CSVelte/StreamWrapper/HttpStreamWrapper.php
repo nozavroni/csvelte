@@ -15,7 +15,6 @@ class HttpStreamWrapper implements
      */
     public static $mockBodyData = '';
     public static $mockResponseCode = 'HTTP/1.1 200 OK';
-    public static $contextt;
     public $context;
     public $position = 0;
     public $bodyData = 'test body data';
@@ -36,7 +35,17 @@ class HttpStreamWrapper implements
 
     public function getContext()
     {
+        return $this->context;
+    }
+
+    public function getContextOptions()
+    {
         return stream_context_get_options($this->context);
+    }
+
+    public function getContextParams()
+    {
+        return stream_context_get_params($this->context);
     }
 
     /* IteratorAggregate */

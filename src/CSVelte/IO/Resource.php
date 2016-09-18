@@ -42,6 +42,9 @@ class Resource
      * and the not suing me for outright theft (in this case).
      *
      * @var array Hash of readable and writable stream types
+     * @todo I think I can get rid of this by simply checking whether base is a
+     *     particular letter OR plus is present... try it
+     * @todo Why are x and c not even on either of these lists?
      */
     protected static $readWriteHash = [
         'read' => [
@@ -88,6 +91,56 @@ class Resource
     protected $lazy;
 
     /**
+     * Extra context to open the resource with.
+     *
+     * An associative array of context options and parameters.
+     *
+     * @var array An associative array of stream context options and params
+     * @see http://php.net/manual/en/stream.contexts.php
+     */
+    protected $context = [
+        'options' => [],
+        'params' => []
+    ];
+
+    /**
+     * Context resource handle.
+     *
+     * Holds a context resource handle object for $this->context
+     *
+     * @var resource The context resource handle
+     */
+    protected $crh;
+
+    /**
+     * Should fopen use include path?
+     *
+     * @var boolean True if fopen should use the include path to find potential files
+     */
+    protected $useIncludePath;
+
+    /**
+     * Base open mode.
+     *
+     * @var string A single character for base open mode (r, w, a, x or c)
+     */
+    protected $base;
+
+    /**
+     * Plus reading or plus writing.
+     *
+     * @var string Either a plus or an empty string
+     */
+    protected $plus;
+
+    /**
+     * Binary or text flag.
+     *
+     * @var string Either "b" or "t" for binary or text
+     */
+    protected $flag;
+
+    /**
      * Resource constructor.
      *
      * Instantiates a stream resource. If lazy is set to true, the connection
@@ -98,35 +151,59 @@ class Resource
      * @param boolean $lazy Whether connection should be deferred until an I/O
      *     operation is requested (such as read or write) on the attached stream
      */
-    public function __construct($uri, $mode = null, $lazy = false)
+    public function __construct($uri, $mode = null, $lazy = null, $use_include_path = null, $context_options = null, $context_params = null)
     {
         $this->setUri($uri)
              ->setMode($mode)
-             ->setLazy($lazy);
+             ->setLazy($lazy)
+             ->setUseIncludePath($use_include_path)
+             ->setContext($context_options, $context_params);
         if (!$this->isLazy()) {
-            $this->conn = $this->connect();
+            $this->connect();
         }
     }
 
-    protected function connect()
+    public function __destruct()
     {
-        $that = $this;
-        $e = null;
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($that, &$e) {
-            $e = new IOException(sprintf(
-                "Could not open connection for %s using mode %s.",
-                $that->getUri(),
-                $that->getMode()
-            ), IOException::ERR_STREAM_CONNECTION_FAILED);
-        });
-        $handle = fopen($this->getUri(), $this->getMode());
-        restore_error_handler();
-        if ($e) throw $e;
-        return $handle;
+        $this->close();
     }
 
-    protected function setUri($uri)
+    public function connect()
     {
+        if (!$this->isConnected()) {
+            $that = $this;
+            $e = null;
+            set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($that, &$e) {
+                $e = new IOException(sprintf(
+                    "Could not open connection for %s using mode %s.",
+                    $that->getUri(),
+                    $that->getMode()
+                ), IOException::ERR_STREAM_CONNECTION_FAILED);
+            });
+            $this->conn = fopen(
+                $this->getUri(),
+                $this->getMode(),
+                $this->getUseIncludePath(),
+                $this->getContext()
+            );
+            restore_error_handler();
+            if ($e) throw $e;
+        }
+        return $this->isConnected();
+    }
+
+    protected function close()
+    {
+        if ($this->isConnected()) {
+            return fclose($this->conn);
+        }
+        // return null if nothing to close
+        return;
+    }
+
+    public function setUri($uri)
+    {
+        $this->assertNotConnected(__METHOD__);
         if (parse_url($uri)) {
             $this->uri = $uri;
             return $this;
@@ -134,28 +211,70 @@ class Resource
         throw new InvalidArgumentException("{$uri} is not a valid stream uri.");
     }
 
-    protected function setMode($mode = null)
+    /**
+     * Set the fopen mode.
+     *
+     * Thank you to GitHub user "binsoul" whose AccessMode class inspired this
+     *
+     * @param string $mode A 1-3 character string determining open mode
+     * @see http://php.net/manual/en/function.fopen.php
+     */
+    public function setMode($mode = null)
     {
+        $this->assertNotConnected(__METHOD__);
         if (is_null($mode)) $mode = "r+b";
-        $this->readable = isset(self::$readWriteHash['read'][$mode]);
-        $this->writable = isset(self::$readWriteHash['write'][$mode]);
-        if ($this->readable || $this->writable) {
-            $this->mode = $mode;
+
+        $mode = substr($mode, 0, 3);
+        $rest = substr($mode, 1);
+
+        $base = substr($mode, 0, 1);
+        $plus = (strpos($rest, '+') !== false) ? '+' : '';
+        $flag = trim($rest, '+');
+
+        if (strpos("rwaxc", $base) !== false) {
+            $this->base = $base;
+            $this->plus = $plus;
+            $this->flag = $flag;
+            $this->readable = isset(self::$readWriteHash['read'][$this->getMode()]);
+            $this->writable = isset(self::$readWriteHash['write'][$this->getMode()]);
             return $this;
         }
+
         throw new InvalidArgumentException("{$mode} is not a valid stream access mode.");
     }
 
     protected function setLazy($lazy)
     {
+        if (is_null($lazy)) $lazy = true;
         $this->lazy = (boolean) $lazy;
+        return $this;
+    }
+
+    public function setUseIncludePath($use_include_path)
+    {
+        $this->assertNotConnected(__METHOD__);
+        $this->useIncludePath = (boolean) $use_include_path;
+        return $this;
+    }
+
+// loop over each wrapper and call setcontextoptions then rewrite setcontextoptions
+    public function setContext($options = null, $params = null)
+    {
+        if (is_array($options)) {
+            foreach ($options as $wrap => $opts) {
+                $this->setContextOptions($opts, $wrap);
+            }
+        }
+        if (!is_null($params)) {
+            $this->setContextParams($params);
+        }
         return $this;
     }
 
     public function getResource()
     {
         if (!$this->isConnected()) {
-            $this->conn = $this->connect();
+            $this->connect();
         }
         return $this->conn;
     }
@@ -172,12 +291,102 @@ class Resource
 
     public function getMode()
     {
-        return $this->mode;
+        return sprintf(
+            "%s%s%s",
+            $this->base,
+            $this->plus,
+            $this->flag
+        );
+    }
+
+    public function isBinary()
+    {
+        return $this->flag == "b";
+    }
+
+    public function isText()
+    {
+        return $this->flag == "t";
     }
 
     public function isLazy()
     {
         return $this->lazy;
+    }
+
+    public function getUseIncludePath()
+    {
+        return $this->useIncludePath;
+    }
+
+    protected function updateContext()
+    {
+        // if already connected, set the options on the context resource
+        // otherwise, it will be set at connection time
+        if ($this->isConnected()) {
+            // set options and params on existing stream resource
+            stream_context_set_params(
+                $this->getContext(),
+                $this->getContextParams() + [
+                    'options' => $this->getContextOptions()
+                ]
+            );
+        }
+        return $this;
+    }
+
+    public function setContextOptions($options, $wrapper = null)
+    {
+        if (is_array($options)) {
+            if (is_null($wrapper)) {
+                $this->context['options'] = $options;
+            } else {
+                $this->assertValidWrapper($wrapper);
+                $this->context['options'][$wrapper] = $options;
+            }
+            $this->updateContext();
+            return $this;
+        }
+        throw new InvalidArgumentException("Context options must be an array, got: " . gettype($options));
+    }
+
+    public function setContextParams($params)
+    {
+        if (is_array($params)) {
+            $this->context['params'] = $params;
+            $this->updateContext();
+            return $this;
+        }
+        throw new InvalidArgumentException("Context parameters must be an array, got: " . gettype($params));
+    }
+
+    public function getContextOptions($wrapper = null)
+    {
+        if (is_null($wrapper)) {
+            return $this->context['options'];
+        }
+        $this->assertValidWrapper($wrapper);
+        if (isset($this->context['options'][$wrapper])) {
+            return $this->context['options'][$wrapper];
+        }
+    }
+
+    public function getContextParams()
+    {
+        return $this->context['params'];
+    }
+
+    public function getContext()
+    {
+        // if context resource hasn't been created, create one
+        if (is_null($this->crh)) {
+            $this->crh = stream_context_create(
+                $this->getContextOptions(),
+                $this->getContextParams()
+            );
+        }
+        // return context resource handle
+        return $this->crh;
     }
 
     public function isReadable()
@@ -189,4 +398,19 @@ class Resource
     {
         return $this->writable;
     }
+
+    protected function assertNotConnected($method)
+    {
+        if ($this->isConnected()) {
+            throw new IOException("Cannot perform this operation on a stream once it has already been opened: {$method}", IOException::ERR_STREAM_ALREADY_OPEN);
+        }
+    }
+
+    protected function assertValidWrapper($name)
+    {
+        if (!in_array($name, stream_get_wrappers())) {
+            throw new InvalidArgumentException("{$name} is not a registered stream wrapper.");
+        }
+    }
+
 }

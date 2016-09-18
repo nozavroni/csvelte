@@ -23,6 +23,9 @@ namespace CSVelteTest\IO;
  * and the taster. And probably the factory/facade as well.
  */
 use CSVelteTest\UnitTestCase;
+use CSVelteTest\StreamWrapper\HttpStreamWrapper;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\visitor\vfsStreamPrintVisitor;
 /**
  * CSVelte\IO Tests
  *
@@ -32,5 +35,19 @@ use CSVelteTest\UnitTestCase;
  */
 class IOTest extends UnitTestCase
 {
+    public function setUp()
+    {
+        parent::setUp();
+        stream_wrapper_unregister('http');
+        stream_wrapper_register(
+            'http',
+            HttpStreamWrapper::class
+        ) or die('Failed to register protocol');
+    }
 
+    public function tearDown()
+    {
+        parent::tearDown();
+        stream_wrapper_restore('http');
+    }
 }
