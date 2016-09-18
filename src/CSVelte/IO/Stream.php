@@ -66,24 +66,6 @@ class Stream implements Readable, Writable, Seekable
     protected $meta;
 
     /**
-     * Is stream seekable
-     * @var boolean True if stream is seekable, false otherwise
-     */
-    protected $seekable;
-
-    /**
-     * Is stream readable
-     * @var boolean True if stream is readable, false otherwise
-     */
-    protected $readable;
-
-    /**
-     * Is stream writable
-     * @var boolean True if stream is writable, false otherwise
-     */
-    protected $writable;
-
-    /**
      * Instantiate a stream.
      *
      * Instantiate a new stream object using a stream resource object.
