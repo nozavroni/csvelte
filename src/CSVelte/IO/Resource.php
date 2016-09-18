@@ -27,7 +27,7 @@ use CSVelte\Exception\IOException;
  * @subpackage CSVelte\IO
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
- * @since      v0.2
+ * @since      v0.2.1
  */
 class Resource
 {
@@ -168,8 +168,8 @@ class Resource
      * Instantiates a stream resource. If lazy is set to true, the connection
      * is delayed until the first call to getResource().
      *
-     * @param string  $uri  The URI to connect to
-     * @param string  $mode The connection mode
+     * @param string|resource $uri  The URI to connect to OR a stream resource handle
+     * @param string $mode The connection mode
      * @param boolean $lazy Whether connection should be deferred until an I/O
      *     operation is requested (such as read or write) on the attached stream
      * @throws \CSVelte\Exception\IOException if connection fails
@@ -177,6 +177,25 @@ class Resource
      */
     public function __construct($uri, $mode = null, $lazy = null, $use_include_path = null, $context_options = null, $context_params = null)
     {
+        // first, check if we're wrapping an existing stream resource
+        if (is_resource($handle = $uri)) {
+            if (($resource_type = get_resource_type($handle)) != ($exp_resource_type = "stream")) {
+                throw new InvalidArgumentException(sprintf(
+                    'Invalid stream resource type for %s, expected "%s", got: "%s"',
+                    __METHOD__,
+                    $exp_resource_type,
+                    $resource_type
+                ));
+            }
+            // set all this manually
+            $meta = stream_get_meta_data($handle);
+            $this->setUri($meta['uri'])
+                 ->setMode($meta['mode']);
+            $this->conn = $handle;
+            return;
+        }
+
+        // ok we're opening a new stream resource handle
         $this->setUri($uri)
              ->setMode($mode)
              ->setLazy($lazy)
@@ -204,14 +223,14 @@ class Resource
      */
     public function __invoke()
     {
-        return $this->getResource();
+        return $this->getHandle();
     }
 
     /**
      * Connect (open connection) to file/stream.
      *
      * File open is (by default) delayed until the user explicitly calls connect()
-     * or they request the resource with getResource().
+     * or they request the resource handle with getHandle().
      *
      * @return boolean True if connection was successful
      * @throws \CSVelte\Exception\IOException if connection fails
@@ -600,17 +619,17 @@ class Resource
     }
 
     /**
-     * Retrieve underlying stream resource.
+     * Retrieve underlying stream resource handle.
      *
      * An accessor method for the underlying stream resource object. Also triggers
      * stream connection if in lazy open mode. Because this method may potentially
      * call the connect() method, it is possible that it may throw an exception
      * if there is some issue with opening the stream.
      *
-     * @return resource The underlying stream resource
+     * @return resource The underlying stream resource handle
      * @throws \CSVelte\Exception\IOException
      */
-    public function getResource()
+    public function getHandle()
     {
         if (!$this->isConnected()) {
             $this->connect();

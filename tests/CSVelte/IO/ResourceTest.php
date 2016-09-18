@@ -25,7 +25,7 @@ class ResourceTest extends IOTest
         $this->assertTrue($sr->isReadable());
         $this->assertTrue($sr->isWritable());
         $this->assertFalse($sr->isConnected());
-        $this->assertTrue(is_resource($sr->getResource()));
+        $this->assertTrue(is_resource($sr->getHandle()));
         $this->assertTrue($sr->isConnected());
         $this->assertFalse($sr->getUseIncludePath());
         $this->assertEquals([], $sr->getContextOptions());
@@ -64,18 +64,18 @@ class ResourceTest extends IOTest
      * @expectedException CSVelte\Exception\IOException
      * @expectedExceptionCode CSVelte\Exception\IOException::ERR_STREAM_CONNECTION_FAILED
      */
-    public function testGetResourceStreamResourceWithBadUriThrowsException()
+    public function testgetHandleStreamResourceWithBadUriThrowsException()
     {
         $sr = new Resource("I am not a uri");
         $this->assertFalse($sr->isConnected());
-        $sr->getResource();
+        $sr->getHandle();
     }
 
     public function testInstantiateALazyResource()
     {
         $sr = new Resource($this->getFilePathFor('veryShort'), null, true);
         $this->assertFalse($sr->isConnected());
-        $this->assertTrue(is_resource($sr->getResource()));
+        $this->assertTrue(is_resource($sr->getHandle()));
         $this->assertTrue($sr->isConnected());
     }
 
@@ -141,7 +141,7 @@ class ResourceTest extends IOTest
         $res = new Resource('http://www.example.com/');
         $res->setContext($expContextOptions, $expContextParams);
         $res->connect();
-        $meta = stream_get_meta_data($res->getResource());
+        $meta = stream_get_meta_data($res->getHandle());
         $wrapper = $meta['wrapper_data'];
         $this->assertEquals($expContextOptions, $res->getContextOptions());
         $this->assertEquals($expContextParams, $res->getContextParams());
@@ -216,7 +216,7 @@ class ResourceTest extends IOTest
         $context_options = ['http' => ['method' => 'POST']];
         $context_params = ['notification' => 'some_func_callback'];
         $context_resource = stream_context_create($context_options, $context_params);
-        $res->setContextResource($res->getResource());
+        $res->setContextResource($res->getHandle());
     }
 
     public function testUseResourceAsFunctionReturnsUnderlyingStreamResource()
@@ -228,9 +228,37 @@ class ResourceTest extends IOTest
         $this->assertFalse($res->isConnected());
         $invoked_res = $res();
         $this->assertTrue($res->isConnected());
-        $res_handle = $res->getResource();
+        $res_handle = $res->getHandle();
         $this->assertEquals($res_handle, $invoked_res);
         $this->assertTrue(is_resource($invoked_res));
         $this->assertEquals('stream', get_resource_type($invoked_res));
+    }
+
+    public function testInstantiateIOResourceAcceptsOpenResourceHandle()
+    {
+        $handle = fopen(
+            'php://output',
+            // 'http://www.example.com/',
+            // realpath(__DIR__ . '/../../files/banklist.csv'),
+            // $this->getFilePathFor('veryShort'),
+            'w+',
+            null,
+            stream_context_create(['http' => ['method' => 'POST']])
+        );
+        // this is going to have to work like this...
+        // $resource = Resource::factory($rh);
+        // or maybe...
+        // $resource = Resource::wrap($handle); // winner! nevermind...
+        // $resource = Resource::accept($handle);
+        // $resource = Resource::adopt($handle);
+        $resource = new Resource($handle);
+        // php://output, apparently, automatically changes this
+        $this->assertEquals('wb', $resource->getMode());
+        $this->assertTrue($resource->isWritable());
+        $this->assertTrue($resource->isBinary());
+        $this->assertFalse($resource->isReadable());
+        $this->assertTrue($resource->isCursorPositionedAtBeginning());
+        $this->assertFalse($resource->isCursorPositionedAtEnd());
+        $this->assertTrue($resource->isTruncated());
     }
 }
