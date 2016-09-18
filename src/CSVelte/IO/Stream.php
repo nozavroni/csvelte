@@ -6,7 +6,7 @@
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   v0.2
+ * @version   v0.2.1
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
@@ -148,35 +148,6 @@ class Stream implements Readable, Writable, Seekable
     }
 
     /**
-     * Stream Object Constructor.
-     *
-     * Instantiates the stream object
-     *
-     * @param string|object|resource $stream Either a valid stream URI or an open
-     *     stream resource (using fopen, fsockopen, et al.)
-     * @param string $mode file/stream open mode as passed to native php
-     *     ``fopen`` function
-     * @param array $context Stream context options array as passed to native php
-     *     ``stream_context_create`` function
-     * @see http://php.net/manual/en/function.fopen.php
-     * @see http://php.net/manual/en/function.stream-context-create.php
-     */
-    public function __construct($stream, $mode = null, $context = null)
-    {
-        $this->setMetaData($this->stream = self::open($stream, $mode, $context));
-    }
-
-    /**
-     * Stream Object Destructor.
-     *
-     * Closes stream connection.
-     */
-    public function __destruct()
-    {
-        $this->close();
-    }
-
-    /**
      * Reads all data from the stream into a string, from the beginning to end.
      *
      * This method MUST attempt to seek to the beginning of the stream before
@@ -204,6 +175,37 @@ class Stream implements Readable, Writable, Seekable
             // eat any exception that may be thrown...
         }
         return $string;
+    }
+
+    /**
+     * Stream Object Constructor.
+     *
+     * Instantiates the stream object
+     *
+     * @param string|object|resource $stream Either a valid stream URI or an open
+     *     stream resource (using fopen, fsockopen, et al.)
+     * @param string $mode file/stream open mode as passed to native php
+     *     ``fopen`` function
+     * @param array $context Stream context options array as passed to native php
+     *     ``stream_context_create`` function
+     * @see http://php.net/manual/en/function.fopen.php
+     * @see http://php.net/manual/en/function.stream-context-create.php
+     */
+    public function __construct($stream, $mode = null, $context = null)
+    {
+        $this->setMetaData(
+            $this->stream = self::open($stream, $mode, $context)
+        );
+    }
+
+    /**
+     * Stream Object Destructor.
+     *
+     * Closes stream connection.
+     */
+    public function __destruct()
+    {
+        $this->close();
     }
 
     /**

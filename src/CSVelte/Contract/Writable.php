@@ -3,7 +3,7 @@
  * CSVelte
  * Slender, elegant CSV for PHP
  *
- * @version v0.2
+ * @version v0.2.1
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @license See LICENSE file
