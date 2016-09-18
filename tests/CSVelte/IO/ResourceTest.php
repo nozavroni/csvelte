@@ -218,4 +218,19 @@ class ResourceTest extends IOTest
         $context_resource = stream_context_create($context_options, $context_params);
         $res->setContextResource($res->getResource());
     }
+
+    public function testUseResourceAsFunctionReturnsUnderlyingStreamResource()
+    {
+        $res = new Resource(
+            $uri = "http://www.example.com/data/foo.csv",
+            $mode = 'rb'
+        );
+        $this->assertFalse($res->isConnected());
+        $invoked_res = $res();
+        $this->assertTrue($res->isConnected());
+        $res_handle = $res->getResource();
+        $this->assertEquals($res_handle, $invoked_res);
+        $this->assertTrue(is_resource($invoked_res));
+        $this->assertEquals('stream', get_resource_type($invoked_res));
+    }
 }

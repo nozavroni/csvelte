@@ -196,6 +196,18 @@ class Resource
     }
 
     /**
+     * Invoke magic method.
+     *
+     * Returns the underlying stream resource when object is accessed as a function
+     *
+     * @return resource The underlying stream resource
+     */
+    public function __invoke()
+    {
+        return $this->getResource();
+    }
+
+    /**
      * Connect (open connection) to file/stream.
      *
      * File open is (by default) delayed until the user explicitly calls connect()
@@ -442,17 +454,27 @@ class Resource
         return $this;
     }
 
+    /**
+     * Set context resource directly
+     * @param resource|null $context Stream context resource to set directly
+     * @return $this
+     * @see http://php.net/manual/en/function.stream-context-create.php
+     * @todo Need to write a unit test for passing this method a null value
+     */
     public function setContextResource($context)
     {
-        if (!is_resource($context) || get_resource_type($context) != "stream-context") {
-            throw new InvalidArgumentException(sprintf(
-                "Invalid argument for %s. Expecting resource of type \"stream-context\" but got: \"%s\"",
-                __METHOD__,
-                gettype($context)
-            ));
+        if (!is_null($context)) {
+            if (!is_resource($context) || get_resource_type($context) != "stream-context") {
+                throw new InvalidArgumentException(sprintf(
+                    "Invalid argument for %s. Expecting resource of type \"stream-context\" but got: \"%s\"",
+                    __METHOD__,
+                    gettype($context)
+                ));
+            }
+            // don't need to call updateContext() because its already a context resource
+            $this->crh = $context;
         }
-        // don't need to call updateContext() because its already a context resource 
-        $this->crh = $context;
+        return $this;
     }
 
     /**
