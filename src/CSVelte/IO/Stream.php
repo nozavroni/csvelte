@@ -162,6 +162,8 @@ class Stream implements Readable, Writable, Seekable
      *
      * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
      * @return string
+     * @todo I'm leaning towards getting rid of the code that places the cursor
+     *     back at the position it was in... I'm not sure it's expected behavior
      */
     public function __toString()
     {
