@@ -150,7 +150,7 @@ class Resource
      * @param string  $mode The connection mode
      * @param boolean $lazy Whether connection should be deferred until an I/O
      *     operation is requested (such as read or write) on the attached stream
-     * @throws \CSVelte\Exception\IOException if connection fails 
+     * @throws \CSVelte\Exception\IOException if connection fails
      */
     public function __construct($uri, $mode = null, $lazy = null, $use_include_path = null, $context_options = null, $context_params = null)
     {
@@ -343,104 +343,6 @@ class Resource
     }
 
     /**
-     * Retrieve underlying stream resource.
-     *
-     * An accessor method for the underlying stream resource object. Also triggers
-     * stream connection if in lazy open mode. Because this method may potentially
-     * call the connect() method, it is possible that it may throw an exception
-     * if there is some issue with opening the stream.
-     *
-     * @return resource The underlying stream resource
-     * @throws \CSVelte\Exception\IOException
-     */
-    public function getResource()
-    {
-        if (!$this->isConnected()) {
-            $this->connect();
-        }
-        return $this->conn;
-    }
-
-    /**
-     * Is the stream connection open?
-     *
-     * Tells you whether this stream resource is open or not.
-     *
-     * @return boolean Whether the stream is open
-     */
-    public function isConnected()
-    {
-        return is_resource($this->conn);
-    }
-
-    /**
-     * Get the stream URI.
-     *
-     * Accessor method for stream URI.
-     *
-     * @return string The stream URI
-     */
-    public function getUri()
-    {
-        return $this->uri;
-    }
-
-    /**
-     * Get the access mode.
-     *
-     * Tells you what the access mode is. This is the short string of characters
-     * that you would pass to the fopen function to tell it how to open a file/stream
-     *
-     * @return string The file/stream access mode
-     * @see http://php.net/manual/en/function.fopen.php
-     */
-    public function getMode()
-    {
-        return sprintf(
-            "%s%s%s",
-            $this->base,
-            $this->plus,
-            $this->flag
-        );
-    }
-
-    /**
-     * Is access mode binary-safe?
-     * @return boolean Whether binary-safe flag is set
-     */
-    public function isBinary()
-    {
-        return $this->flag == "b";
-    }
-
-    /**
-     * Is stream connected in text mode?
-     * @return boolean Whether text mode flag is set
-     */
-    public function isText()
-    {
-        return $this->flag == "t";
-    }
-
-    /**
-     * Is this a lazy open resource?
-     * @return boolean Whether this is a lazily-opened resource
-     */
-    public function isLazy()
-    {
-        return $this->lazy;
-    }
-
-    /**
-     * Should fopen search include path?
-     * @return boolean Whether fopen should search include path for files
-     */
-    public function getUseIncludePath()
-    {
-        return $this->useIncludePath;
-    }
-
-    /**
      * Update the stream context.
      *
      * After setting/updating stream context options and/or params, this method
@@ -563,6 +465,104 @@ class Resource
     }
 
     /**
+     * Retrieve underlying stream resource.
+     *
+     * An accessor method for the underlying stream resource object. Also triggers
+     * stream connection if in lazy open mode. Because this method may potentially
+     * call the connect() method, it is possible that it may throw an exception
+     * if there is some issue with opening the stream.
+     *
+     * @return resource The underlying stream resource
+     * @throws \CSVelte\Exception\IOException
+     */
+    public function getResource()
+    {
+        if (!$this->isConnected()) {
+            $this->connect();
+        }
+        return $this->conn;
+    }
+
+    /**
+     * Is the stream connection open?
+     *
+     * Tells you whether this stream resource is open or not.
+     *
+     * @return boolean Whether the stream is open
+     */
+    public function isConnected()
+    {
+        return is_resource($this->conn);
+    }
+
+    /**
+     * Get the stream URI.
+     *
+     * Accessor method for stream URI.
+     *
+     * @return string The stream URI
+     */
+    public function getUri()
+    {
+        return $this->uri;
+    }
+
+    /**
+     * Get the access mode.
+     *
+     * Tells you what the access mode is. This is the short string of characters
+     * that you would pass to the fopen function to tell it how to open a file/stream
+     *
+     * @return string The file/stream access mode
+     * @see http://php.net/manual/en/function.fopen.php
+     */
+    public function getMode()
+    {
+        return sprintf(
+            "%s%s%s",
+            $this->base,
+            $this->plus,
+            $this->flag
+        );
+    }
+
+    /**
+     * Is access mode binary-safe?
+     * @return boolean Whether binary-safe flag is set
+     */
+    public function isBinary()
+    {
+        return $this->flag == "b";
+    }
+
+    /**
+     * Is stream connected in text mode?
+     * @return boolean Whether text mode flag is set
+     */
+    public function isText()
+    {
+        return $this->flag == "t";
+    }
+
+    /**
+     * Is this a lazy open resource?
+     * @return boolean Whether this is a lazily-opened resource
+     */
+    public function isLazy()
+    {
+        return $this->lazy;
+    }
+
+    /**
+     * Should fopen search include path?
+     * @return boolean Whether fopen should search include path for files
+     */
+    public function getUseIncludePath()
+    {
+        return $this->useIncludePath;
+    }
+
+    /**
      * Does the access mode string indicate readability?
      *
      * Readable, in this context, only refers to the manner in which this stream
@@ -590,6 +590,84 @@ class Resource
     public function isWritable()
     {
         return $this->writable;
+    }
+
+    /**
+     * Is cursor positioned at the beginning of stream?
+     *
+     * Returns true if this stream resource's access mode positions the internal
+     * cursor at the beginning of the stream.
+     *
+     * @return boolean Whether cursor positioned at beginning of stream
+     */
+    public function isCursorPositionedAtBeginning()
+    {
+        return $this->base != 'a';
+    }
+
+    /**
+     * Is cursor positioned at the end of stream?
+     *
+     * Returns true if this stream resource's access mode positions the internal
+     * cursor at the end of the stream.
+     *
+     * @return boolean Whether cursor positioned at end of stream
+     */
+    public function isCursorPositionedAtEnd()
+    {
+        return $this->base == 'a';
+    }
+
+    /**
+     * Is content truncated to zero-length on opening?
+     *
+     * Returns true if this stream resource's access mode indicates truncation of
+     * stream content to zero-length upon opening.
+     *
+     * @return boolean Whether stream content is truncated on opening
+     */
+    public function isTruncated()
+    {
+        return $this->base == 'w';
+    }
+
+    /**
+     * Does stream access mode indicate file creation?
+     *
+     * Returns true if this stream's access mode implies that PHP will attempt to
+     * create a file if none exists.
+     *
+     * @return boolean Whether PHP should attempt to create file at $uri
+     */
+    public function attemptsFileCreation()
+    {
+        return $this->base != 'r';
+    }
+
+    /**
+     * Does stream access mode indicate the rejection of existing files?
+     *
+     * Returns true if this stream's access mode implies that PHP will fail to
+     * open a file if it already exists.
+     *
+     * @return boolean Whether PHP should attempt to create file at $uri
+     */
+    public function rejectsExistingFiles()
+    {
+        return $this->base == 'x';
+    }
+
+    /**
+     * Are write operations appended to the end of the stream?
+     *
+     * Returns true if write operations are appended to the end of the stream
+     * regardless of the position of the read cursor.
+     *
+     * @return boolean Whether write operations ore always appended
+     */
+    public function appendsWriteOperations()
+    {
+        return $this->base == 'w';
     }
 
     /**
