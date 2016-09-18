@@ -20,8 +20,9 @@ namespace CSVelte;
  * @since v0.2.1
  */
 
- use CSVelte\IO\Stream;
- use CSVelte\IO\Resource;
+use \Iterator;
+use CSVelte\IO\Stream;
+use CSVelte\IO\Resource;
 
 /**
  * Stream - streams various types of values and objects.
@@ -39,6 +40,10 @@ function streamize($obj)
         return new Stream(new Resource($obj));
     }
 
+    if ($obj instanceof Iterator) {
+        
+    }
+
     if (is_object($obj) && method_exists($obj, '__toString')) {
         $obj = (string) $obj;
     }
@@ -51,9 +56,4 @@ function streamize($obj)
         }
         return $stream;
     }
-    
-    if ($obj instanceof Iterator) {
-
-    }
-
 }

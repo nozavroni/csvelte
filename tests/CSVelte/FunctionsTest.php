@@ -3,6 +3,7 @@ namespace CSVelteTest;
 
 use CSVelte\IO\Resource;
 use CSVelte\IO\Stream;
+use \SplFileObject;
 use function CSVelte\streamize;
 
 /**
@@ -14,7 +15,7 @@ use function CSVelte\streamize;
  */
 class FunctionsTest extends UnitTestCase
 {
-    public function testStreamReturnsStreamObjectForOpenStreamResource()
+    public function testStreamizeReturnsStreamObjectForOpenStreamResource()
     {
         $handle = fopen($this->getFilePathFor('veryShort'), $mode = 'r+b');
         $this->assertInstanceOf(Stream::class, $stream = streamize($handle));
@@ -22,7 +23,7 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals($mode, $stream->getResource()->getMode());
     }
 
-    public function testStreamReturnsStreamObjectForPHPString()
+    public function testStreamizeReturnsStreamObjectForPHPString()
     {
         $string = "All your base are belong to us";
         $this->assertInstanceOf(Stream::class, $stream = streamize($string));
@@ -34,7 +35,7 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals('r+', $stream->getResource()->getMode());
     }
 
-    public function testStreamReturnsStreamObjectForPHPStringableObject()
+    public function testStreamizeReturnsStreamObjectForPHPStringableObject()
     {
         // Create a stub for non-existant StringableClass.
         $csv_obj = $this->getMockBuilder('StringableClass')
@@ -55,4 +56,12 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals($string, (string) $stream);
         $this->assertEquals('r+', $stream->getResource()->getMode());
     }
+
+    // this will work for any Iterator class, not just SplFileObject
+    // public function testStreamizeReturnsStreamObjectForSplFileObject()
+    // {
+    //     $file_obj = new SplFileObject($this->getFilePathFor('commaNewlineHeader'));
+    //     $stream = streamize($file_obj);
+    //     $this->assertEquals("\n", $stream->read(300));
+    // }
 }
