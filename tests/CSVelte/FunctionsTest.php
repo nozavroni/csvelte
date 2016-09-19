@@ -66,4 +66,18 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals(" Institution,Closing Date,Update", $stream->read(32));
         $this->assertEquals("d Date\nFirst CornerStone Bank,\"K", $stream->read(32));
     }
+
+    // public function testTasteFunctionIsAliasForTasterInvoke()
+    // {
+    //     $stream = Stream::open($this->getFilePathFor('headerDoubleQuote'));
+    //     $flavor = CSVelte\taste();
+    // }
+
+    // public function testFlavorFunction()
+    // {
+    //     $flavor = CSVelte\flavor([
+    //         'delimiter' => "\t",
+    //         'lineTerminator' =>
+    //     ]);
+    // }
 }

@@ -12,8 +12,8 @@
  */
 namespace CSVelte;
 
-use Carbon\Carbon;
-use CSVelte\Contract\Readable;
+use \DateTime;
+use CSVelte\Contract\Streamable;
 use CSVelte\Exception\TasterException;
 
 /**
@@ -111,17 +111,33 @@ class Taster
     /**
      * Class constructor--accepts a CSV input source
      *
-     * @param \CSVelte\Contract\Readable The source of CSV data
+     * @param \CSVelte\Contract\Streamable The source of CSV data
      * @todo It may be a good idea to skip the first line or two for the sample
      *     so that the header line(s) don't throw things off (with the exception
      *     of lickHeader() obviously)
      */
-    public function __construct(Readable $input)
+    public function __construct(Streamable $input)
     {
         $this->input = $input;
         if (!$this->sample = $input->read(self::SAMPLE_SIZE)) {
             throw new TasterException("Invalid input, cannot read sample.", TasterException::ERR_INVALID_SAMPLE);
         }
+    }
+
+    /**
+     * "Invoke" magic method.
+     *
+     * Called when an object is invoked as if it were a function. So, for instance,
+     * $taster = new Taster();
+     * $taster(); <-- invoke
+     * This is imply an alias to the lick method.
+     *
+     * @return \CSVelte\Flavor A flavor object
+     * @throws \CSVelte\Exception\TasterException
+     */
+    public function __invoke()
+    {
+        return $this->lick();
     }
 
     /**
@@ -132,7 +148,7 @@ class Taster
      * are quoted.
      *
      * @return \CSVelte\Flavor The metadata that the CSV format doesn't provide
-     * @access public
+     * @throws \CSVelte\Exception\TasterException
      * @todo Implement a lickQuote method for when lickQuoteAndDelim method fails
      * @todo Should there bea lickEscapeChar method? the python module that inspired
      *     this library doesn't include one...
@@ -166,7 +182,6 @@ class Taster
      *
      * @param string The string to replace quoted strings within
      * @return string The input string with quoted strings removed
-     * @access protected
      * @todo Replace code that uses this method with the replaceQuotedSpecialChars
      *     method instead. I think it's cleaner.
      */
@@ -180,7 +195,6 @@ class Taster
      * as the end-of-line character
      *
      * @return string The end-of-line char for the input data
-     * @access protected
      * @credit pulled from stackoverflow thread *tips hat to username "Harm"*
      * @todo This should throw an exception if it cannot determine the line ending
      * @todo I probably will make this method protected when I'm done with testing...
@@ -217,7 +231,6 @@ class Taster
      * determine these characters some other way... (see lickDelimiter)
      *
      * @return array A two-row array containing quotechar, delimchar
-     * @access protected
      * @todo make protected
      * @todo This should throw an exception if it cannot determine the delimiter
      *     this way.
@@ -268,7 +281,6 @@ class Taster
       * @param string The character(s) used for newlines
       * @return string One of four Flavor::QUOTING_* constants
       * @see \CSVelte\Flavor for possible quote style constants
-      * @access protected
       * @todo Refactor this method--It needs more thorough testing against a wider
       *     variety of CSV data to be sure it works reliably. And I'm sure there
       *     are many performance and logic improvements that could be made. This
@@ -330,7 +342,6 @@ class Taster
      * @param string $eol The character used for newlines
      * @return string One of four "QUOTING_" constants defined above--see this
      *     method's description for more info.
-     * @access protected
      * @todo Refactor this method--It needs more thorough testing against a wider
      *     variety of CSV data to be sure it works reliably. And I'm sure there
      *     are many performance and logic improvements that could be made. This
@@ -403,7 +414,6 @@ class Taster
      *
      * @param string The data to "unquote"
      * @return string The data passed in, only with quotes stripped (off the edges)
-     * @access protected
      */
     protected function unQuote($data)
     {
@@ -415,7 +425,6 @@ class Taster
      *
      * @param string The data to check
      * @return boolean Whether the data is quoted or not
-     * @access protected
      */
     protected function isQuoted($data)
     {
@@ -435,7 +444,6 @@ class Taster
      *
      * @param string The data to determine the type of
      * @return string The type of data (one of the "DATA_" constants above)
-     * @access protected
      * @todo I could probably eliminate this method and use an anonymous function
      *     instead. It isn't used anywhere else and its name could be misleading.
      *     Especially since I also have a lickType method that is used within the
@@ -465,7 +473,6 @@ class Taster
      * @param string The string to do the replacements on
      * @param string The delimiter character to replace
      * @return string The data with replacements performed
-     * @access protected
      * @todo I could probably pass in (maybe optionally) the newline character I
      *     want to replace as well. I'll do that if I need to.
      */
@@ -491,8 +498,6 @@ class Taster
      *
      * @param string The string of data to check the type of
      * @return string One of the TYPE_ string constants above
-     * @access protected
-     * @uses \Carbon\Carbon date/time ilbrary/class
      */
     protected function lickType($data)
     {
@@ -512,8 +517,13 @@ class Taster
                 $sep = '[\/\.\-]?';
                 $time = '([0-2]?[0-9](:[0-5][0-9]){1,2}(am|pm)?|[01]?[0-9](am|pm))';
                 $date = '(' . $month . $sep . $day . $sep . $year . '|' . $day . $sep . $month . $sep . $year . '|' . $year . $sep . $month . $sep . $day . ')';
-                $dt = Carbon::parse($data);
-                if ($dt->today()) {
+                $dt = new DateTime($data);
+                $dt->setTime(0,0,0);
+                $now = new DateTime();
+                $now->setTime(0,0,0);
+                $diff = $dt->diff($now);
+                $diffDays = (integer) $diff->format( "%R%a" );
+                if ($diffDays === 0) {
                     // then this is most likely a time string...
                     if (preg_match("/^{$time}$/i", $data)) {
                         return self::TYPE_TIME;
@@ -547,7 +557,6 @@ class Taster
      *     typically $eol is either a comma or a tab, sometimes a pipe)
      * @param string The CSV data's end-of-line char(s) (\n \r or \r\n)
      * @return boolean True if the data (most likely) contains a header row
-     * @access public
      * @todo This method needs a total refactor. It's not necessary to loop twice
      *     You could get away with one loop and that would allow for me to do
      *     something like only examining enough rows to get to a particular

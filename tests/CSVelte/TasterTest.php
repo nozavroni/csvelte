@@ -4,6 +4,8 @@ namespace CSVelteTest;
 use CSVelte\Taster;
 use CSVelte\Flavor;
 use CSVelte\IO\Stream;
+use \SplFileObject;
+use function CSVelte\streamize;
 
 /**
  * CSVelte\Taster Tests.
@@ -65,5 +67,25 @@ class TasterTest extends UnitTestCase
     {
         $input = Stream::streamize('');
         $taster = new Taster($input);
+    }
+
+    public function testTasterInvokeMethodIsAliasToLickMethod()
+    {
+        $stream = Stream::open($this->getFilePathFor('headerDoubleQuote'));
+        $taster = new Taster($stream);
+        $flavor = $taster();
+        $this->assertInstanceOf(Flavor::class, $flavor);
+    }
+
+    public function testTasterInvokeWithSplFileObject()
+    {
+        $fileObj = new SplFileObject($this->getFilePathFor('headerTabSingleQuotes'));
+        $taster = new Taster(streamize($fileObj));
+        $flavor = $taster();
+        $this->assertEquals("\t", $flavor->delimiter);
+        $this->assertEquals("\n", $flavor->lineTerminator);
+        $this->assertEquals(Flavor::QUOTE_MINIMAL, $flavor->quoteStyle);
+        $this->assertTrue($flavor->doubleQuote);
+        $this->assertEquals("'", $flavor->quoteChar);
     }
 }
