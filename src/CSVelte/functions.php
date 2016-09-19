@@ -12,6 +12,7 @@
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
 namespace CSVelte;
+
 /**
  * Library Functions
  *
@@ -37,6 +38,7 @@ use CSVelte\Contract\Streamable;
  *
  * @param mixed The item you want to stream
  * @return \CSVelte\IO\Stream A stream object
+ * @since v0.2.1
  */
 function streamize($obj)
 {
@@ -70,6 +72,7 @@ function streamize($obj)
  *
  * @param \CSVelte\Contract\Streamable Any streamable class to analyze
  * @return \CSVelte\Flavor A flavor representing stream's formatting attributes
+ * @since v0.2.1
  */
 function taste(Streamable $str)
 {
@@ -82,6 +85,7 @@ function taste(Streamable $str)
  *
  * @param \CSVelte\Contract\Streamable $str Stream object
  * @return boolean Whether stream dataset has header
+ * @since v0.2.1
  */
 function data_has_header(Streamable $str)
 {
