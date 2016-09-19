@@ -75,11 +75,9 @@ trait IsReadable
     protected function assertIsReadable()
     {
         if (!$this->isReadable()) {
-            throw new IOException("Stream not readable: " . $this->getName(), IOException::ERR_NOT_READABLE);
+            throw new IOException("Stream not readable", IOException::ERR_NOT_READABLE);
         }
     }
-
-    abstract public function getName();
 
     abstract public function isReadable();
 

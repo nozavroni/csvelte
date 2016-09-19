@@ -55,14 +55,12 @@ trait IsSeekable
     protected function assertIsSeekable()
     {
         if (!$this->isSeekable()) {
-            throw new IOException("Stream not seekable: " . $this->getName(), IOException::ERR_NOT_SEEKABLE);
+            throw new IOException("Stream not seekable", IOException::ERR_NOT_SEEKABLE);
         }
     }
 
-    abstract public function getName();
-
     abstract public function isSeekable();
 
-    abstract public function seek($offset, $whence);
+    abstract public function seek($offset, $whence = SEEK_SET);
 
 }

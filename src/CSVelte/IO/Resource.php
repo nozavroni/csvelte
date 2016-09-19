@@ -151,14 +151,14 @@ class Resource
     /**
      * Does access mode string indicate readability?
      *
-     * @var string Whether access mode indicates readability
+     * @var bool Whether access mode indicates readability
      */
     protected $readable = false;
 
     /**
      * Does access mode string indicate writability
      *
-     * @var string Whether access mode indicates writability
+     * @var bool Whether access mode indicates writability
      */
     protected $writable = false;
 

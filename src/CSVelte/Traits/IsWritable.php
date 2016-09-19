@@ -52,11 +52,9 @@ trait IsWritable
     protected function assertIsWritable()
     {
         if (!$this->isWritable()) {
-            throw new IOException("Stream not writable: " . $this->getName(), IOException::ERR_NOT_WRITABLE);
+            throw new IOException("Stream not writable", IOException::ERR_NOT_WRITABLE);
         }
     }
-
-    abstract public function getName();
 
     abstract public function isWritable();
 

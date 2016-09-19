@@ -147,17 +147,6 @@ interface Streamable
      */
     public function write($data);
 
-    /**
-     * Write single line to output.
-     *
-     * Writes a line to the output (including end of line char/str).
-     *
-     * @param string The line to be written to the stream
-     * @param string The end of line string
-     * @return int The number of bytes written to the stream
-     */
-    public function writeLine($line, $eol);
-
      /**
       * Seekability accessor.
       *
@@ -178,14 +167,4 @@ interface Streamable
      * @return boolean True if seek was successful
      */
     public function seek($offset, $whence = SEEK_SET);
-
-    /**
-     * Seek to specified line offset.
-     *
-     * @param int Offset to seek to
-     * @param int Position from whence to seek from
-     * @param string The line terminator string/char
-     * @return boolean True if successful
-     */
-    public function seekLine($offset, $whence, $eol);
 }

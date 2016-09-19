@@ -3,6 +3,7 @@ namespace CSVelteTest\IO;
 
 use \SplFileObject;
 use CSVelte\IO\Stream;
+use CSVelte\IO\BufferStream;
 use CSVelte\IO\Resource;
 
 /**
@@ -579,5 +580,54 @@ class StreamTest extends IOTest
         $streamcopy = Stream::streamize($stream);
         $this->assertEquals((string) $stream, (string) $streamcopy);
     }
+
+    public function testBufferStreamInstantiateBufferSize()
+    {
+        $stream = new BufferStream();
+        $this->assertEquals(['maxBufferSize' => 16384], $stream->getMetadata());
+        $this->assertEquals(16384, $stream->getMetadata('maxBufferSize'));
+
+        $stream = new BufferStream(100);
+        $this->assertEquals(['maxBufferSize' => 100], $stream->getMetadata());
+        $this->assertEquals(100, $stream->getMetadata('maxBufferSize'));
+    }
+
+    public function testBufferStreamInputOutput()
+    {
+        $buffer = new BufferStream();
+
+        // write some data to the buffer
+        $this->assertTrue($buffer->isWritable());
+        $this->assertEquals(11, $buffer->write('helloworld,'));
+        $this->assertEquals(8, $buffer->write('goodbye,'));
+        $this->assertEquals(6, $buffer->write('cruel,'));
+        $this->assertEquals(6, $buffer->write("world\n"));
+
+        // now read to drain it
+        $this->assertTrue($buffer->isReadable());
+        $this->assertEquals('helloworld', $buffer->read(10));
+        $this->assertEquals(',goodbye,cruel,', $buffer->read(15));
+
+        // writing still adds tot he end of the buffer
+        $this->assertEquals(16, $buffer->write("abcdefghijklmnop"));
+
+        // read the rest of it...
+        $this->assertEquals("world\nabcdefghijklmnop", $buffer->getContents());
+    }
+
+    public function testBufferStreamSeek()
+    {
+        $buffer = new BufferStream();
+        $buffer->write($this->getFileContentFor('commaNewlineHeader'));
+        $this->assertFalse($buffer->isSeekable());
+        $this->assertFalse($buffer->seek(25));
+    }
+
+    // public function testBufferStreamWritesFailWhenMaxIsReached()
+    // {
+    //     $stream = new BufferStream(100);
+    //     $this->assertEquals(['maxBufferSize' => 100], $stream->getMetadata());
+    //     $this->assertEquals(100, $stream->getMetadata('maxBufferSize'));
+    // }
 
 }
