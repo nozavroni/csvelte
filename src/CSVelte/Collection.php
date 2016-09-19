@@ -13,6 +13,7 @@
 namespace CSVelte;
 
 use \Iterator;
+use \Countable;
 use \OutOfBoundsException;
 use \InvalidArgumentException;
 
@@ -29,7 +30,7 @@ use \InvalidArgumentException;
  * @since     v0.2.1
  * @replaces  \CSVelte\Utils
  */
-class Collection
+class Collection implements Countable
 {
     /**
      * Underlying array
@@ -144,6 +145,12 @@ class Collection
         return $default;
     }
 
+
+    public function count()
+    {
+        return count($this->data);
+    }
+
     /**
      * Apply a callback to each element in the collection and return the
      * resulting collection
@@ -164,6 +171,24 @@ class Collection
     public function walk(Callable $func, $userdata = null)
     {
         array_walk($this->data, $func, $userdata);
+        return $this;
+    }
+
+    /**
+     * Call a user function for each item in the collection. If function returns
+     * false, loop is terminated.
+     *
+     * @return $this
+     * @todo I'm not entirely sure what this method should do... return new
+     *     collection? modify this one?
+     */
+    public function each(Callable $func)
+    {
+        foreach ($this->data as $key => $val) {
+            if (!$ret = $func($val, $key)) {
+                if ($ret === false) break;
+            }
+        }
         return $this;
     }
 

@@ -233,4 +233,31 @@ class CollectionTest extends UnitTestCase
             return $val instanceof Iterator;
         }));
     }
+
+    public function testCollectionCount()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar'
+        ]);
+        $this->assertEquals(3, $coll->count());
+    }
+
+    public function testCollectionEachReturnsFalseToStopLoop()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar',
+            'doo' => 'dar',
+            'moo' => 'mar'
+        ]);
+        $string = '';
+        $coll->each(function($val) use (&$string) {
+            $string .= $val;
+            if (strlen($val) > 3) return false;
+        });
+        $this->assertEquals('barfarczar', $string);
+    }
 }
