@@ -173,6 +173,11 @@ class Collection
         );
     }
 
+    /**
+     * Get average of data items.
+     *
+     * @return mixed The average of all items in collection
+     */
     public function average()
     {
         $total = array_sum($this->data);
@@ -180,6 +185,11 @@ class Collection
         return $total / $count;
     }
 
+    /**
+     * Get mode of data items.
+     *
+     * @return mixed The mode of all items in collection
+     */
     public function mode()
     {
         $counts = array_count_values($this->data);
@@ -187,6 +197,11 @@ class Collection
         return key($counts);
     }
 
+    /**
+     * Get median of data items.
+     *
+     * @return mixed The median of all items in collection
+     */
     public function median()
     {
         $count = count($this->data);
