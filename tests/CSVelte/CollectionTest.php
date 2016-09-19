@@ -196,4 +196,41 @@ class CollectionTest extends UnitTestCase
             '-1foobar'
         ], $coll->toArray());
     }
+
+    public function testCollectionHasReturnsTrueIfRequestedKeyInCollectionKeys()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar'
+        ]);
+        $this->assertTrue($coll->has('foo'));
+        $this->assertFalse($coll->has('poo'));
+    }
+
+    public function testCollectionContainsReturnsTrueIfRequestedValueInCollection()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar'
+        ]);
+        $this->assertTrue($coll->contains('bar'));
+        $this->assertFalse($coll->contains('tar'));
+
+        // can also check key
+        $this->assertTrue($coll->contains('bar', 'foo'), "Ensure Container::contains() can pass a second param for key. ");
+        $this->assertFalse($coll->contains('far', 'poo'));
+
+        // can also accept a callable to determine if collection contains user-specified criteria
+        $this->assertTrue($coll->contains(function($val, $key) {
+            return strlen($val) > 3;
+        }));
+        $this->assertFalse($coll->contains(function($val, $key) {
+            return strlen($val) < 3;
+        }));
+        $this->assertFalse($coll->contains(function($val, $key) {
+            return $val instanceof Iterator;
+        }));
+    }
 }

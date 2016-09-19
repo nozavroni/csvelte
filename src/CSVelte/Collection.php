@@ -115,6 +115,23 @@ class Collection
         return $this;
     }
 
+    public function contains($val, $key = null)
+    {
+        if (is_callable($func = $val)) {
+            foreach ($this->data as $key => $val) {
+                if ($func($val, $key)) return true;
+            }
+        } elseif (in_array($val, $this->data)) {
+            return (is_null($key) || (isset($this->data[$key]) && $this->data[$key] == $val));
+        }
+        return false;
+    }
+
+    public function has($key)
+    {
+        return array_key_exists($key, $this->data);
+    }
+
     public function get($key, $default = null, $throwExc = false)
     {
         if (array_key_exists($key, $this->data)) {
@@ -142,11 +159,12 @@ class Collection
      * Walk through each item in the collection, calling a function for each
      * item in the collection.
      *
-     * @return array An array of key/value pairs
+     * @return $this
      */
     public function walk(Callable $func, $userdata = null)
     {
         array_walk($this->data, $func, $userdata);
+        return $this;
     }
 
     /**
