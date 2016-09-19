@@ -14,6 +14,7 @@ namespace CSVelte;
 
 use \Iterator;
 use \Countable;
+use \ArrayAccess;
 use \OutOfBoundsException;
 use \InvalidArgumentException;
 
@@ -30,7 +31,7 @@ use \InvalidArgumentException;
  * @since     v0.2.1
  * @replaces  \CSVelte\Utils
  */
-class Collection implements Countable
+class Collection implements Countable, ArrayAccess
 {
     /**
      * Underlying array
@@ -145,6 +146,30 @@ class Collection implements Countable
         return $default;
     }
 
+    // @todo create an alias for this... maybe delete() or remove()
+    public function offsetUnset($offset)
+    {
+        if ($this->has($offset)) {
+            unset($this->data[$offset]);
+        }
+    }
+
+    // @todo create an alias for this... maybe delete() or remove()
+    public function offsetExists($offset)
+    {
+        return $this->has($offset);
+    }
+
+    // @todo create an alias for this... maybe delete() or remove()
+    public function offsetSet($offset, $value)
+    {
+        $this->set($offset, $value);
+    }
+
+    public function offsetGet($offset)
+    {
+        $this->get($offset);
+    }
 
     public function count()
     {
@@ -189,6 +214,34 @@ class Collection implements Countable
                 if ($ret === false) break;
             }
         }
+        return $this;
+    }
+
+    /**
+     * Filter out unwanted items using a callback function.
+     *
+     * @param Callable $func
+     * @return $this
+     */
+    public function filter(Callable $func)
+    {
+        $keys = [];
+        foreach ($this->data as $key => $val) {
+            if (false === $func($val, $key)) $keys[$key] = true;
+        }
+        $this->data = array_diff_key($this->data, $keys);
+    }
+
+    public function first(Callable $func)
+    {
+        foreach ($this->data as $key => $val) {
+            if ($func($val, $key)) return $val;
+        }
+    }
+
+    public function flip()
+    {
+        $this->data = array_flip($this->data);
         return $this;
     }
 

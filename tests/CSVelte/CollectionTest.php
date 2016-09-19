@@ -2,7 +2,10 @@
 namespace CSVelteTest;
 
 use \OutOfBoundsException;
+use \ArrayIterator;
 use \SplFileObject;
+use \DateTime;
+use \stdClass;
 use CSVelte\Collection;
 
 /**
@@ -23,6 +26,28 @@ class CollectionTest extends UnitTestCase
         array('7','pete','pippen'),
         array('10','greg','milton'),
     );
+
+    protected function getMixedNuts()
+    {
+        return [
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar',
+            'doo' => 'dar',
+            'iter' => new ArrayIterator([1,2,3]),
+            'obj' => new stdClass('1,2,3'),
+            'moo' => 'mar',
+            'too' => 'tootoo',
+            'roo' => 1267,
+            'asd' => [],
+            'fls' => false,
+            'zero' => 0,
+            ''    => 'blankee',
+             1000 => 'intkey',
+                1 => 'nero',
+            'que' => new DateTime()
+        ];
+    }
 
     protected function getDummyData()
     {
@@ -259,5 +284,60 @@ class CollectionTest extends UnitTestCase
             if (strlen($val) > 3) return false;
         });
         $this->assertEquals('barfarczar', $string);
+    }
+
+    public function testCollectionFilterUsingCallable()
+    {
+        $coll = new Collection($this->getMixedNuts());
+        $this->assertEquals(16, $coll->count());
+        $coll->filter(function($val, $key) {
+            return !is_object($val);
+        });
+        $this->assertEquals(13, count($coll));
+
+        $coll->filter(function($val, $key){ return !is_numeric($key); });
+        $this->assertEquals(11, count($coll));
+        $coll->each(function($val, $key){
+            $this->assertTrue(!is_object($val));
+            $this->assertTrue(!is_numeric($key));
+        });
+    }
+
+    public function testFirstMethodReturnsFirstElementToPassTruthTest()
+    {
+        $coll = new Collection($this->getMixedNuts());
+        $elem = $coll->first(function($val, $key){
+            return is_object($val);
+        });
+        $this->assertInternalType('object', $elem);
+        $this->assertInstanceOf(ArrayIterator::class, $elem);
+    }
+
+    public function testFlipReversesKeysAndValues()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar'
+        ]);
+        $this->assertTrue($coll->contains('czar', 'goo'));
+        $this->assertFalse($coll->contains('goo','czar'));
+        $coll->flip();
+        $this->assertTrue($coll->contains('goo','czar'));
+        $this->assertFalse($coll->contains('czar', 'goo'));
+    }
+
+    public function testUnsetByKey()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar'
+        ]);
+        $this->assertTrue($coll->contains('czar'));
+        $coll->offsetUnset('goo');
+        $this->assertFalse($coll->contains('czar'));
+        unset($coll['foo']);
+        $this->assertFalse($coll->contains('bar'));
     }
 }
