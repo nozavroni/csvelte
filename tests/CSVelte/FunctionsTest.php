@@ -58,10 +58,12 @@ class FunctionsTest extends UnitTestCase
     }
 
     // this will work for any Iterator class, not just SplFileObject
-    // public function testStreamizeReturnsStreamObjectForSplFileObject()
-    // {
-    //     $file_obj = new SplFileObject($this->getFilePathFor('commaNewlineHeader'));
-    //     $stream = streamize($file_obj);
-    //     $this->assertEquals("\n", $stream->read(300));
-    // }
+    public function testStreamizeReturnsStreamObjectForSplFileObject()
+    {
+        $file_obj = new SplFileObject($this->getFilePathFor('commaNewlineHeader'));
+        $stream = streamize($file_obj);
+        $this->assertEquals("Bank Name,City,ST,CERT,Acquiring", $stream->read(32));
+        $this->assertEquals(" Institution,Closing Date,Update", $stream->read(32));
+        $this->assertEquals("d Date\nFirst CornerStone Bank,\"K", $stream->read(32));
+    }
 }

@@ -22,6 +22,7 @@ namespace CSVelte;
 
 use \Iterator;
 use CSVelte\IO\Stream;
+use CSVelte\IO\IteratorStream;
 use CSVelte\IO\Resource;
 
 /**
@@ -41,7 +42,7 @@ function streamize($obj)
     }
 
     if ($obj instanceof Iterator) {
-        
+        return new IteratorStream($obj);
     }
 
     if (is_object($obj) && method_exists($obj, '__toString')) {
