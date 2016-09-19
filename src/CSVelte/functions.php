@@ -62,7 +62,6 @@ function streamize($obj)
     }
 }
 
-
 /**
  * "Taste" a stream object.
  *
@@ -72,8 +71,24 @@ function streamize($obj)
  * @param \CSVelte\Contract\Streamable Any streamable class to analyze
  * @return \CSVelte\Flavor A flavor representing stream's formatting attributes
  */
-function taste(Streamable $streamable)
+function taste(Streamable $str)
 {
-    $taster = new Taster($streamable);
+    $taster = new Taster($str);
     return $taster();
+}
+
+/**
+ * Does dataset being streamed by $str have a header row?
+ *
+ * @param \CSVelte\Contract\Streamable $str Stream object
+ * @return boolean Whether stream dataset has header
+ */
+function data_has_header(Streamable $str)
+{
+    $taster = new Taster($str);
+    $flv = $taster();
+    return $taster->lickHeader(
+        $flv->delimiter,
+        $flv->lineTerminator
+    );
 }

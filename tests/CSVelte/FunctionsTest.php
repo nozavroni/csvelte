@@ -5,7 +5,10 @@ use CSVelte\Flavor;
 use CSVelte\IO\Resource;
 use CSVelte\IO\Stream;
 use \SplFileObject;
-use function CSVelte\streamize, CSVelte\taste;
+use function
+    CSVelte\data_has_header,
+    CSVelte\streamize,
+    CSVelte\taste;
 
 /**
  * CSVelte functions tests
@@ -72,12 +75,19 @@ class FunctionsTest extends UnitTestCase
     {
         $stream = Stream::open($this->getFilePathFor('headerDoubleQuote'));
         $flavor = taste($stream);
+        $this->assertInstanceOf(Flavor::class, $flavor);
+        $this->assertEquals(",", $flavor->delimiter);
+        $this->assertEquals("\n", $flavor->lineTerminator);
+        $this->assertEquals(Flavor::QUOTE_MINIMAL, $flavor->quoteStyle);
+        $this->assertTrue($flavor->doubleQuote);
+        $this->assertEquals('"', $flavor->quoteChar);
     }
 
     public function testTasterInvokeWithSplFileObject()
     {
         $fileObj = new SplFileObject($this->getFilePathFor('headerTabSingleQuotes'));
         $flavor = taste(streamize($fileObj));
+        $this->assertInstanceOf(Flavor::class, $flavor);
         $this->assertEquals("\t", $flavor->delimiter);
         $this->assertEquals("\n", $flavor->lineTerminator);
         $this->assertEquals(Flavor::QUOTE_MINIMAL, $flavor->quoteStyle);
@@ -85,11 +95,40 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals("'", $flavor->quoteChar);
     }
 
-    // public function testFlavorFunction()
-    // {
-    //     $flavor = CSVelte\flavor([
-    //         'delimiter' => "\t",
-    //         'lineTerminator' =>
-    //     ]);
-    // }
+    public function testHasHeaderFunction()
+    {
+        $stream = Stream::open($this->getFilePathFor('veryShort'));
+        $this->assertFalse(data_has_header($stream));
+
+        $stream = Stream::open($this->getFilePathFor('shortQuotedNewlines'));
+        $this->assertFalse(data_has_header($stream));
+
+        $stream = Stream::open($this->getFilePathFor('commaNewlineHeader'));
+        $this->assertTrue(data_has_header($stream));
+
+        $stream = Stream::open($this->getFilePathFor('headerDoubleQuote'));
+        $this->assertTrue(data_has_header($stream));
+
+        $stream = Stream::open($this->getFilePathFor('headerTabSingleQuotes'));
+        $this->assertTrue(data_has_header($stream));
+
+        $stream = Stream::open($this->getFilePathFor('noHeaderCommaNoQuotes'));
+        $this->assertFalse(data_has_header($stream));
+
+        $stream = Stream::open($this->getFilePathFor('noHeaderCommaQuoteAll'));
+        $this->assertFalse(data_has_header($stream));
+
+        $stream = Stream::open($this->getFilePathFor('headerCommaQuoteNonnumeric'));
+        $this->assertTrue(data_has_header($stream));
+
+        $stream = Stream::open($this->getFilePathFor('noHeaderCommaNoQuotes'));
+        $this->assertFalse(data_has_header($stream));
+
+        $stream = Stream::open($this->getFilePathFor('noHeaderCommaNoQuotes'));
+        $this->assertFalse(data_has_header($stream));
+
+        $stream = Stream::open($this->getFilePathFor('noHeaderCommaNoQuotes'));
+        $this->assertFalse(data_has_header($stream));
+    }
+
 }
