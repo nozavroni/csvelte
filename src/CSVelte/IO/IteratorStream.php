@@ -13,15 +13,17 @@
  */
 namespace CSVelte\IO;
 
+use \Iterator;
+use CSVelte\IO\BufferStream;
 use CSVelte\Traits\IsReadable;
 use CSVelte\Traits\IsWritable;
 use CSVelte\Contract\Streamable;
 
 /**
- * Buffered Stream.
+ * Iterator Stream.
  *
- * Read operations pull from the buffer, write operations fill up the buffer.
- * When the buffer reaches a
+ * A read-only stream that uses an iterable to continuously fill up a buffer as
+ * read operations deplete it.
  *
  * @package    CSVelte
  * @subpackage CSVelte\IO
@@ -29,15 +31,17 @@ use CSVelte\Contract\Streamable;
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  * @since      v0.2.1
  */
-class BufferStream implements Streamable
+class IteratorStream implements Streamable
 {
     use IsReadable, IsWritable;
 
     /**
-     * Buffer contents
-     * @var string A string containing the buffer contents
+     * Buffer stream
+     * @var \CSVelte\IO\BufferStream A BufferStream object
      */
-    protected $buffer = '';
+    protected $buffer;
+
+    protected $overflow;
 
     /**
      * Is stream readable?
@@ -51,7 +55,7 @@ class BufferStream implements Streamable
      *
      * @var boolean Whether stream is writable
      */
-    protected $writable = true;
+    protected $writable = false;
 
     /**
      * Is stream seekable?
@@ -61,40 +65,29 @@ class BufferStream implements Streamable
     protected $seekable = false;
 
     /**
-     * @var array Stream meta data
-     *            hwm: "high water mark" - once buffer reaches this number (in bytes)
-     *                 write() operations will begin returning false defaults to 16384 bytes (16KB)
+     * @var array Any additional options / meta data
      */
     protected $meta = [
-        'hwm' => 16384
+
     ];
 
     /**
-     * Instantiate a buffer stream.
+     * Instantiate an iterator stream
      *
-     * Instantiate a new buffer stream, optionally changing the high water mark
-     * from its default of 16384 bytes (16KB). Once buffer reaches high water
-     * mark, write operations will begin returning false. It's possible for buffer
-     * size to exceed this level since it is only AFTER it is reached that writes
-     * begin returning false.
+     * Instantiate a new iterator stream. The iterator is used to continually
+     * refill a buffer as it is drained by read operations.
      *
-     * @param int Number (in bytes) representing buffer "high water mark"
+     * @param \Iterator The iterator to stream data from
+     * @param \CSVelte\IO\BufferIterator|null Either a buffer or null (to use
+     *     default buffer)
      */
-    public function __construct($hwm = null)
+    public function __construct(Iterator $iter, $buffer = null)
     {
-        if (!is_null($hwm)) {
-            $this->meta['hwm'] = $hwm;
+        $this->iter = $iter;
+        if (!($buffer instanceof BufferStream)) {
+            $buffer = new BufferStream();
         }
-    }
-
-    public function isEmpty()
-    {
-        return $this->getSize() === 0;
-    }
-
-    public function isFull()
-    {
-        return $this->getSize() >= $this->getMetadata('hwm');
+        $this->buffer = $buffer;
     }
 
     /**
@@ -112,18 +105,64 @@ class BufferStream implements Streamable
         return $this->readable;
     }
 
-    /**
-     * Read in the specified amount of characters from the input source
-     *
-     * @param integer Amount of characters to read from input source
-     * @return string|boolean The specified amount of characters read from input source
-     */
-    public function read($chars)
+    public function read($bytes)
     {
-        $data = substr($this->buffer, 0, $chars);
-        $this->buffer = substr($this->buffer, $chars);
+        $data = '';
+        while (strlen($data) < $bytes) {
+            if ($this->buffer->isEmpty()) {
+                $this->inflateBuffer();
+            }
+            if (!$read = $this->buffer->read($bytes - strlen($data))) {
+                break;
+            }
+            $data .= $read;
+        }
         return $data;
     }
+
+    protected function inflateBuffer()
+    {
+        while (!$this->buffer->isFull() && $this->iter->valid()) {
+            $data = $this->iter->current();
+            $this->buffer->write($data);
+            $this->iter->next();
+        }
+    }
+
+    // /**
+    //  * Read in the specified amount of characters from the input source
+    //  *
+    //  * @param integer Amount of characters to read from input source
+    //  * @return string|boolean The specified amount of characters read from input source
+    //  */
+    // public function read($chars)
+    // {
+    //     $data = '';
+    //     while (strlen($data) < $chars) {
+    //         // if buffer is empty, inflate it
+    //         if (!$this->buffer->getSize()) {
+    //             $this->inflateBuffer();
+    //         }
+    //         $data .= $this->buffer->read($chars);
+    //     }
+    //     return $data;
+    // }
+    //
+    // protected function inflateBuffer()
+    // {
+    //     while ($this->iter->valid()) {
+    //         $data = $this->iter->current();
+    //         $written = $this->buffer->write($data);
+    //         $maxAllowedWrite = min(
+    //             $iterlen = strlen($data),
+    //             $maxlen = $this->buffer->getMetadata('maxBufferSize')
+    //         );
+    //         if ($written < $maxAllowedWrite) {
+    //             break;
+    //         }
+    //         $this->iter->next();
+    //     }
+    // }
 
     /**
      * Read the entire stream, beginning to end.
@@ -137,7 +176,7 @@ class BufferStream implements Streamable
      */
     public function __toString()
     {
-        return $this->getContents();
+
     }
 
     /**
@@ -147,9 +186,7 @@ class BufferStream implements Streamable
      */
     public function getContents()
     {
-        $buffer = $this->buffer;
-        $this->buffer = "";
-        return $buffer;
+
     }
 
     /**
@@ -159,7 +196,7 @@ class BufferStream implements Streamable
      */
     public function getSize()
     {
-        return strlen($this->buffer);
+
     }
 
     /**
@@ -179,7 +216,7 @@ class BufferStream implements Streamable
      */
     public function eof()
     {
-        return empty($this->buffer);
+
     }
 
     /**
@@ -217,7 +254,7 @@ class BufferStream implements Streamable
      */
     public function close()
     {
-        $this->buffer = false;
+
     }
 
     /**
@@ -229,9 +266,7 @@ class BufferStream implements Streamable
      */
     public function detach()
     {
-        $buffer = $this->buffer;
-        $this->buffer = false;
-        return $buffer;
+
     }
 
     /**
@@ -257,11 +292,7 @@ class BufferStream implements Streamable
      */
     public function write($data)
     {
-        if ($this->getSize() >= $this->getMetadata('hwm')) {
-            return false;
-        }
-        $this->buffer .= $data;
-        return strlen($data);
+        return $this->writable;
     }
 
      /**

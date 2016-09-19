@@ -1,9 +1,11 @@
 <?php
 namespace CSVelteTest\IO;
 
+use \ArrayIterator;
 use \SplFileObject;
 use CSVelte\IO\Stream;
 use CSVelte\IO\BufferStream;
+use CSVelte\IO\IteratorStream;
 use CSVelte\IO\Resource;
 
 /**
@@ -584,12 +586,12 @@ class StreamTest extends IOTest
     public function testBufferStreamInstantiateBufferSize()
     {
         $stream = new BufferStream();
-        $this->assertEquals(['maxBufferSize' => 16384], $stream->getMetadata());
-        $this->assertEquals(16384, $stream->getMetadata('maxBufferSize'));
+        $this->assertEquals(['hwm' => 16384], $stream->getMetadata());
+        $this->assertEquals(16384, $stream->getMetadata('hwm'));
 
         $stream = new BufferStream(100);
-        $this->assertEquals(['maxBufferSize' => 100], $stream->getMetadata());
-        $this->assertEquals(100, $stream->getMetadata('maxBufferSize'));
+        $this->assertEquals(['hwm' => 100], $stream->getMetadata());
+        $this->assertEquals(100, $stream->getMetadata('hwm'));
     }
 
     public function testBufferStreamInputOutput()
@@ -648,9 +650,11 @@ class StreamTest extends IOTest
     public function testBufferStreamWritesFailWhenMaxIsReached()
     {
         $buffer = new BufferStream(100);
-        $this->assertEquals(['maxBufferSize' => 100], $buffer->getMetadata());
-        $this->assertEquals(100, $buffer->getMetadata('maxBufferSize'));
+        $this->assertEquals(['hwm' => 100], $buffer->getMetadata());
+        $this->assertEquals(100, $buffer->getMetadata('hwm'));
         $this->assertEquals(0, $buffer->getSize());
+        $this->assertFalse($buffer->isFull());
+        $this->assertTrue($buffer->isEmpty());
         $buffer->write('helloworld');
         $buffer->write('helloworld');
         $buffer->write('helloworld');
@@ -662,15 +666,17 @@ class StreamTest extends IOTest
         $buffer->write('helloworld');
         $this->assertEquals(90, $buffer->getSize());
         $this->assertEquals(5, $buffer->write('hello'));
-        $this->assertEquals(5, $buffer->write('helloworld'));
+        $this->assertEquals(10, $buffer->write('helloworld'));
         $this->assertFalse($buffer->write('helloworld'));
-        $this->assertEquals(100, $buffer->getSize());
+        $this->assertEquals(105, $buffer->getSize());
         // now read and then write 1 char at a time
         $this->assertEquals('helloworld', $buffer->read(10));
+        $this->assertFalse($buffer->isFull());
+        $this->assertFalse($buffer->isEmpty());
         $this->assertEquals(8, $buffer->write('12341234'));
-        $this->assertEquals(1, $buffer->write('1'));
-        $this->assertEquals(1, $buffer->write(2));
-        $this->assertFalse($buffer->write('3'));
+        $this->assertFalse($buffer->write('1'));
+        $this->assertTrue($buffer->isFull());
+        $this->assertFalse($buffer->isEmpty());
     }
 
     public function testBufferStreamClose()
@@ -688,7 +694,7 @@ class StreamTest extends IOTest
         $buffer->write($content = $this->getFileContentFor('headerCommaQuoteNonnumeric'));
         $detached = $buffer->detach();
         $this->assertFalse($buffer->read(1));
-        $this->assertEquals(substr($content, 0, 100), $detached);
+        $this->assertEquals($content, $detached);
     }
 
     public function testBufferStreamReadLine()
@@ -706,6 +712,36 @@ class StreamTest extends IOTest
         $this->assertEquals(32, $buffer->writeLine($line2 = "First CornerStone Bank,\"King of"));
         $this->assertEquals($line1 . PHP_EOL . $line2 . PHP_EOL, $buffer->getContents());
 
+    }
+
+    public function testIteratorStreamUsingArrayIterator()
+    {
+        $array = explode("\n", $this->getFileContentFor('noHeaderCommaNoQuotes'));
+        $iter = new ArrayIterator($array);
+        $stream = new IteratorStream($iter);
+        $this->assertEquals("1,Eldon Ba", $stream->read(10));
+    }
+
+    public function testIteratorStreamSmallerThanBufferHwm()
+    {
+        $array = explode("\n", $content = $this->getFileContentFor('noHeaderCommaNoQuotes'));
+        $lenplusone = strlen($content) + 1;
+        $iter = new ArrayIterator($array);
+        $stream = new IteratorStream($iter, new BufferStream($lenplusone));
+        $this->assertEquals("1,Eldon Ba", $stream->read(10));
+    }
+
+    public function testIteratorStreamUsingSplFileObject()
+    {
+        $content = $this->getFileContentFor('commaNewlineHeader');
+        $fileObj = new SplFileObject($this->getFilePathFor('commaNewlineHeader'));
+        $stream = new IteratorStream($fileObj, new BufferStream(1024));
+        $this->assertEquals(substr($content, 0, 100), $stream->read(100));
+        $this->assertEquals(substr($content, 100, 100), $stream->read(100));
+        $this->assertEquals(substr($content, 200, 100), $stream->read(100));
+        $this->assertEquals(substr($content, 300, 100), $stream->read(100));
+        $this->assertEquals(substr($content, 400, 100), $stream->read(100));
+        $this->assertEquals(substr($content, 500, 1000), $stream->read(1000));
     }
 
 }
