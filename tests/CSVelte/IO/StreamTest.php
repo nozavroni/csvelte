@@ -621,13 +621,91 @@ class StreamTest extends IOTest
         $buffer->write($this->getFileContentFor('commaNewlineHeader'));
         $this->assertFalse($buffer->isSeekable());
         $this->assertFalse($buffer->seek(25));
+        $this->assertFalse($buffer->tell());
     }
 
-    // public function testBufferStreamWritesFailWhenMaxIsReached()
-    // {
-    //     $stream = new BufferStream(100);
-    //     $this->assertEquals(['maxBufferSize' => 100], $stream->getMetadata());
-    //     $this->assertEquals(100, $stream->getMetadata('maxBufferSize'));
-    // }
+    public function testBufferStreamTellAndEOL()
+    {
+        $buffer = new BufferStream();
+        $buffer->write($this->getFileContentFor('commaNewlineHeader'));
+        $this->assertFalse($buffer->tell());
+        $this->assertFalse($buffer->eof());
+        $buffer->read(100000);
+        $this->assertTrue($buffer->eof());
+    }
+
+    public function testBufferStreamGetSize()
+    {
+        $buffer = new BufferStream();
+        $buffer->write($content = $this->getFileContentFor('commaNewlineHeader'));
+        $this->assertEquals(strlen($content), $buffer->getSize());
+        $buffer->read(100);
+        $this->assertEquals(strlen($content) - 100, $buffer->getSize());
+        $buffer->write('helloworld');
+        $this->assertEquals(strlen($content) - 100 + 10, $buffer->getSize());
+    }
+
+    public function testBufferStreamWritesFailWhenMaxIsReached()
+    {
+        $buffer = new BufferStream(100);
+        $this->assertEquals(['maxBufferSize' => 100], $buffer->getMetadata());
+        $this->assertEquals(100, $buffer->getMetadata('maxBufferSize'));
+        $this->assertEquals(0, $buffer->getSize());
+        $buffer->write('helloworld');
+        $buffer->write('helloworld');
+        $buffer->write('helloworld');
+        $buffer->write('helloworld');
+        $buffer->write('helloworld');
+        $buffer->write('helloworld');
+        $buffer->write('helloworld');
+        $buffer->write('helloworld');
+        $buffer->write('helloworld');
+        $this->assertEquals(90, $buffer->getSize());
+        $this->assertEquals(5, $buffer->write('hello'));
+        $this->assertEquals(5, $buffer->write('helloworld'));
+        $this->assertFalse($buffer->write('helloworld'));
+        $this->assertEquals(100, $buffer->getSize());
+        // now read and then write 1 char at a time
+        $this->assertEquals('helloworld', $buffer->read(10));
+        $this->assertEquals(8, $buffer->write('12341234'));
+        $this->assertEquals(1, $buffer->write('1'));
+        $this->assertEquals(1, $buffer->write(2));
+        $this->assertFalse($buffer->write('3'));
+    }
+
+    public function testBufferStreamClose()
+    {
+        $buffer = new BufferStream(100);
+        $buffer->write($content = $this->getFileContentFor('commaNewlineHeader'));
+        $this->assertEquals('Bank Name,', $buffer->read(10));
+        $buffer->close();
+        $this->assertFalse($buffer->read(1));
+    }
+
+    public function testBufferStreamDetach()
+    {
+        $buffer = new BufferStream(100);
+        $buffer->write($content = $this->getFileContentFor('headerCommaQuoteNonnumeric'));
+        $detached = $buffer->detach();
+        $this->assertFalse($buffer->read(1));
+        $this->assertEquals(substr($content, 0, 100), $detached);
+    }
+
+    public function testBufferStreamReadLine()
+    {
+        $buffer = new BufferStream();
+        $buffer->write($content = $this->getFileContentFor('commaNewlineHeader'));
+        $this->assertEquals("Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date\n", $buffer->readLine());
+        $this->assertEquals("First CornerStone Bank,\"King of\n", $buffer->readLine());
+    }
+
+    public function testBufferStreamWriteLine()
+    {
+        $buffer = new BufferStream();
+        $this->assertEquals(71, $buffer->writeLine($line1 = "Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date"));
+        $this->assertEquals(32, $buffer->writeLine($line2 = "First CornerStone Bank,\"King of"));
+        $this->assertEquals($line1 . PHP_EOL . $line2 . PHP_EOL, $buffer->getContents());
+
+    }
 
 }

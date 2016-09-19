@@ -41,18 +41,13 @@ use CSVelte\Exception\IOException;
  */
 class BufferStream implements Streamable
 {
-    use IsReadable, IsWritable, IsSeekable;
-
-    /**
-     * @var int The total size (in bytes) of the stream
-     */
-    protected $size;
+    use IsReadable, IsWritable;
 
     /**
      * Buffer contents
      * @var string A string containing the buffer contents
      */
-    protected $buffer;
+    protected $buffer = '';
 
     /**
      * Is stream readable?
@@ -127,19 +122,6 @@ class BufferStream implements Streamable
     }
 
     /**
-     * Read a single line from input source and return it (and move pointer to )
-     * the beginning of the next line)
-     *
-     * @param string $eol Line terminator sequence/character
-     * @param int $maxLength The maximum line length to return
-     * @return string The next line from the input source
-     */
-    public function readLine($eol = PHP_EOL, $maxLength = null)
-    {
-
-    }
-
-    /**
      * Read the entire stream, beginning to end.
      *
      * In most stream implementations, __toString() differs from getContents()
@@ -173,7 +155,7 @@ class BufferStream implements Streamable
      */
     public function getSize()
     {
-
+        return strlen($this->buffer);
     }
 
     /**
@@ -183,7 +165,7 @@ class BufferStream implements Streamable
      */
     public function tell()
     {
-
+        return false;
     }
 
     /**
@@ -193,7 +175,7 @@ class BufferStream implements Streamable
      */
     public function eof()
     {
-
+        return empty($this->buffer);
     }
 
     /**
@@ -201,7 +183,7 @@ class BufferStream implements Streamable
      */
     public function rewind()
     {
-
+        // does nothing...
     }
 
     /**
@@ -231,7 +213,7 @@ class BufferStream implements Streamable
      */
     public function close()
     {
-
+        $this->buffer = false;
     }
 
     /**
@@ -239,11 +221,13 @@ class BufferStream implements Streamable
      *
      * After the stream has been detached, the stream is in an unusable state.
      *
-     * @return resource|null Underlying PHP stream, if any
+     * @return string|null Underlying PHP stream, if any
      */
     public function detach()
     {
-
+        $buffer = $this->buffer;
+        $this->buffer = false;
+        return $buffer;
     }
 
     /**
@@ -269,6 +253,15 @@ class BufferStream implements Streamable
      */
     public function write($data)
     {
+        $maxsize = $this->getMetadata('maxBufferSize');
+        $writesize = strlen($data);
+        if (!$space = $maxsize - $this->getSize()) {
+            return false;
+        }
+        if ($writesize > $space) {
+            // not enough space so chop the data to fit...
+            $data = substr($data, 0, $space);
+        }
         $this->buffer .= $data;
         return strlen($data);
     }
