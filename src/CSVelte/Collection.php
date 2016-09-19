@@ -29,6 +29,8 @@ use \InvalidArgumentException;
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @since     v0.2.1
+ * @todo      Maybe methods should return a new collection rather than modifying
+ *            this collection in place.
  * @replaces  \CSVelte\Utils
  */
 class Collection implements Countable, ArrayAccess
@@ -53,6 +55,39 @@ class Collection implements Countable, ArrayAccess
         if (!is_null($data)) {
             $this->setData($data);
         }
+    }
+
+    /**
+     * Invokes the object as a function.
+     *
+     * If called with no arguments, it will return underlying data array
+     * If called with array as first argument, array will be merged into data array
+     * If called with second param, it will call $this->set($key, $val)
+     * If called with null as first param and key as second param, it will call $this->offsetUnset($key)
+     *
+     * @return array The underlying data array
+     */
+    public function __invoke($val = null, $key = null)
+    {
+        if (is_null($val)) {
+            if (is_null($key)) {
+                return $this->data;
+            } else {
+                return $this->offsetUnset($key);
+            }
+        } else {
+            if (is_null($key)) {
+                if (is_array($val)) return $this->merge($val);
+                else {
+                    if (is_callable($val)) {
+                        return $this->map($val);
+                    }
+                }
+            } else {
+                $this->offsetSet($key, $val);
+            }
+        }
+        return $this;
     }
 
     /**
@@ -84,7 +119,17 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * Merge array into this collection.
+     * Get data as an array.
+     *
+     * @return array Collection data as an array
+     */
+    public function keys()
+    {
+        return array_keys($this->data);
+    }
+
+    /**
+     * Merge data
      *
      * Pass an array to this method ot have it merged into this collection.
      *
@@ -92,11 +137,11 @@ class Collection implements Countable, ArrayAccess
      * @param boolean Should existing values be overwritten?
      * @return $this;
      */
-    public function merge(array $data, $overwrite = true)
+    public function merge($data = null, $overwrite = true)
     {
         $this->assertArrayOrIterator($data);
         foreach ($data as $key => $val) {
-            $this->set($key, $value, $overwrite);
+            $this->set($key, $val, $overwrite);
         }
         return $this;
     }
@@ -110,7 +155,6 @@ class Collection implements Countable, ArrayAccess
      */
     public function set($key, $value = null, $overwrite = true)
     {
-        $this->assertArrayOrIterator($data);
         if (!array_key_exists($key, $this->data) || $overwrite) {
             $this->data[$key] = $value;
         }
@@ -152,6 +196,7 @@ class Collection implements Countable, ArrayAccess
         if ($this->has($offset)) {
             unset($this->data[$offset]);
         }
+        return $this;
     }
 
     // @todo create an alias for this... maybe delete() or remove()
@@ -164,11 +209,12 @@ class Collection implements Countable, ArrayAccess
     public function offsetSet($offset, $value)
     {
         $this->set($offset, $value);
+        return $this;
     }
 
     public function offsetGet($offset)
     {
-        $this->get($offset);
+        return $this->get($offset);
     }
 
     public function count()
@@ -237,6 +283,21 @@ class Collection implements Countable, ArrayAccess
         foreach ($this->data as $key => $val) {
             if ($func($val, $key)) return $val;
         }
+        return null;
+    }
+
+    public function last(Callable $func)
+    {
+        $elem = null;
+        foreach ($this->data as $key => $val) {
+            if ($func($val, $key)) $elem = $val;
+        }
+        return $elem;
+    }
+
+    public function unique()
+    {
+        return new self(array_unique($this->data));
     }
 
     public function flip()
@@ -286,6 +347,26 @@ class Collection implements Countable, ArrayAccess
      *
      * @return mixed The mode of all items in collection
      */
+    public function max()
+    {
+        return max($this->data);
+    }
+
+    /**
+     * Get mode of data items.
+     *
+     * @return mixed The mode of all items in collection
+     */
+    public function min()
+    {
+        return min($this->data);
+    }
+
+    /**
+     * Get mode of data items.
+     *
+     * @return mixed The mode of all items in collection
+     */
     public function mode()
     {
         $counts = array_count_values($this->data);
@@ -314,9 +395,24 @@ class Collection implements Countable, ArrayAccess
         return $values[$middle];
     }
 
+    public function join($glue)
+    {
+        return implode($glue, $this->data);
+    }
+
+    public function isEmpty()
+    {
+        return empty($this->data);
+    }
+
+    public function value(Callable $func)
+    {
+        return $func($this);
+    }
+
     protected function assertArrayOrIterator($data)
     {
-        if (is_array($data) || $data instanceof Iterator) {
+        if (is_null($data) || is_array($data) || $data instanceof Iterator) {
             return;
         }
         throw new InvalidArgumentException("Invalid type for collection data: " . gettype($data));

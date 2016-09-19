@@ -313,6 +313,16 @@ class CollectionTest extends UnitTestCase
         $this->assertInstanceOf(ArrayIterator::class, $elem);
     }
 
+    public function testLastMethodReturnsLastElementToPassTruthTest()
+    {
+        $coll = new Collection($this->getMixedNuts());
+        $elem = $coll->last(function($val, $key){
+            return is_object($val);
+        });
+        $this->assertInternalType('object', $elem);
+        $this->assertInstanceOf(DateTime::class, $elem);
+    }
+
     public function testFlipReversesKeysAndValues()
     {
         $coll = new Collection([
@@ -339,5 +349,79 @@ class CollectionTest extends UnitTestCase
         $this->assertFalse($coll->contains('czar'));
         unset($coll['foo']);
         $this->assertFalse($coll->contains('bar'));
+    }
+
+    public function testJoinUsingComma()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar'
+        ]);
+        $this->assertEquals('bar,far,czar', $coll->join(','));
+    }
+
+    public function testKeysMethodReturnsDataKeys()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar'
+        ]);
+        $this->assertEquals(['foo','boo','goo'], $coll->keys());
+    }
+
+    public function testIsEmptyReturnsTrueIfCollectionIsEmpty()
+    {
+        $coll = new Collection();
+        $this->assertTrue($coll->isEmpty());
+    }
+
+    public function testMinReturnsSmallestElemAndMaxReturnsLargestElem()
+    {
+        $coll = new Collection([104,906,532,123,116,216,366,34,783,455,449]);
+        $this->assertEquals(34, $coll->min());
+        $this->assertEquals(906, $coll->max());
+    }
+
+    public function testMergeOverwritesExistingData()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar'
+        ]);
+        $coll->merge(['goo' => 'poo', 'czar' => 'C-ZAR!!!']);
+        $this->assertEquals(['foo' => 'bar', 'boo' => 'far', 'goo' => 'poo', 'czar' => 'C-ZAR!!!'], $coll->toArray());
+    }
+
+    public function testValueAcceptsCallableAndImmediatelyGetsReturnValue()
+    {
+        $coll = new Collection([1,50,23,45,86,101]);
+        $this->assertEquals(1, $coll->value(function($c){
+            return $c->min();
+        }));
+        $this->assertEquals(101, $coll->value(function($c){
+            return $c->max();
+        }));
+        $this->assertEquals(51, $coll->value(function($c){
+            return $c->average();
+        }));
+    }
+
+    public function testCollectionCallAsFunctionCallsInvoke()
+    {
+        $coll = new Collection([1,50,23,45,86,101]);
+        $coll2 = $coll(function($val) {
+            return $val . '+';
+        });
+        $this->assertEquals([1 . '+', 50 . '+', 23 . '+', 45 . '+', 86 . '+', 101 . '+'], $coll2->toArray());
+    }
+
+    public function testCollectionUniqueRemovesDuplicates()
+    {
+        $coll = new Collection($arr = [1,1,1,1,2,2,3,4,5,66,7,8,9,1,2,2,3,4,6,66]);
+        $this->assertEquals($arr, $coll->toArray());
+        $this->assertEquals([0 => 1, 4 => 2, 6 => 3, 7 => 4, 8 => 5, 9 => 66, 10 => 7, 11 => 8, 12 => 9, 18 => 6], $coll->unique()->toArray());
     }
 }
