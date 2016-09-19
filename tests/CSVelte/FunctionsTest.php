@@ -1,10 +1,11 @@
 <?php
 namespace CSVelteTest;
 
+use CSVelte\Flavor;
 use CSVelte\IO\Resource;
 use CSVelte\IO\Stream;
 use \SplFileObject;
-use function CSVelte\streamize;
+use function CSVelte\streamize, CSVelte\taste;
 
 /**
  * CSVelte functions tests
@@ -67,11 +68,22 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals("d Date\nFirst CornerStone Bank,\"K", $stream->read(32));
     }
 
-    // public function testTasteFunctionIsAliasForTasterInvoke()
-    // {
-    //     $stream = Stream::open($this->getFilePathFor('headerDoubleQuote'));
-    //     $flavor = CSVelte\taste();
-    // }
+    public function testTasteFunctionIsAliasForTasterInvoke()
+    {
+        $stream = Stream::open($this->getFilePathFor('headerDoubleQuote'));
+        $flavor = taste($stream);
+    }
+
+    public function testTasterInvokeWithSplFileObject()
+    {
+        $fileObj = new SplFileObject($this->getFilePathFor('headerTabSingleQuotes'));
+        $flavor = taste(streamize($fileObj));
+        $this->assertEquals("\t", $flavor->delimiter);
+        $this->assertEquals("\n", $flavor->lineTerminator);
+        $this->assertEquals(Flavor::QUOTE_MINIMAL, $flavor->quoteStyle);
+        $this->assertTrue($flavor->doubleQuote);
+        $this->assertEquals("'", $flavor->quoteChar);
+    }
 
     // public function testFlavorFunction()
     // {

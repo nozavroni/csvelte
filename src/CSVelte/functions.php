@@ -21,9 +21,12 @@ namespace CSVelte;
  */
 
 use \Iterator;
+use CSVelte\Taster;
+use CSVelte\Flavor;
 use CSVelte\IO\Stream;
-use CSVelte\IO\IteratorStream;
 use CSVelte\IO\Resource;
+use CSVelte\IO\IteratorStream;
+use CSVelte\Contract\Streamable;
 
 /**
  * Stream - streams various types of values and objects.
@@ -57,4 +60,20 @@ function streamize($obj)
         }
         return $stream;
     }
+}
+
+
+/**
+ * "Taste" a stream object.
+ *
+ * Pass any class that implements the "Streamable" interface to this function
+ * to auto-detect "flavor" (formatting attributes).
+ *
+ * @param \CSVelte\Contract\Streamable Any streamable class to analyze
+ * @return \CSVelte\Flavor A flavor representing stream's formatting attributes
+ */
+function taste(Streamable $streamable)
+{
+    $taster = new Taster($streamable);
+    return $taster();
 }
