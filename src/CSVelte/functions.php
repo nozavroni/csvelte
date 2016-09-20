@@ -96,3 +96,19 @@ function data_has_header(Streamable $str)
         $flv->lineTerminator
     );
 }
+
+/**
+ * Collection factory function
+ *
+ * @param  $in [description]
+ * @return [type]     [description]
+ */
+function collect($in)
+{
+    return new Collection($in);
+}
+
+function gen()
+{
+    
+}

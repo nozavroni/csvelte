@@ -8,7 +8,8 @@ use \SplFileObject;
 use function
     CSVelte\data_has_header,
     CSVelte\streamize,
-    CSVelte\taste;
+    CSVelte\taste,
+    CSVelte\collect;
 
 /**
  * CSVelte functions tests
@@ -129,6 +130,32 @@ class FunctionsTest extends UnitTestCase
 
         $stream = Stream::open($this->getFilePathFor('noHeaderCommaNoQuotes'));
         $this->assertFalse(data_has_header($stream));
+    }
+
+    public function testCollectionFactoryFunctionUsingArray()
+    {
+        $coll = collect($arr = [0,1,2,3,4,5,6,7,8,9]);
+        $this->assertEquals($arr, $coll->toArray());
+    }
+
+    public function testCollectFluidMethods()
+    {
+        $coll = collect($arr = [
+            'f' => 'a',
+            1 => '',
+            'a' => '',
+            2 => 'a',
+            3 => 'foobar'
+        ])->unique();
+        $this->assertEquals(['f' => 'a', 1 => '', 3 => 'foobar'], $coll->toArray());
+    }
+
+    // @todo Create a collection object that works on a string so that you
+    // can call a function for every character in a string and various other
+    // functionality 
+    public function testCollectFunctionAcceptsString()
+    {
+
     }
 
 }

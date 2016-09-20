@@ -424,4 +424,6 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals($arr, $coll->toArray());
         $this->assertEquals([0 => 1, 4 => 2, 6 => 3, 7 => 4, 8 => 5, 9 => 66, 10 => 7, 11 => 8, 12 => 9, 18 => 6], $coll->unique()->toArray());
     }
+
+    
 }
