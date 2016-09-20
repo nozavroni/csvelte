@@ -3,10 +3,13 @@ namespace CSVelteTest\IO;
 
 use \ArrayIterator;
 use \SplFileObject;
+use CSVelte\Contract\Streamable;
 use CSVelte\IO\Stream;
 use CSVelte\IO\BufferStream;
 use CSVelte\IO\IteratorStream;
 use CSVelte\IO\Resource;
+
+use function CSVelte\streamize;
 
 /**
  * CSVelte\IO\Stream Tests.
@@ -348,28 +351,19 @@ class StreamTest extends IOTest
         $this->assertFalse($nonWritableStream->isWritable());
     }
 
-    /**
-     * @covers ::streamize()
-     */
     public function testStreamCanConvertStringIntoStreamWithStreamize()
     {
         $csv_string = $this->getFileContentFor('veryShort');
-        $csv_stream = Stream::streamize($csv_string);
+        $csv_stream = streamize($csv_string);
         $this->assertEquals($csv_string, $csv_stream->read(37));
     }
 
-    /**
-     * @covers ::streamize()
-     */
     public function testStreamCanConvertEmptyStringIntoStreamWithStreamizeWithNoParams()
     {
-        $csv_stream = Stream::streamize();
+        $csv_stream = streamize();
         $this->assertEquals('', $csv_stream->read(10));
     }
 
-    /**
-     * @covers ::streamize()
-     */
     public function testStreamCanConvertObjectWithToStringMethodIntoStreamWithStreamize()
     {
         // Create a stub for non-existant StreamableClass.
@@ -382,14 +376,14 @@ class StreamTest extends IOTest
              ->willReturn($csv_string = $this->getFileContentFor('veryShort'));
 
         // test it
-        $csv_stream = Stream::streamize($csv_obj);
+        $csv_stream = streamize($csv_obj);
         $this->assertEquals($csv_string, $csv_stream->read(37));
     }
 
     public function testStreamizeCanStreamSplFileObject()
     {
         $fileObj = new SplFileObject($fn = $this->getFilePathFor('headerCommaQuoteNonnumeric'));
-        $this->assertInstanceOf(Stream::class, $stream = Stream::streamize($fileObj));
+        $this->assertInstanceOf(Streamable::class, $stream = streamize($fileObj));
         $this->assertEquals(file_get_contents($fn), $stream->__toString());
     }
 
@@ -397,7 +391,7 @@ class StreamTest extends IOTest
     // {
     //     $fileObj = new SplFileObject($fn = $this->getFilePathFor('headerCommaQuoteNonnumeric'));
     //     $fileObj->read($pos = 25);
-    //     $stream = Stream::streamize($fileObj);
+    //     $stream = streamize($fileObj);
     //     $this->assertEquals($pos, $stream->tell());
     //     //$this->assertEquals($pos, $fileObj->ftell());
     // }
@@ -552,7 +546,7 @@ class StreamTest extends IOTest
     public function testStreamizeWithIntegerThrowsInvalidArgumentException()
     {
         $intval = 1;
-        Stream::streamize($intval);
+        streamize($intval);
     }
 
     /**
@@ -561,12 +555,12 @@ class StreamTest extends IOTest
     public function testStreamizeWithNonStringObjectThrowsInvalidArgumentException()
     {
         $obj = new \stdClass;
-        Stream::streamize($obj);
+        streamize($obj);
     }
 
     public function testStreamizeWithNoArguments()
     {
-        $stream = Stream::streamize();
+        $stream = streamize();
         $this->assertTrue($stream->isReadable());
         $this->assertTrue($stream->isWritable());
         $this->assertTrue($stream->isSeekable());
@@ -578,8 +572,8 @@ class StreamTest extends IOTest
 
     public function testStreamizeStream()
     {
-        $stream = Stream::streamize("helloworld");
-        $streamcopy = Stream::streamize($stream);
+        $stream = streamize("helloworld");
+        $streamcopy = streamize($stream);
         $this->assertEquals((string) $stream, (string) $streamcopy);
     }
 
@@ -742,6 +736,32 @@ class StreamTest extends IOTest
         $this->assertEquals(substr($content, 300, 100), $stream->read(100));
         $this->assertEquals(substr($content, 400, 100), $stream->read(100));
         $this->assertEquals(substr($content, 500, 1000), $stream->read(1000));
+    }
+
+    public function testIteratorStreamToString()
+    {
+        $content = $this->getFileContentFor('commaNewlineHeader');
+        $fileObj = new SplFileObject($this->getFilePathFor('commaNewlineHeader'));
+        $stream = new IteratorStream($fileObj, new BufferStream(1024));
+        $this->assertEquals($content, $stream->__toString());
+    }
+
+    public function testIteratorStreamReadThenToString()
+    {
+        $content = $this->getFileContentFor('commaNewlineHeader');
+        $fileObj = new SplFileObject($this->getFilePathFor('commaNewlineHeader'));
+        $stream = new IteratorStream($fileObj, new BufferStream(1024));
+        $this->assertEquals(substr($content, 0, 100), $stream->read(100));
+        $this->assertEquals($content, $stream->__toString());
+    }
+
+    public function testIteratorStreamReadThenGetContents()
+    {
+        $content = $this->getFileContentFor('commaNewlineHeader');
+        $fileObj = new SplFileObject($this->getFilePathFor('commaNewlineHeader'));
+        $stream = new IteratorStream($fileObj, new BufferStream(1024));
+        $this->assertEquals(substr($content, 0, 100), $stream->read(100));
+        $this->assertEquals(substr($content, 100), $stream->getContents());
     }
 
 }

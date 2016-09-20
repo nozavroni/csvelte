@@ -129,41 +129,6 @@ class IteratorStream implements Streamable
         }
     }
 
-    // /**
-    //  * Read in the specified amount of characters from the input source
-    //  *
-    //  * @param integer Amount of characters to read from input source
-    //  * @return string|boolean The specified amount of characters read from input source
-    //  */
-    // public function read($chars)
-    // {
-    //     $data = '';
-    //     while (strlen($data) < $chars) {
-    //         // if buffer is empty, inflate it
-    //         if (!$this->buffer->getSize()) {
-    //             $this->inflateBuffer();
-    //         }
-    //         $data .= $this->buffer->read($chars);
-    //     }
-    //     return $data;
-    // }
-    //
-    // protected function inflateBuffer()
-    // {
-    //     while ($this->iter->valid()) {
-    //         $data = $this->iter->current();
-    //         $written = $this->buffer->write($data);
-    //         $maxAllowedWrite = min(
-    //             $iterlen = strlen($data),
-    //             $maxlen = $this->buffer->getMetadata('maxBufferSize')
-    //         );
-    //         if ($written < $maxAllowedWrite) {
-    //             break;
-    //         }
-    //         $this->iter->next();
-    //     }
-    // }
-
     /**
      * Read the entire stream, beginning to end.
      *
@@ -176,7 +141,8 @@ class IteratorStream implements Streamable
      */
     public function __toString()
     {
-
+        $this->rewind();
+        return $this->getContents();
     }
 
     /**
@@ -186,17 +152,25 @@ class IteratorStream implements Streamable
      */
     public function getContents()
     {
-
+        $contents = '';
+        while (!$this->eof()) {
+            $contents .= $this->read(
+                // kind of arbitrary... we have to specify something for the
+                // chunk length, so I just used the buffer's "high water mark"
+                $this->buffer->getMetadata('hwm')
+            );
+        }
+        return $contents;
     }
 
     /**
-     * Return the size (in bytes) of this readable (if known).
+     * Return the size (in bytes) of this stream (if known).
      *
-     * @return int|null Size (in bytes) of this readable
+     * @return int|null Size (in bytes) of this stream
      */
     public function getSize()
     {
-
+        // no way to know so return null
     }
 
     /**
@@ -210,21 +184,25 @@ class IteratorStream implements Streamable
     }
 
     /**
-     * Determine whether the end of the readable resource has been reached
+     * Determine whether the end of the stream has been reached
      *
-     * @return boolean Whether we're at the end of the readable
+     * @return boolean Whether we're at the end of the stream
      */
     public function eof()
     {
-
+        return (
+            !$this->iter->valid() &&
+            $this->buffer->eof()
+        );
     }
 
     /**
-     * File must be able to be rewound when the end is reached
+     * Rewind to beginning of stream
      */
     public function rewind()
     {
-        // does nothing...
+        $this->iter->rewind();
+        $this->buffer->rewind();
     }
 
     /**
@@ -254,7 +232,12 @@ class IteratorStream implements Streamable
      */
     public function close()
     {
-
+        $buff = $this->buffer->close();
+        $iter = true;
+        if (method_exists($this->iter, 'close')) {
+            $iter = $this->iter->close();
+        }
+        return $buff && $iter;
     }
 
     /**
@@ -263,10 +246,17 @@ class IteratorStream implements Streamable
      * After the stream has been detached, the stream is in an unusable state.
      *
      * @return string|null Underlying PHP stream, if any
+     * @todo I'm not sure what detach is for so I don't know whether what I'm
+     *     doing here is right. The reason I have the method at all is because
+     *     psr7 StreamInterface has one.f
      */
     public function detach()
     {
-
+        $buffer = $this->buffer;
+        $iter = $this->iter;
+        $this->buffer = null;
+        $this->iter = null;
+        return [$iter, $buffer];
     }
 
     /**

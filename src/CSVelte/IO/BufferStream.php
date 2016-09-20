@@ -187,7 +187,7 @@ class BufferStream implements Streamable
      */
     public function rewind()
     {
-        // does nothing...
+        $this->buffer = '';
     }
 
     /**
