@@ -107,8 +107,3 @@ function collect($in)
 {
     return new Collection($in);
 }
-
-function gen()
-{
-    
-}
