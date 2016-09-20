@@ -96,47 +96,6 @@ class Stream implements Streamable
     }
 
     /**
-     * Converts object/string to a usable stream
-     *
-     * Mercilessly stolen from:
-     * https://github.com/guzzle/streams/blob/master/src/Stream.php
-     *
-     * My kudos and sincere thanks go out to Michael Dowling and Graham Campbell
-     * of the guzzle/streams PHP package. Thanks for the inspiration (in some cases)
-     * and the not suing me for outright theft (in this case).
-     *
-     * @param object|string|SplFileObject The string/object to convert to a stream
-     * @param array Options to pass to the newly created stream
-     * @return \CSVelte\IO\Stream
-     * @throws \InvalidArgumentException
-     * @todo Write an IO\AccessMode class like what I talked about in issue #114
-     */
-    public static function streamize($obj = '')
-    {
-        if ($obj instanceof SplFileObject) {
-            return self::open($obj->getPathName());
-        }
-
-        $type = gettype($obj);
-
-        if ($type == 'string') {
-            $stream = self::open('php://temp', 'r+');
-            if ($obj !== '') {
-                $res = $stream->getResource();
-                fwrite($res(), $obj);
-                fseek($res(), 0);
-            }
-            return $stream;
-        }
-
-        if ($type == 'object' && method_exists($obj, '__toString')) {
-            return self::streamize((string) $obj);
-        }
-
-        throw new InvalidArgumentException('Invalid resource type: ' . $type);
-    }
-
-    /**
      * Reads all data from the stream into a string, from the beginning to end.
      *
      * This method MUST attempt to seek to the beginning of the stream before

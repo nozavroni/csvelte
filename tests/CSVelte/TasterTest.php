@@ -21,22 +21,22 @@ class TasterTest extends UnitTestCase
 {
     public function testLickQuotingStyleDoesntNeedSampleInParams()
     {
-        $stream = Stream::streamize($this->getFileContentFor('headerDoubleQuote'));
+        $stream = streamize($this->getFileContentFor('headerDoubleQuote'));
         $taster = new Taster($stream);
         $flavor = $taster->lick();
         $this->assertEquals(Flavor::QUOTE_MINIMAL, $flavor->quoteStyle);
 
-        $stream = Stream::streamize($this->getFileContentFor('noHeaderCommaQuoteAll'));
+        $stream = streamize($this->getFileContentFor('noHeaderCommaQuoteAll'));
         $taster = new Taster($stream);
         $flavor = $taster->lick();
         $this->assertEquals(Flavor::QUOTE_ALL, $flavor->quoteStyle);
 
-        $stream = Stream::streamize($this->getFileContentFor('headerCommaQuoteNonnumeric'));
+        $stream = streamize($this->getFileContentFor('headerCommaQuoteNonnumeric'));
         $taster = new Taster($stream);
         $flavor = $taster->lick();
         $this->assertEquals(Flavor::QUOTE_NONNUMERIC, $flavor->quoteStyle);
 
-        $stream = Stream::streamize($this->getFileContentFor('noHeaderCommaNoQuotes'));
+        $stream = streamize($this->getFileContentFor('noHeaderCommaNoQuotes'));
         $taster = new Taster($stream);
         $flavor = $taster->lick();
         $this->assertEquals(Flavor::QUOTE_NONE, $flavor->quoteStyle);
@@ -47,8 +47,8 @@ class TasterTest extends UnitTestCase
      */
     public function testLickHeaderNowAcceptsReader()
     {
-        $header_stream = Stream::streamize($this->getFileContentFor('headerDoubleQuote'));
-        $no_header_stream = $stream = Stream::streamize($this->getFileContentFor('noHeaderCommaNoQuotes'));
+        $header_stream = streamize($this->getFileContentFor('headerDoubleQuote'));
+        $no_header_stream = $stream = streamize($this->getFileContentFor('noHeaderCommaNoQuotes'));
 
         $header_taster = new Taster($header_stream);
         $header_flavor = $header_taster->lick();
@@ -65,7 +65,7 @@ class TasterTest extends UnitTestCase
      */
     public function testTasterThrowsExceptionIfPassedInputWithNoData()
     {
-        $input = Stream::streamize('');
+        $input = streamize('');
         $taster = new Taster($input);
     }
 

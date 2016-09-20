@@ -28,7 +28,7 @@ class WriterTest extends UnitTestCase
 
     public function testWriterCustomFlavor()
     {
-        $out = new Stream('php://memory');
+        $out = Stream::open('php://memory');
         $writer = new Writer($out, $expectedFlavor = new Flavor(array('delimiter' => '|')));
         $this->assertSame($expectedFlavor, $writer->getFlavor());
     }
@@ -40,13 +40,13 @@ class WriterTest extends UnitTestCase
         $flavorArr['lineTerminator'] = "\n";
         $flavorArr['quoteChar'] = "'";
         $flavorArr['quoteStyle'] = Flavor::QUOTE_ALL;
-        $writer = new Writer(new Stream($this->getFilePathFor('veryShort'), 'a+'), $flavorArr);
+        $writer = new Writer(Stream::open($this->getFilePathFor('veryShort'), 'a+'), $flavorArr);
         $this->assertEquals($flavorArr, $writer->getFlavor()->toArray());
     }
 
     public function testWriterWriteWriteSingleRowUsingArray()
     {
-        $out = new Stream('php://memory');
+        $out = Stream::open('php://memory');
         $writer = new Writer($out);
         $data = array('one','two', 'three');
         $this->assertEquals(strlen(implode(',', $data)) + strlen("\r\n"), $writer->writeRow($data));
@@ -54,7 +54,7 @@ class WriterTest extends UnitTestCase
 
     public function testWriterWriteWriteSingleRowUsingIterator()
     {
-        $out = new Stream('php://memory');
+        $out = Stream::open('php://memory');
         $writer = new Writer($out);
         $data = new ArrayIterator(array('one','two', 'three'));
         $this->assertEquals(strlen(implode(',', $data->getArrayCopy())) + strlen("\r\n"), $writer->writeRow($data));
@@ -62,7 +62,7 @@ class WriterTest extends UnitTestCase
 
     public function testWriterWritesHeaderRow()
     {
-        $temp = new Stream('php://temp');
+        $temp = Stream::open('php://temp');
         $writer = new Writer($temp);
         $writer->setHeaderRow(['id','firstname','lastname','email']);
         $writer->writeRows($this->sampledata);
@@ -75,15 +75,15 @@ class WriterTest extends UnitTestCase
      */
     public function testWriterThrowsExceptionIfUserAttemptsToSetHeaderAfterRowsHaveBeenWritten()
     {
-        $writer = new Writer(new Stream('php://temp'));
+        $writer = new Writer(Stream::open('php://temp'));
         $writer->writeRow(array('foo','bar','baz'));
         $writer->setHeaderRow(array('this','shouldnt','work'));
     }
 
     public function testWriterWriteWriteSingleRowUsingCSVReader()
     {
-        $reader = new Reader(new Stream($this->getFilePathFor('veryShort')));
-        $writer = new Writer($stream = new Stream('php://temp'));
+        $reader = new Reader(Stream::open($this->getFilePathFor('veryShort')));
+        $writer = new Writer($stream = Stream::open('php://temp'));
         $writer->writeRow($reader->current());
         $stream->rewind();
         $this->assertEquals("foo,bar,baz\r\n", $stream->read(15));
@@ -94,16 +94,16 @@ class WriterTest extends UnitTestCase
      */
     public function testWriterWriteRowsThrowsExceptionIfPassedNonIterable()
     {
-        $out = new Stream('php://temp');
+        $out = Stream::open('php://temp');
         $writer = new Writer($out);
         $writer->writeRows('foo');
     }
 
     public function testWriterWriteMultipleRows()
     {
-        $out = new Stream('php://temp');
+        $out = Stream::open('php://temp');
         $writer = new Writer($out);
-        $reader = new Reader(new Stream($this->getFilePathFor('commaNewlineHeader')));
+        $reader = new Reader(Stream::open($this->getFilePathFor('commaNewlineHeader')));
         $data = array();
         $i = 0;
         foreach ($reader as $row) {
@@ -117,9 +117,9 @@ class WriterTest extends UnitTestCase
 
     public function testWriterWriteRowsAcceptsReader()
     {
-        $out = new Stream($fname = $this->root->url() . '/reader2writer.csv', 'w');
+        $out = Stream::open($fname = $this->root->url() . '/reader2writer.csv', 'w');
         $writer = new Writer($out, ['lineTerminator' => "\n"]);
-        $in = new Stream($this->getFilePathFor('headerDoubleQuote'), 'r+b');
+        $in = Stream::open($this->getFilePathFor('headerDoubleQuote'), 'r+b');
         $reader = new Reader($in, ['lineTerminator' => "\n"]);
         $this->assertEquals(29, $writer->writeRows($reader));
         $this->assertEquals($this->getFileContentFor('headerDoubleQuote'), file_get_contents($fname));
@@ -127,8 +127,8 @@ class WriterTest extends UnitTestCase
 
     public function testWriterWriteRowsAcceptsReaderToReformat()
     {
-        $out = new Stream($fname = $this->root->url() . '/reformatme.csv', 'w');
-        $in = new Stream($this->getFilePathFor('headerDoubleQuote'));
+        $out = Stream::open($fname = $this->root->url() . '/reformatme.csv', 'w');
+        $in = Stream::open($this->getFilePathFor('headerDoubleQuote'));
         $writer = new Writer($out, [
             'delimiter' => '|',
             'quoteStyle' => Flavor::QUOTE_NONNUMERIC,
@@ -147,7 +147,7 @@ class WriterTest extends UnitTestCase
 
     public function testWriterWritesCorrectOutputForFlavorWithQuoteAll()
     {
-        $stream = new Stream('php://temp');
+        $stream = Stream::open('php://temp');
         $writer = new Writer($stream, ['quoteStyle' => Flavor::QUOTE_ALL]);
         $this->assertEquals(24, $writer->writeRow(['bacon','cheese','ham']));
         $this->assertEquals(3, $writer->writeRows([['monkey','lettuce','spam'],['table','hair','blam'],['chalk','talk','caulk']]));
@@ -157,7 +157,7 @@ class WriterTest extends UnitTestCase
 
     public function testWriterWritesCorrectOutputForFlavorWithQuoteNone()
     {
-        $stream = new Stream('php://temp');
+        $stream = Stream::open('php://temp');
         $writer = new Writer($stream, ['quoteStyle' => Flavor::QUOTE_NONE]);
         $this->assertEquals(18, $writer->writeRow(['bacon','cheese','ham']));
         $this->assertEquals(3, $writer->writeRows([['monkey','lettuce','spam'],['table','hair','blam'],['chalk','talk','caulk']]));

@@ -49,7 +49,7 @@ class CSVelte
     public static function reader($filename, $flavor = null)
     {
         self::assertFileIsReadable($filename);
-        $file = new Stream($filename);
+        $file = Stream::open($filename);
         return new Reader($file, $flavor);
     }
 
@@ -67,7 +67,7 @@ class CSVelte
      */
     public static function stringReader($str, $flavor = null)
     {
-        return new Reader($str, $flavor);
+        return new Reader(streamize($str), $flavor);
     }
 
     /**
@@ -85,7 +85,7 @@ class CSVelte
      */
     public static function writer($filename, $flavor = null)
     {
-        $file = new Stream($filename, 'w+');
+        $file = Stream::open($filename, 'w+');
         return new Writer($file, $flavor);
     }
 
@@ -104,7 +104,7 @@ class CSVelte
      */
     public static function export($filename, $data, $flavor = null)
     {
-        $file = new Stream($filename, 'w+');
+        $file = Stream::open($filename, 'w+');
         $writer = new Writer($file, $flavor);
         return $writer->writeRows($data);
     }

@@ -13,14 +13,22 @@
  */
 namespace CSVelte;
 
-use \InvalidArgumentException;
+use CSVelte\Contract\Streamable;
+
 use \FilterIterator;
 use CSVelte\IO\Stream;
-use CSVelte\Contract\Readable;
 use CSVelte\Table\Row;
 use CSVelte\Table\HeaderRow;
-use CSVelte\Exception\EndOfFileException;
 use CSVelte\Reader\FilteredIterator as FilteredReader;
+
+use \InvalidArgumentException;
+use CSVelte\Exception\EndOfFileException;
+
+use function
+    CSVelte\streamize,
+    CSVelte\taste,
+    CSVelte\taste_has_header,
+    CSVelte\collect;
 
 /**
  * CSV Reader
@@ -42,7 +50,7 @@ class Reader implements \Iterator
      * This class supports any sources of input that implements this interface.
      * This way I can read from local files, streams, FTP, any class that implements
      * the "Readable" interface
-     * @var \CSVelte\Contract\Readable
+     * @var \CSVelte\Contract\Streamable
      */
     protected $source;
 
@@ -85,7 +93,7 @@ class Reader implements \Iterator
      * Reader Constructor.
      * Initializes a reader object using an input source and optionally a flavor
      *
-     * @param \CSVelte\Contract\Readable $input The source of our CSV data
+     * @param mixed $input The source of our CSV data
      * @param \CSVelte\Flavor|array|null $flavor The "flavor" or format specification object
      */
     public function __construct($input, $flavor = null)
@@ -125,20 +133,17 @@ class Reader implements \Iterator
      * readable (can be read). This will make sure that whatever is passed to
      * the reader meets these expectations and set $this->source. It can also
      * accept any string (or any object with a __toString() method), or an
-     * SplFileObject, so long as it represents a file rather than a directory. 
+     * SplFileObject, so long as it represents a file rather than a directory.
      *
-     * @param \CSVelte\Contract\Readable|object|string|SplFileObject $input See description
+     * @param mixed $input See description
      * @return $this
      */
     protected function setSource($input)
     {
-        if ($input instanceof Readable && $input->isReadable()) {
-            $this->source = $input;
-        } elseif (file_exists((string) $input)) {
-            $this->source = new IO\Stream($input);
-        } else {
-            $this->source = Stream::streamize($input);
+        if (!($input instanceof Streamable)) {
+            $input = streamize($input);
         }
+        $this->source = $input;
         return $this;
     }
 

@@ -29,6 +29,8 @@ use CSVelte\IO\Resource;
 use CSVelte\IO\IteratorStream;
 use CSVelte\Contract\Streamable;
 
+use \InvalidArgumentException;
+
 /**
  * Stream - streams various types of values and objects.
  *
@@ -40,8 +42,23 @@ use CSVelte\Contract\Streamable;
  * @return \CSVelte\IO\Stream A stream object
  * @since v0.2.1
  */
-function streamize($obj)
+function streamize($obj = '')
 {
+    if ($obj instanceof Streamable) {
+        return $obj;
+    }
+
+    // @todo add this
+    // if (($resource = $obj) instanceof Resource) {
+    //     return $resource() or $resource->stream();
+    // }
+
+    // @todo there needs to be a way to create a stream object from a resource
+    //     object (other than streamize($resource)). I'm thinking something like
+    //     $resource = new Resource(); $stream = $resource->toStream(); or $resource->stream();
+    //     also possibly $resource = new Resource(); $stream = $resource();
+    //     I kinda like the idea of passing around a $resource and then just invoking
+    //     it to get a stream from it...
     if (is_resource($obj) && get_resource_type($obj) == 'stream') {
         return new Stream(new Resource($obj));
     }
@@ -62,6 +79,12 @@ function streamize($obj)
         }
         return $stream;
     }
+
+    throw new InvalidArgumentException(sprintf(
+        "Invalid argument type for %s: %s",
+        __FUNCTION__,
+        gettype($obj)
+    ));
 }
 
 /**
@@ -87,7 +110,7 @@ function taste(Streamable $str)
  * @return boolean Whether stream dataset has header
  * @since v0.2.1
  */
-function data_has_header(Streamable $str)
+function taste_has_header(Streamable $str)
 {
     $taster = new Taster($str);
     $flv = $taster();

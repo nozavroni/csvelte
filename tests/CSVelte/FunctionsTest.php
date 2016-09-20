@@ -6,7 +6,7 @@ use CSVelte\IO\Resource;
 use CSVelte\IO\Stream;
 use \SplFileObject;
 use function
-    CSVelte\data_has_header,
+    CSVelte\taste_has_header,
     CSVelte\streamize,
     CSVelte\taste,
     CSVelte\collect;
@@ -99,37 +99,37 @@ class FunctionsTest extends UnitTestCase
     public function testHasHeaderFunction()
     {
         $stream = Stream::open($this->getFilePathFor('veryShort'));
-        $this->assertFalse(data_has_header($stream));
+        $this->assertFalse(taste_has_header($stream));
 
         $stream = Stream::open($this->getFilePathFor('shortQuotedNewlines'));
-        $this->assertFalse(data_has_header($stream));
+        $this->assertFalse(taste_has_header($stream));
 
         $stream = Stream::open($this->getFilePathFor('commaNewlineHeader'));
-        $this->assertTrue(data_has_header($stream));
+        $this->assertTrue(taste_has_header($stream));
 
         $stream = Stream::open($this->getFilePathFor('headerDoubleQuote'));
-        $this->assertTrue(data_has_header($stream));
+        $this->assertTrue(taste_has_header($stream));
 
         $stream = Stream::open($this->getFilePathFor('headerTabSingleQuotes'));
-        $this->assertTrue(data_has_header($stream));
+        $this->assertTrue(taste_has_header($stream));
 
         $stream = Stream::open($this->getFilePathFor('noHeaderCommaNoQuotes'));
-        $this->assertFalse(data_has_header($stream));
+        $this->assertFalse(taste_has_header($stream));
 
         $stream = Stream::open($this->getFilePathFor('noHeaderCommaQuoteAll'));
-        $this->assertFalse(data_has_header($stream));
+        $this->assertFalse(taste_has_header($stream));
 
         $stream = Stream::open($this->getFilePathFor('headerCommaQuoteNonnumeric'));
-        $this->assertTrue(data_has_header($stream));
+        $this->assertTrue(taste_has_header($stream));
 
         $stream = Stream::open($this->getFilePathFor('noHeaderCommaNoQuotes'));
-        $this->assertFalse(data_has_header($stream));
+        $this->assertFalse(taste_has_header($stream));
 
         $stream = Stream::open($this->getFilePathFor('noHeaderCommaNoQuotes'));
-        $this->assertFalse(data_has_header($stream));
+        $this->assertFalse(taste_has_header($stream));
 
         $stream = Stream::open($this->getFilePathFor('noHeaderCommaNoQuotes'));
-        $this->assertFalse(data_has_header($stream));
+        $this->assertFalse(taste_has_header($stream));
     }
 
     public function testCollectionFactoryFunctionUsingArray()
@@ -152,7 +152,7 @@ class FunctionsTest extends UnitTestCase
 
     // @todo Create a collection object that works on a string so that you
     // can call a function for every character in a string and various other
-    // functionality 
+    // functionality
     public function testCollectFunctionAcceptsString()
     {
 

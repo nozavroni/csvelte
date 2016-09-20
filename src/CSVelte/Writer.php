@@ -12,9 +12,10 @@
  */
 namespace CSVelte;
 
+use CSVelte\Contract\Streamable;
+
 use \Iterator;
 use \ArrayIterator;
-use CSVelte\Contract\Writable;
 use CSVelte\Table\Data;
 use CSVelte\Table\HeaderRow;
 use CSVelte\Table\Row;
@@ -62,7 +63,7 @@ class Writer
      * @param \CSVelte\Contract\Writable $output An output source to write to
      * @param \CSVelte\Flavor|array $flavor A flavor or set of formatting params
      */
-    public function __construct(Writable $output, $flavor = null)
+    public function __construct(Streamable $output, $flavor = null)
     {
         if (!($flavor instanceof Flavor)) $flavor = new Flavor($flavor);
         $this->flavor = $flavor;

@@ -37,7 +37,7 @@ class ReaderTest extends UnitTestCase
      */
     public function testReaderCanUseIOStreamForFileReadable()
     {
-        $readable = new Stream($this->getFilePathFor('shortQuotedNewlines'));
+        $readable = Stream::open($this->getFilePathFor('shortQuotedNewlines'));
         $reader = new Reader($readable);
         $this->assertEquals(['foo','bar','baz'], $reader->current()->toArray());
         $this->assertEquals(['bin',"boz,bork\nlib,bil,ilb",'bon'], $reader->next()->toArray());
@@ -93,7 +93,7 @@ class ReaderTest extends UnitTestCase
     public function testReaderStillRunsLickHeaderIfFlavorWasPassedInWithNullHasHeaderProperty()
     {
         $flavor = new Flavor(['header' => null, 'lineTerminator' => "\n"]);
-        $in = new Stream($this->getFilePathFor('headerDoubleQuote'));
+        $in = Stream::open($this->getFilePathFor('headerDoubleQuote'));
         $reader = new Reader($in, $flavor);
         $this->assertTrue($reader->hasHeader());
     }
@@ -118,15 +118,12 @@ class ReaderTest extends UnitTestCase
         ], $arr);
     }
 
-    /**
-     * Make sure that when you pass a string to Reader constructor, that it first
-     * tries opening that string as a file path or stream URI before attempting
-     * to parse it as a CSV string
-     */
-    public function testReaderTriesFilePathBeforeStringParse()
+    // if you need to get a stream for a uri/filename you need to use Stream::open()
+    // or instantiate a resource manually
+    public function testReaderConstructorWillTreatAllTextAsCSVData()
     {
         $reader = new Reader($this->getFilePathFor('veryShort'));
-        $this->assertEquals(["foo","bar","baz"], $reader->current()->toArray());
+        $this->assertEquals(["vfs:","","root",'testfiles','veryShort.csv'], $reader->current()->toArray());
         $reader = new Reader("i,am,a\nvry,short,csv\nfile,yes,sir\n");
         $this->assertEquals(["i","am","a"], $reader->current()->toArray());
     }
