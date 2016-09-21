@@ -113,14 +113,13 @@ class Reader implements \Iterator
     protected function setFlavor($flavor = null)
     {
         if (is_array($flavor)) $flavor = new Flavor($flavor);
-        $taster = new Taster($this->source);
         // @todo put this inside a try/catch
         if (is_null($flavor)) {
-            $flavor = $taster->lick();
+            $flavor = taste($this->source);
         }
         if (is_null($flavor->header)) {
             // Flavor is immutable, give me a new one with header set to lickHeader return val
-            $flavor = $flavor->copy(['header' => $taster->lickHeader($flavor->delimiter, $flavor->lineTerminator)]);
+            $flavor = $flavor->copy(['header' => taste_has_header($this->source)]);
         }
         $this->flavor = $flavor;
         return $this;
@@ -190,7 +189,7 @@ class Reader implements \Iterator
             do {
                 if (!isset($lines)) $lines = array();
                 if (false === ($line = $this->source->readLine($eol))) {
-                    throw new EndOfFileException("End of file reached: " . $this->source->getName());
+                    throw new EndOfFileException("End of file reached");
                 }
                 array_push($lines, rtrim($line, $eol));
             } while ($this->inQuotedString(end($lines), $f->quoteChar, $f->escapeChar));

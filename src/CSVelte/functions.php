@@ -74,8 +74,8 @@ function streamize($obj = '')
         $stream = Stream::open('php://temp', 'r+');
         if ($obj !== '') {
             $res = $stream->getResource();
-            fwrite($res(), $obj);
-            fseek($res(), 0);
+            fwrite($res->getHandle(), $obj);
+            fseek($res->getHandle(), 0);
         }
         return $stream;
     }
@@ -87,6 +87,20 @@ function streamize($obj = '')
     ));
 }
 
+function stream_resource($uri, $mode = null, $context = null, $lazy = true)
+{
+    $res = (new Resource($uri, $mode))
+        ->setContextResource($context);
+    if (!$lazy) $res->connect();
+    return $res;
+}
+
+function stream($uri, $mode = null, $context = null, $lazy = true)
+{
+    $res = stream_resource($uri, $mode, $context, $lazy);
+    return new Stream($res);
+}
+
 /**
  * "Taste" a stream object.
  *
@@ -94,7 +108,7 @@ function streamize($obj = '')
  * to auto-detect "flavor" (formatting attributes).
  *
  * @param \CSVelte\Contract\Streamable Any streamable class to analyze
- * @return \CSVelte\Flavor A flavor representing stream's formatting attributes
+ * @return \CSVelte\Flavor A flavor representing str                                                                                                                                                                                                                                                                                                                                                           eam's formatting attributes
  * @since v0.2.1
  */
 function taste(Streamable $str)

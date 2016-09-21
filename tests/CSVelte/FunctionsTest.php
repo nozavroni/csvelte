@@ -7,6 +7,7 @@ use CSVelte\IO\Stream;
 use \SplFileObject;
 use function
     CSVelte\taste_has_header,
+    CSVelte\stream_resource,
     CSVelte\streamize,
     CSVelte\taste,
     CSVelte\collect;
@@ -33,7 +34,7 @@ class FunctionsTest extends UnitTestCase
         $string = "All your base are belong to us";
         $this->assertInstanceOf(Stream::class, $stream = streamize($string));
         $res = $stream->getResource();
-        $this->assertTrue(is_resource($res()));
+        $this->assertTrue(is_resource($res->getHandle()));
         $this->assertTrue($res->isConnected());
         $this->assertEquals(strlen($string), $stream->getSize());
         $this->assertEquals($string, (string) $stream);
@@ -55,7 +56,7 @@ class FunctionsTest extends UnitTestCase
         // test it...
         $this->assertInstanceOf(Stream::class, $stream = streamize($csv_obj));
         $res = $stream->getResource();
-        $this->assertTrue(is_resource($res()));
+        $this->assertTrue(is_resource($res->getHandle()));
         $this->assertTrue($res->isConnected());
         $this->assertEquals(strlen($string), $stream->getSize());
         $this->assertEquals($string, (string) $stream);
@@ -132,6 +133,35 @@ class FunctionsTest extends UnitTestCase
         $this->assertFalse(taste_has_header($stream));
     }
 
+    public function testStreamResourceFunctionReturnsResourceObject()
+    {
+        $res = stream_resource(
+            $this->getFilePathFor('headerDoubleQuote'),
+            'c+b',
+            $ctxt = stream_context_create($ctxarr = [
+                'vfs' => ['foo' => 'bar']
+            ])
+        );
+        $this->assertInstanceOf(Resource::class, $res);
+        $this->assertFalse($res->isConnected());
+        $this->assertTrue($res->isLazy());
+        $this->assertEquals($ctxt, $res->getContext());
+        $this->assertEquals($ctxarr, stream_context_get_options($res->getContext()));
+    }
+
+    public function testStreamResourceInvokeReturnsAStreamObject()
+    {
+        $res = stream_resource(
+            $this->getFilePathFor('headerDoubleQuote'),
+            'c+b',
+            $ctxt = stream_context_create($ctxarr = [
+                'vfs' => ['foo' => 'bar']
+            ])
+        );
+        $this->assertInstanceOf(Resource::class, $res);
+        $this->assertInstanceOf(Stream::class, $res());
+    }
+
     public function testCollectionFactoryFunctionUsingArray()
     {
         $coll = collect($arr = [0,1,2,3,4,5,6,7,8,9]);
@@ -150,12 +180,12 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals(['f' => 'a', 1 => '', 3 => 'foobar'], $coll->toArray());
     }
 
-    // @todo Create a collection object that works on a string so that you
-    // can call a function for every character in a string and various other
-    // functionality
-    public function testCollectFunctionAcceptsString()
-    {
-
-    }
+    // // @todo Create a collection object that works on a string so that you
+    // // can call a function for every character in a string and various other
+    // // functionality
+    // public function testCollectFunctionAcceptsString()
+    // {
+    //
+    // }
 
 }

@@ -87,8 +87,8 @@ class StreamTest extends IOTest
     {
         $stream = Stream::open($this->getFilePathFor('veryShort'));
         $res = $stream->getResource();
-        $this->assertTrue(is_resource($res()));
-        $this->assertEquals("stream", get_resource_type($res()));
+        $this->assertTrue(is_resource($res->getHandle()));
+        $this->assertEquals("stream", get_resource_type($res->getHandle()));
     }
 
     /**
@@ -477,8 +477,8 @@ class StreamTest extends IOTest
         $this->assertTrue($stream->isSeekable());
         $this->assertTrue($stream->isReadable());
         $this->assertTrue($stream->isWritable());
-        $this->assertInternalType($expectedResourceType = "resource", $streamResource());
-        $this->assertEquals($expectedResourceStreamType = "stream", get_resource_type($streamResource()));
+        $this->assertInternalType($expectedResourceType = "resource", $streamResource->getHandle());
+        $this->assertEquals($expectedResourceStreamType = "stream", get_resource_type($streamResource->getHandle()));
         $this->assertFalse($stream->eof());
         $this->assertEquals($expectedStrContent = "foo,bar,ba", $stream->read(10));
         $this->assertEquals($expectedStrContent = "z\nbin,boz,bork\nlib,bil,ilb\n", $stream->getContents());

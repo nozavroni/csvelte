@@ -217,13 +217,13 @@ class Resource
     /**
      * Invoke magic method.
      *
-     * Returns the underlying stream resource when object is accessed as a function
+     * Creates and returns a Stream object for this resource
      *
      * @return resource The underlying stream resource
      */
     public function __invoke()
     {
-        return $this->getHandle();
+        return new Stream($this);
     }
 
     /**
