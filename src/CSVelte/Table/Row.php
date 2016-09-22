@@ -12,7 +12,6 @@
  */
 namespace CSVelte\Table;
 
-use CSVelte\Utils;
 use CSVelte\Exception\HeaderException;
 
 use function CSVelte\collect;

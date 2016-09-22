@@ -15,7 +15,6 @@ namespace CSVelte\Table;
 use \Iterator;
 use \Countable;
 use \ArrayAccess;
-use CSVelte\Utils;
 use CSVelte\Flavor;
 
 use \OutOfBoundsException;

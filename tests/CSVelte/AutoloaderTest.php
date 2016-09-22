@@ -61,7 +61,7 @@ class AutoloaderTest extends UnitTestCase
     public function testLoadClassReturnsNullIfClassExists()
     {
         $auto = new Autoloader;
-        $this->assertNull($auto->load('CSVelte\Utils'));
+        $this->assertNull($auto->load('CSVelte\Flavor'));
     }
 
     public function testLoadClassReturnsNullIfClassDoesntExistAtAll()
