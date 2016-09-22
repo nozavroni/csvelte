@@ -15,6 +15,8 @@ namespace CSVelte\Table;
 use CSVelte\Utils;
 use CSVelte\Exception\HeaderException;
 
+use function CSVelte\collect;
+
 /**
  * Table Row Class
  * Represents a row of tabular data (CSVelte\Table\Cell objects)
@@ -24,20 +26,10 @@ use CSVelte\Exception\HeaderException;
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  * @todo       May need to put toArray() method in here so that it uses headers
- *             as keys here 
+ *             as keys here
  */
 class Row extends AbstractRow
 {
-    /**
-     * @var array Same as fields only indexed using headers rather than numbers
-     */
-    protected $assocCols = [];
-
-    /**
-     * @var array The headers for this row
-     */
-    protected $headers = [];
-
     /**
      * Get the current key (column number or header, if available)
      *
@@ -48,7 +40,11 @@ class Row extends AbstractRow
      */
     public function key()
     {
-        return isset($this->headers[$this->position]) ? $this->headers[$this->position] : $this->position;
+        try {
+            return $this->fields->getKeyAtPosition($this->position);
+        } catch (OutOfBoundsException $e) {
+            return parent::key();
+        }
     }
 
     /**
@@ -67,15 +63,17 @@ class Row extends AbstractRow
         if (($hcount = $headers->count()) !== ($rcount = $this->count())) {
             if ($hcount > $rcount) {
                 // header count is long, could be an error, but lets just fill in the short row with null values...
-                $this->fields = array_pad($this->fields, $hcount, null);
+                $this->fields->pad($hcount);
             } else {
                 // @todo This is too strict. I need a way to recover from this a little better...
                 // header count is short, this is likely an error...
                 throw new HeaderException("Header count ({$hcount}) does not match column count ({$rcount}).", HeaderException::ERR_HEADER_COUNT);
             }
         }
-        $this->headers = $headerArray;
-        $this->assocCols = array_combine($headerArray, $this->fields);
+        $this->fields = collect(array_combine(
+            $headerArray,
+            $this->fields->toArray()
+        ));
     }
 
     /**
@@ -88,9 +86,8 @@ class Row extends AbstractRow
     public function offsetExists($offset)
     {
         try {
-            Utils::array_get($this->assocCols, $offset, null, true);
+            $this->fields->get($offset, null, true);
         } catch (\OutOfBoundsException $e) {
-            // now check $this->properties?
             return parent::offsetExists($offset);
         }
         return true;
@@ -106,7 +103,7 @@ class Row extends AbstractRow
     public function offsetGet($offset)
     {
         try {
-            $val = Utils::array_get($this->assocCols, $offset, null, true);
+            $val = $this->fields->get($offset, null, true);
         } catch (\OutOfBoundsException $e) {
             return parent::offsetGet($offset);
         }

@@ -197,9 +197,7 @@ class Collection implements Countable, ArrayAccess
      */
     public function getValueAtPosition($pos)
     {
-        $data = array_values($this->data);
-        if (isset($data[$pos])) return $data[$pos];
-        throw new OutOfBoundsException("Collection data does not contain a value at given position: " . $pos);
+        return $this->data[$this->getKeyAtPosition($pos)];
     }
 
     public function hasPosition($pos)
@@ -210,6 +208,12 @@ class Collection implements Countable, ArrayAccess
             return false;
         }
         return true;
+    }
+
+    public function pad($size, $with = null)
+    {
+        $this->data = array_pad($this->data, (int) $size, $with);
+        return $this;
     }
 
     public function has($key)

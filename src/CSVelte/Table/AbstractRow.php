@@ -22,6 +22,8 @@ use \OutOfBoundsException;
 use \InvalidArgumentException;
 use CSVelte\Exception\ImmutableException;
 
+use function CSVelte\collect;
+
 /**
  * Table row abstract base class
  * Represents a row of tabular data (represented by CSVelte\Table\Data objects)
@@ -70,7 +72,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
                 throw new InvalidArgumentException(__CLASS__ . " requires an array, got: " . gettype($fields));
             }
         }
-        $this->fields = array_values($fields);
+        $this->fields = collect(array_values($fields));
         return $this;
     }
 
@@ -88,7 +90,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function join($delimiter = ',')
     {
-        return implode($delimiter, $this->fields);
+        return $this->fields->join($delimiter);
     }
 
     /**
@@ -99,7 +101,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function toArray()
     {
-        return iterator_to_array($this);
+        return $this->fields->toArray();
     }
 
     /** Begin SPL Countable Interface Method **/
@@ -125,7 +127,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function current()
     {
-        return $this->fields[$this->position];
+        return $this->fields->getValueAtPosition($this->position);
     }
 
     /**
@@ -174,7 +176,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function valid()
     {
-        return array_key_exists($this->position, $this->fields);
+        return $this->fields->hasPosition($this->position);
     }
 
     /** Begin SPL ArrayAccess Methods **/
@@ -188,12 +190,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function offsetExists($offset)
     {
-        try {
-            Utils::array_get($this->fields, $offset, null, true);
-        } catch (OutOfBoundsException $e) {
-            return false;
-        }
-        return true;
+        return $this->fields->hasPosition($offset);
     }
 
     /**
@@ -205,8 +202,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        $this->assertOffsetExists($offset);
-        return $this->fields[$offset];
+        return $this->fields->getValueAtPosition($offset);
     }
 
     /**
@@ -236,21 +232,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     public function offsetUnset($offset)
     {
         $this->raiseImmutableException();
-    }
-
-    /**
-     * Throw exception unless offset/index exists
-     *
-     * @param integer|string Offset/index
-     * @return void
-     * @access protected
-     * @throws \OutOfBoundsException
-     */
-    protected function assertOffsetExists($offset)
-    {
-        if (!$this->offsetExists($offset)) {
-            throw new OutOfBoundsException("Undefined offset: " . $offset);
-        }
     }
 
     /**
