@@ -123,6 +123,12 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals("default", $coll->get('nonexist', "default", true));
     }
 
+    public function testSumMethodSumsCollection()
+    {
+        $coll = new Collection([10,20,30,100,60,80]);
+        $this->assertEquals(300, $coll->sum());
+    }
+
     public function testAverageMethodAveragesCollection()
     {
         $coll = new Collection([10,20,30,100,60,80]);
@@ -143,12 +149,12 @@ class CollectionTest extends UnitTestCase
         $coll = new Collection([1,20,300,4000]);
         $this->assertEquals(160, $coll->median());
 
-        $coll = new Collection(['one','two','three','four','five']);
-        $this->assertEquals('four', $coll->median());
+        // $coll = new Collection(['one','two','three','four','five']);
+        // $this->assertEquals('four', $coll->median());
 
         // @todo Maybe for strings median should work with string length?
-        $coll = new Collection(['hello','world','this','will','do','weird','stuff','yes','it','will']);
-        $this->assertEquals(0, $coll->median());
+        // $coll = new Collection(['hello','world','this','will','do','weird','stuff','yes','it','will']);
+        // $this->assertEquals(0, $coll->median());
 
         $coll = new Collection([1]);
         $this->assertEquals(1, $coll->median());
@@ -157,7 +163,10 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals(1.5, $coll->median());
     }
 
-    public function testModeMethodReturnsCollectionModeWithNonDigits()
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testModeWillThrowExceptionForNonnumeric()
     {
         $coll = new Collection(['i','like','to','eat','ham','i']);
         $this->assertEquals('i', $coll->mode());
@@ -470,5 +479,107 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals($arr, $coll->toArray());
         $this->assertEquals([0 => 1, 4 => 2, 6 => 3, 7 => 4, 8 => 5, 9 => 66, 10 => 7, 11 => 8, 12 => 9, 18 => 6], $coll->unique()->toArray());
     }
+
+    /** Two-dimensional Collections **/
+
+    public function test2DCollectionAverage()
+    {
+        $coll = new Collection([
+            [1,2,3,4,50,40,30,10],
+            [1,1,1,1, 2, 3, 2, 1],
+            [100,200,300,200,300,100,200,200],
+            [1.25,336.25,215.5,1,5,50.5,100,100],
+            [5,10,15,20,25,30,25,10,25,10],
+            [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
+        ]);
+        $this->assertInternalType("array", $coll->average()->toArray());
+        $this->assertEquals([17.5,1.5,200,101.1875,17.5,0.15625], $coll->average()->toArray());
+    }
+
+    public function test2DCollectionMax()
+    {
+        $coll = new Collection([
+            [1,2,3,4,50,40,30,10],
+            [1,1,1,1, 2, 3, 2, 1],
+            [100,200,300,200,300,100,200,200],
+            [1.25,336.25,215.5,1,5,50.5,100,100],
+            [5,10,15,20,25,30,25,10,25,10],
+            [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
+        ]);
+        $this->assertInternalType("array", $coll->max()->toArray());
+        $this->assertEquals([50,3,300,336.25,30,0.5], $coll->max()->toArray());
+    }
+
+    public function test2DCollectionMin()
+    {
+        $coll = new Collection([
+            [1,2,3,4,50,40,30,10],
+            [1,1,1,1, 2, 3, 2, 1],
+            [100,200,300,200,300,100,200,200],
+            [1.25,336.25,215.5,1,5,50.5,100,100],
+            [5,10,15,20,25,30,25,10,25,10],
+            [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
+        ]);
+        $this->assertInternalType("array", $coll->min()->toArray());
+        $this->assertEquals([1,1,100,1,5,0], $coll->min()->toArray());
+    }
+
+    public function test2DCollectionMode()
+    {
+        $coll = new Collection([
+            [1,2,3,4,50,40,30,10,1],
+            [1,1,1,1, 2, 3, 2, 1],
+            [100,200,300,200,300,100,200,200],
+            [1.25,336.25,215.5,1,5,50.5,100,100],
+            [5,10,15,20,25,30,25,10,25,10],
+            [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
+        ]);
+        $this->assertInternalType("array", $coll->mode()->toArray());
+        $this->assertEquals([1,1,200,100,25,0.1], $coll->mode()->toArray());
+    }
+
+    public function test2DCollectionMedian()
+    {
+        $coll = new Collection([
+            [1,2,3,4,50,40,30,10,1], // 1,1,2,3,4,10,30,40,50
+            [1,1,1,1, 2, 3, 2, 1], // 1,1,1,1,1,2,2,3
+            [100,200,300,200,300,100,200,200], // 100, 100, 200, 200, 200, 200, 300, 300
+            [1.25,336.25,215.5,1,5,50.5,100,100], // 1, 1.25, 5, 50.5, 100, 100, 215.5, 336.25,
+            [5,10,15,20,25,30,25,10,25,10], // 5, 10, 15,
+            [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
+        ]);
+        $this->assertInternalType("array", $coll->median()->toArray());
+        $this->assertEquals([4,1,200,75.25,17.5,0.1], $coll->median()->toArray());
+    }
+
+    public function test2DCollectionSum()
+    {
+        $coll = new Collection([
+            [1,2,3,4,50,40,30,10,1], // 1,1,2,3,4,10,30,40,50
+            [1,1,1,1, 2, 3, 2, 1], // 1,1,1,1,1,2,2,3
+            [100,200,300,200,300,100,200,200], // 100, 100, 200, 200, 200, 200, 300, 300
+            [1.25,336.25,215.5,1,5,50.5,100,100], // 1, 1.25, 5, 50.5, 100, 100, 215.5, 336.25,
+            [5,10,15,20,25,30,25,10,25,10], // 5, 10, 15,
+            [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
+        ]);
+        $this->assertInternalType("array", $coll->sum()->toArray());
+        $this->assertEquals([141,12,1600,809.5,175,1.25], $coll->sum()->toArray());
+    }
+
+    public function test2DCollectionCount()
+    {
+        $coll = new Collection([
+            [1,2,3,4,50,40,30,10,1], // 1,1,2,3,4,10,30,40,50
+            [1,1,1,1,1], // 1,1,1,1,1,2,2,3
+            [100,200,300,200,300,100,200,200], // 100, 100, 200, 200, 200, 200, 300, 300
+            [1.25,336.25,215.5,1,5,50.5,100,100], // 1, 1.25, 5, 50.5, 100, 100, 215.5, 336.25,
+            [5,10,15,10], // 5, 10, 15,
+            [0.1]
+        ]);
+        $this->assertInternalType("array", $coll->count(true)->toArray());
+        $this->assertEquals([9,5,8,8,4,1], $coll->count(true)->toArray());
+    }
+
+    // @todo add sum
 
 }

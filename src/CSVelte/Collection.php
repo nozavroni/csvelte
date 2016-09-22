@@ -18,6 +18,8 @@ use \ArrayAccess;
 use \OutOfBoundsException;
 use \InvalidArgumentException;
 
+use function CSVelte\collect;
+
 /**
  * Collection class.
  *
@@ -112,6 +114,7 @@ class Collection implements Countable, ArrayAccess
      * Get data as an array.
      *
      * @return array Collection data as an array
+     * @todo Recursively call toArray on anything inside this collection
      */
     public function toArray()
     {
@@ -119,9 +122,9 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * Get data as an array.
+     * Get array keys
      *
-     * @return array Collection data as an array
+     * @return array An array of keys
      */
     public function keys()
     {
@@ -260,8 +263,18 @@ class Collection implements Countable, ArrayAccess
         return $this->get($offset);
     }
 
-    public function count()
+    public function count($multi = false)
     {
+        if ($multi) {
+            if ($this->contains(function($val){
+                return is_array($val);
+            })) {
+                // average each array
+                return $this->map(function($val){
+                    return collect($val)->count();
+                });
+            }
+        }
         return count($this->data);
     }
 
@@ -378,8 +391,36 @@ class Collection implements Countable, ArrayAccess
      *
      * @return mixed The average of all items in collection
      */
+    public function sum()
+    {
+        if ($this->contains(function($val){
+            return is_array($val);
+        })) {
+            // average each array
+            return $this->map(function($val){
+                return collect($val)->sum();
+            });
+        }
+        $this->assertNumericValues();
+        return array_sum($this->data);
+    }
+
+    /**
+     * Get average of data items.
+     *
+     * @return mixed The average of all items in collection
+     */
     public function average()
     {
+        if ($this->contains(function($val){
+            return is_array($val);
+        })) {
+            // average each array
+            return $this->map(function($val){
+                return collect($val)->average();
+            });
+        }
+        $this->assertNumericValues();
         $total = array_sum($this->data);
         $count = count($this->data);
         return $total / $count;
@@ -392,6 +433,15 @@ class Collection implements Countable, ArrayAccess
      */
     public function max()
     {
+        if ($this->contains(function($val){
+            return is_array($val);
+        })) {
+            // average each array
+            return $this->map(function($val){
+                return collect($val)->max();
+            });
+        }
+        $this->assertNumericValues();
         return max($this->data);
     }
 
@@ -402,6 +452,15 @@ class Collection implements Countable, ArrayAccess
      */
     public function min()
     {
+        if ($this->contains(function($val){
+            return is_array($val);
+        })) {
+            // average each array
+            return $this->map(function($val){
+                return collect($val)->min();
+            });
+        }
+        $this->assertNumericValues();
         return min($this->data);
     }
 
@@ -412,9 +471,22 @@ class Collection implements Countable, ArrayAccess
      */
     public function mode()
     {
-        $counts = array_count_values($this->data);
+        if ($this->contains(function($val){
+            return is_array($val);
+        })) {
+            // average each array
+            return $this->map(function($val){
+                return collect($val)->mode();
+            });
+        }
+        $strvals = $this->map(function($val){
+            return (string) $val;
+        });
+        $this->assertNumericValues();
+        $counts = array_count_values($strvals->toArray());
         arsort($counts);
-        return key($counts);
+        $mode = key($counts);
+        return (strpos($mode, '.')) ? floatval($mode) : intval($mode);
     }
 
     /**
@@ -424,14 +496,23 @@ class Collection implements Countable, ArrayAccess
      */
     public function median()
     {
+        if ($this->contains(function($val){
+            return is_array($val);
+        })) {
+            // average each array
+            return $this->map(function($val){
+                return collect($val)->median();
+            });
+        }
+        $this->assertNumericValues();
         $count = count($this->data);
         natcasesort($this->data);
-        $middle = ($count / 2) - 1;
+        $middle = ($count / 2);
         $values = array_values($this->data);
         if ($count % 2 == 0) {
             // even number, use middle
-            $low = $values[$middle];
-            $high = $values[$middle + 1];
+            $low = $values[$middle - 1];
+            $high = $values[$middle];
             return ($low + $high) / 2;
         }
         // odd number return median
@@ -451,6 +532,19 @@ class Collection implements Countable, ArrayAccess
     public function value(Callable $func)
     {
         return $func($this);
+    }
+
+    protected function assertNumericValues()
+    {
+        if ($this->contains(function($val){
+            return !is_numeric($val);
+        })) {
+            // can't average non-numeric data
+            throw new InvalidArgumentException(sprintf(
+                "%s expects collection of integers or collection of arrays of integers",
+                __METHOD__
+            ));
+        }
     }
 
     protected function assertArrayOrIterator($data)
