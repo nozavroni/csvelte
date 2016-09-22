@@ -173,6 +173,45 @@ class Collection implements Countable, ArrayAccess
         return false;
     }
 
+    /**
+     * Get the key at a given numerical position
+     *
+     * @param int $pos Numerical position
+     * @return mixed The key at numerical position
+     */
+    public function getKeyAtPosition($pos)
+    {
+        $i = 0;
+        foreach ($this->data as $key => $val) {
+            if ($i === $pos) return $key;
+            $i++;
+        }
+        throw new OutOfBoundsException("Collection data does not contain a key at given position: " . $pos);
+    }
+
+    /**
+     * Get the value at a given numerical position
+     *
+     * @param int $pos Numerical position
+     * @return mixed The value at numerical position
+     */
+    public function getValueAtPosition($pos)
+    {
+        $data = array_values($this->data);
+        if (isset($data[$pos])) return $data[$pos];
+        throw new OutOfBoundsException("Collection data does not contain a value at given position: " . $pos);
+    }
+
+    public function hasPosition($pos)
+    {
+        try {
+            $this->getKeyAtPosition($pos);
+        } catch (OutOfBoundsException $e) {
+            return false;
+        }
+        return true;
+    }
+
     public function has($key)
     {
         return array_key_exists($key, $this->data);

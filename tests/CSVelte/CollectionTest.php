@@ -259,6 +259,52 @@ class CollectionTest extends UnitTestCase
         }));
     }
 
+    public function testCollectionGetKeyAndValAtPosition()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar',
+            'noo' => 'blar',
+            'hoo' => 'gnar'
+        ]);
+        $this->assertTrue($coll->hasPosition(2));
+        $this->assertTrue($coll->hasPosition(0));
+        $this->assertFalse($coll->hasPosition(5));
+        $this->assertEquals("goo", $coll->getKeyAtPosition(2));
+        $this->assertEquals("czar", $coll->getValueAtPosition(2));
+    }
+
+    /**
+     * @expectedException OutOfBoundsException
+     */
+    public function testCollectionGetKeyAtPositionThrowsExceptionIfNotPos()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar',
+            'noo' => 'blar',
+            'hoo' => 'gnar'
+        ]);
+        $this->assertEquals("goo", $coll->getKeyAtPosition(5));
+    }
+
+    /**
+     * @expectedException OutOfBoundsException
+     */
+    public function testCollectionGetValueAtPositionThrowsExceptionIfNotPos()
+    {
+        $coll = new Collection([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar',
+            'noo' => 'blar',
+            'hoo' => 'gnar'
+        ]);
+        $this->assertEquals("goo", $coll->getValueAtPosition(5));
+    }
+
     public function testCollectionCount()
     {
         $coll = new Collection([
