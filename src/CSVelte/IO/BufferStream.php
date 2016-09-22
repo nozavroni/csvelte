@@ -28,6 +28,9 @@ use CSVelte\Contract\Streamable;
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  * @since      v0.2.1
+ * @todo       Add methods to convert KB and MB to bytes so that you don't have
+ *             to actually know how many bytes are in 16KB. You would just do
+ *             $buffer = new BufferStream('16KB');
  */
 class BufferStream implements Streamable
 {
