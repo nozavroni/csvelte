@@ -480,6 +480,16 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals([0 => 1, 4 => 2, 6 => 3, 7 => 4, 8 => 5, 9 => 66, 10 => 7, 11 => 8, 12 => 9, 18 => 6], $coll->unique()->toArray());
     }
 
+    public function testCollectionFrequency()
+    {
+        $coll = new Collection([',','.','.',';',';',';',';',',',',']);
+        $this->assertEquals([
+            ',' => 3,
+            '.' => 2,
+            ';' => 4
+        ], $coll->frequency()->toArray());
+    }
+
     /** Two-dimensional Collections **/
 
     public function test2DCollectionAverage()
@@ -580,6 +590,38 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals([9,5,8,8,4,1], $coll->count(true)->toArray());
     }
 
-    // @todo add sum
+    public function test2DCollectionFrequency()
+    {
+        $coll = new Collection([
+            [1,2,3,4,50,40,30,10,1],
+            [1,1,1,1,1],
+            [100,200,300,200,300,100,200,200],
+            ['a','a','a','a','b','b','c','d','e','e','e','e','e','e','e','f']
+        ]);
+        $this->assertInternalType("array", $coll->frequency()->toArray());
+        $this->assertEquals([[
+            1 => 2,
+            2 => 1,
+            3 => 1,
+            4 => 1,
+            50 => 1,
+            40 => 1,
+            30 => 1,
+            10 => 1
+        ],[
+            1 => 5
+        ],[
+            100 => 2,
+            200 => 4,
+            300 => 2
+        ],[
+            'a' => 4,
+            'b' => 2,
+            'c' => 1,
+            'd' => 1,
+            'e' => 7,
+            'f' => 1
+        ]], $coll->frequency()->toArray());
+    }
 
 }

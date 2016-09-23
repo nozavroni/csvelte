@@ -118,7 +118,11 @@ class Collection implements Countable, ArrayAccess
      */
     public function toArray()
     {
-        return $this->data;
+        $data = [];
+        foreach($this->data as $key => $val) {
+            $data[$key] = (is_object($val) && method_exists($val, 'toArray')) ? $val->toArray() : $val;
+        }
+        return $data;
     }
 
     /**
@@ -349,6 +353,27 @@ class Collection implements Countable, ArrayAccess
             if ($func($val, $key)) $elem = $val;
         }
         return $elem;
+    }
+
+    public function frequency()
+    {
+        if ($this->contains(function($val){
+            return is_array($val);
+        })) {
+            // frequencies for each array
+            return $this->map(function($val){
+                return collect($val)->frequency();
+            });
+        }
+        $freq = [];
+        foreach ($this->data as $val) {
+            $key = is_numeric($val) ? $val : (string) $val;
+            if (!isset($freq[$key])) {
+                $freq[$key] = 0;
+            }
+            $freq[$key]++;
+        }
+        return new self($freq);
     }
 
     public function unique()
