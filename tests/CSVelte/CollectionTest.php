@@ -387,7 +387,7 @@ class CollectionTest extends UnitTestCase
         ]);
         $this->assertTrue($coll->contains('czar', 'goo'));
         $this->assertFalse($coll->contains('goo','czar'));
-        $coll->flip();
+        $coll = $coll->flip();
         $this->assertTrue($coll->contains('goo','czar'));
         $this->assertFalse($coll->contains('czar', 'goo'));
     }
@@ -423,7 +423,7 @@ class CollectionTest extends UnitTestCase
             'boo' => 'far',
             'goo' => 'czar'
         ]);
-        $this->assertEquals(['foo','boo','goo'], $coll->keys());
+        $this->assertEquals(['foo','boo','goo'], $coll->keys()->toArray());
     }
 
     public function testIsEmptyReturnsTrueIfCollectionIsEmpty()
@@ -446,7 +446,7 @@ class CollectionTest extends UnitTestCase
             'boo' => 'far',
             'goo' => 'czar'
         ]);
-        $coll->merge(['goo' => 'poo', 'czar' => 'C-ZAR!!!']);
+        $coll = $coll->merge(['goo' => 'poo', 'czar' => 'C-ZAR!!!']);
         $this->assertEquals(['foo' => 'bar', 'boo' => 'far', 'goo' => 'poo', 'czar' => 'C-ZAR!!!'], $coll->toArray());
     }
 

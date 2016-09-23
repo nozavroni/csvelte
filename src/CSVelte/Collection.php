@@ -132,13 +132,13 @@ class Collection implements Countable, ArrayAccess
      */
     public function keys()
     {
-        return array_keys($this->data);
+        return new self(array_keys($this->data));
     }
 
     /**
      * Merge data
      *
-     * Pass an array to this method ot have it merged into this collection.
+     * Pass an array to this method to have it merged into this collection.
      *
      * @param array $data Data to merge into the collection
      * @param boolean Should existing values be overwritten?
@@ -147,10 +147,11 @@ class Collection implements Countable, ArrayAccess
     public function merge($data = null, $overwrite = true)
     {
         $this->assertArrayOrIterator($data);
+        $coll = new self($this->data);
         foreach ($data as $key => $val) {
-            $this->set($key, $val, $overwrite);
+            $coll->set($key, $val, $overwrite);
         }
-        return $this;
+        return $coll;
     }
 
     /**
@@ -219,8 +220,7 @@ class Collection implements Countable, ArrayAccess
 
     public function pad($size, $with = null)
     {
-        $this->data = array_pad($this->data, (int) $size, $with);
-        return $this;
+        return new self(array_pad($this->data, (int) $size, $with));
     }
 
     public function has($key)
@@ -383,8 +383,7 @@ class Collection implements Countable, ArrayAccess
 
     public function flip()
     {
-        $this->data = array_flip($this->data);
-        return $this;
+        return new self(array_flip($this->data));
     }
 
     /**
