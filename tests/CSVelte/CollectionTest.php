@@ -624,4 +624,80 @@ class CollectionTest extends UnitTestCase
         ]], $coll->frequency()->toArray());
     }
 
+    public function testSort()
+    {
+        $coll = new Collection($data = ['b','a','c','b','cool' => 'f','d','ad','az','ba','aa','Za','aZ','AZ','ZA']);
+        $coll = $coll->sort();
+        $dcopy = $data;
+        natcasesort($dcopy);
+        $this->assertEquals($dcopy, $coll->toArray());
+
+        $coll2 = new Collection($data);
+        $coll2 = $coll2->sort(function($a, $b){
+            $a = strtolower($a);
+            $b = strtolower($b);
+            if ($a == $b) return 0;
+            if (strlen($a) > strlen($b)) return 1;
+            if (strlen($b) > strlen($a)) return -1;
+            return ($a > $b) ? 1 : -1;
+        });
+        $this->assertEquals([
+            1 => 'a', 0 => 'b', 3 => 'b', 2 => 'c', 4 => 'd','cool' => 'f', 8 => 'aa',
+            5 => 'ad', 11 => 'AZ', 6 => 'az', 10 => 'aZ', 7 => 'ba', 12 => 'ZA', 9 => 'Za'
+            ],$coll2->toArray()
+        );
+
+        $coll = new Collection($data = ['b','a','c','b','cool' => 'f','d','ad','az','ba','aa','Za','aZ','AZ','ZA']);
+        $coll = $coll->sort('strnatcasecmp', false);
+        $dcopy = $data;
+        natcasesort($dcopy);
+        $this->assertEquals(array_values($dcopy), $coll->toArray());
+    }
+
+    public function testReverse()
+    {
+        $coll = new Collection($data = ['b','a','c','b','cool' => 'f','d','ad','az','ba','aa','Za','aZ','AZ','ZA']);
+        $this->assertEquals($data, $coll->toArray());
+        $this->assertEquals(array_reverse($data, true), $coll->reverse()->toArray());
+        $this->assertEquals(array_reverse($data, false), $coll->reverse(false)->toArray());
+    }
+
+    public function testOrderBy()
+    {
+        $coll = new Collection([
+            ['name' => 'Luke', 'email' => 'luke@something.com', 'date' => '1986-04-23'],
+            ['name' => 'John', 'email' => 'boyjohn@mysite.com', 'date' => '1945-01-21'],
+            ['name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1992-10-03'],
+            ['name' => 'Mark', 'email' => 'mark@ihatescreechingchildren.com', 'date' => '2000-02-14'],
+        ]);
+        $this->assertEquals([
+            2 => ['name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1992-10-03'],
+            1 => ['name' => 'John', 'email' => 'boyjohn@mysite.com', 'date' => '1945-01-21'],
+            0 => ['name' => 'Luke', 'email' => 'luke@something.com', 'date' => '1986-04-23'],
+            3 => ['name' => 'Mark', 'email' => 'mark@ihatescreechingchildren.com', 'date' => '2000-02-14'],
+        ], $coll->orderBy('name')->toArray());
+        $this->assertEquals([
+            1 => ['name' => 'John', 'email' => 'boyjohn@mysite.com', 'date' => '1945-01-21'],
+            0 => ['name' => 'Luke', 'email' => 'luke@something.com', 'date' => '1986-04-23'],
+            2 => ['name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1992-10-03'],
+            3 => ['name' => 'Mark', 'email' => 'mark@ihatescreechingchildren.com', 'date' => '2000-02-14'],
+        ], $coll->orderBy('date')->toArray());
+        $this->assertEquals([
+            2 => ['name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1992-10-03'],
+            3 => ['name' => 'Mark', 'email' => 'mark@ihatescreechingchildren.com', 'date' => '2000-02-14'],
+            1 => ['name' => 'John', 'email' => 'boyjohn@mysite.com', 'date' => '1945-01-21'],
+            0 => ['name' => 'Luke', 'email' => 'luke@something.com', 'date' => '1986-04-23'],
+        ], $coll->orderBy('date', $cmpday = function($a, $b) {
+            $adt = new \DateTime($a);
+            $bdt = new \DateTime($b);
+            return ($adt->format('j') - $bdt->format('j'));
+        })->toArray());
+        $this->assertEquals([
+            ['name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1992-10-03'],
+            ['name' => 'Mark', 'email' => 'mark@ihatescreechingchildren.com', 'date' => '2000-02-14'],
+            ['name' => 'John', 'email' => 'boyjohn@mysite.com', 'date' => '1945-01-21'],
+            ['name' => 'Luke', 'email' => 'luke@something.com', 'date' => '1986-04-23'],
+        ], $coll->orderBy('date', $cmpday, false)->toArray());
+    }
+
 }

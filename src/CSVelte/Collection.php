@@ -17,6 +17,7 @@ use \Countable;
 use \ArrayAccess;
 use \OutOfBoundsException;
 use \InvalidArgumentException;
+use \RuntimeException;
 
 use function CSVelte\collect;
 
@@ -323,6 +324,11 @@ class Collection implements Countable, ArrayAccess
         return $this;
     }
 
+    public function reduce(Callable $func, $initial = null)
+    {
+        return array_reduce($this->data, $func, $initial);
+    }
+
     /**
      * Filter out unwanted items using a callback function.
      *
@@ -556,6 +562,71 @@ class Collection implements Countable, ArrayAccess
     public function value(Callable $func)
     {
         return $func($this);
+    }
+
+    public function sort($sort_func = 'strcasecmp', $preserve_keys = true)
+    {
+        if (!is_callable($sort_func)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid argument supplied for %s. Expected %s, got: "%s".',
+                __METHOD__,
+                'Callable',
+                gettype($sort_func)
+            ));
+        }
+        $data = $this->data;
+        if ($preserve_keys) {
+            uasort($data, $sort_func);
+        } else {
+            usort($data, $sort_func);
+        }
+        return new self($data);
+    }
+
+    public function orderBy($key, Callable $cmp = null, $preserve_keys = true)
+    {
+        $this->assertIsTabular();
+        return $this->sort(function($a, $b) use ($key, $cmp) {
+            if (!isset($a[$key]) || !isset($b[$key])) {
+                throw new RuntimeException('Cannot order collection by non-existant key: ' . $key);
+            }
+            if (is_null($cmp)) {
+                return strcasecmp($a[$key], $b[$key]);
+            } else {
+                return $cmp($a[$key], $b[$key]);
+            }
+        }, $preserve_keys);
+    }
+
+    public function reverse($preserve_keys = true)
+    {
+        return new self(array_reverse($this->data, $preserve_keys));
+    }
+
+    public function isTabular()
+    {
+        $test = [];
+        $this->walk(function($val, $key) use (&$test) {
+            if (is_array($val)) {
+                $test[$key] = array_keys($val);
+                return true;
+            }
+            return false;
+        });
+
+        $first = array_shift($test);
+        foreach ($test as $key => $keys) {
+            $diff = array_diff($first, $keys);
+            if (!empty($diff)) return false;
+        }
+        return true;
+    }
+
+    protected function assertIsTabular()
+    {
+        if (!$this->isTabular()) {
+            throw new RuntimeException('Invalid data type, requires tabular data.');
+        }
     }
 
     protected function assertNumericValues()
