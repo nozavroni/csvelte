@@ -524,6 +524,8 @@ class CollectionTest extends UnitTestCase
             [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
         ]);
         $this->assertInternalType("array", $coll->average()->toArray());
+        $this->assertTrue($coll->is2D());
+        $this->assertTrue($coll->isTabular());
         $this->assertEquals([17.5,1.5,200,101.1875,17.5,0.15625], $coll->average()->toArray());
     }
 
@@ -538,6 +540,8 @@ class CollectionTest extends UnitTestCase
             [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
         ]);
         $this->assertInternalType("array", $coll->max()->toArray());
+        $this->assertTrue($coll->is2D());
+        $this->assertTrue($coll->isTabular());
         $this->assertEquals([50,3,300,336.25,30,0.5], $coll->max()->toArray());
     }
 
@@ -552,6 +556,8 @@ class CollectionTest extends UnitTestCase
             [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
         ]);
         $this->assertInternalType("array", $coll->min()->toArray());
+        $this->assertTrue($coll->is2D());
+        $this->assertTrue($coll->isTabular());
         $this->assertEquals([1,1,100,1,5,0], $coll->min()->toArray());
     }
 
@@ -566,6 +572,8 @@ class CollectionTest extends UnitTestCase
             [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
         ]);
         $this->assertInternalType("array", $coll->mode()->toArray());
+        $this->assertTrue($coll->is2D());
+        $this->assertFalse($coll->isTabular());
         $this->assertEquals([1,1,200,100,25,0.1], $coll->mode()->toArray());
     }
 
@@ -580,6 +588,8 @@ class CollectionTest extends UnitTestCase
             [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
         ]);
         $this->assertInternalType("array", $coll->median()->toArray());
+        $this->assertTrue($coll->is2D());
+        $this->assertFalse($coll->isTabular());
         $this->assertEquals([4,1,200,75.25,17.5,0.1], $coll->median()->toArray());
     }
 
@@ -594,6 +604,8 @@ class CollectionTest extends UnitTestCase
             [0.1,0,0.2,0.1,0.25,0.1,0.5,0]
         ]);
         $this->assertInternalType("array", $coll->sum()->toArray());
+        $this->assertTrue($coll->is2D());
+        $this->assertFalse($coll->isTabular());
         $this->assertEquals([141,12,1600,809.5,175,1.25], $coll->sum()->toArray());
     }
 
@@ -607,8 +619,11 @@ class CollectionTest extends UnitTestCase
             [5,10,15,10], // 5, 10, 15,
             [0.1]
         ]);
+        // dd($coll->count(true));
         $this->assertInternalType("array", $coll->count(true)->toArray());
-        $this->assertEquals([9,5,8,8,4,1], $coll->count(true)->toArray());
+        $this->assertTrue($coll->is2D());
+        $this->assertFalse($coll->isTabular());
+        $this->assertEquals([9,5,8,8,4,1], $coll->count(true)->toArray(), 'The $multi argument for Collection::count() only works on twp-dimensional data.');
     }
 
     public function test2DCollectionFrequency()
@@ -798,6 +813,8 @@ class CollectionTest extends UnitTestCase
             6 => ['object' => new DateInterval('P10000D'), 'mixed' => 10000, 'integer' => 10000, 'string' => 'ten thousand', 'match' => '00-aa-10000d'],
         ];
         $coll = new Collection($table);
+        $this->assertTrue($coll->is2D());
+        $this->assertTrue($coll->isTabular());
         $this->assertEquals([0,3], $coll->where('object', DateTime::class, 'instanceof')->keys()->toArray());
         $this->assertEquals([1,2,4,5,6], $coll->where('object', DateTime::class, '!instanceof')->keys()->toArray());
         $this->assertEquals([4], $coll->where('mixed', 'stdClass', 'instanceof')->keys()->toArray());
@@ -818,6 +835,7 @@ class CollectionTest extends UnitTestCase
     public function testWhereOnlyWorksOnTabularData()
     {
         $coll = new Collection(['object' => new DateTime, 'mixed' => 1, 'integer' => 1, 'string' => 'one', 'match' => '14-xx-1235157S']);
+        $this->assertFalse($coll->isTabular());
         $coll->where('mixed', 0);
     }
 

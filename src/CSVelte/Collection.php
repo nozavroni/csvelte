@@ -416,15 +416,15 @@ class Collection implements Countable, ArrayAccess
     public function count($multi = false)
     {
         if ($multi) {
-            if ($this->contains(function($val){
-                return is_array($val);
-            })) {
-                // average each array
+            // if every value is an array...
+            if ($this->is2D()) {
+                // count each array...
                 return $this->map(function($val){
-                    return collect($val)->count();
+                    return (new self($val))->count();
                 });
             }
         }
+        // just count main array
         return count($this->data);
     }
 
@@ -508,12 +508,10 @@ class Collection implements Countable, ArrayAccess
 
     public function frequency()
     {
-        if ($this->contains(function($val){
-            return is_array($val);
-        })) {
+        if ($this->is2D()) {
             // frequencies for each array
             return $this->map(function($val){
-                return collect($val)->frequency();
+                return (new self($val))->frequency();
             });
         }
         $freq = [];
@@ -529,6 +527,11 @@ class Collection implements Countable, ArrayAccess
 
     public function unique()
     {
+        if ($this->is2D()) {
+            return $this->map(function($val){
+                return (new self($val))->unique();
+            });
+        }
         return new self(array_unique($this->data));
     }
 
@@ -568,12 +571,10 @@ class Collection implements Countable, ArrayAccess
      */
     public function sum()
     {
-        if ($this->contains(function($val){
-            return is_array($val);
-        })) {
+        if ($this->is2D()) {
             // average each array
             return $this->map(function($val){
-                return collect($val)->sum();
+                return (new self($val))->sum();
             });
         }
         $this->assertNumericValues();
@@ -587,12 +588,10 @@ class Collection implements Countable, ArrayAccess
      */
     public function average()
     {
-        if ($this->contains(function($val){
-            return is_array($val);
-        })) {
+        if ($this->is2D()) {
             // average each array
             return $this->map(function($val){
-                return collect($val)->average();
+                return (new self($val))->average();
             });
         }
         $this->assertNumericValues();
@@ -608,12 +607,10 @@ class Collection implements Countable, ArrayAccess
      */
     public function max()
     {
-        if ($this->contains(function($val){
-            return is_array($val);
-        })) {
+        if ($this->is2D()) {
             // average each array
             return $this->map(function($val){
-                return collect($val)->max();
+                return (new self($val))->max();
             });
         }
         $this->assertNumericValues();
@@ -627,12 +624,10 @@ class Collection implements Countable, ArrayAccess
      */
     public function min()
     {
-        if ($this->contains(function($val){
-            return is_array($val);
-        })) {
+        if ($this->is2D()) {
             // average each array
             return $this->map(function($val){
-                return collect($val)->min();
+                return (new self($val))->min();
             });
         }
         $this->assertNumericValues();
@@ -646,12 +641,10 @@ class Collection implements Countable, ArrayAccess
      */
     public function mode()
     {
-        if ($this->contains(function($val){
-            return is_array($val);
-        })) {
+        if ($this->is2D()) {
             // average each array
             return $this->map(function($val){
-                return collect($val)->mode();
+                return (new self($val))->mode();
             });
         }
         $strvals = $this->map(function($val){
@@ -671,12 +664,10 @@ class Collection implements Countable, ArrayAccess
      */
     public function median()
     {
-        if ($this->contains(function($val){
-            return is_array($val);
-        })) {
+        if ($this->is2D()) {
             // average each array
             return $this->map(function($val){
-                return collect($val)->median();
+                return (new self($val))->median();
             });
         }
         $this->assertNumericValues();
@@ -748,31 +739,64 @@ class Collection implements Countable, ArrayAccess
         return new self(array_reverse($this->data, $preserve_keys));
     }
 
+    public function is2D()
+    {
+        return !$this->contains(function($val){
+            return !is_array($val);
+        });
+    }
+
     public function isTabular()
     {
-        $test = [];
-        $this->walk(function($val, $key) use (&$test) {
-            if (is_array($val)) {
-                $test[$key] = array_keys($val);
-                return true;
+        if ($this->is2D()) {
+            // look through each item in the collection and if an array, grab its keys
+            // and throw them in an array to be analyzed later...
+            $test = [];
+            $this->walk(function($val, $key) use (&$test) {
+                if (is_array($val)) {
+                    $test[$key] = array_keys($val);
+                    return true;
+                }
+                return false;
+            });
+
+            // if the list of array keys is shorter than the total amount of items in
+            // the collection, than this is not tabular data
+            if (count($test) != count($this)) return false;
+
+            // loop through the array of each item's array keys that we just created
+            // and compare it to the FIRST item. If any array contains different keys
+            // than this is not tabular data.
+            $first = array_shift($test);
+            foreach ($test as $key => $keys) {
+                $diff = array_diff($first, $keys);
+                if (!empty($diff)) return false;
             }
-            return false;
-        });
-
-        if (count($test) != count($this)) return false;
-
-        $first = array_shift($test);
-        foreach ($test as $key => $keys) {
-            $diff = array_diff($first, $keys);
-            if (!empty($diff)) return false;
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    /**
+     * Assert this collection is two-dimensional.
+     *
+     * Although a collection must be two-dimensional to be tabular, the opposite
+     * is not necessarily true. This will throw an exception if this collection
+     * contains anything but arrays.
+     *
+     * @throws
+     */
+    protected function assertIs2D()
+    {
+        if (!$this->is2D()) {
+            throw new RuntimeException('Invalid data type, requires two-dimensional array.');
+        }
     }
 
     protected function assertIsTabular()
     {
         if (!$this->isTabular()) {
-            throw new RuntimeException('Invalid data type, requires tabular data.');
+            throw new RuntimeException('Invalid data type, requires tabular data (two-dimensional array where each sub-array has the same keys).');
         }
     }
 
