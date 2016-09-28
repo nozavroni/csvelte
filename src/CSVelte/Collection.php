@@ -38,22 +38,56 @@ use function CSVelte\collect;
  */
 class Collection implements Countable, ArrayAccess
 {
-    /** @var Constants used as comparison operators in where() method **/
+    /**
+     * Constants used as comparison operators in where() method
+     */
+
+    /** @var const Use this operator constant to test for identity (exact same) **/
     const WHERE_ID = '===';
+
+    /** @var const Use this operator constant to test for non-identity **/
     const WHERE_NID = '!==';
+
+    /** @var const Use this operator constant to test for equality **/
     const WHERE_EQ = '==';
+
+    /** @var const Use this operator constant to test for non-equality **/
     const WHERE_NEQ = '!=';
+
+    /** @var const Use this operator constant to test for less-than **/
     const WHERE_LT = '<';
+
+    /** @var const Use this operator constant to test for greater-than or equal-to **/
     const WHERE_LTE = '<=';
+
+    /** @var const Use this operator constant to test for greater-than **/
     const WHERE_GT = '>';
+
+    /** @var const Use this operator constant to test for greater-than or equal-to **/
     const WHERE_GTE = '>=';
+
+    /** @var const Use this operator constant to test for case insensitive equality **/
     const WHERE_LIKE = 'like';
+
+    /** @var const Use this operator constant to test for case instensitiv inequality **/
     const WHERE_NLIKE = '!like';
+
+    /** @var const Use this operator constant to test for descendants or instances of a class **/
     const WHERE_ISA = 'instanceof';
+
+    /** @var const Use this operator constant to test for values that aren't descendants or instances of a class  **/
     const WHERE_NISA = '!instanceof';
+
+    /** @var const Use this operator constant to test for internal PHP types **/
     const WHERE_TOF = 'typeof';
+
+    /** @var const Use this operator constant to test for internal PHP type (negated) **/
     const WHERE_NTOF = '!typeof';
+
+    /** @var const Use this operator constant to test against a regex pattern **/
     const WHERE_MATCH = 'match';
+
+    /** @var const Use this operator constant to test against a regex pattern (negated) **/
     const WHERE_NMATCH = '!match';
 
     /**
@@ -200,6 +234,20 @@ class Collection implements Countable, ArrayAccess
         return false;
     }
 
+    /**
+     * Tabular Where Search.
+     *
+     * Search for values of a certain key that meet a particular search criteria
+     * using either one of the "Collection::WHERE_" class constants, or its string
+     * counterpart.
+     *
+     * Warning: Only works for tabular collections (2-dimensional data array)
+     *
+     * @param  [type] $key  [description]
+     * @param  [type] $val  [description]
+     * @param  [type] $comp [description]
+     * @return [type]       [description]
+     */
     public function where($key, $val, $comp = null)
     {
         $this->assertIsTabular();
@@ -710,6 +758,8 @@ class Collection implements Countable, ArrayAccess
             }
             return false;
         });
+
+        if (count($test) != count($this)) return false;
 
         $first = array_shift($test);
         foreach ($test as $key => $keys) {

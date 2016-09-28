@@ -812,4 +812,13 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals([0,1,2,3,4,5,6], $coll->where('object', new ArrayIterator([]), '!==')->keys()->toArray());
     }
 
+    /**
+     * @expectedException \RuntimeException
+     */
+    public function testWhereOnlyWorksOnTabularData()
+    {
+        $coll = new Collection(['object' => new DateTime, 'mixed' => 1, 'integer' => 1, 'string' => 'one', 'match' => '14-xx-1235157S']);
+        $coll->where('mixed', 0);
+    }
+
 }
