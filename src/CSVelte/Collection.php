@@ -417,11 +417,8 @@ class Collection implements Countable, ArrayAccess
     {
         if ($multi) {
             // if every value is an array...
-            if ($this->is2D()) {
-                // count each array...
-                return $this->map(function($val){
-                    return (new self($val))->count();
-                });
+            if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
+                return $condRet;
             }
         }
         // just count main array
@@ -508,11 +505,8 @@ class Collection implements Countable, ArrayAccess
 
     public function frequency()
     {
-        if ($this->is2D()) {
-            // frequencies for each array
-            return $this->map(function($val){
-                return (new self($val))->frequency();
-            });
+        if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
+            return $condRet;
         }
         $freq = [];
         foreach ($this->data as $val) {
@@ -527,10 +521,8 @@ class Collection implements Countable, ArrayAccess
 
     public function unique()
     {
-        if ($this->is2D()) {
-            return $this->map(function($val){
-                return (new self($val))->unique();
-            });
+        if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
+            return $condRet;
         }
         return new self(array_unique($this->data));
     }
@@ -571,11 +563,8 @@ class Collection implements Countable, ArrayAccess
      */
     public function sum()
     {
-        if ($this->is2D()) {
-            // average each array
-            return $this->map(function($val){
-                return (new self($val))->sum();
-            });
+        if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
+            return $condRet;
         }
         $this->assertNumericValues();
         return array_sum($this->data);
@@ -588,11 +577,8 @@ class Collection implements Countable, ArrayAccess
      */
     public function average()
     {
-        if ($this->is2D()) {
-            // average each array
-            return $this->map(function($val){
-                return (new self($val))->average();
-            });
+        if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
+            return $condRet;
         }
         $this->assertNumericValues();
         $total = array_sum($this->data);
@@ -607,11 +593,8 @@ class Collection implements Countable, ArrayAccess
      */
     public function max()
     {
-        if ($this->is2D()) {
-            // average each array
-            return $this->map(function($val){
-                return (new self($val))->max();
-            });
+        if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
+            return $condRet;
         }
         $this->assertNumericValues();
         return max($this->data);
@@ -624,11 +607,8 @@ class Collection implements Countable, ArrayAccess
      */
     public function min()
     {
-        if ($this->is2D()) {
-            // average each array
-            return $this->map(function($val){
-                return (new self($val))->min();
-            });
+        if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
+            return $condRet;
         }
         $this->assertNumericValues();
         return min($this->data);
@@ -641,11 +621,8 @@ class Collection implements Countable, ArrayAccess
      */
     public function mode()
     {
-        if ($this->is2D()) {
-            // average each array
-            return $this->map(function($val){
-                return (new self($val))->mode();
-            });
+        if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
+            return $condRet;
         }
         $strvals = $this->map(function($val){
             return (string) $val;
@@ -664,11 +641,8 @@ class Collection implements Countable, ArrayAccess
      */
     public function median()
     {
-        if ($this->is2D()) {
-            // average each array
-            return $this->map(function($val){
-                return (new self($val))->median();
-            });
+        if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
+            return $condRet;
         }
         $this->assertNumericValues();
         $count = count($this->data);
@@ -737,6 +711,20 @@ class Collection implements Countable, ArrayAccess
     public function reverse($preserve_keys = true)
     {
         return new self(array_reverse($this->data, $preserve_keys));
+    }
+
+    protected function if2DMapInternalMethod($method)
+    {
+        if ($this->is2D()) {
+            $method = explode('::', $method, 2);
+            if (count($method) == 2) {
+                $method = $method[1];
+                return $this->map(function($val) use ($method) {
+                    return (new self($val))->$method();
+                });
+            }
+        }
+        return false;
     }
 
     public function is2D()
