@@ -38,6 +38,24 @@ use function CSVelte\collect;
  */
 class Collection implements Countable, ArrayAccess
 {
+    /** @var Constants used as comparison operators in where() method **/
+    const WHERE_ID = '===';
+    const WHERE_NID = '!==';
+    const WHERE_EQ = '==';
+    const WHERE_NEQ = '!=';
+    const WHERE_LT = '<';
+    const WHERE_LTE = '<=';
+    const WHERE_GT = '>';
+    const WHERE_GTE = '>=';
+    const WHERE_LIKE = 'like';
+    const WHERE_NLIKE = '!like';
+    const WHERE_ISA = 'instanceof';
+    const WHERE_NISA = '!instanceof';
+    const WHERE_TOF = 'typeof';
+    const WHERE_NTOF = '!typeof';
+    const WHERE_MATCH = 'match';
+    const WHERE_NMATCH = '!match';
+
     /**
      * Underlying array
      * @var array The array of data for this collection
@@ -182,6 +200,82 @@ class Collection implements Countable, ArrayAccess
         return false;
     }
 
+    public function where($key, $val, $comp = null)
+    {
+        $this->assertIsTabular();
+        $data = [];
+        if ($this->has($key, true)) {
+            if (is_callable($val)) {
+                foreach ($this->data as $ln => $row) {
+                    if ($val($row[$key], $key)) {
+                        $data[$ln] = $row;
+                    }
+                }
+            } else {
+                foreach ($this->data as $ln => $row) {
+                    $fieldval = $row[$key];
+                    switch (strtolower($comp)) {
+                        case self::WHERE_ID:
+                            $comparison = $fieldval === $val;
+                            break;
+                        case self::WHERE_NID:
+                            $comparison = $fieldval !== $val;
+                            break;
+                        case self::WHERE_LT:
+                            $comparison = $fieldval < $val;
+                            break;
+                        case self::WHERE_LTE:
+                            $comparison = $fieldval <= $val;
+                            break;
+                        case self::WHERE_GT:
+                            $comparison = $fieldval > $val;
+                            break;
+                        case self::WHERE_GTE:
+                            $comparison = $fieldval >= $val;
+                            break;
+                        case self::WHERE_LIKE:
+                            $comparison = strtolower($fieldval) == strtolower($val);
+                            break;
+                        case self::WHERE_NLIKE:
+                            $comparison = strtolower($fieldval) != strtolower($val);
+                            break;
+                        case self::WHERE_ISA:
+                            $comparison = (is_object($fieldval) && $fieldval instanceof $val);
+                            break;
+                        case self::WHERE_NISA:
+                            $comparison = (!is_object($fieldval) || !($fieldval instanceof $val));
+                            break;
+                        case self::WHERE_TOF:
+                            $comparison = (strtolower(gettype($fieldval)) == strtolower($val));
+                            break;
+                        case self::WHERE_NTOF:
+                            $comparison = (strtolower(gettype($fieldval)) != strtolower($val));
+                            break;
+                        case self::WHERE_NEQ:
+                            $comparison = $fieldval != $val;
+                            break;
+                        case self::WHERE_MATCH:
+                            $match = preg_match($val, $fieldval);
+                            $comparison = $match === 1;
+                            break;
+                        case self::WHERE_NMATCH:
+                            $match = preg_match($val, $fieldval);
+                            $comparison = $match === 0;
+                            break;
+                        case self::WHERE_EQ:
+                        default:
+                            $comparison = $fieldval == $val;
+                            break;
+                    }
+                    if ($comparison) {
+                        $data[$ln] = $row;
+                    }
+                }
+            }
+        }
+        return new self($data);
+    }
+
     /**
      * Get the key at a given numerical position
      *
@@ -224,8 +318,11 @@ class Collection implements Countable, ArrayAccess
         return new self(array_pad($this->data, (int) $size, $with));
     }
 
-    public function has($key)
+    public function has($key, $column = false)
     {
+        if ($column && $this->isTabular() && $first = reset($this->data)) {
+            return array_key_exists($key, $first);
+        }
         return array_key_exists($key, $this->data);
     }
 

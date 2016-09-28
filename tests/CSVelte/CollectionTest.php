@@ -5,6 +5,7 @@ use \OutOfBoundsException;
 use \ArrayIterator;
 use \SplFileObject;
 use \DateTime;
+use \DateInterval;
 use \stdClass;
 use CSVelte\Collection;
 
@@ -75,6 +76,26 @@ class CollectionTest extends UnitTestCase
             }
         }
         return $arr;
+    }
+
+    public function setUp()
+    {
+        $this->testppl = [
+            ['last_name' => 'Visinoni', 'first_name' => 'Luke', 'email' => 'luke@something.com', 'date' => '1986-04-23'],
+            ['last_name' => 'Baker', 'first_name' => 'John', 'email' => 'boyjohn@mysite.com', 'date' => '1945-01-21'],
+            ['last_name' => 'Wheeler', 'first_name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1990-10-03'],
+            ['last_name' => 'Smith', 'first_name' => 'Mark', 'email' => 'mark@ihatescreechingchildren.com', 'date' => '2000-02-14'],
+            ['last_name' => 'Jacobs', 'first_name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1994-10-03'],
+            ['last_name' => 'Carrell', 'first_name' => 'Lacey', 'email' => 'zlace@boofoo.org', 'date' => '1985-12-31'],
+            ['last_name' => 'Stevens', 'first_name' => 'Xavier', 'email' => 'xxxman@gmail.com', 'date' => '1976-11-13'],
+            ['last_name' => 'Smithson', 'first_name' => 'Peter', 'email' => 'thepeet@neet.com', 'date' => '1962-03-03'],
+            ['last_name' => 'Stimson', 'first_name' => 'Alan', 'email' => 'alan@marsdenfam.com', 'date' => '1959-06-30'],
+            ['last_name' => 'Marone', 'first_name' => 'Brutus', 'email' => 'thebrute@czar.com', 'date' => '1950-01-10'],
+            ['last_name' => 'White', 'first_name' => 'Carl', 'email' => 'ccc@whitecarl.com', 'date' => '1992-09-04'],
+            ['last_name' => 'Black', 'first_name' => 'Gary', 'email' => 'gmeister@pge.gov', 'date' => '1960-07-09'],
+            ['last_name' => 'Visinoni', 'first_name' => 'Margaret', 'email' => 'mkultra@dahotness.com', 'date' => '1976-05-11'],
+        ];
+        return parent::setUp();
     }
 
     public function testInstantiateCollection()
@@ -698,6 +719,97 @@ class CollectionTest extends UnitTestCase
             ['name' => 'John', 'email' => 'boyjohn@mysite.com', 'date' => '1945-01-21'],
             ['name' => 'Luke', 'email' => 'luke@something.com', 'date' => '1986-04-23'],
         ], $coll->orderBy('date', $cmpday, false)->toArray());
+    }
+
+    public function testWhere()
+    {
+        $coll = new Collection($this->testppl);
+        $this->assertEquals([
+                 2 => ['last_name' => 'Wheeler', 'first_name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1990-10-03'],
+                 3 => ['last_name' => 'Smith', 'first_name' => 'Mark', 'email' => 'mark@ihatescreechingchildren.com', 'date' => '2000-02-14'],
+                 4 => ['last_name' => 'Jacobs', 'first_name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1994-10-03'],
+                10 => ['last_name' => 'White', 'first_name' => 'Carl', 'email' => 'ccc@whitecarl.com', 'date' => '1992-09-04']
+            ],
+            $coll->where('date', function($date, $key) {
+                $dt = new \DateTime($date);
+                $dtdiff = $dt->diff((new \DateTime()));
+                return ($dtdiff->days < 10000);
+            })->toArray(),
+            "Assert that Collection::where can accept an anonymous function to do custom where values"
+        );
+        $this->assertEquals([
+                0 => ['last_name' => 'Visinoni', 'first_name' => 'Luke', 'email' => 'luke@something.com', 'date' => '1986-04-23'],
+                12 => ['last_name' => 'Visinoni', 'first_name' => 'Margaret', 'email' => 'mkultra@dahotness.com', 'date' => '1976-05-11'],
+            ],
+            $coll->where('last_name', 'Visinoni')->toArray(),
+            "Assert that Collection::where with value rather than anonymous function defaults to == (equality) comparison"
+        );
+
+    }
+
+    public function testWhereAcceptsThirdArgumentThatDictatesWhatTypeOfEqualityComparisonToUse()
+    {
+        $coll = new Collection($this->testppl);
+        $this->assertEquals([
+                 2 => ['last_name' => 'Wheeler', 'first_name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1990-10-03'],
+                 3 => ['last_name' => 'Smith', 'first_name' => 'Mark', 'email' => 'mark@ihatescreechingchildren.com', 'date' => '2000-02-14'],
+                 4 => ['last_name' => 'Jacobs', 'first_name' => 'Jacob', 'email' => 'cobaj@name.com', 'date' => '1994-10-03'],
+                10 => ['last_name' => 'White', 'first_name' => 'Carl', 'email' => 'ccc@whitecarl.com', 'date' => '1992-09-04']
+            ],
+            $coll->where('date', '1990-01-01', Collection::WHERE_GT)->toArray(),
+            'Assert that Collection::where can accept > (greater than) as third argument (comparison/equality type)'
+        );
+        $this->assertEquals([
+                0 => ['last_name' => 'Visinoni', 'first_name' => 'Luke', 'email' => 'luke@something.com', 'date' => '1986-04-23'],
+                1 => ['last_name' => 'Baker', 'first_name' => 'John', 'email' => 'boyjohn@mysite.com', 'date' => '1945-01-21'],
+                5 => ['last_name' => 'Carrell', 'first_name' => 'Lacey', 'email' => 'zlace@boofoo.org', 'date' => '1985-12-31'],
+                6 => ['last_name' => 'Stevens', 'first_name' => 'Xavier', 'email' => 'xxxman@gmail.com', 'date' => '1976-11-13'],
+                7 => ['last_name' => 'Smithson', 'first_name' => 'Peter', 'email' => 'thepeet@neet.com', 'date' => '1962-03-03'],
+                8 => ['last_name' => 'Stimson', 'first_name' => 'Alan', 'email' => 'alan@marsdenfam.com', 'date' => '1959-06-30'],
+                9 => ['last_name' => 'Marone', 'first_name' => 'Brutus', 'email' => 'thebrute@czar.com', 'date' => '1950-01-10'],
+                11 => ['last_name' => 'Black', 'first_name' => 'Gary', 'email' => 'gmeister@pge.gov', 'date' => '1960-07-09'],
+                12 => ['last_name' => 'Visinoni', 'first_name' => 'Margaret', 'email' => 'mkultra@dahotness.com', 'date' => '1976-05-11'],
+            ],
+            $coll->where('date', '1990-01-01', Collection::WHERE_LTE)->toArray(),
+            'Assert that Collection::where can accept <= (less than or equal to) as third argument (comparison/equality type)'
+        );
+        $this->assertEquals([
+                0 => ['last_name' => 'Visinoni', 'first_name' => 'Luke', 'email' => 'luke@something.com', 'date' => '1986-04-23'],
+                12 => ['last_name' => 'Visinoni', 'first_name' => 'Margaret', 'email' => 'mkultra@dahotness.com', 'date' => '1976-05-11'],
+            ],
+            $coll->where('last_name', 'visinoni', Collection::WHERE_LIKE)->toArray(),
+            'Assert that Collection::where can accept <= (less than or equal to) as third argument (comparison/equality type)'
+        );
+        $this->assertEquals([2,4], $coll->where('first_name', 'jacob', Collection::WHERE_LIKE)->keys()->toArray());
+        $this->assertEquals([0,1,3,5,6,7,8,9,10,11,12], $coll->where('first_name', 'jacob', Collection::WHERE_NLIKE)->keys()->toArray());
+        $this->assertEquals([0,1,2,3,4,5,6,7,8,9,10,11,12], $coll->where('first_name', 'jacob', Collection::WHERE_NEQ)->keys()->toArray());
+
+    }
+
+    public function testWhereWithNonStringAndRegexComparisons()
+    {
+        $table = [
+            0 => ['object' => new DateTime, 'mixed' => 1, 'integer' => 1, 'string' => 'one', 'match' => '14-xx-1235157S'],
+            1 => ['object' => new stdClass, 'mixed' => 'nuts', 'integer' => 6510, 'string' => 'string', 'match' => '_+_--+_----+'],
+            2 => ['object' => new ArrayIterator([]), 'mixed' => -20, 'integer' => 0, 'string' => 'zero', 'match' => 'ak-47'],
+            3 => ['object' => new DateTime('10-10-10 10:10:10'), 'mixed' => 50.15, 'integer' => -78, 'string' => 'i am a string', 'match' => '__something__'],
+            4 => ['object' => new stdClass(['a' => 'b', 'b' => 1]), 'mixed' => new stdClass, 'integer' => 0, 'string' => 'one', 'match' => '15-ex-458x'],
+            5 => ['object' => null, 'mixed' => null, 'integer' => null, 'string' => null, 'match' => null],
+            6 => ['object' => new DateInterval('P10000D'), 'mixed' => 10000, 'integer' => 10000, 'string' => 'ten thousand', 'match' => '00-aa-10000d'],
+        ];
+        $coll = new Collection($table);
+        $this->assertEquals([0,3], $coll->where('object', DateTime::class, 'instanceof')->keys()->toArray());
+        $this->assertEquals([1,2,4,5,6], $coll->where('object', DateTime::class, '!instanceof')->keys()->toArray());
+        $this->assertEquals([4], $coll->where('mixed', 'stdClass', 'instanceof')->keys()->toArray());
+        $this->assertEquals([0,2,6], $coll->where('mixed', 'integer', 'typeof')->keys()->toArray());
+        $this->assertEquals([1,3,4,5], $coll->where('mixed', 'integer', '!typeof')->keys()->toArray());
+        $this->assertEquals([5], $coll->where('mixed', 'null', 'typeof')->keys()->toArray());
+        $this->assertEquals([0,4,6], $coll->where('match', '/[0-9]{2}-[a-z]{2}-[0-9]+[a-z]/i', 'match')->keys()->toArray());
+        $this->assertEquals([1,2,3,5], $coll->where('match', '/[0-9]{2}-[a-z]{2}-[0-9]+[a-z]/i', '!match')->keys()->toArray());
+        $this->assertEquals([1], $coll->where('match', '~([_-][+-])+~', 'match')->keys()->toArray());
+        $this->assertEquals([2,4], $coll->where('integer', 0, '===')->keys()->toArray());
+        $this->assertEquals([], $coll->where('object', new DateTime, '===')->keys()->toArray());
+        $this->assertEquals([0,1,2,3,4,5,6], $coll->where('object', new ArrayIterator([]), '!==')->keys()->toArray());
     }
 
 }
