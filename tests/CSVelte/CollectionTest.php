@@ -214,7 +214,7 @@ class CollectionTest extends UnitTestCase
             ['foo','bar'],
             ['boo','far'],
             ['goo','czar']
-        ], $coll->pairs());
+        ], $coll->pairs()->toArray());
 
         $coll = new Collection([
             'foo' => 'bar',
@@ -225,7 +225,7 @@ class CollectionTest extends UnitTestCase
             ['foo' => 'bar'],
             ['boo' => 'far'],
             ['goo' => 'czar']
-        ], $coll->pairs(true));
+        ], $coll->pairs(true)->toArray());
     }
 
     public function testCollectionWalkCallbackModifyInPlace()
@@ -366,12 +366,12 @@ class CollectionTest extends UnitTestCase
     {
         $coll = new Collection($this->getMixedNuts());
         $this->assertEquals(16, $coll->count());
-        $coll->filter(function($val, $key) {
+        $coll = $coll->filter(function($val, $key) {
             return !is_object($val);
         });
         $this->assertEquals(13, count($coll));
 
-        $coll->filter(function($val, $key){ return !is_numeric($key); });
+        $coll = $coll->filter(function($val, $key){ return !is_numeric($key); });
         $this->assertEquals(11, count($coll));
         $coll->each(function($val, $key){
             $this->assertTrue(!is_object($val));

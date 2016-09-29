@@ -18,6 +18,7 @@ use \ArrayAccess;
 use \OutOfBoundsException;
 use \InvalidArgumentException;
 use \RuntimeException;
+use CSVelte\Collection;
 
 use function CSVelte\collect;
 
@@ -32,8 +33,21 @@ use function CSVelte\collect;
  * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @since     v0.2.1
- * @todo      Maybe methods should return a new collection rather than modifying
- *            this collection in place.
+ * @todo      Most of this class's methods will return a new Collection class
+ *     rather than modify the existing class. There needs to be a clear distinction
+ *     as to which ones don't and why. Also, some methods return a single value.
+ *     These also need to be clear.
+ * @todo      Need to make sure method naming, args, return values, concepts, etc.
+ *     are consistent. This is a very large class with a LOT of methods. It will
+ *     be very difficult to not let it blow up and get extremely messy. Go through
+ *     and refactor each method. Make sure there is nothing superfluous and that
+ *     everything makes sense and is intuitive to use. Also, because this class
+ *     is so enourmous it is going to be a bitch to test. Good test coverage is
+ *     going to require a LOT of tests. So put that on the list as well...
+ * @todo      Implement whichever SPL classes/interfaces you can (that make sense).
+ *     Probably a good idea to implement/extend some of these:
+ *         Interfaces - RecursiveIterator, SeekableIterator, OuterIterator, IteratorAggregate
+ *         Classes - FilterIterator, CallbackFilterIterator, CachingIterator, IteratorIterator, etc.
  * @replaces  \CSVelte\Utils
  */
 class Collection implements Countable, ArrayAccess
@@ -120,7 +134,14 @@ class Collection implements Countable, ArrayAccess
      * If called with second param, it will call $this->set($key, $val)
      * If called with null as first param and key as second param, it will call $this->offsetUnset($key)
      *
-     * @return array The underlying data array
+     * @param null|array $val If an array, it will be merged into the collection
+     *     If both this arg and second arg are null, underlying data array will be returned
+     * @param null|any $key If null and first arg is callable, this method will call map with callable
+     *     If this value is not null but first arg is, it will call $this->offsetUnset($key)
+     *     If this value is not null and first arg is anything other than callable, it will return $this->set($key, $val)
+     * @see the description for various possible method signatures
+     * @return mixed The return value depends entirely upon the arguments passed
+     *     to it. See description for various possible arguments/return value combinations
      */
     public function __invoke($val = null, $key = null)
     {
@@ -136,7 +157,9 @@ class Collection implements Countable, ArrayAccess
                 else {
                     if (is_callable($val)) {
                         return $this->map($val);
-                    }
+                    } /*else {
+                        return $this->set($key, $val);
+                    }*/
                 }
             } else {
                 $this->offsetSet($key, $val);
@@ -167,7 +190,6 @@ class Collection implements Countable, ArrayAccess
      * Get data as an array.
      *
      * @return array Collection data as an array
-     * @todo Recursively call toArray on anything inside this collection
      */
     public function toArray()
     {
@@ -181,7 +203,7 @@ class Collection implements Countable, ArrayAccess
     /**
      * Get array keys
      *
-     * @return array An array of keys
+     * @return \CSVelte\Collection The collection's keys (as a collection)
      */
     public function keys()
     {
@@ -189,13 +211,14 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * Merge data
+     * Merge data (array or iterator)
      *
-     * Pass an array to this method to have it merged into this collection.
+     * Pass an array to this method to have it merged into the collection. A new
+     * collection will be created with the merged data and returned.
      *
-     * @param array $data Data to merge into the collection
-     * @param boolean Should existing values be overwritten?
-     * @return $this;
+     * @param array|iterator $data Data to merge into the collection
+     * @param boolean $overwrite Whether existing values should be overwritten
+     * @return \CSVelte\Collection A new collection with $data merged into it
      */
     public function merge($data = null, $overwrite = true)
     {
@@ -208,11 +231,16 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * Set value for given key.
+     * Set value for the given key.
      *
-     * @param [type]  $key       [description]
-     * @param [type]  $value     [description]
-     * @param boolean $overwrite [description]
+     * Given $key, this will set $this->data[$key] to the value of $val. If that
+     * index already has a value, it will be overwritten unless $overwrite is set
+     * to false. In that case nothing happens.
+     *
+     * @param any $key The key you want to set a value for
+     * @param any $value The value you want to set key to
+     * @param boolean $overwrite Whether to overwrite existing value
+     * @return $this
      */
     public function set($key, $value = null, $overwrite = true)
     {
@@ -222,11 +250,25 @@ class Collection implements Countable, ArrayAccess
         return $this;
     }
 
+    /**
+     * Test whether this collection contains the given value, optionally at a
+     * specific key.
+     *
+     * This will return true if the collection contains a value equivalent to $val.
+     * If $val is a callable (function/method), than the callable will be called
+     * with $val, $key as its arguments (in that order). If the callable returns
+     * any truthy value, than this method will return true.
+     *
+     * @param any|callable $val Either the value to check for or a callable that
+     *     accepts $key,$val and returns true if collection contains $val
+     * @param any $key If not null, the only the value for this key will be checked
+     * @return boolean True if this collection contains $val, $key
+     */
     public function contains($val, $key = null)
     {
-        if (is_callable($func = $val)) {
+        if (is_callable($callback = $val)) {
             foreach ($this->data as $key => $val) {
-                if ($func($val, $key)) return true;
+                if ($callback($val, $key)) return true;
             }
         } elseif (in_array($val, $this->data)) {
             return (is_null($key) || (isset($this->data[$key]) && $this->data[$key] == $val));
@@ -243,10 +285,14 @@ class Collection implements Countable, ArrayAccess
      *
      * Warning: Only works for tabular collections (2-dimensional data array)
      *
-     * @param  [type] $key  [description]
-     * @param  [type] $val  [description]
-     * @param  [type] $comp [description]
-     * @return [type]       [description]
+     * @param string $key The key to compare to $val
+     * @param mixed|Callable $val Either a value to test against or a callable to
+     *     run your own custom "where comparison logic"
+     * @param string $comp The type of comparison operation ot use (such as "=="
+     *     or "instanceof"). Must be one of the self::WHERE_* constants' values
+     *     listed at the top of this class.
+     * @return \CSVelte\Collection A collection of rows that meet the criteria
+     *     specified by $key, $val, and $comp
      */
     public function where($key, $val, $comp = null)
     {
@@ -325,10 +371,16 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * Get the key at a given numerical position
+     * Get the key at a given numerical position.
+     *
+     * This method will give you the key at the specified numerical offset,
+     * regardless of how it's indexed (associatively, unordered numerical, etc.).
+     * This allows you to find out what the first key is. Or the second. etc.
      *
      * @param int $pos Numerical position
      * @return mixed The key at numerical position
+     * @throws \OutOfBoundsException If you request a position that doesn't exist
+     * @todo Allow negative $pos to start counting from end
      */
     public function getKeyAtPosition($pos)
     {
@@ -341,16 +393,28 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * Get the value at a given numerical position
+     * Get the value at a given numerical position.
+     *
+     * This method will give you the value at the specified numerical offset,
+     * regardless of how it's indexed (associatively, unordered numerical, etc.).
+     * This allows you to find out what the first value is. Or the second. etc.
      *
      * @param int $pos Numerical position
      * @return mixed The value at numerical position
+     * @throws \OutOfBoundsException If you request a position that doesn't exist
+     * @todo Allow negative $pos to start counting from end
      */
     public function getValueAtPosition($pos)
     {
         return $this->data[$this->getKeyAtPosition($pos)];
     }
 
+    /**
+     * Determine if this collection has a value at the specified numerical position.
+     *
+     * @param int $pos Numerical position
+     * @return boolean Whether there exists a value at specified position
+     */
     public function hasPosition($pos)
     {
         try {
@@ -361,19 +425,59 @@ class Collection implements Countable, ArrayAccess
         return true;
     }
 
+    /**
+     * Pad collection to specified length.
+     *
+     * Pad the collection to a specific length, filling it with a given value. A
+     * new collection with padded values is returned.
+     *
+     * @param  int $size The number of values you want this collection to have
+     * @param  any $with The value you want to pad the collection with
+     * @return \CSVelte\Collection A new collection, padded to specified size
+     */
     public function pad($size, $with = null)
     {
         return new self(array_pad($this->data, (int) $size, $with));
     }
 
-    public function has($key, $column = false)
+    /**
+     * Check if this collection has a value at the given key.
+     *
+     * If this is a tabular data collection, this will check if the table has the
+     * given key by default. You can change this behavior by passing false as the
+     * second argument (this will change the behavior to check for a given key
+     * at the row-level so it will likely only ever be numerical).
+     *
+     * @param any $key The key you want to check
+     * @return boolean Whether there's a value at $key
+     */
+    public function has($key, $column = true)
     {
+        // we only need to check one row for the existance of $key because the
+        // isTabular() method ensures every row has the same keys
         if ($column && $this->isTabular() && $first = reset($this->data)) {
             return array_key_exists($key, $first);
         }
+        // if we don't have tabular data or we don't want to check for a column...
         return array_key_exists($key, $this->data);
     }
 
+    /**
+     * Get the value at the given key.
+     *
+     * If there is a value at the given key, it will be returned. If there isn't,
+     * a default may be specified. If you would like for this method to throw an
+     * exception when there is no value at $key, pass true as the third argument
+     *
+     * @param  any  $key      The key you want to test for
+     * @param  any  $default  The default to return if there is no value at $key
+     * @param  boolean $throwExc Whether to throw an exception on failure to find
+     *     a value at the given key.
+     * @return mixed            Either the value at $key or the specified default
+     *     value
+     * @throws \OutOfBoundsException If value can't be found at $key and $throwExc
+     *     is set to true
+     */
     public function get($key, $default = null, $throwExc = false)
     {
         if (array_key_exists($key, $this->data)) {
@@ -386,7 +490,16 @@ class Collection implements Countable, ArrayAccess
         return $default;
     }
 
-    // @todo create an alias for this... maybe delete() or remove()
+    /**
+     * Unset value at the given offset.
+     *
+     * This method is used when the end-user uses a colleciton as an array and
+     * calls unset($collection[5]).
+     *
+     * @param mixed $offset The offset at which to unset
+     * @return $this
+     * @todo create an alias for this... maybe delete() or remove()
+     */
     public function offsetUnset($offset)
     {
         if ($this->has($offset)) {
@@ -395,24 +508,53 @@ class Collection implements Countable, ArrayAccess
         return $this;
     }
 
-    // @todo create an alias for this... maybe delete() or remove()
+    /**
+     * Alias of self::has
+     *
+     * @param int|mixed The offset to test for
+     * @return boolean Whether a value exists at $offset
+     */
     public function offsetExists($offset)
     {
         return $this->has($offset);
     }
 
-    // @todo create an alias for this... maybe delete() or remove()
+    /**
+     * Alias of self::set
+     *
+     * @param int|mixed The offset to set
+     * @param any The value to set it to
+     * @return boolean
+     */
     public function offsetSet($offset, $value)
     {
         $this->set($offset, $value);
         return $this;
     }
 
+    /**
+     * Alias of self::get
+     *
+     * @param int|mixed The offset to get
+     * @return mixed The value at $offset
+     */
     public function offsetGet($offset)
     {
         return $this->get($offset);
     }
 
+    /**
+     * Count the items in this collection.
+     *
+     * Returns either the number of items in the collection or, if this is a
+     * collection of tabular data, and you pass true as the first argument, you
+     * will get back a collection containing the count of each row (which will
+     * always be the same so maybe I should still just return an integer).
+     *
+     * @param boolean $multi Whether to count just the items in the collection or
+     *     to count the items in each tabular data row.
+     * @return int|\CSVelte\Collection Either an integer count or a collection of counts
+     */
     public function count($multi = false)
     {
         if ($multi) {
@@ -426,25 +568,36 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * Apply a callback to each element in the collection and return the
-     * resulting collection
+     * Collection map.
      *
-     * @return array An array of key/value pairs
+     * Apply a callback to each element in the collection and return the
+     * resulting collection. The resulting collection will contain the return
+     * values of each call to $callback.
+     *
+     * @param Callable $callback A callback to apply to each item in the collection
+     * @return \CSVelte\Collection A collection of callback return values
      */
-    public function map(Callable $func)
+    public function map(Callable $callback)
     {
-        return new self(array_map($func, $this->data));
+        return new self(array_map($callback, $this->data));
     }
 
     /**
-     * Walk through each item in the collection, calling a function for each
-     * item in the collection.
+     * Walk the collection.
      *
+     * Walk through each item in the collection, calling a function for each
+     * item in the collection. This is one of the few methods that doesn't return
+     * a new collection. All changes will be to the existing collection object.
+     *
+     * Note: return false from the collback to stop walking.
+     *
+     * @param Callable $callback A callback function to call for each item in the collection
+     * @param any $userdata Any extra data you'd like passed to your callback
      * @return $this
      */
-    public function walk(Callable $func, $userdata = null)
+    public function walk(Callable $callback, $userdata = null)
     {
-        array_walk($this->data, $func, $userdata);
+        array_walk($this->data, $callback, $userdata);
         return $this;
     }
 
@@ -455,54 +608,92 @@ class Collection implements Countable, ArrayAccess
      * @return $this
      * @todo I'm not entirely sure what this method should do... return new
      *     collection? modify this one?
+     * @todo This method appears to be a duplicate of walk(). Is it even necessary?
      */
-    public function each(Callable $func)
+    public function each(Callable $callback)
     {
         foreach ($this->data as $key => $val) {
-            if (!$ret = $func($val, $key)) {
+            if (!$ret = $callback($val, $key)) {
                 if ($ret === false) break;
             }
         }
         return $this;
     }
 
-    public function reduce(Callable $func, $initial = null)
+    /**
+     * Reduce collection to single value.
+     *
+     * Reduces the collection to a single value by calling a callback for each
+     * item in the collection, carrying along an accumulative value as it does so.
+     * The final value is then returned.
+     *
+     * @param Callable $callback The function to reduce the collection
+     * @param any $initial The initial value to set the accumulative value to
+     * @return mixed Whatever the final value from the callback is
+     */
+    public function reduce(Callable $callback, $initial = null)
     {
-        return array_reduce($this->data, $func, $initial);
+        return array_reduce($this->data, $callback, $initial);
     }
 
     /**
      * Filter out unwanted items using a callback function.
      *
-     * @param Callable $func
-     * @return $this
+     * @param Callable $callback
+     * @return CSVelte\Collection A new collection with filtered items removed
      */
-    public function filter(Callable $func)
+    public function filter(Callable $callback)
     {
         $keys = [];
         foreach ($this->data as $key => $val) {
-            if (false === $func($val, $key)) $keys[$key] = true;
+            if (false === $callback($val, $key)) $keys[$key] = true;
         }
-        $this->data = array_diff_key($this->data, $keys);
+        return new self(array_diff_key($this->data, $keys));
     }
 
-    public function first(Callable $func)
+    /**
+     * Get first match.
+     *
+     * Get first value that meets criteria specified with $callback function.
+     *
+     * @param Callable $callback A callback with arguments ($val, $key). If it
+     *     returns true, that $val will be returned.
+     * @return mixed The first $val that meets criteria specified with $callback
+     */
+    public function first(Callable $callback)
     {
         foreach ($this->data as $key => $val) {
-            if ($func($val, $key)) return $val;
+            if ($callback($val, $key)) return $val;
         }
         return null;
     }
 
-    public function last(Callable $func)
+    /**
+     * Get last match.
+     *
+     * Get last value that meets criteria specified with $callback function.
+     *
+     * @param Callable $callback A callback with arguments ($val, $key). If it
+     *     returns true, that $val will be returned.
+     * @return mixed The last $val that meets criteria specified with $callback
+     */
+    public function last(Callable $callback)
     {
         $elem = null;
         foreach ($this->data as $key => $val) {
-            if ($func($val, $key)) $elem = $val;
+            if ($callback($val, $key)) $elem = $val;
         }
         return $elem;
     }
 
+    /**
+     * Collection value frequency.
+     *
+     * Returns an array where the key is a value in the collection and the value
+     * is the number of times that value appears in the collection.
+     *
+     * @return CSVelte\Collection A collection of value frequencies (see description)
+     */
     public function frequency()
     {
         if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
@@ -519,6 +710,14 @@ class Collection implements Countable, ArrayAccess
         return new self($freq);
     }
 
+    /**
+     * Unique collection.
+     *
+     * Returns a collection with duplicate values removed. If two-dimensional,
+     * then each array within the collection will have its duplicates removed.
+     *
+     * @return CSVelte\Collection A new collection with duplicate values removed.
+     */
     public function unique()
     {
         if (false !== ($condRet = $this->if2DMapInternalMethod(__METHOD__))) {
@@ -527,6 +726,13 @@ class Collection implements Countable, ArrayAccess
         return new self(array_unique($this->data));
     }
 
+    /**
+     * Reverse keys/values.
+     *
+     * Get a new collection where the keys and values have been swapped.
+     *
+     * @return CSVelte\Collection A new collection where keys/values have been swapped
+     */
     public function flip()
     {
         return new self(array_flip($this->data));
@@ -539,11 +745,11 @@ class Collection implements Countable, ArrayAccess
      * first is the default.
      *
      * @param boolean Whether you want pairs in [k => v] rather than [k, v] format
-     * @return array An array of key/value pairs
+     * @return CSVelte\Collection A collection of key/value pairs
      */
     public function pairs($alt = false)
     {
-        return array_map(
+        return new self(array_map(
             function ($key, $val) use ($alt) {
                 if ($alt) {
                     return [$key => $val];
@@ -553,7 +759,7 @@ class Collection implements Countable, ArrayAccess
             },
             array_keys($this->data),
             array_values($this->data)
-        );
+        ));
     }
 
     /**
@@ -573,7 +779,9 @@ class Collection implements Countable, ArrayAccess
     /**
      * Get average of data items.
      *
-     * @return mixed The average of all items in collection
+     * If two-dimensional it will return a collection of averages.
+     *
+     * @return mixed|CSVelte\Collection The average of all items in collection
      */
     public function average()
     {
@@ -587,9 +795,9 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * Get mode of data items.
+     * Get largest item in the collection
      *
-     * @return mixed The mode of all items in collection
+     * @return mixed The largest item in the collection
      */
     public function max()
     {
@@ -601,9 +809,9 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * Get mode of data items.
+     * Get smallest item in the collection
      *
-     * @return mixed The mode of all items in collection
+     * @return mixed The smallest item in the collection
      */
     public function min()
     {
@@ -659,40 +867,80 @@ class Collection implements Countable, ArrayAccess
         return $values[$middle];
     }
 
+    /**
+     * Join items together into a string
+     *
+     * @param string $glue The string to join items together with
+     * @return string A string with all items in the collection strung together
+     * @todo Make this work with 2D collection
+     */
     public function join($glue)
     {
         return implode($glue, $this->data);
     }
 
+    /**
+     * Is the collection empty?
+     *
+     * @return boolean Whether the collection is empty
+     */
     public function isEmpty()
     {
         return empty($this->data);
     }
 
-    public function value(Callable $func)
+    /**
+     * Immediately invoke a callback.
+     *
+     * @param Callable $callback A callback to invoke with ($this)
+     * @return mixed Whatever the callback returns
+     */
+    public function value(Callable $callback)
     {
-        return $func($this);
+        return $callback($this);
     }
 
-    public function sort($sort_func = 'strcasecmp', $preserve_keys = true)
+    /**
+     * Sort the collection.
+     *
+     * This method can sort your collection in any which way you please. By
+     * default it uses a case-insensitive natural order algorithm, but you can
+     * pass it any sorting algorithm you like.
+     *
+     * @param Callable $sort_func The sorting function you want to use
+     * @param boolean $preserve_keys Whether you want to preserve keys
+     * @return CSVelte\Collection A new collection sorted by $callback
+     */
+    public function sort(Callable $callback = null, $preserve_keys = true)
     {
-        if (!is_callable($sort_func)) {
+        if (is_null($callback)) $callback = 'strcasecmp';
+        if (!is_callable($callback)) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid argument supplied for %s. Expected %s, got: "%s".',
                 __METHOD__,
                 'Callable',
-                gettype($sort_func)
+                gettype($callback)
             ));
         }
         $data = $this->data;
         if ($preserve_keys) {
-            uasort($data, $sort_func);
+            uasort($data, $callback);
         } else {
-            usort($data, $sort_func);
+            usort($data, $callback);
         }
         return new self($data);
     }
 
+    /**
+     * Order tabular data.
+     *
+     * Order a tabular dataset by a given key/comparison algorithm
+     *
+     * @param string $key The key you want to order by
+     * @param Callable $cmp The sorting comparison algorithm to use
+     * @param boolean $preserve_keys Whether keys should be preserved
+     * @return CSVelte\Collection A new collection sorted by $cmp and $key
+     */
     public function orderBy($key, Callable $cmp = null, $preserve_keys = true)
     {
         $this->assertIsTabular();
@@ -708,6 +956,15 @@ class Collection implements Countable, ArrayAccess
         }, $preserve_keys);
     }
 
+    /**
+     * Reverse collection order.
+     *
+     * Reverse the order of items in a collection. Sometimes it's easier than
+     * trying to write a particular sorting algurithm that sorts forwards and back.
+     *
+     * @param boolean $preserve_keys Whether keys should be preserved
+     * @return CSVelte\Collection A new collection in reverse order
+     */
     public function reverse($preserve_keys = true)
     {
         return new self(array_reverse($this->data, $preserve_keys));
@@ -727,13 +984,29 @@ class Collection implements Countable, ArrayAccess
         return false;
     }
 
+    /**
+     * Is this collection two-dimensional
+     *
+     * If all items of the collection are arrays this will return true.
+     *
+     * @return boolean whether this is two-dimensional
+     */
     public function is2D()
     {
         return !$this->contains(function($val){
             return !is_array($val);
         });
+        return false;
     }
 
+    /**
+     * Is this a tabular collection?
+     *
+     * If this is a two-dimensional collection with the same keys in every array,
+     * this method will return true.
+     *
+     * @return boolean Whether this is a tabular collection
+     */
     public function isTabular()
     {
         if ($this->is2D()) {
