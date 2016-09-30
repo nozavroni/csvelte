@@ -876,4 +876,13 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals(['f','g',['h','i','j'],'k','e','a','b','c','d'], $coll->unshift('f', 'g', ['h', 'i', 'j'], 'k')->toArray());
     }
 
+    public function testInsertItemAtPosition()
+    {
+        $coll = new Collection(['a','b','c','d','e']);
+        $coll->insert(2, 'a');
+        $this->assertEquals(['a','b','a','c','d','e'], $coll->toArray());
+        $coll->insert(10, 'october');
+        $this->assertEquals(['a','b','a','c','d','e','october'], $coll->toArray(), "Ensure inserting at a position greater than the collection has, just adds to the end of the collection.");
+    }
+
 }

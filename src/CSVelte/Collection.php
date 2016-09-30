@@ -486,6 +486,30 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
+     * "Insert" an item at a given numerical position.
+     *
+     * Regardless of how the collection is keyed (numerically or otherwise), this
+     * method will insert an item at a given numerical position. If the given
+     * position is more than there are items in the collection, the given item
+     * will simply be added to the end. Nothing is overwritten with this method.
+     * All elements that come after $offset will simply be shifted a space.
+     *
+     * Note: This method is one of the few that will modify the collection in
+     *       place rather than returning a new one.
+     *
+     * @param mixed ... The item(s) to push onto the top of the collection. You may
+     *     also add additional arguments to add multiple items
+     * @return $this
+     */
+    public function insert($offset, $item)
+    {
+        $top = array_slice($this->data, 0, $offset);
+        $bottom = array_slice($this->data, $offset);
+        $this->data = array_merge($top, [$item], $bottom);
+        return $this;
+    }
+
+    /**
      * Pad collection to specified length.
      *
      * Pad the collection to a specific length, filling it with a given value. A
