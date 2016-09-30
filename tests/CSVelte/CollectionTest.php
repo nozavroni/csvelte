@@ -853,4 +853,16 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals(['a','b','c'], $coll->toArray());
     }
 
+    /**
+     * Positional methods -- these allow the adding/removing from the beginning/end
+     * of an array, inserting at a given position, slicing, etc.
+     */
+
+    public function testPushItemsOntoCollectionAddsToEnd()
+    {
+        $coll = new Collection(['a','b','c','d']);
+        $this->assertEquals(['a','b','c','d','e'], $coll->push('e')->toArray());
+        $this->assertEquals(['a','b','c','d','e','f','g',['h','i','j'], 'k'], $coll->push('f', 'g', ['h', 'i', 'j'], 'k')->toArray());
+    }
+
 }

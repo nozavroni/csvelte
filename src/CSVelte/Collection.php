@@ -426,16 +426,33 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * "Pop" an item from the top of the collection.
+     * "Pop" an item from the end of a collection.
      *
-     * Removes an item from the top of the collection's underlying array and
-     * return it. This will actually remove the item from the collection.
+     * Removes an item from the bottom of the collection's underlying array and
+     * returns it. This will actually remove the item from the collection.
      *
-     * @return mixed Whatever the top-most item in the collection is
+     * @return mixed Whatever the last item in the collection is
      */
     public function pop()
     {
         return array_pop($this->data);
+    }
+
+    /**
+     * "Push" an item onto the end of the collection.
+     *
+     * Adds an item to the end of the collection's underlying array.
+     *
+     * @param mixed ... The item(s) to push onto the end of the collection. You may
+     *     also add additional arguments to push multiple items onto the end
+     * @return $this
+     */
+    public function push()
+    {
+        foreach (func_get_args() as $arg) {
+            array_push($this->data, $arg);
+        }
+        return $this;
     }
 
     /**
