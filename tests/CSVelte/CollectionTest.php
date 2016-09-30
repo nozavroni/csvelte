@@ -839,4 +839,18 @@ class CollectionTest extends UnitTestCase
         $coll->where('mixed', 0);
     }
 
+    /**
+     * Positional methods -- these allow the adding/removing from the beginning/end
+     * of an array, inserting at a given position, slicing, etc.
+     */
+
+    public function testPopReturnsAnItemAndRemovesItFromEnd()
+    {
+        $coll = new Collection(['a','b','c','d',$expected = 'pop goes the weasel']);
+        $this->assertEquals($expected, $coll->pop());
+        $this->assertEquals(['a','b','c','d'], $coll->toArray());
+        $this->assertEquals('d', $coll->pop());
+        $this->assertEquals(['a','b','c'], $coll->toArray());
+    }
+
 }

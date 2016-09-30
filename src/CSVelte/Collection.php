@@ -426,6 +426,19 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
+     * "Pop" an item from the top of the collection.
+     *
+     * Removes an item from the top of the collection's underlying array and
+     * return it. This will actually remove the item from the collection.
+     *
+     * @return mixed Whatever the top-most item in the collection is
+     */
+    public function pop()
+    {
+        return array_pop($this->data);
+    }
+
+    /**
      * Pad collection to specified length.
      *
      * Pad the collection to a specific length, filling it with a given value. A
