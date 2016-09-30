@@ -120,13 +120,13 @@ class ReaderTest extends UnitTestCase
 
     // if you need to get a stream for a uri/filename you need to use Stream::open()
     // or instantiate a resource manually
-    public function testReaderConstructorWillTreatAllTextAsCSVData()
-    {
-        $reader = new Reader($this->getFilePathFor('veryShort'));
-        $this->assertEquals(["vfs:","","root",'testfiles','veryShort.csv'], $reader->current()->toArray());
-        $reader = new Reader("i,am,a\nvry,short,csv\nfile,yes,sir\n");
-        $this->assertEquals(["i","am","a"], $reader->current()->toArray());
-    }
+    // public function testReaderConstructorWillTreatAllTextAsCSVData()
+    // {
+    //     $reader = new Reader($this->getFilePathFor('veryShort'));
+    //     $this->assertEquals(["vfs:","","root",'testfiles','veryShort.csv'], $reader->current()->toArray());
+    //     $reader = new Reader("i,am,a\nvry,short,csv\nfile,yes,sir\n");
+    //     $this->assertEquals(["i","am","a"], $reader->current()->toArray());
+    // }
 
     public function testReaderFilteredIterator()
     {

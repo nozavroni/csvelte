@@ -14,7 +14,11 @@ namespace CSVelte;
 
 use \DateTime;
 use CSVelte\Contract\Streamable;
+
+use \OutOfBoundsException;
 use CSVelte\Exception\TasterException;
+
+use function CSVelte\collect;
 
 /**
  * CSVelte\Taster
@@ -96,17 +100,14 @@ class Taster
     // abababab
     const TYPE_ALPHA = 'alpha';
 
-    /**
-     * @var \CSVelte\Contract\Readable The source of data to examine
-     * @access protected
-     */
+    /** @var \CSVelte\Contract\Readable The source of data to examine */
     protected $input;
 
-    /**
-     * Sample of CSV data to use for tasting (determining CSV flavor)
-     * @var string
-     */
+    /** @var string Sample of CSV data to use for tasting (determining CSV flavor) */
     protected $sample;
+
+    /** @var array Possible delimiter characters in (roughly) the order of likelihood */
+    protected $delims = [",", "\t", ";", "|", ":", "-", "_", "#", "/", '\\', '$', '+', '=', '&', '@'];
 
     /**
      * Class constructor--accepts a CSV input source
@@ -260,15 +261,23 @@ class Taster
             if (@preg_match_all($pattern, $this->sample, $matches) && $matches) break;
         }
         if ($matches) {
-            $quotes = array_count_values($matches['quoteChar']);
-            arsort($quotes);
-            $quotes = array_flip($quotes);
-            if ($theQuote = array_shift($quotes)) {
-                $delims = array_count_values($matches['delim']);
-                arsort($delims);
-                $delims = array_flip($delims);
-                $theDelim = array_shift($delims);
-                return array($theQuote, $theDelim);
+            try {
+                return [
+                    collect($matches)
+                        ->frequency()
+                        ->get('quoteChar')
+                        ->sort()
+                        ->reverse()
+                        ->getKeyAtPosition(0),
+                    collect($matches)
+                        ->frequency()
+                        ->get('delim')
+                        ->sort()
+                        ->reverse()
+                        ->getKeyAtPosition(0)
+                ];
+            } catch (OutOfBoundsException $e) {
+                // eat this exception and let the taster exception below be thrown instead...
             }
         }
         throw new TasterException("quoteChar and delimiter cannot be determined", TasterException::ERR_QUOTE_AND_DELIM);
@@ -285,44 +294,103 @@ class Taster
       *     variety of CSV data to be sure it works reliably. And I'm sure there
       *     are many performance and logic improvements that could be made. This
       *     is essentially a first draft.
-      * @todo Use replaceQuotedSpecialChars rather than removeQuotedStrings
+      * @todo Can't use replaceQuotedSpecialChars rather than removeQuotedStrings
+      *     because the former requires u to know the delimiter
       */
     protected function lickDelimiter($eol = "\n")
     {
-        $delimiters = array(",", "\t", "|", ":", ";", "/", '\\');
-        $lines = explode($eol, $this->removeQuotedStrings($this->sample));
-        $start = 0;
-        $charFrequency = array();
-        while ($start < count($lines)) {
-            foreach ($lines as $key => $line) {
-                if (!trim($line)) continue;
-                foreach ($delimiters as $char) {
-                    $freq = substr_count($line, $char);
-                    $charFrequency[$char][$key] = $freq;
-                }
-            }
-            $start++;
-        }
-        $averages = Utils::array_average($charFrequency);
-        $modes = Utils::array_mode($charFrequency);
-        $consistencies = array();
-        foreach ($averages as $achar => $avg) {
-            foreach ($modes as $mchar => $mode) {
-                if ($achar == $mchar) {
-                    if ($mode) {
-                        $consistencies[$achar] = $avg / $mode;
-                    } else {
-                        $consistencies[$achar] = 0;
+//         $this->sample = "Bank Name\tCity\tST\tCERT\tAcquiring Institution\tClosing Date\tUpdated Date\nFirst CornerStone Bank\tKing of Prussia\tPA\t35312\t\"First-Citizens Bank & \tTrust\", Company\t6-May-16\t25-May-16\nTrust Company Bank\tMemphis\tTN\t9956\tThe Bank of Fayette County\t29-Apr-16\t25-May-16\nNorth Milwaukee, State Bank\tMilwaukee\tWI\t20364\tFirst-Citizens Bank & Trust Company\t11-Mar-16\t16-Jun-16\nHometown National Bank\tLongview\tWA\t35156\tTwin City Bank\t2-Oct-15\t13-Apr-16\nThe Bank of Georgia\tPeachtree City\tGA\t35259\tFidelity Bank\t2-Oct-15\t13-Apr-16\nPremier Bank\tDenver\tCO\t34112\t\"United Fidelity \r\n
+//  \r \r \n \r\n Bank\t fsb\"\t10-Jul-15\t17-Dec-15\nEdgebrook Bank\tChicago\tIL\t57772\tRepublic Bank of Chicago\t8-May-15\t2-Jun-16\nDoral Bank\tSan Juan\tPR\t32102\tBanco, Popular de Puerto Rico\t27-Feb-15\t13-May-15\nCapitol, City, Bank & Trust Company\tAtlanta\tGA\t33938\tFirst-Citizens Bank & Trust Company\t13-Feb-15\t21-Apr-15\nHighland Community Bank\tChicago\tIL\t20290\t\"United Fidelity Bank, fsb\"\t23-Jan-15\t21-Apr-15\nFirst National Bank of Crestview \tCrestview\tFL\t17557\tFirst NBC Bank\t16-Jan-15\t15-Jan-16\nNorthern Star Bank\tMankato\tMN\t34983\tBankVista\t19-Dec-14\t6-Jan-16\n\"Frontier\"\"s Bank, FSB D/B/A El Paseo Bank\"\tPalm Desert\tCA\t34738\t\"Bank of Southern California, N.A.\"\t7-Nov-14\t6-Jan-16\nThe National Republic Bank of Chicago\tChicago\tIL\t916\tState Bank of Texas\t24-Oct-14\t6-Jan-16\n\"NBRS\t,Financial\"\tRising Sun\tMD\t4862\tHoward Bank\t17-Oct-14\t26-Mar-15\n\"GreenChoice\"\"s Bank, fsb\"\tChicago\tIL\t28462\t\"Providence, Bank, LLC\"\t25-Jul-14\t28-Jul-15\nEastside Commercial, Bank\tConyers\tGA\t58125\tCommunity & Southern Bank\t18-Jul-14\t28-Jul-15\n\"The\t, Freedom\t State Bank\" \tFreedom\tOK\t12483\tAlva State Bank & Trust Company\t27-Jun-14\t25-Mar-16\nValley Bank\tFort Lauderdale\tFL\t21793\t\"Landmark Bank, National Association\"\t20-Jun-14\t29-Jun-15\nValley Bank\tMoline\tIL\t10450\tGreat Southern, Bank\t20-Jun-14\t26-Jun-15\nSlavie Federal Savings Bank\tBel Air\tMD\t32368\t\"Bay Bank, FSB\"\t30-May-14\t15-Jun-15\nColumbia, Savings, Bank\tCincinnati\tOH\t32284\t\"United Fidelity Bank, fsb\"\t23-May-14\t28-May-15\n\"AztecAmerica,\tBank\"\t Berwyn\tIL\t57866\tRepublic Bank of Chicago\t16-May-14\t18-Jul-14\nAllendale County Bank\tFairfax\tSC\t15062\tPalmetto State Bank\t25-Apr-14\t18-Jul-14\nVantage Point Bank\tHorsham\tPA\t58531\tFirst Choice Bank\t28-Feb-14\t3-Mar-15\n\"Millennium Bank, National\nAssociation\"\tSterling\tVA\t35096\tWashingtonFirst Bank\t28-Feb-14\t3-Mar-15\nSyringa Bank\tBoise\tID\t34296\tSunwest Bank\t31-Jan-14\t12-Apr-16\nThe Bank of Union\tEl Reno\tOK\t17967\tBancFirst\t24-Jan-14\t25-Mar-16\nDuPage National Bank\tWest Chicago\tIL\t5732\tRepublic Bank";
+//  $this->sample = "Bank Name\tCity\tST\tCERT\tAcquiring Institution\tClosing Date\tUpdated Date\nFirst CornerStone Bank\tKing of Prussia\tPA\t35312\t\"FirstCitizens Bank & \tTrust\", Company\t6-May-16\t25-May-16\nTrust Company Bank\tMemphis\tTN\t9956\tThe Bank of Fayette County\t29-Apr-16\t25-May-16\nNorth Milwaukee, State Bank\tMilwaukee\tWI\t20364\tFirstCitizens Bank & Trust Company\t11-Mar-16\t16-Jun-16\nHometown National Bank\tLongview\tWA\t35156\tTwin City Bank\t2-Oct-15\t13-Apr-16\nThe Bank of Georgia\tPeachtree City\tGA\t35259\tFidelity Bank\t2-Oct-15\t13-Apr-16\nPremier Bank\tDenver\tCO\t34112\t\"United Fidelity \r\n
+// \r \r \n \r\n Bank\t fsb\"\t10-Jul-15\t17-Dec-15\nEdgebrook Bank\tChicago\tIL\t57772\tRepublic Bank of Chicago\t8-May-15\t2-Jun-16\nDoral Bank\tSan Juan\tPR\t32102\tBanco, Popular de Puerto Rico\t27-Feb-15\t13-May-15\nCapitol, City, Bank & Trust Company\tAtlanta\tGA\t33938\tFirstCitizens Bank & Trust Company\t13-Feb-15\t21-Apr-15\nHighland Community Bank\tChicago\tIL\t20290\t\"United Fidelity Bank, fsb\"\t23-Jan-15\t21-Apr-15\nFirst National Bank of Crestview \tCrestview\tFL\t17557\tFirst NBC Bank\t16-Jan-15\t15-Jan-16\nNorthern Star Bank\tMankato\tMN\t34983\tBankVista\t19-Dec-14\t6-Jan-16\n\"Frontier\"\"s Bank, FSB D/B/A El Paseo Bank\"\tPalm Desert\tCA\t34738\t\"Bank of Southern California, N.A.\"\t7-Nov-14\t6-Jan-16\nThe National Republic Bank of Chicago\tChicago\tIL\t916\tState Bank of Texas\t24-Oct-14\t6-Jan-16\n\"NBRS\t,Financial\"\tRising Sun\tMD\t4862\tHoward Bank\t17-Oct-14\t26-Mar-15\n\"GreenChoice\"\"s Bank, fsb\"\tChicago\tIL\t28462\t\"Providence, Bank, LLC\"\t25-Jul-14\t28-Jul-15\nEastside Commercial, Bank\tConyers\tGA\t58125\tCommunity & Southern Bank\t18-Jul-14\t28-Jul-15\n\"The\t, Freedom\t State Bank\" \tFreedom\tOK\t12483\tAlva State Bank & Trust Company\t27-Jun-14\t25-Mar-16\nValley Bank\tFort Lauderdale\tFL\t21793\t\"Landmark Bank, National Association\"\t20-Jun-14\t29-Jun-15\nValley Bank\tMoline\tIL\t10450\tGreat Southern, Bank\t20-Jun-14\t26-Jun-15\nSlavie Federal Savings Bank\tBel Air\tMD\t32368\t\"Bay Bank, FSB\"\t30-May-14\t15-Jun-15\nColumbia, Savings, Bank\tCincinnati\tOH\t32284\t\"United Fidelity Bank, fsb\"\t23-May-14\t28-May-15\n\"AztecAmerica,\tBank\"\t Berwyn\tIL\t57866\tRepublic Bank of Chicago\t16-May-14\t18-Jul-14\nAllendale County Bank\tFairfax\tSC\t15062\tPalmetto State Bank\t25-Apr-14\t18-Jul-14\nVantage Point Bank\tHorsham\tPA\t58531\tFirst Choice Bank\t28-Feb-14\t3-Mar-15\n\"Millennium Bank, National\nAssociation\"\tSterling\tVA\t35096\tWashingtonFirst Bank\t28-Feb-14\t3-Mar-15\nSyringa Bank\tBoise\tID\t34296\tSunwest Bank\t31-Jan-14\t12-Apr-16\nThe Bank of Union\tEl Reno\tOK\t17967\tBancFirst\t24-Jan-14\t25-Mar-16\n";
+//
+// //dd($this->sample);
+
+        $frequencies = [];
+        $consistencies = [];
+
+        // build a table of characters and their frequencies for each line. We
+        // will use this frequency table to then build a table of frequencies of
+        // each frequency (in 10 lines, "tab" occurred 5 times on 7 of those
+        // lines, 6 times on 2 lines, and 7 times on 1 line)
+        $lines = collect(explode($eol, $this->removeQuotedStrings($this->sample)))
+            ->pop(true)
+            ->filter(function($str){ return (bool) trim($str); })
+            ->walk(function($line, $line_no) use (&$frequencies) {
+                $freq = collect(str_split($line))
+                    ->filter(function($c) { return collect($this->delims)->contains($c); })
+                    ->frequency()
+                    ->sort()
+                    ->reverse()
+                    ->walk(function($count, $char) use (&$frequencies, $line_no) {
+                        $frequencies[$char][$line_no] = $count;
+                    });
+            })
+            // the above only finds frequencies for characters if they exist in
+            // a given line. This will go back and fill in zeroes where a char
+            // didn't occur at all in a given line (needed to determine mode)
+            ->walk(function($line, $line_no) use (&$frequencies) {
+                collect($frequencies)
+                    ->walk(function($counts, $char) use ($line_no, &$frequencies) {
+                        if (!isset($frequencies[$char][$line_no])) {
+                            $frequencies[$char][$line_no] = 0;
+                        }
+                    });
+            });
+
+        // now determine the mode for each char to decide the "expected" amount
+        // of times a char (possible delim) will occur on each line...
+        $freqs = collect($frequencies);
+        $modes = $freqs->mode();
+        $averages = $freqs->average();
+        $freqs->walk(function($f, $chr) use ($modes, &$consistencies) {
+            collect($f)->walk(function($num) use ($modes, $chr, &$consistencies) {
+                if ($expected = $modes->get($chr)) {
+                    if ($num == $expected) {
+                        // met the goal, yay!
+                        if (!isset($consistencies[$chr])) {
+                            $consistencies[$chr] = 0;
+                        }
+                        $consistencies[$chr]++;
                     }
-                    break;
                 }
-            }
+            });
+        });
+
+        //$consistencies = ['-' => 27, ',' => 29, "\t" => 29, '_' => 22];
+        $delims = collect($consistencies);
+        $max = $delims->max();
+        $dups = $delims->duplicates();
+        if ($dups->has($max, false)) {
+            // if more than one candidate, then look at where the character appeared
+            // in the data. Was it relatively evenly distributed or was there a
+            // specific area that the character tended to appear? Dates will have a
+            // consistent format (e.g. 04-23-1986) and so may easily provide a false
+            // positive for delimiter. But the dash will be focused in that one area,
+            // whereas the comma character is spread out. You can determine this by
+            // finding out the number of chars between each occurrence and getting
+            // the average. If the average is wildly different than any given distance
+            // than bingo you probably aren't working with a delimiter there...
+
+            /**
+             * @todo Add a method here to figure out where duplicate best-match
+             *     delimiter(s) fall within each line and then, depending on
+             *     which one has the best distribution, return that one.
+             */
+
+             // if somehow we STILL can't come to a consensus, then fall back to a
+             // "preferred delimiters" list...
+             $decision = $dups->get($max);
+             foreach ($this->delims as $key => $val) {
+                if ($delim = array_search($val, $decision)) return $delim;
+             }
         }
-        if (empty($consistencies)) {
-            throw new TasterException('Cannot determine delimiter character', TasterException::ERR_DELIMITER);
-        }
-        arsort($consistencies);
-        return key($consistencies);
+
+        $delim = $delims
+            ->sort()
+            ->reverse()
+            ->getKeyAtPosition(0);
+        return $delim;
     }
 
     /**

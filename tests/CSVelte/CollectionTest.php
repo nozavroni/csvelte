@@ -885,4 +885,11 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals(['a','b','a','c','d','e','october'], $coll->toArray(), "Ensure inserting at a position greater than the collection has, just adds to the end of the collection.");
     }
 
+    public function testDuplicatesReturnsCollectionOfDupsAndKeys()
+    {
+        $coll = new Collection(['a','b','c','c','a','d','e','f','g','h','c','h','i','j','k']);
+        $dups = $coll->duplicates();
+        $this->assertEquals(['a' => [0,4], 'c' => [2,3,10], 'h' => [9,11]], $dups->toArray());
+    }
+
 }

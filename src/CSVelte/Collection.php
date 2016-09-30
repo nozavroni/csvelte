@@ -431,11 +431,14 @@ class Collection implements Countable, ArrayAccess
      * Removes an item from the bottom of the collection's underlying array and
      * returns it. This will actually remove the item from the collection.
      *
+     * @param boolean $discard Whether to discard the popped item and return
+     *     $this instead of the default behavior
      * @return mixed Whatever the last item in the collection is
      */
-    public function pop()
+    public function pop($discard = false)
     {
-        return array_pop($this->data);
+        $popped = array_pop($this->data);
+        return ($discard) ? $this : $popped;
     }
 
     /**
@@ -444,11 +447,14 @@ class Collection implements Countable, ArrayAccess
      * Removes an item from the top of the collection's underlying array and
      * returns it. This will actually remove the item from the collection.
      *
+     * @param boolean $discard Whether to discard the shifted item and return
+     *     $this instead of the default behavior
      * @return mixed Whatever the first item in the collection is
      */
-    public function shift()
+    public function shift($discard = false)
     {
-        return array_shift($this->data);
+        $shifted = array_shift($this->data);
+        return ($discard) ? $this : $shifted;
     }
 
     /**
@@ -808,6 +814,25 @@ class Collection implements Countable, ArrayAccess
             return $condRet;
         }
         return new self(array_unique($this->data));
+    }
+
+    /**
+     * Get duplicate values.
+     *
+     * Returns a collection of arrays where the key is the duplicate value
+     * and the value is an array of keys from the original collection.
+     *
+     * @return CSVelte\Collection A new collection with duplicate values.
+     */
+    public function duplicates()
+    {
+        $dups = [];
+        $this->walk(function($val, $key) use (&$dups) {
+            $dups[$val][] = $key;
+        });
+        return (new self($dups))->filter(function($val, $key) {
+            return (count($val) > 1);
+        });
     }
 
     /**
