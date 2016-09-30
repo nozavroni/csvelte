@@ -853,16 +853,27 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals(['a','b','c'], $coll->toArray());
     }
 
-    /**
-     * Positional methods -- these allow the adding/removing from the beginning/end
-     * of an array, inserting at a given position, slicing, etc.
-     */
+    public function testShiftReturnsAnItemAndRemovesItFromBeginning()
+    {
+        $coll = new Collection([$expected = 'a','b','c','d','pop goes the weasel']);
+        $this->assertEquals($expected, $coll->shift());
+        $this->assertEquals(['b','c','d','pop goes the weasel'], $coll->toArray());
+        $this->assertEquals('b', $coll->shift());
+        $this->assertEquals(['c','d','pop goes the weasel'], $coll->toArray());
+    }
 
     public function testPushItemsOntoCollectionAddsToEnd()
     {
         $coll = new Collection(['a','b','c','d']);
         $this->assertEquals(['a','b','c','d','e'], $coll->push('e')->toArray());
         $this->assertEquals(['a','b','c','d','e','f','g',['h','i','j'], 'k'], $coll->push('f', 'g', ['h', 'i', 'j'], 'k')->toArray());
+    }
+
+    public function testUnshiftAddsToBeginningOfCollection()
+    {
+        $coll = new Collection(['a','b','c','d']);
+        $this->assertEquals(['e','a','b','c','d'], $coll->unshift('e')->toArray());
+        $this->assertEquals(['f','g',['h','i','j'],'k','e','a','b','c','d'], $coll->unshift('f', 'g', ['h', 'i', 'j'], 'k')->toArray());
     }
 
 }

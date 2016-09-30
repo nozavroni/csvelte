@@ -439,9 +439,22 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
+     * "Shift" an item from the top of a collection.
+     *
+     * Removes an item from the top of the collection's underlying array and
+     * returns it. This will actually remove the item from the collection.
+     *
+     * @return mixed Whatever the first item in the collection is
+     */
+    public function shift()
+    {
+        return array_shift($this->data);
+    }
+
+    /**
      * "Push" an item onto the end of the collection.
      *
-     * Adds an item to the end of the collection's underlying array.
+     * Adds item(s) to the end of the collection's underlying array.
      *
      * @param mixed ... The item(s) to push onto the end of the collection. You may
      *     also add additional arguments to push multiple items onto the end
@@ -451,6 +464,23 @@ class Collection implements Countable, ArrayAccess
     {
         foreach (func_get_args() as $arg) {
             array_push($this->data, $arg);
+        }
+        return $this;
+    }
+
+    /**
+     * "Unshift" an item onto the beginning of the collection.
+     *
+     * Adds item(s) to the beginning of the collection's underlying array.
+     *
+     * @param mixed ... The item(s) to push onto the top of the collection. You may
+     *     also add additional arguments to add multiple items
+     * @return $this
+     */
+    public function unshift()
+    {
+        foreach (array_reverse(func_get_args()) as $arg) {
+            array_unshift($this->data, $arg);
         }
         return $this;
     }
