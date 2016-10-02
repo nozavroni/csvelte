@@ -39,7 +39,12 @@ class TasterTest extends UnitTestCase
         $stream = streamize($this->getFileContentFor('noHeaderCommaNoQuotes'));
         $taster = new Taster($stream);
         $flavor = $taster->lick();
-        $this->assertEquals(Flavor::QUOTE_NONE, $flavor->quoteStyle);
+        $this->assertEquals(Flavor::QUOTE_NONE, $flavor->quoteStyle, sprintf(
+            'Assert that %s guesses quoting style to be %s for %s',
+            'Taster::lick()',
+            'Flavor::QUOTE_NONE',
+            $this->getFilePathFor('noHeaderCommaNoQuotes')
+        ));
     }
 
     /**

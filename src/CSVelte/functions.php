@@ -135,12 +135,19 @@ function taste_has_header(Streamable $str)
 }
 
 /**
- * Collection factory function
+ * Collection factory.
  *
- * @param  $in [description]
- * @return [type]     [description]
+ * Simply an alias to (new Collection($in)). Allows for a little more concise and
+ * simpler instantiation of a collection. Also I plan to eventually support
+ * additional input types that will make this function more flexible and forgiving
+ * than simply instantiating a Collection object, but for now the two are identical.
+ *
+ * @param array|Iterator $in Either an array or an iterator of data
+ * @return \CSVelte\Collection A collection object containing data from $in
+ * @see CSVelte\Collection::__construct() (alias)
+ * )
  */
-function collect($in)
+function collect($in = null)
 {
     return new Collection($in);
 }

@@ -15,6 +15,7 @@ namespace CSVelte;
 use \DateTime;
 use CSVelte\Contract\Streamable;
 
+use \Exception;
 use \OutOfBoundsException;
 use CSVelte\Exception\TasterException;
 
@@ -302,8 +303,9 @@ class Taster
 //         $this->sample = "Bank Name\tCity\tST\tCERT\tAcquiring Institution\tClosing Date\tUpdated Date\nFirst CornerStone Bank\tKing of Prussia\tPA\t35312\t\"First-Citizens Bank & \tTrust\", Company\t6-May-16\t25-May-16\nTrust Company Bank\tMemphis\tTN\t9956\tThe Bank of Fayette County\t29-Apr-16\t25-May-16\nNorth Milwaukee, State Bank\tMilwaukee\tWI\t20364\tFirst-Citizens Bank & Trust Company\t11-Mar-16\t16-Jun-16\nHometown National Bank\tLongview\tWA\t35156\tTwin City Bank\t2-Oct-15\t13-Apr-16\nThe Bank of Georgia\tPeachtree City\tGA\t35259\tFidelity Bank\t2-Oct-15\t13-Apr-16\nPremier Bank\tDenver\tCO\t34112\t\"United Fidelity \r\n
 //  \r \r \n \r\n Bank\t fsb\"\t10-Jul-15\t17-Dec-15\nEdgebrook Bank\tChicago\tIL\t57772\tRepublic Bank of Chicago\t8-May-15\t2-Jun-16\nDoral Bank\tSan Juan\tPR\t32102\tBanco, Popular de Puerto Rico\t27-Feb-15\t13-May-15\nCapitol, City, Bank & Trust Company\tAtlanta\tGA\t33938\tFirst-Citizens Bank & Trust Company\t13-Feb-15\t21-Apr-15\nHighland Community Bank\tChicago\tIL\t20290\t\"United Fidelity Bank, fsb\"\t23-Jan-15\t21-Apr-15\nFirst National Bank of Crestview \tCrestview\tFL\t17557\tFirst NBC Bank\t16-Jan-15\t15-Jan-16\nNorthern Star Bank\tMankato\tMN\t34983\tBankVista\t19-Dec-14\t6-Jan-16\n\"Frontier\"\"s Bank, FSB D/B/A El Paseo Bank\"\tPalm Desert\tCA\t34738\t\"Bank of Southern California, N.A.\"\t7-Nov-14\t6-Jan-16\nThe National Republic Bank of Chicago\tChicago\tIL\t916\tState Bank of Texas\t24-Oct-14\t6-Jan-16\n\"NBRS\t,Financial\"\tRising Sun\tMD\t4862\tHoward Bank\t17-Oct-14\t26-Mar-15\n\"GreenChoice\"\"s Bank, fsb\"\tChicago\tIL\t28462\t\"Providence, Bank, LLC\"\t25-Jul-14\t28-Jul-15\nEastside Commercial, Bank\tConyers\tGA\t58125\tCommunity & Southern Bank\t18-Jul-14\t28-Jul-15\n\"The\t, Freedom\t State Bank\" \tFreedom\tOK\t12483\tAlva State Bank & Trust Company\t27-Jun-14\t25-Mar-16\nValley Bank\tFort Lauderdale\tFL\t21793\t\"Landmark Bank, National Association\"\t20-Jun-14\t29-Jun-15\nValley Bank\tMoline\tIL\t10450\tGreat Southern, Bank\t20-Jun-14\t26-Jun-15\nSlavie Federal Savings Bank\tBel Air\tMD\t32368\t\"Bay Bank, FSB\"\t30-May-14\t15-Jun-15\nColumbia, Savings, Bank\tCincinnati\tOH\t32284\t\"United Fidelity Bank, fsb\"\t23-May-14\t28-May-15\n\"AztecAmerica,\tBank\"\t Berwyn\tIL\t57866\tRepublic Bank of Chicago\t16-May-14\t18-Jul-14\nAllendale County Bank\tFairfax\tSC\t15062\tPalmetto State Bank\t25-Apr-14\t18-Jul-14\nVantage Point Bank\tHorsham\tPA\t58531\tFirst Choice Bank\t28-Feb-14\t3-Mar-15\n\"Millennium Bank, National\nAssociation\"\tSterling\tVA\t35096\tWashingtonFirst Bank\t28-Feb-14\t3-Mar-15\nSyringa Bank\tBoise\tID\t34296\tSunwest Bank\t31-Jan-14\t12-Apr-16\nThe Bank of Union\tEl Reno\tOK\t17967\tBancFirst\t24-Jan-14\t25-Mar-16\nDuPage National Bank\tWest Chicago\tIL\t5732\tRepublic Bank";
 //  $this->sample = "Bank Name\tCity\tST\tCERT\tAcquiring Institution\tClosing Date\tUpdated Date\nFirst CornerStone Bank\tKing of Prussia\tPA\t35312\t\"FirstCitizens Bank & \tTrust\", Company\t6-May-16\t25-May-16\nTrust Company Bank\tMemphis\tTN\t9956\tThe Bank of Fayette County\t29-Apr-16\t25-May-16\nNorth Milwaukee, State Bank\tMilwaukee\tWI\t20364\tFirstCitizens Bank & Trust Company\t11-Mar-16\t16-Jun-16\nHometown National Bank\tLongview\tWA\t35156\tTwin City Bank\t2-Oct-15\t13-Apr-16\nThe Bank of Georgia\tPeachtree City\tGA\t35259\tFidelity Bank\t2-Oct-15\t13-Apr-16\nPremier Bank\tDenver\tCO\t34112\t\"United Fidelity \r\n
-// \r \r \n \r\n Bank\t fsb\"\t10-Jul-15\t17-Dec-15\nEdgebrook Bank\tChicago\tIL\t57772\tRepublic Bank of Chicago\t8-May-15\t2-Jun-16\nDoral Bank\tSan Juan\tPR\t32102\tBanco, Popular de Puerto Rico\t27-Feb-15\t13-May-15\nCapitol, City, Bank & Trust Company\tAtlanta\tGA\t33938\tFirstCitizens Bank & Trust Company\t13-Feb-15\t21-Apr-15\nHighland Community Bank\tChicago\tIL\t20290\t\"United Fidelity Bank, fsb\"\t23-Jan-15\t21-Apr-15\nFirst National Bank of Crestview \tCrestview\tFL\t17557\tFirst NBC Bank\t16-Jan-15\t15-Jan-16\nNorthern Star Bank\tMankato\tMN\t34983\tBankVista\t19-Dec-14\t6-Jan-16\n\"Frontier\"\"s Bank, FSB D/B/A El Paseo Bank\"\tPalm Desert\tCA\t34738\t\"Bank of Southern California, N.A.\"\t7-Nov-14\t6-Jan-16\nThe National Republic Bank of Chicago\tChicago\tIL\t916\tState Bank of Texas\t24-Oct-14\t6-Jan-16\n\"NBRS\t,Financial\"\tRising Sun\tMD\t4862\tHoward Bank\t17-Oct-14\t26-Mar-15\n\"GreenChoice\"\"s Bank, fsb\"\tChicago\tIL\t28462\t\"Providence, Bank, LLC\"\t25-Jul-14\t28-Jul-15\nEastside Commercial, Bank\tConyers\tGA\t58125\tCommunity & Southern Bank\t18-Jul-14\t28-Jul-15\n\"The\t, Freedom\t State Bank\" \tFreedom\tOK\t12483\tAlva State Bank & Trust Company\t27-Jun-14\t25-Mar-16\nValley Bank\tFort Lauderdale\tFL\t21793\t\"Landmark Bank, National Association\"\t20-Jun-14\t29-Jun-15\nValley Bank\tMoline\tIL\t10450\tGreat Southern, Bank\t20-Jun-14\t26-Jun-15\nSlavie Federal Savings Bank\tBel Air\tMD\t32368\t\"Bay Bank, FSB\"\t30-May-14\t15-Jun-15\nColumbia, Savings, Bank\tCincinnati\tOH\t32284\t\"United Fidelity Bank, fsb\"\t23-May-14\t28-May-15\n\"AztecAmerica,\tBank\"\t Berwyn\tIL\t57866\tRepublic Bank of Chicago\t16-May-14\t18-Jul-14\nAllendale County Bank\tFairfax\tSC\t15062\tPalmetto State Bank\t25-Apr-14\t18-Jul-14\nVantage Point Bank\tHorsham\tPA\t58531\tFirst Choice Bank\t28-Feb-14\t3-Mar-15\n\"Millennium Bank, National\nAssociation\"\tSterling\tVA\t35096\tWashingtonFirst Bank\t28-Feb-14\t3-Mar-15\nSyringa Bank\tBoise\tID\t34296\tSunwest Bank\t31-Jan-14\t12-Apr-16\nThe Bank of Union\tEl Reno\tOK\t17967\tBancFirst\t24-Jan-14\t25-Mar-16\n";
-//
+// \r \r \n \r\n Bank\t fsb\"\t10-Jul-15\t17-Dec-15\nEdgebrook Bank\tChicago\tIL\t57772\tRepublic Bank of Chicago\t8-May-15\t2-Jun-16\nDoral Bank\tSan Juan\tPR\t32102\tBanco, Popular de Puerto Rico\t27-Feb-15\t13-May-15\nCapitol, City, Bank & Trust Company\tAtlanta\tGA\t33938\tFirstCitizens Bank & Trust Company\t13-Feb-15\t21-Apr-15\nHighland Community Bank\tChicago\tIL\t20290\t\"United Fidelity Bank, fsb\"\t23-Jan-15\t21-Apr-15\nFirst National Bank of Crestview \tCrestview\tFL\t17557\tFirst NBC Bank\t16-Jan-15\t15-Jan-16\nNorthern Star Bank\tMankato\tMN\t34983\tBankVista\t19-Dec-14\t6-Jan-16\n\"Frontier\"\"s Bank, FSB D/B/A El Paseo Bank\"\tPalm Desert\tCA\t34738\t\"Bank of Southern California, N.A.\"\t7-Nov-14\t6-Jan-16\nThe National Republic Bank of Chicago\tChicago\tIL\t916\tState Bank of Texas\t24-Oct-14\t6-Jan-16\n\"NBRS\t,Financial\"\tRising Sun\tMD\t4862\tHoward Bank\t17-Oct-14\t26-Mar-15\n\"GreenChoice\"\"s Bank, fsb\"\tChicago\tIL\t28462\t\"Providence, Bank, LLC\"\t25-Jul-14\t28-Jul-15\nEastside Commercial, Bank\tConyers\tGA\t58125\tCommunity & Southern Bank\t18-Jul-14\t28-Jul-15\n\"The\t, Freedom\t State Bank\" \tFreedom\tOK\t12483\tAlva State Bank & Trust Company\t27-Jun-14\t25-Mar-16\nValley Bank\tFort Lauderdale\tFL\t21793\t\"Landmark Bank, National Association\"\t20-Jun-14\t29-Jun-15\nValley Bank\tMoline\tIL\t10450\tGreat Southern, Bank\t20-Jun-14\t26-Jun-15\nSlavie Federal Savings Bank\tBel Air\tMD\t32368\t\"Bay Bank, FSB\"\t30-May-14\t15-Jun-15\nColumbia, Savings, Bank\tCincinnati\tOH\t32284\t\"United Fidelity Bank, fsb\"\t23-May-14\t28-May-15\n\"AztecAmerica,\tBank\"\t Berwyn\tIL\t57866\tRepublic Bank of Chicago\t16-May-14\t18-Jul-14\nAllendale County Bank\tFairfax\tSC\t15062\tPalmetto State Bank\t25-Apr-14\t18-Jul-14\nVantage Point Bank\tHorsham\tPA\t58531\tFirst Choice Bank\t28-Feb-14\t3-Mar-15\n\"Millennium Bank, National\nAssociation\"\tSterling\tVA\t35096\tWashingtonFirst Bank\t28-Feb-14\t3-Mar-15\nSyringa Bank\tBoise\tID\t34296\tSunwest Bank\t31-Jan-14\t12-Apr-16\nThe Bank of Union\tEl Reno\tOK\t17967\tBancFirst\t24-Jan-14\t25-Mar-16
+// ";
+
 // //dd($this->sample);
 
         $frequencies = [];
@@ -313,9 +315,7 @@ class Taster
         // will use this frequency table to then build a table of frequencies of
         // each frequency (in 10 lines, "tab" occurred 5 times on 7 of those
         // lines, 6 times on 2 lines, and 7 times on 1 line)
-        $lines = collect(explode($eol, $this->removeQuotedStrings($this->sample)))
-            ->pop(true)
-            ->filter(function($str){ return (bool) trim($str); })
+        collect(explode($eol, $this->removeQuotedStrings($this->sample)))
             ->walk(function($line, $line_no) use (&$frequencies) {
                 $freq = collect(str_split($line))
                     ->filter(function($c) { return collect($this->delims)->contains($c); })
@@ -357,7 +357,6 @@ class Taster
             });
         });
 
-        //$consistencies = ['-' => 27, ',' => 29, "\t" => 29, '_' => 22];
         $delims = collect($consistencies);
         $max = $delims->max();
         $dups = $delims->duplicates();
@@ -372,25 +371,92 @@ class Taster
             // the average. If the average is wildly different than any given distance
             // than bingo you probably aren't working with a delimiter there...
 
+            // another option to find the delimiter if there is a tie, is to build
+            // a table of character position within each line. Then use that to
+            // determine if one character is consistently in the same position or
+            // at least the same general area. Use the delimiter that is the most
+            // consistent in that way...
+
             /**
              * @todo Add a method here to figure out where duplicate best-match
              *     delimiter(s) fall within each line and then, depending on
              *     which one has the best distribution, return that one.
              */
 
-             // if somehow we STILL can't come to a consensus, then fall back to a
-             // "preferred delimiters" list...
              $decision = $dups->get($max);
-             foreach ($this->delims as $key => $val) {
-                if ($delim = array_search($val, $decision)) return $delim;
+             try {
+                 $delim = $this->guessDelimByDistribution($decision, $eol);
+             } catch (TasterException $e) {
+                 // if somehow we STILL can't come to a consensus, then fall back to a
+                 // "preferred delimiters" list...
+                 foreach ($this->delims as $key => $val) {
+                    if ($delim = array_search($val, $decision)) return $delim;
+                 }
              }
         }
-
-        $delim = $delims
+        return $delims
             ->sort()
-            ->reverse()
             ->getKeyAtPosition(0);
-        return $delim;
+    }
+
+    /**
+     * Compare positional consistency of several characters to determine the
+     * probable delimiter character. The idea behind this is that the delimiter
+     * character is likely more consistently distributed than false-positive
+     * delimiter characters produced by lickDelimiter(). For instance, consider
+     * a series of rows similar to the following:
+     *
+     * 1,luke,visinoni,luke.visinoni@gmail.com,(530) 413-3076,04-23-1986
+     *
+     * The lickDelimiter() method will often not be able to determine whether the
+     * delimiter is a comma or a dash because they occur the same number of times
+     * on just about every line (5 for comma, 3 for dash). The difference is
+     * obvious to you, no doubt. But us humans are pattern-recognition machines!
+     * The difference between the comma and the dash are that the comma is dist-
+     * ributed almost evenly throughout the line. The dash characters occur
+     * entirely at the end of the line. This method accepts any number of possible
+     * delimiter characters and returns the one that is distributed
+     *
+     * If delim character cannot be determined by lickQuoteAndDelim(), taster
+     * tries lickDelimiter(). When that method runs into a tie, it will use this
+     * as a tie-breaker.
+     *
+     * @param array $delims Possible delimiter characters (method chooses from
+     *     this array of characters)
+     * @return string The probable delimiter character
+     */
+    protected function guessDelimByDistribution(array $delims, $eol = "\n")
+    {
+        try {
+            // @todo Write a method that does this...
+            $lines = collect(explode($eol, $this->removeQuotedStrings($this->sample)));
+            dd($lines);
+            return $delims[collect($delims)->map(function($delim) use (&$distrib, $lines) {
+                $linedist = collect();
+                $lines->walk(function($line, $line_no) use (&$linedist, $delim) {
+                    if (!strlen($line)) return;
+                    $sectstot = 10;
+                    $sectlen = (int) (strlen($line) / $sectstot);
+                    $sections = collect(str_split($line, $sectlen))
+                        ->map(function($section) use($delim) {
+                            return substr_count($section, $delim);
+                        })
+                        ->filter(function($count) { return (bool) $count; });
+                    if (is_numeric($count = $sections->count())) {
+                        $linedist->set($line_no, $count / $sectstot);
+                    } else {
+                        // doo doo doo nothing to do here...
+                    }
+                });
+                return $linedist;
+            })->map(function($dists) {
+                return $dists->average();
+            })->sort()
+              ->reverse()
+              ->getKeyAtPosition(0)];
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
     /**
