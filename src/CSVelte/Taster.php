@@ -300,14 +300,6 @@ class Taster
       */
     protected function lickDelimiter($eol = "\n")
     {
-//         $this->sample = "Bank Name\tCity\tST\tCERT\tAcquiring Institution\tClosing Date\tUpdated Date\nFirst CornerStone Bank\tKing of Prussia\tPA\t35312\t\"First-Citizens Bank & \tTrust\", Company\t6-May-16\t25-May-16\nTrust Company Bank\tMemphis\tTN\t9956\tThe Bank of Fayette County\t29-Apr-16\t25-May-16\nNorth Milwaukee, State Bank\tMilwaukee\tWI\t20364\tFirst-Citizens Bank & Trust Company\t11-Mar-16\t16-Jun-16\nHometown National Bank\tLongview\tWA\t35156\tTwin City Bank\t2-Oct-15\t13-Apr-16\nThe Bank of Georgia\tPeachtree City\tGA\t35259\tFidelity Bank\t2-Oct-15\t13-Apr-16\nPremier Bank\tDenver\tCO\t34112\t\"United Fidelity \r\n
-//  \r \r \n \r\n Bank\t fsb\"\t10-Jul-15\t17-Dec-15\nEdgebrook Bank\tChicago\tIL\t57772\tRepublic Bank of Chicago\t8-May-15\t2-Jun-16\nDoral Bank\tSan Juan\tPR\t32102\tBanco, Popular de Puerto Rico\t27-Feb-15\t13-May-15\nCapitol, City, Bank & Trust Company\tAtlanta\tGA\t33938\tFirst-Citizens Bank & Trust Company\t13-Feb-15\t21-Apr-15\nHighland Community Bank\tChicago\tIL\t20290\t\"United Fidelity Bank, fsb\"\t23-Jan-15\t21-Apr-15\nFirst National Bank of Crestview \tCrestview\tFL\t17557\tFirst NBC Bank\t16-Jan-15\t15-Jan-16\nNorthern Star Bank\tMankato\tMN\t34983\tBankVista\t19-Dec-14\t6-Jan-16\n\"Frontier\"\"s Bank, FSB D/B/A El Paseo Bank\"\tPalm Desert\tCA\t34738\t\"Bank of Southern California, N.A.\"\t7-Nov-14\t6-Jan-16\nThe National Republic Bank of Chicago\tChicago\tIL\t916\tState Bank of Texas\t24-Oct-14\t6-Jan-16\n\"NBRS\t,Financial\"\tRising Sun\tMD\t4862\tHoward Bank\t17-Oct-14\t26-Mar-15\n\"GreenChoice\"\"s Bank, fsb\"\tChicago\tIL\t28462\t\"Providence, Bank, LLC\"\t25-Jul-14\t28-Jul-15\nEastside Commercial, Bank\tConyers\tGA\t58125\tCommunity & Southern Bank\t18-Jul-14\t28-Jul-15\n\"The\t, Freedom\t State Bank\" \tFreedom\tOK\t12483\tAlva State Bank & Trust Company\t27-Jun-14\t25-Mar-16\nValley Bank\tFort Lauderdale\tFL\t21793\t\"Landmark Bank, National Association\"\t20-Jun-14\t29-Jun-15\nValley Bank\tMoline\tIL\t10450\tGreat Southern, Bank\t20-Jun-14\t26-Jun-15\nSlavie Federal Savings Bank\tBel Air\tMD\t32368\t\"Bay Bank, FSB\"\t30-May-14\t15-Jun-15\nColumbia, Savings, Bank\tCincinnati\tOH\t32284\t\"United Fidelity Bank, fsb\"\t23-May-14\t28-May-15\n\"AztecAmerica,\tBank\"\t Berwyn\tIL\t57866\tRepublic Bank of Chicago\t16-May-14\t18-Jul-14\nAllendale County Bank\tFairfax\tSC\t15062\tPalmetto State Bank\t25-Apr-14\t18-Jul-14\nVantage Point Bank\tHorsham\tPA\t58531\tFirst Choice Bank\t28-Feb-14\t3-Mar-15\n\"Millennium Bank, National\nAssociation\"\tSterling\tVA\t35096\tWashingtonFirst Bank\t28-Feb-14\t3-Mar-15\nSyringa Bank\tBoise\tID\t34296\tSunwest Bank\t31-Jan-14\t12-Apr-16\nThe Bank of Union\tEl Reno\tOK\t17967\tBancFirst\t24-Jan-14\t25-Mar-16\nDuPage National Bank\tWest Chicago\tIL\t5732\tRepublic Bank";
-//  $this->sample = "Bank Name\tCity\tST\tCERT\tAcquiring Institution\tClosing Date\tUpdated Date\nFirst CornerStone Bank\tKing of Prussia\tPA\t35312\t\"FirstCitizens Bank & \tTrust\", Company\t6-May-16\t25-May-16\nTrust Company Bank\tMemphis\tTN\t9956\tThe Bank of Fayette County\t29-Apr-16\t25-May-16\nNorth Milwaukee, State Bank\tMilwaukee\tWI\t20364\tFirstCitizens Bank & Trust Company\t11-Mar-16\t16-Jun-16\nHometown National Bank\tLongview\tWA\t35156\tTwin City Bank\t2-Oct-15\t13-Apr-16\nThe Bank of Georgia\tPeachtree City\tGA\t35259\tFidelity Bank\t2-Oct-15\t13-Apr-16\nPremier Bank\tDenver\tCO\t34112\t\"United Fidelity \r\n
-// \r \r \n \r\n Bank\t fsb\"\t10-Jul-15\t17-Dec-15\nEdgebrook Bank\tChicago\tIL\t57772\tRepublic Bank of Chicago\t8-May-15\t2-Jun-16\nDoral Bank\tSan Juan\tPR\t32102\tBanco, Popular de Puerto Rico\t27-Feb-15\t13-May-15\nCapitol, City, Bank & Trust Company\tAtlanta\tGA\t33938\tFirstCitizens Bank & Trust Company\t13-Feb-15\t21-Apr-15\nHighland Community Bank\tChicago\tIL\t20290\t\"United Fidelity Bank, fsb\"\t23-Jan-15\t21-Apr-15\nFirst National Bank of Crestview \tCrestview\tFL\t17557\tFirst NBC Bank\t16-Jan-15\t15-Jan-16\nNorthern Star Bank\tMankato\tMN\t34983\tBankVista\t19-Dec-14\t6-Jan-16\n\"Frontier\"\"s Bank, FSB D/B/A El Paseo Bank\"\tPalm Desert\tCA\t34738\t\"Bank of Southern California, N.A.\"\t7-Nov-14\t6-Jan-16\nThe National Republic Bank of Chicago\tChicago\tIL\t916\tState Bank of Texas\t24-Oct-14\t6-Jan-16\n\"NBRS\t,Financial\"\tRising Sun\tMD\t4862\tHoward Bank\t17-Oct-14\t26-Mar-15\n\"GreenChoice\"\"s Bank, fsb\"\tChicago\tIL\t28462\t\"Providence, Bank, LLC\"\t25-Jul-14\t28-Jul-15\nEastside Commercial, Bank\tConyers\tGA\t58125\tCommunity & Southern Bank\t18-Jul-14\t28-Jul-15\n\"The\t, Freedom\t State Bank\" \tFreedom\tOK\t12483\tAlva State Bank & Trust Company\t27-Jun-14\t25-Mar-16\nValley Bank\tFort Lauderdale\tFL\t21793\t\"Landmark Bank, National Association\"\t20-Jun-14\t29-Jun-15\nValley Bank\tMoline\tIL\t10450\tGreat Southern, Bank\t20-Jun-14\t26-Jun-15\nSlavie Federal Savings Bank\tBel Air\tMD\t32368\t\"Bay Bank, FSB\"\t30-May-14\t15-Jun-15\nColumbia, Savings, Bank\tCincinnati\tOH\t32284\t\"United Fidelity Bank, fsb\"\t23-May-14\t28-May-15\n\"AztecAmerica,\tBank\"\t Berwyn\tIL\t57866\tRepublic Bank of Chicago\t16-May-14\t18-Jul-14\nAllendale County Bank\tFairfax\tSC\t15062\tPalmetto State Bank\t25-Apr-14\t18-Jul-14\nVantage Point Bank\tHorsham\tPA\t58531\tFirst Choice Bank\t28-Feb-14\t3-Mar-15\n\"Millennium Bank, National\nAssociation\"\tSterling\tVA\t35096\tWashingtonFirst Bank\t28-Feb-14\t3-Mar-15\nSyringa Bank\tBoise\tID\t34296\tSunwest Bank\t31-Jan-14\t12-Apr-16\nThe Bank of Union\tEl Reno\tOK\t17967\tBancFirst\t24-Jan-14\t25-Mar-16
-// ";
-
-// //dd($this->sample);
-
         $frequencies = [];
         $consistencies = [];
 
@@ -430,7 +422,6 @@ class Taster
         try {
             // @todo Write a method that does this...
             $lines = collect(explode($eol, $this->removeQuotedStrings($this->sample)));
-            dd($lines);
             return $delims[collect($delims)->map(function($delim) use (&$distrib, $lines) {
                 $linedist = collect();
                 $lines->walk(function($line, $line_no) use (&$linedist, $delim) {
@@ -444,8 +435,6 @@ class Taster
                         ->filter(function($count) { return (bool) $count; });
                     if (is_numeric($count = $sections->count())) {
                         $linedist->set($line_no, $count / $sectstot);
-                    } else {
-                        // doo doo doo nothing to do here...
                     }
                 });
                 return $linedist;
@@ -455,7 +444,7 @@ class Taster
               ->reverse()
               ->getKeyAtPosition(0)];
         } catch (Exception $e) {
-            dd($e->getMessage());
+            throw new TasterException("delimiter cannot be determined by distribution", TasterException::ERR_DELIMITER);
         }
     }
 
