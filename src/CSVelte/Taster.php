@@ -472,61 +472,67 @@ class Taster
      */
     protected function lickQuotingStyle($delim, $eol)
     {
-        $data = $this->replaceQuotedSpecialChars($this->sample, $delim);
+        $quoting_styles = collect([
+            Flavor::QUOTE_ALL => true,
+            Flavor::QUOTE_NONE => true,
+            Flavor::QUOTE_MINIMAL => true,
+            Flavor::QUOTE_NONNUMERIC => true,
+        ]);
 
-        $quoting_styles = array(
-            Flavor::QUOTE_ALL => 0,
-            Flavor::QUOTE_NONE => 0,
-            Flavor::QUOTE_MINIMAL => 0,
-            Flavor::QUOTE_NONNUMERIC => 0,
-        );
+        $lines = collect(explode($eol, $this->replaceQuotedSpecialChars($this->sample, $delim)));
+        $freq = collect()
+            ->set('quoted', collect())
+            ->set('unquoted', collect());
 
-        $lines = explode($eol, $data);
-        $freq = array(
-            'quoted' => array(),
-            'unquoted' => array()
-        );
-
-        foreach ($lines as $key => $line) {
-            // now we can sub back in the correct newlines
+        // walk through each line from the data sample to determine which fields
+        // are quoted and which aren't
+        $that = $this;
+        $lines->walk(function($line, $line_no) use (&$quoting_styles, &$freq, $that, $eol, $delim) {
             $line = str_replace(self::PLACEHOLDER_NEWLINE, $eol, $line);
-            $cols = explode($delim, $line);
-            foreach ($cols as $colkey => $col) {
-                // now we can sub back in the correct delim characters
-                $col = str_replace(self::PLACEHOLDER_DELIM, $delim, $col);
-                if ($this->isQuoted($col)) {
-                    $col = $this->unQuote($col);
-                    $type = $this->lickDataType($col);
-                    // we can remove this guy all together since at lease one column is quoted
-                    unset($quoting_styles[Flavor::QUOTE_NONE]);
-                    $freq['quoted'][] = $type;
-                } else {
-                    $type = $this->lickDataType($col);
-                    // we can remove this guy all together since at lease one column is unquoted
-                    unset($quoting_styles[Flavor::QUOTE_ALL]);
-                    $freq['unquoted'][] = $type;
-                }
-            }
-        }
-        $types = array_unique($freq['quoted']);
-        // if quoting_styles still has QUOTE_ALL or QUOTE_NONE, then that's the one to return
-        if (array_key_exists(Flavor::QUOTE_ALL, $quoting_styles)) return Flavor::QUOTE_ALL;
-        if (array_key_exists(Flavor::QUOTE_NONE, $quoting_styles)) return Flavor::QUOTE_NONE;
-        if (count($types) == 1) {
-            if (current($types) == self::DATA_SPECIAL) return Flavor::QUOTE_MINIMAL;
-            elseif (current($types) == self::DATA_NONNUMERIC) return Flavor::QUOTE_NONNUMERIC;
-        } else {
-            if (array_key_exists(self::DATA_NONNUMERIC, array_flip($types))) {
-                // allow for a SMALL amount of error here
-                $counts = array(self::DATA_SPECIAL => 0, self::DATA_NONNUMERIC => 0);
-                array_walk($freq['quoted'], function ($val) use (&$counts) {
-                    $counts[$val]++;
+            $fields = collect(explode($delim, $line))
+                ->walk(function($field, $colpos) use (&$quoting_styles, &$freq, $that, $delim) {
+                    $field = str_replace(self::PLACEHOLDER_DELIM, $delim, $field);
+                    if ($this->isQuoted($field)) {
+                        $field = $that->unQuote($field);
+                        $freq->get('quoted')->push($that->lickDataType($field));
+                        // since we know there's at least one quoted field,
+                        // QUOTE_NONE can be ruled out
+                        $quoting_styles->set(Flavor::QUOTE_NONE, false);
+                    } else {
+                        $type = $that->lickDataType($field);
+                        $freq->get('unquoted')->push($that->lickDataType($field));
+                        // since we know there's at least one unquoted field,
+                        // QUOTE_ALL can be ruled out
+                        $quoting_styles->set(Flavor::QUOTE_ALL, false);
+                    }
                 });
-                arsort($counts);
-                $most = current($counts);
-                $least = end($counts);
-                $err_margin = $least / $most;
-                if ($err_margin < 1) return Flavor::QUOTE_NONNUMERIC;
+
+        });
+
+        $types = $freq->get('quoted')->unique();
+        $quoting_styles = $quoting_styles->filter(function($val) { return (bool) $val; });
+        // if quoting_styles still has QUOTE_ALL or QUOTE_NONE, then return
+        // whichever of them it is, we don't need to do anything else
+        if ($quoting_styles->has(Flavor::QUOTE_ALL)) return Flavor::QUOTE_ALL;
+        if ($quoting_styles->has(Flavor::QUOTE_NONE)) return Flavor::QUOTE_NONE;
+        if (count($types) == 1) {
+            $style = $types->getValueAtPosition(0);
+            if ($quoting_styles->has($style)) {
+                return $style;
+            }
+        } else {
+            if ($types->contains(self::DATA_NONNUMERIC)) {
+                // allow for a SMALL amount of error here
+                $counts = collect([self::DATA_SPECIAL => 0, self::DATA_NONNUMERIC => 0]);
+                $freq->get('quoted')->walk(function ($type) use (&$counts) {
+                    $counts->increment($type);
+                });
+                // @todo is all this even necessary? seems unnecessary to me...
+                if ($most = $counts->max()) {
+                    $least = $counts->min();
+                    $err_margin = $least / $most;
+                    if ($err_margin < 1) return Flavor::QUOTE_NONNUMERIC;
+                }
             }
         }
         return Flavor::QUOTE_MINIMAL;
