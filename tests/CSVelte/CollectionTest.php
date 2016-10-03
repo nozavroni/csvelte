@@ -892,4 +892,59 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals(['a' => [0,4], 'c' => [2,3,10], 'h' => [9,11]], $dups->toArray());
     }
 
+    public function testIncrementIncreasesValue()
+    {
+        $coll = new Collection(['one' => 1, 2 => 2,3,4,5,'eff' => 'f', 'gee' => 'gee','boo' => 'boo!', 'float' => 23.24, 'neg' => -25]);
+        $this->assertEquals(2, $coll->get(2));
+        $coll->increment(2);
+        $this->assertEquals(3, $coll->get(2));
+        $this->assertEquals(1, $coll->get('one'));
+        $coll->increment('one');
+        $this->assertEquals(2, $coll->get('one'), 'Assert that integers are incremented by Collection::increment()');
+        $this->assertEquals('f', $coll->get('eff'));
+        $coll->increment('eff');
+        $this->assertEquals('g', $coll->get('eff'), 'Assert that letters can be incremented by Collection::increment()');
+        $this->assertEquals('gee', $coll->get('gee'));
+        $coll->increment('gee');
+        $this->assertEquals('gef', $coll->get('gee'), 'Assert that a word\'s final letter is incremented by Collection::increment()');
+        $this->assertEquals('boo!', $coll->get('boo'));
+        $coll->increment('boo');
+        $this->assertEquals('boo!', $coll->get('boo'), 'Assert that word ending in punctuation is NOT affected by Collection::increment()');
+        $this->assertEquals(23.24, $coll->get('float'));
+        $coll->increment('float');
+        $this->assertEquals(24.24, $coll->get('float'), 'Assert that float is incremented by one whole number by Collection::increment()');
+        $this->assertEquals(-25, $coll->get('neg'));
+        $coll->increment('neg');
+        $this->assertEquals(-24, $coll->get('neg'), 'Assert that negative numbers are incremented properly by Collection::increment()');
+    }
+
+    public function testDecrementDecreasesValue()
+    {
+        $coll = new Collection(['one' => 1, 2 => 2,3,4,5,'eff' => 'f', 'gee' => 'gee','boo' => 'boo!', 'float' => 23.24, 'neg' => -25]);
+        $this->assertEquals(2, $coll->get(2));
+        $coll->decrement(2);
+        $this->assertEquals(1, $coll->get(2));
+        $this->assertEquals(1, $coll->get('one'));
+        $coll->decrement('one');
+        $this->assertEquals(0, $coll->get('one'), 'Assert that integers are decremented by Collection::decrement()');
+        $this->assertEquals(0, $coll->get('one'));
+        $coll->decrement('one');
+        $this->assertEquals(-1, $coll->get('one'), 'Assert that 0 is properly decremented to -1 by Collection::decrement()');
+        $this->assertEquals('f', $coll->get('eff'));
+        $coll->decrement('eff');
+        $this->assertEquals('f', $coll->get('eff'), 'Assert that letters can\'t be decremented by Collection::decrement(). Why? Because PHP said so. That\'s why. Keep asking questions and it\'ll decrement your fingers.');
+        $this->assertEquals('gee', $coll->get('gee'));
+        $coll->decrement('gee');
+        $this->assertEquals('gee', $coll->get('gee'), 'Assert that a word\'s final letter is NOT decremented by Collection::decrement()');
+        $this->assertEquals('boo!', $coll->get('boo'));
+        $coll->decrement('boo');
+        $this->assertEquals('boo!', $coll->get('boo'), 'Assert that word ending in punctuation is NOT affected by Collection::decrement()');
+        $this->assertEquals(23.24, $coll->get('float'));
+        $coll->decrement('float');
+        $this->assertEquals(22.24, $coll->get('float'), 'Assert that float is decremented by one whole number by Collection::decrement()');
+        $this->assertEquals(-25, $coll->get('neg'));
+        $coll->decrement('neg');
+        $this->assertEquals(-26, $coll->get('neg'), 'Assert that negative numbers are decremented properly by Collection::decrement()');
+    }
+
 }

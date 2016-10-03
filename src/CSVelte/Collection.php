@@ -231,26 +231,6 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * Set value for the given key.
-     *
-     * Given $key, this will set $this->data[$key] to the value of $val. If that
-     * index already has a value, it will be overwritten unless $overwrite is set
-     * to false. In that case nothing happens.
-     *
-     * @param any $key The key you want to set a value for
-     * @param any $value The value you want to set key to
-     * @param boolean $overwrite Whether to overwrite existing value
-     * @return $this
-     */
-    public function set($key, $value = null, $overwrite = true)
-    {
-        if (!array_key_exists($key, $this->data) || $overwrite) {
-            $this->data[$key] = $value;
-        }
-        return $this;
-    }
-
-    /**
      * Test whether this collection contains the given value, optionally at a
      * specific key.
      *
@@ -581,6 +561,26 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
+     * Set value for the given key.
+     *
+     * Given $key, this will set $this->data[$key] to the value of $val. If that
+     * index already has a value, it will be overwritten unless $overwrite is set
+     * to false. In that case nothing happens.
+     *
+     * @param any $key The key you want to set a value for
+     * @param any $value The value you want to set key to
+     * @param boolean $overwrite Whether to overwrite existing value
+     * @return $this
+     */
+    public function set($key, $value = null, $overwrite = true)
+    {
+        if (!array_key_exists($key, $this->data) || $overwrite) {
+            $this->data[$key] = $value;
+        }
+        return $this;
+    }
+
+    /**
      * Unset value at the given offset.
      *
      * This method is used when the end-user uses a colleciton as an array and
@@ -631,6 +631,46 @@ class Collection implements Countable, ArrayAccess
     public function offsetGet($offset)
     {
         return $this->get($offset);
+    }
+
+    /**
+     * Increment an item.
+     *
+     * Increment the item specified by $key by one value. Intended for integers
+     * but also works (using this term loosely) for letters. Any other data type
+     * it may modify is unintended behavior at best.
+     *
+     * This method modifies its internal data array rather than returning a new
+     * collection.
+     *
+     * @param  mixed $key The key of the item you want to increment.
+     * @return $this
+     */
+    public function increment($key)
+    {
+        $val = $this->get($key, null, true);
+        $this->set($key, ++$val);
+        return $this;
+    }
+
+    /**
+     * Decrement an item.
+     *
+     * Frcrement the item specified by $key by one value. Intended for integers.
+     * Does not work for letters and if it does anything to anything else, it's
+     * unintended at best.
+     *
+     * This method modifies its internal data array rather than returning a new
+     * collection.
+     *
+     * @param  mixed $key The key of the item you want to decrement.
+     * @return $this
+     */
+    public function decrement($key)
+    {
+        $val = $this->get($key, null, true);
+        $this->set($key, --$val);
+        return $this;
     }
 
     /**
