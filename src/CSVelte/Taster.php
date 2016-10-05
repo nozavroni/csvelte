@@ -42,6 +42,12 @@ use function CSVelte\collect;
  *            was just easier to write the methods that way during testing.
  * @todo      There are at least portions of this class that could use the
  *            Reader class rather than working directly with data.
+ * @todo      Refactor all of the anonymous functions used as callbacks. Rather
+ *            than passing $this all over, use $closure->bindTo() instead...
+ *            Actually, write a method called getBoundClosure() or something...
+ *            maybe even make it a trait I don't know yet. But here it would
+ *            allow me to bind any anon function to $this and give me a certain
+ *            set of commonly needed values ($delim, $eol, etc.)
  */
 class Taster
 {
@@ -683,8 +689,8 @@ class Taster
      * provide metadata such as that.
      *
      * @param string $delim The CSV data's delimiting char (can be a variety of chars but)
-     *     typically $eol is either a comma or a tab, sometimes a pipe)
-     * @param string The CSV data's end-of-line char(s) (\n \r or \r\n)
+     *     typically is either a comma or a tab, sometimes a pipe)
+     * @param string $eol The CSV data's end-of-line char(s) (\n \r or \r\n)
      * @return boolean True if the data (most likely) contains a header row
      * @todo This method needs a total refactor. It's not necessary to loop twice
      *     You could get away with one loop and that would allow for me to do
@@ -693,46 +699,55 @@ class Taster
      * @todo Also, break out of the first loop after a certain (perhaps even a
      *     configurable) amount of lines (you only need to examine so much data )
      *     to reliably make a determination and this is an expensive method)
-     * @todo Because the header isn't actually part of the "flavor",
-     *     I could remove the need for quote, delim, and eol by "licking" the
+     * @todo I could remove the need for quote, delim, and eol by "licking" the
      *     data sample provided in the first argument. Also, I could actually
      *     create a Reader object to read the data here.
      */
     public function lickHeader($delim, $eol)
     {
-        $data = $this->replaceQuotedSpecialChars($this->sample, $delim);
-        $lines = explode($eol, $data);
-        $types = array();
-        foreach ($lines as $line_no => $line) {
-            // now we can sub back in the correct newlines
+        $types = collect();
+        $buildTypes = function($line, $line_no) use (&$types, $delim, $eol) {
             $line = str_replace(self::PLACEHOLDER_NEWLINE, $eol, $line);
-            $cols = explode($delim, $line);
-            foreach ($cols as $col_no => $col) {
-                // now we can sub back in the correct delim characters
-                $col = str_replace(self::PLACEHOLDER_DELIM, $delim, $col);
-                $types[$line_no][$col_no] = array(
-                    'type' => $this->lickType($this->unQuote($col)),
-                    'length' => strlen($col)
-                );
-            }
-        }
+            $getType = function($field, $colpos) use (&$types, $line, $line_no, $delim) {
+                $field = str_replace(self::PLACEHOLDER_DELIM, $delim, $field);
+                // @todo Need a Collection::setTableField($x, $y) method
+                //       See notes in green binder about refactoring Collection
+                if (!$types->has($line_no)) $types->set($line_no, collect());
+                $types->get($line_no)->set($colpos, [
+                    'type' => $this->lickType($this->unQuote($field)),
+                    'length' => strlen($field)
+                ]);
+            };
+            $fields = collect(explode($delim, $line))->walk($getType->bindTo($this));
+        };
+        $lines = collect(explode(
+            $eol,
+            $this->replaceQuotedSpecialChars($this->sample, $delim)
+        ))
+        ->walk($buildTypes->bindTo($this));
+
         $hasHeader = 0;
-        $potential_header = array_shift($types);
-        foreach ($types as $line_no => $cols) {
-            foreach ($cols as $col_no => $col_info) {
-                extract($col_info);
-                if (!array_key_exists($col_no, $potential_header)) continue;
-                extract($potential_header[$col_no], EXTR_PREFIX_ALL, "header");
-                if ($header_type == self::TYPE_STRING) {
-                    // use length
-                    if ($length != $header_length) $hasHeader++;
-                    else $hasHeader--;
-                } else {
-                    if ($type != $header_type) $hasHeader++;
-                    else $hasHeader--;
+        $possibleHeader = $types->shift();
+        $types->walk(function($row, $line_no) use (&$hasHeader, $possibleHeader) {
+            $row->walk(function($field_info, $col_no) use (&$hasHeader, $possibleHeader) {
+                extract($field_info);
+                try {
+                    extract($possibleHeader->get($col_no, null, true), EXTR_PREFIX_ALL, "header");
+                    if ($header_type == self::TYPE_STRING) {
+                        // use length
+                        if ($length != $header_length) $hasHeader++;
+                        else $hasHeader--;
+                    } else {
+                        // use data type
+                        if ($type != $header_type) $hasHeader++;
+                        else $hasHeader--;
+                    }
+                } catch (OutOfBoundsException $e) {
+                    // failure...
+                    return;
                 }
-            }
-        }
+            });
+        });
         return $hasHeader > 0;
     }
 }
