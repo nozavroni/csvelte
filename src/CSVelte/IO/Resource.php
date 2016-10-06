@@ -238,15 +238,15 @@ class Resource
     public function connect()
     {
         if (!$this->isConnected()) {
-            $that = $this;
             $e = null;
-            set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($that, &$e) {
+            $errhandler = function ($errno, $errstr, $errfile, $errline) use (&$e) {
                 $e = new IOException(sprintf(
                     "Could not open connection for %s using mode %s.",
-                    $that->getUri(),
-                    $that->getMode()
+                    $this->getUri(),
+                    $this->getMode()
                 ), IOException::ERR_STREAM_CONNECTION_FAILED);
-            });
+            };
+            set_error_handler($errhandler->bindTo($this));
             $this->conn = fopen(
                 $this->getUri(),
                 $this->getMode(),
