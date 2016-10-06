@@ -113,7 +113,7 @@ class Autoloader
      */
     public function load($className)
     {
-        if(class_exists($className)) {
+        if(class_exists($className, false)) {
             return;
         }
         $fqcp = str_replace(self::NAMESPACE_SEPARATOR, DIRECTORY_SEPARATOR, $className);

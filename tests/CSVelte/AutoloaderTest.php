@@ -77,6 +77,15 @@ class AutoloaderTest extends UnitTestCase
         $this->assertTrue(class_exists($classname));
     }
 
+    public function testLoadReturnsNullEvenIfItSuccessfullyLoadsAClass()
+    {
+        $auto = new Autoloader;
+        $classname = 'CSVelte\\Exception\\DeprecatedException';
+        $this->assertFalse(class_exists($classname, false));
+        $this->assertNull($auto->load($classname));
+        $this->assertTrue(class_exists($classname, false));
+    }
+
     public function testRequireSrcAutoloadClass()
     {
         // set include path to something meaningless first, just to make sure that
