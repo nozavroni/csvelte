@@ -53,12 +53,6 @@ function streamize($obj = '')
     //     return $resource() or $resource->stream();
     // }
 
-    // @todo there needs to be a way to create a stream object from a resource
-    //     object (other than streamize($resource)). I'm thinking something like
-    //     $resource = new Resource(); $stream = $resource->toStream(); or $resource->stream();
-    //     also possibly $resource = new Resource(); $stream = $resource();
-    //     I kinda like the idea of passing around a $resource and then just invoking
-    //     it to get a stream from it...
     if (is_resource($obj) && get_resource_type($obj) == 'stream') {
         return new Stream(new Resource($obj));
     }
@@ -108,7 +102,7 @@ function stream($uri, $mode = null, $context = null, $lazy = true)
  * to auto-detect "flavor" (formatting attributes).
  *
  * @param \CSVelte\Contract\Streamable Any streamable class to analyze
- * @return \CSVelte\Flavor A flavor representing str                                                                                                                                                                                                                                                                                                                                                           eam's formatting attributes
+ * @return \CSVelte\Flavor A flavor representing stream's formatting attributes
  * @since v0.2.1
  */
 function taste(Streamable $str)
