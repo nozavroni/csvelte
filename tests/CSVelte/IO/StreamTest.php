@@ -708,6 +708,17 @@ class StreamTest extends IOTest
 
     }
 
+    public function testBufferStreamToString()
+    {
+        $buffer = new BufferStream();
+        $buffer->write($alf_spiel = "My name is Alf. I like to eat cats. I gave Luke nightmares as a child.");
+        $str = (string) $buffer;
+        $this->assertEquals($alf_spiel, $str);
+        $this->assertFalse($buffer->read(15));
+        $this->assertEquals("", $buffer->__toString());
+        $this->assertTrue($buffer->eof());
+    }
+
     public function testIteratorStreamUsingArrayIterator()
     {
         $array = explode("\n", $this->getFileContentFor('noHeaderCommaNoQuotes'));
