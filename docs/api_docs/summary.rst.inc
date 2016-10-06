@@ -1,0 +1,2 @@
+
+The API documentation is an exhaustive listing of every class, method, property, exception, and function defined by CSVelte as well as definitions for each of them. This portion of the documentation is generated automatically by a piece of software called `ApiGen`_. It's definitely the most comprehensive of the three documentation sections, but not the easiest to read. It is recommended that you read the :doc:`/users_guide/index` to learn and the :doc:`/api_docs/index` as a reference.

@@ -1,0 +1,30 @@
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+         syntaxCheck="true"
+         verbose="true"
+         bootstrap="tests/bootstrap.php">
+    <testsuites>
+      <testsuite name="Core CSVelte Functionality">
+          <file>tests/CSVelte/IO/StreamTest.php</file>
+          <file>tests/CSVelte/Table/RowTest.php</file>
+          <file>tests/CSVelte/ReaderTest.php</file>
+          <file>tests/CSVelte/WriterTest.php</file>
+          <file>tests/CSVelte/FlavorTest.php</file>
+          <file>tests/CSVelte/TasterTest.php</file>
+          <file>tests/CSVelte/CSVelteTest.php</file>
+          <file>tests/CSVelte/AutoloaderTest.php</file>
+          <file>tests/CSVelte/UtilsTest.php</file>
+      </testsuite>
+    </testsuites>
+    <filter>
+        <whitelist>
+            <directory>./src/</directory>
+        </whitelist>
+    </filter>
+</phpunit>

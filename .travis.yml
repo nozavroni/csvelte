@@ -1,0 +1,36 @@
+# tips hat to Pádraic Brady, Dave Marshall, Wouter, Graham Campbell for this
+language: php
+
+php:
+  - 5.6
+  - 7.0
+
+matrix:
+  allow_failures:
+    - php: 7.0
+
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+    - composer self-update
+
+install:
+    - export PATH="$HOME/.composer/vendor/bin:$PATH"
+    - travis_retry ./travis/install.sh
+
+before_script:
+    - composer install
+    - ./travis/before_script.sh
+
+script: ./travis/script.sh
+
+after_script: ./travis/after_script.sh
+
+notifications:
+  email:
+    - luke.visinoni@gmail.com
+    - csvelte-users@googlegroups.com

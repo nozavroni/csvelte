@@ -1,0 +1,5 @@
+.DS_Store
+tests/files
+venv
+phpunit.xml
+-1
