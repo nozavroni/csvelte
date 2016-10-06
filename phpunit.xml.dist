@@ -19,7 +19,6 @@
           <file>tests/CSVelte/TasterTest.php</file>
           <file>tests/CSVelte/CSVelteTest.php</file>
           <file>tests/CSVelte/AutoloaderTest.php</file>
-          <file>tests/CSVelte/UtilsTest.php</file>
       </testsuite>
     </testsuites>
     <filter>
