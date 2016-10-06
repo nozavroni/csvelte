@@ -336,7 +336,22 @@ class RowTest extends UnitTestCase
 
     public function testRewindReturnsNullWhenInvalid()
     {
-        $reader = new Row([]);
-        $this->assertNull($reader->rewind());
+        $row = new Row([]);
+        $this->assertNull($row->rewind());
+    }
+
+    public function testOffsetGetAndSetAndExistsForImmutable()
+    {
+        $row = new Row([0,1,2,3,4,5]);
+        try {
+            $this->assertNull($row->offsetSet(0, 'zero'));
+        } catch (\Exception $e) {
+            $this->assertEquals('Cannot change immutable column data', $e->getMessage());
+        }
+        try {
+            $this->assertNull($row->offsetUnset(0));
+        } catch (\Exception $e) {
+            $this->assertEquals('Cannot change immutable column data', $e->getMessage());
+        }
     }
 }
