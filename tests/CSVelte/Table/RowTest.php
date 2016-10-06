@@ -312,4 +312,25 @@ class RowTest extends UnitTestCase
         $str = 'won,to,free,for';
         $row = new Row($str);
     }
+
+    public function testKeyReturnsPosition()
+    {
+        $row = new Row($cols = ['one', 'two', 'three']);
+        $this->assertEquals(0, $row->key());
+        $this->assertEquals('two', $row->next());
+        $this->assertEquals(1, $row->key());
+        $this->assertEquals('three', $row->next());
+        $this->assertEquals(2, $row->key());
+    }
+
+    public function testKeyReturnsHeaderWhenAvailable()
+    {
+        $row = new Row($cols = ['one', 'two', 'three']);
+        $row->setHeaderRow(new HeaderRow(['uno', 'dos', 'tres']));
+        $this->assertEquals('uno', $row->key());
+        $this->assertEquals('two', $row->next());
+        $this->assertEquals('dos', $row->key());
+        $this->assertEquals('three', $row->next());
+        $this->assertEquals('tres', $row->key());
+    }
 }
