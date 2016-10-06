@@ -123,12 +123,12 @@ class BufferStream implements Streamable
      */
     public function read($chars)
     {
-        if ($this->buffer === '') {
-            return false;
+        if (!$this->eof()) {
+            $data = substr($this->buffer, 0, $chars);
+            $this->buffer = substr($this->buffer, $chars);
+            return $data;
         }
-        $data = substr($this->buffer, 0, $chars);
-        $this->buffer = substr($this->buffer, $chars);
-        return $data;
+        return false;
     }
 
     /**
