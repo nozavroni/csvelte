@@ -109,6 +109,7 @@ class Writer
      */
     public function writeRow($row)
     {
+        $count = 0;
         $eol = $this->getFlavor()->lineTerminator;
         $delim = $this->getFlavor()->delimiter;
         if (!$this->written && $this->headers) {
@@ -119,8 +120,8 @@ class Writer
         $row = $this->prepareRow($row);
         if ($count = $this->output->writeLine($row->join($delim), $eol)) {
             $this->written++;
-            return $count;
         }
+        return $count;
     }
 
     protected function writeHeaderRow(HeaderRow $row)
