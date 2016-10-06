@@ -189,4 +189,37 @@ class ReaderTest extends UnitTestCase
         $this->assertEquals(2, $reader->key());
     }
 
+    public function testEscapeCharacterEscapesQuotesWithinQuotes()
+    {
+        $csv = 'Bank Name,City,ST,CERT,Acquiring Institution,Closing Date,Updated Date
+"Sampson \\"The King of Prussia\\" Jahosefat",Peepville,PA,35312,"First-Citizens Bank & \\"Trust\\" Company",6-May-16,25-May-16
+Trust Company Bank,Memphis,TN,9956,"The Bank of \\"Gayette\\" County",29-Apr-16,25-May-16
+North Milwaukee State Bank,Milwaukee,WI,20364,First-Citizens Bank & Trust Company,11-Mar-16,16-Jun-16
+Hometown National Bank,Longview,WA,35156,Twin City Bank,2-Oct-15,13-Apr-16
+The Bank of Georgia,Peachtree City,GA,35259,Fidelity Bank,2-Oct-15,13-Apr-16
+';
+        $flvr = [
+            'delimiter' => ',',
+            'lineTerminator' => '
+',
+            'escapeChar' => null,
+            'doubleQuote' => true,
+            'quoteStyle' => Flavor::QUOTE_MINIMAL,
+            'quoteChar' => '"',
+            'header' => true
+        ];
+        $reader = new Reader($csv, $flvr);
+        $row = $reader->current();
+        $this->assertEquals('Sampson \\"The King of Prussia\\" Jahosefat', $row['Bank Name']);
+        $this->assertEquals('First-Citizens Bank & \\"Trust\\" Company', $row['Acquiring Institution']);
+
+        // change the flavor to make it work...
+        $flvr['doubleQuote'] = false;
+        $flvr['escapeChar'] = '\\';
+        $reader = new Reader($csv, $flvr);
+        $row = $reader->current();
+        $this->assertEquals('Sampson "The King of Prussia" Jahosefat', $row['Bank Name']);
+        $this->assertEquals('First-Citizens Bank & "Trust" Company', $row['Acquiring Institution']);
+    }
+
 }
