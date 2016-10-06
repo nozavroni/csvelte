@@ -7,6 +7,7 @@ use CSVelte\Reader;
 use CSVelte\Writer;
 use CSVelte\Flavor;
 use CSVelte\Table\Row;
+use CSVelte\Exception\NotYetImplementedException;
 
 /**
  * CSVelte\Reader Tests.
@@ -220,6 +221,15 @@ The Bank of Georgia,Peachtree City,GA,35259,Fidelity Bank,2-Oct-15,13-Apr-16
         $row = $reader->current();
         $this->assertEquals('Sampson "The King of Prussia" Jahosefat', $row['Bank Name']);
         $this->assertEquals('First-Citizens Bank & "Trust" Company', $row['Acquiring Institution']);
+    }
+
+    /**
+     * @expectedException CSVelte\Exception\NotYetImplementedException
+     */
+    public function testSeekToLineThrowsNotYetImplemented()
+    {
+        $stream = Stream::open($this->getFilePathFor('veryShort'));
+        $stream->seekLine(2);
     }
 
 }
