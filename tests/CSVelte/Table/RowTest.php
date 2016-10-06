@@ -333,4 +333,10 @@ class RowTest extends UnitTestCase
         $this->assertEquals('three', $row->next());
         $this->assertEquals('tres', $row->key());
     }
+
+    public function testRewindReturnsNullWhenInvalid()
+    {
+        $reader = new Row([]);
+        $this->assertNull($reader->rewind());
+    }
 }
