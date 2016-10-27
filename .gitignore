@@ -2,6 +2,7 @@
 .idea
 tests/files
 venv
+.venv
 phpunit.xml
 -1
 *~
