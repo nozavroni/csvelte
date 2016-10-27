@@ -17,11 +17,11 @@ abstract class UnitTestCase extends TestCase
 
     protected $filedir;
 
-    protected $tmpdir;
+//    protected $tmpdir;
 
     public function setUp()
     {
-        $this->tmpdir = realpath(__DIR__ . '/../files/temp');
+        //$this->tmpdir = realpath(__DIR__ . '/../files/temp');
         $this->root = vfsStream::setup();
         $this->filedir = $this->root->url() . "/testfiles";
         mkdir($this->filedir);
@@ -44,14 +44,14 @@ abstract class UnitTestCase extends TestCase
     public function tearDown()
     {
         // Do I need to destroy anything for vfsStream?
-        $dir = new \DirectoryIterator($this->tmpdir);
-        foreach ($dir as $finfo) {
-            if ($finfo->isFile()) {
-                $fname = $finfo->getPathname();
-                $finfo = null;
-                unlink ($fname);
-            }
-        }
+//        $dir = new \DirectoryIterator($this->tmpdir);
+//        foreach ($dir as $finfo) {
+//            if ($finfo->isFile()) {
+//                $fname = $finfo->getPathname();
+//                $finfo = null;
+//                unlink ($fname);
+//            }
+//        }
     }
 
     protected function getFilePathFor($filekey)

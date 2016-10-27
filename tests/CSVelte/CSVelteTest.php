@@ -24,7 +24,7 @@ class CSVelteTest extends UnitTestCase
 
     public function testGenerateReaderObject()
     {
-        $reader = CSVelte::reader(__DIR__ . '/../files/banklist.csv');
+        $reader = CSVelte::reader($this->getFilePathFor('veryShort'));
         $this->assertInstanceOf(Reader::class, $reader);
     }
 
