@@ -30,7 +30,7 @@ Let's assume our CSV file is located on the local file system at ``/var/www/data
 
 .. code-block:: php
 
-    $stream = new IO\Stream('/var/www/data/products.csv');
+    $stream = IO\Stream::open('/var/www/data/products.csv');
     // you can now ensure the stream object is readable by doing...
     $stream->isReadable(); // should return true
 
@@ -51,7 +51,7 @@ Now, using our stream and flavor objects, we can finally instantiate the reader 
 
     <?php
     // create a stream object to read from our local file...
-    $stream = new IO\Stream('/var/www/data/products.csv');
+    $stream = IO\Stream::open('/var/www/data/products.csv');
     if (!$stream->isReadable()) {
         die('Cannot read CSV file.');
     }
@@ -81,7 +81,7 @@ The previous example looks simple enough, but what if we *didn't* know anything 
 
 .. code-block:: php
 
-    $stream = new IO\Stream('/var/www/data/products.csv');
+    $stream = IO\Stream::open('/var/www/data/products.csv');
     $reader = new Reader($stream);
     $array = $reader->toArray();
 
@@ -90,7 +90,7 @@ In the vast majority of cases, the reader will be able to deduce the CSV flavor 
 .. code-block:: php
 
     try {
-        $stream = new IO\Stream('/var/www/data/products.csv');
+        $stream = IO\Stream::open('/var/www/data/products.csv');
         $reader = new Reader($stream);
         $array = $reader->toArray();
     } catch (Exception\TasterException $e) {
@@ -121,13 +121,13 @@ Again, our first task is going to be creating an :php:class:`IO\\Stream` object.
 
 .. code-block:: php
 
-    $stream = new IO\Stream('/var/www/data/inventory.csv', 'w');
+    $stream = IO\Stream::open('/var/www/data/inventory.csv', 'w');
 
 Just as with our input stream and its :php:meth:`IO\\Stream::isReadable()` method, we can call :php:meth:`IO\\Stream::isWritable()` to make sure that our stream is indeed, writable.
 
 .. code-block:: php
 
-    $stream = new IO\Stream('/var/www/data/inventory.csv', 'w');
+    $stream = IO\Stream::open('/var/www/data/inventory.csv', 'w');
     // you can now ensure the stream object is writable by doing...
     $stream->isWritable(); // should return true
 
@@ -136,11 +136,11 @@ Now that we have an output stream object to write our data for us, we can instan
 .. code-block:: php
 
     <?php
-    // we'll assume this variable contains our CSV data...
-    $csv_array = some_func_that_returns_csv();
+    // we'll assume this variable contains our CSV data in an array...
+    $csv_array = some_func_that_returns_array();
 
     // create stream in write mode...
-    $stream = new IO\Stream('/var/www/data/inventory.csv', 'w');
+    $stream = IO\Stream::open('/var/www/data/inventory.csv', 'w');
     if (!$stream->isWritable()) {
         die('Cannot write to CSV file');
     }

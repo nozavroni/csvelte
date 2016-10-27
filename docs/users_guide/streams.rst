@@ -32,32 +32,32 @@ Because you can never really know until runtime whether a particular stream is r
     $stream = new Stream('http://www.example.com/data.csv');
     echo $stream->isReadable(); // outputs "true"
     echo $stream->isWritable(); // outputs "false"
-    echo $stream->isSeekable(); // outputs "true"
+    echo $stream->isSeekable(); // outputs "true" (seekable only for data that has already been read)
 
 .. note::
 
-    Unless you intend to extend the :php:class:`IO\\Stream` class, you honestly don't really need to know all that much about how it works. At least in regards to its API. All you really need to know is that it provides a common interface for :php:class:`Reader`, :php:class:`Writer` and a few other classes to work with and that those classes delegate all actual I/O functionality to this one class.
+    Unless you intend to extend the :php:class:`IO\\Stream` class or you need advanced streams-related functionality/features, you honestly don't really need to know all that much about how it works. At least in regards to its API. All you really need to know (for now) is that it provides a common interface for :php:class:`Reader`, :php:class:`Writer` and a few other classes to work with and that those classes delegate all actual I/O functionality to this one class.
 
 Create a stream using an URI
 ----------------------------
 
-PHP natively offers a multitude of possible stream wrappers [#]_. You can stream data using the local file system, FTP, SSL, HTTP, and cURL, just to name a few. Each stream wrapper works a little differently, so you'll need to consult PHP's streams_ documentation if you intend to use a stream wrapper not covered here (which means virtually all of them).
+PHP natively offers a multitude of possible stream wrappers [#]_. You can stream data using the local file system, FTP, SSL, HTTP, and cURL, just to name a few. Each stream wrapper works a little differently, so you'll need to consult PHP's streams_ documentation if you intend to use a stream wrapper not covered here.
 
 Local filesystem
 ~~~~~~~~~~~~~~~~
 
-The (arguably) most common stream wrapper is "file", which allows the streaming of local files. To instantiate an :php:class:`IO\\Stream` object using a local file, simply pass a valid file name (including its path) in the constructor (file name may optionally be preceeded with ``file://``). You may also optionally pass a file access mode string [#]_ as a second parameter to tell :php:class:`IO\\Stream` how you intend to use the stream (see `fopen file modes`_ on php.net_). :php:class:`IO\\Stream` respects the rules specified by each of PHP's available access mode characters, so its behavior should be familiar if you've ever worked with PHP's :php:func:`fopen` function.
+The default and (arguably) most common stream wrapper is "file", which allows the streaming of local files. To instantiate an :php:class:`IO\\Stream` object using a local file, simply pass a valid file name (including its path) to the :php:meth:`IO\\Stream::open` method (file name may optionally be preceeded with ``file://`` but it is not required because "file" is the default stream wrapper). You may also optionally pass a file access mode string [#]_ as a second parameter to tell :php:class:`IO\\Stream` how you intend to use the stream. :php:class:`IO\\Stream` respects the rules specified by each of PHP's available access mode characters, so its behavior should be familiar if you've ever worked with PHP's :php:func:`fopen` function.
 
 .. code-block:: php
 
     <?php
     // create a new local file stream object, and prepare it
     // for binary-safe reading (plus writing)
-    $stream = new IO\Stream('file:///var/www/data.csv', 'r+b');
+    $stream = IO\Stream::open('file:///var/www/data.csv', 'r+b');
     // or...
     // create a new local file stream object, placing the file pointer at the
     // end of the file and preparing to append the file
-    $stream = new IO\Stream('./data.csv', 'a');
+    $stream = IO\Stream::open('./data.csv', 'a');
 
 HTTP
 ~~~~
@@ -67,7 +67,7 @@ Streaming CSV data over HTTP is made trivial with :php:class:`IO\\Stream`. Simpl
 .. code-block:: php
 
     <?php
-    $stream = new IO\Stream('http://www.example.com/data/products.csv');
+    $stream = IO\Stream::open('http://www.example.com/data/products.csv');
 
 PHP
 ~~~
@@ -77,7 +77,7 @@ The PHP stream wrapper provides access to various miscellaneous I/O streams such
 .. code-block:: php
 
     <?php
-    $stream = new IO\Stream('php://stdin');
+    $stream = IO\Stream::open('php://stdin');
 
 For more detailed documentation regarding PHP's available stream wrappers and their respective options and parameters, I refer you to the `PHP streams documentation`_ at php.net_.
 
@@ -91,7 +91,7 @@ To demonstrate how this works, let's assume we have a script called ``download_d
 .. code-block:: php
 
     <?php
-    $stream = new IO\Stream('http://www.example.com/download_data.php', 'r', [
+    $stream = IO\Stream::open('http://www.example.com/download_data.php', 'r', [
         'http' => [
             'method'  => 'POST',
             'header'  => 'Content-type: application/x-www-form-urlencoded',
@@ -132,6 +132,12 @@ This also works for any object that has a __toString() magic method [#]_.
 Create a stream from an existing stream resource
 ------------------------------------------------
 
+In PHP, a stream is represented by a special variable called a resource. These variables are used throughout PHP to represent references to external resources (a database for instance). Because CSVelte makes such extensive use of PHP's native streams, I have implemented a :php:class:`IO\\Resource`  class that represents a stream resource. This allows me to instantiate a stream resource and pass it around without ever actually opening it (until the time it is actually needed--this is called lazy-loading or in this case lazy-opening). It also allows you to instantiate it using an already-open stream resource object as shown below. Just invoke it as if it were a function to get an :php:class:`IO\\Stream` object.
+
+.. note::
+
+    Unfortunately, because PHP7 has reserved the word "resource" for future use, I will need to change the name of :php:class:`IO\\Resource`  to something else in my next release (most likely something like :php:class:`IO\\StreamResource` or :php:class:`IO\\Handle`).
+
 If you already have a stream resource that you've opened using :php:func:`fopen`, you can pass that resource directly to the :php:class:`IO\\Stream` constructor to create an :php:class:`IO\\Stream` object.
 
 .. code-block:: php
@@ -141,7 +147,11 @@ If you already have a stream resource that you've opened using :php:func:`fopen`
     if (false === $stream_resource) {
         die("Could not read from stream URI.");
     }
-    $stream = new IO\Stream($stream_resource);
+    $res = new IO\Resource($stream_resource);
+
+    // to get a stream object, simply invoke it as if it were a function...
+    $stream = $res();
+    echo $stream->getUri(); // prints "http://www.example.com/data/example.csv"
 
 .. _PHP streams documentation: http://php.net/manual/en/intro.stream.php
 

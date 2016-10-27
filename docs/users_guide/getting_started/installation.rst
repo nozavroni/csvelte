@@ -40,7 +40,7 @@ If you've never used Composer_, you'll want to head over to getcomposer.org_ and
 
 .. code-block:: bash
 
-    $ php composer.phar require nozavroni/csvelte @dev-master
+    $ php composer.phar require nozavroni/csvelte dev-master
 
 .. important::
 
