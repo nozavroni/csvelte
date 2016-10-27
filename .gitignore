@@ -1,5 +1,7 @@
 .DS_Store
+.idea
 tests/files
 venv
 phpunit.xml
 -1
+*~
