@@ -1007,4 +1007,20 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals(['sow' => 'soo', 'vow' => 'woo'], $coll());
     }
 
+    public function testInvokeCollectionWithKeyAndCallableRunsArrayMap()
+    {
+        $coll = new Collection($arr = [
+            'goo' => 'hooey',
+            'doo' => 'dooey',
+            'poo' => 'kablooey'
+        ]);
+        $dubble = $coll(function($val){
+            return "{$val} {$val}";
+        });
+        $this->assertEquals([
+            'goo' => 'hooey hooey',
+            'doo' => 'dooey dooey',
+            'poo' => 'kablooey kablooey'
+        ], $dubble->toArray());
+    }
 }
