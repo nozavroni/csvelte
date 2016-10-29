@@ -107,6 +107,9 @@ class IteratorStream implements Streamable
 
     public function read($bytes)
     {
+        if (is_null($this->buffer) || is_null($this->iter)) {
+            return false;
+        }
         $data = '';
         while (strlen($data) < $bytes) {
             if ($this->buffer->isEmpty()) {
@@ -256,6 +259,7 @@ class IteratorStream implements Streamable
         $iter = $this->iter;
         $this->buffer = null;
         $this->iter = null;
+        $this->readable = false;
         return [$iter, $buffer];
     }
 

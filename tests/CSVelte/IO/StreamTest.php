@@ -795,4 +795,18 @@ class StreamTest extends IOTest
         $this->assertNull($iter->getMetadata('foo'));
     }
 
+    public function testIteratorStreamDetachUnsetsInternalPropertiesAndReturnsThem()
+    {
+        $arr = ['foo,bar,baz','bar,boo,faz','baz,poo,razz'];
+        $iter = new ArrayIterator($arr);
+        $buff = new BufferStream();
+        $stream = new IteratorStream($iter, $buff);
+        $this->assertInternalType('array', $ret = $stream->detach());
+        $this->assertSame($iter, $ret[0]);
+        $this->assertSame($buff, $ret[1]);
+        $this->assertFalse($stream->isReadable());
+        $this->assertFalse($stream->read(5));
+    }
+
+
 }
