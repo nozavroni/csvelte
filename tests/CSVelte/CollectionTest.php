@@ -947,4 +947,64 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals(-26, $coll->get('neg'), 'Assert that negative numbers are decremented properly by Collection::decrement()');
     }
 
+    public function testInvokeCollectionWithNoParamsReturnsUnderlyingDataArray()
+    {
+        $coll = new Collection($expArr = [1,2,3,4,5]);
+        $this->assertEquals($expArr, $coll());
+    }
+
+    public function testInvokeCollectionWithArrayMergesArrayIntoCollection()
+    {
+        $coll = new Collection($expArr = [
+            'foo' => 'bar',
+            'noo' => 'roo',
+            'poo' => 'doo'
+        ]);
+        $arr2 = [
+            'foo' => 'hoo',
+            'boo' => 'moo',
+            'gloo' => 'voo'
+        ];
+        $this->assertEquals([
+            'foo' => 'hoo',
+            'noo' => 'roo',
+            'poo' => 'doo',
+            'boo' => 'moo',
+            'gloo' => 'voo'
+        ], $coll($arr2)->toArray());
+    }
+
+    public function testInvokeCollectionWithKeyAndValueSetsKeyToValue()
+    {
+        $coll = new Collection($arr = [
+            'cow' => 'moo',
+            'sow' => 'soo',
+            'vow' => 'woo',
+            'bow' => 'boo'
+        ]);
+        // @todo why are these in this order?
+        $coll('kaboom!', 'pow');
+        $coll('whoo', 'bow');
+        $this->assertEquals([
+            'cow' => 'moo',
+            'sow' => 'soo',
+            'vow' => 'woo',
+            'bow' => 'whoo',
+            'pow' => 'kaboom!'
+        ], $coll());
+    }
+
+    public function testInvokeCollectionWithKeyAndNullDeletesKey()
+    {
+        $coll = new Collection($arr = [
+            'cow' => 'moo',
+            'sow' => 'soo',
+            'vow' => 'woo',
+            'bow' => 'boo'
+        ]);
+        $coll(null, 'cow');
+        $coll(null, 'bow');
+        $this->assertEquals(['sow' => 'soo', 'vow' => 'woo'], $coll());
+    }
+
 }
