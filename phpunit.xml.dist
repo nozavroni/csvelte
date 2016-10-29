@@ -12,13 +12,16 @@
     <testsuites>
       <testsuite name="Core CSVelte Functionality">
           <file>tests/CSVelte/IO/StreamTest.php</file>
+          <file>tests/CSVelte/IO/ResourceTest.php</file>
           <file>tests/CSVelte/Table/RowTest.php</file>
-          <file>tests/CSVelte/ReaderTest.php</file>
-          <file>tests/CSVelte/WriterTest.php</file>
-          <file>tests/CSVelte/FlavorTest.php</file>
-          <file>tests/CSVelte/TasterTest.php</file>
-          <file>tests/CSVelte/CSVelteTest.php</file>
           <file>tests/CSVelte/AutoloaderTest.php</file>
+          <file>tests/CSVelte/CollectionTest.php</file>
+          <file>tests/CSVelte/CSVelteTest.php</file>
+          <file>tests/CSVelte/FlavorTest.php</file>
+          <file>tests/CSVelte/FunctionsTest.php</file>
+          <file>tests/CSVelte/ReaderTest.php</file>
+          <file>tests/CSVelte/TasterTest.php</file>
+          <file>tests/CSVelte/WriterTest.php</file>
       </testsuite>
     </testsuites>
     <filter>
