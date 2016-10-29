@@ -764,4 +764,35 @@ class StreamTest extends IOTest
         $this->assertEquals(substr($content, 100), $stream->getContents());
     }
 
+    public function testIteratorStreamBasicProperties()
+    {
+        $arr = ['foo,bar,baz','bar,boo,faz','baz,poo,razz'];
+        $iter = new IteratorStream(new ArrayIterator($arr));
+        $this->assertTrue($iter->isReadable());
+        $this->assertFalse($iter->isWritable());
+        $this->assertFalse($iter->isSeekable());
+        $this->assertNull($iter->getSize());
+    }
+
+    public function testIteratorStreamSeekReturnsFalse()
+    {
+        $arr = ['foo,bar,baz','bar,boo,faz','baz,poo,razz'];
+        $iter = new IteratorStream(new ArrayIterator($arr));
+        $this->assertFalse($iter->seek(5));
+    }
+
+    public function testIteratorStreamMetaReturnsEmptyArrayWhenCalledWithNoParams()
+    {
+        $arr = ['foo,bar,baz','bar,boo,faz','baz,poo,razz'];
+        $iter = new IteratorStream(new ArrayIterator($arr));
+        $this->assertEquals([], $iter->getMetadata());
+    }
+
+    public function testIteratorStreamMetaReturnsNullWhenCalledWithNonexistantKey()
+    {
+        $arr = ['foo,bar,baz','bar,boo,faz','baz,poo,razz'];
+        $iter = new IteratorStream(new ArrayIterator($arr));
+        $this->assertNull($iter->getMetadata('foo'));
+    }
+
 }
