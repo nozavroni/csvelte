@@ -24,7 +24,7 @@ Before we can instantiate a :php:class:`Reader` object, we must first instantiat
 .. code-block:: php
 
     // first instantiate a readable stream object...
-    $stream = new IO\Stream("/var/www/inventory.csv");
+    $stream = IO\Stream::open("/var/www/inventory.csv");
     // then pass it to the reader
     $reader = new Reader($stream);
 
@@ -46,7 +46,7 @@ If you know in advance what flavor of CSV you're working with, you can pass a :p
 .. code-block:: php
 
     // create readable stream
-    $in = new IO\Stream("./data/purchases.csv");
+    $in = IO\Stream::open("./data/purchases.csv");
 
     // explicitly pass a flavor object to the reader
     $reader = new Reader($in, new Flavor([
@@ -96,7 +96,7 @@ Although you could loop over every row in a CSV file, and place if/elseif/else b
 .. code-block:: php
 
     <?php
-    $reader = new Reader(new IO\Stream('./data/products.csv'));
+    $reader = new Reader(IO\Stream::open('./data/products.csv'));
     foreach ($reader as $line_no => $row) {
         if (isset($row[2]) && strlen($row[2]) > 10) {
             continue;
@@ -144,7 +144,7 @@ When looping through CSV data using ``Reader`` and ``foreach``, you will have ac
 .. code-block:: php
 
     <?php
-    $reader = new Reader(new IO\Stream('./data/products.csv'));
+    $reader = new Reader(IO\Stream::open('./data/products.csv'));
     foreach ($reader as $line_no => $row) {
         foreach ($row as $col_no => $field) {
             // now do something with $field
@@ -170,7 +170,7 @@ The table above will represent our CSV data. The first row represents the index 
 .. code-block:: php
 
     <?php
-    $reader = new Reader(new IO\Stream('./data/great-albums.csv'));
+    $reader = new Reader(IO\Stream::open('./data/great-albums.csv'));
     foreach ($reader as $line_no => $row) {
         // for the first row, this will print:
         // "One of my favorite albums is Lateralus by Tool."
@@ -200,7 +200,7 @@ In order to be able to use column header values rather than numeric indexes, you
     $flavor = new Flavor([
         'header' => true
     ]);
-    $reader = new Reader(new IO\Stream('./data/great-albums.csv'), $flavor);
+    $reader = new Reader(IO\Stream::open('./data/great-albums.csv'), $flavor);
     foreach ($reader as $line_no => $row) {
         // now we can use column headers rather than numeric indexes
         $album = $row['Album'];

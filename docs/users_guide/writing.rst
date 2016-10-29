@@ -12,7 +12,7 @@ Let's assume we want to write a CSV file called ``./data/products.csv``. We woul
 .. code-block:: php
 
     // we use "w" access mode string to open stream in write mode
-    $out = new IO\Stream('./data/products.csv', 'w');
+    $out = IO\Stream::open('./data/products.csv', 'w');
     $writer = new Writer($out);
 
 You could do the same thing using CSVelte's writer factory method.
@@ -29,7 +29,7 @@ If you want to use a specific flavor of CSV (rather than the standard :php:class
 .. code-block:: php
    :emphasize-lines: 2
 
-    $out = new IO\Stream('./data/products.csv', 'w');
+    $out = IO\Stream::open('./data/products.csv', 'w');
     $flavor = new Flavor(['delimiter' => "\t"]);
     $writer = new Writer($out, $flavor);
 
@@ -38,7 +38,7 @@ As I mentioned before, it is also acceptable to pass an associative array to the
 .. code-block:: php
    :emphasize-lines: 2
 
-    $out = new IO\Stream('./data/products.csv', 'w');
+    $out = IO\Stream::open('./data/products.csv', 'w');
     $writer = new Writer($out, ['delimiter' => "\t"]);
 
 We can shave off even *more* keystrokes by using CSVelte's writer factory method to generate our writer for us. As long as you don't need some custom stream output or something, this is the quickest and easiest way and it works just fine. Again, you can pass either a :php:class:`Flavor` object *or* an associative array of flavor attributes as the second parameter.
@@ -59,7 +59,7 @@ Once you've instantiated a :php:class:`Writer` object, you can use the :php:meth
 .. code-block:: php
 
     <?php
-    $out = new IO\Stream('./data/products.csv', 'w');
+    $out = IO\Stream::open('./data/products.csv', 'w');
     $writer = new Writer($out);
     // you can pass an array...
     $writer->writeRow(['one', 2, 'three', 'fore']);
@@ -81,7 +81,7 @@ If you have a two-dimensional array or any other traversable tabular data [#]_, 
 .. code-block:: php
 
     <?php
-    $out = new IO\Stream('./data/albums.csv', 'w');
+    $out = IO\Stream::open('./data/albums.csv', 'w');
     $writer = new Writer($out);
     $writer->writeRows([
         ['Lateralus', 'Tool', 2001, 'Volcano Entertainment'],
@@ -109,7 +109,7 @@ CSV files allow an optional header row to designate labels for each column withi
 .. code-block:: php
    :emphasize-lines: 4
 
-    $out = new IO\Stream('./data/albums.csv', 'w');
+    $out = IO\Stream::open('./data/albums.csv', 'w');
     $writer = new Writer($out);
     $writer->writeRows([
         ['Album', 'Artist', 'Year', 'Label'],
@@ -123,7 +123,7 @@ But if you prefer to be explicit, like I do, you may use the :php:meth:`Writer::
 .. code-block:: php
    :emphasize-lines: 3
 
-    $out = new IO\Stream('./data/albums.csv');
+    $out = IO\Stream::open('./data/albums.csv');
     $writer = new Writer($out);
     $writer->setHeaderRow(['Album', 'Artist', 'Year', 'Label']);
     $writer->writeRows([

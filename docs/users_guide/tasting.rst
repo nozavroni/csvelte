@@ -24,7 +24,7 @@ Using the auto-detect feature is so easy, you won't even know you're using it. A
 
     <?php
     // flavor will be quietly inferred from a sample of "products.csv"
-    $reader = new Reader(new IO\Stream("./files/products.csv"));
+    $reader = new Reader(IO\Stream::open("./files/products.csv"));
 
 .. note::
 
@@ -39,7 +39,7 @@ Behind the scenes, CSVelte's auto-detect feature ultimately boils down to a sing
 
     <?php
     // create an input stream object that points to a CSV file
-    $csv = new IO\Stream('./data/products.csv');
+    $csv = IO\Stream::open('./data/products.csv');
 
     // now, using that stream object, instantiate your taster
     $taster = new Taster($csv);
@@ -55,7 +55,7 @@ This will work for the overwhelming majority of datasets, but if your data is to
     // this time we wrap our tasting code in a try/catch
     // block for more graceful error recovery
     try {
-        $csv = new IO\Stream('./data/products.csv');
+        $csv = IO\Stream::open('./data/products.csv');
         $taster = new Taster($csv);
         $flavor = $taster->lick();
     } catch (Exception\TasterException $e) {

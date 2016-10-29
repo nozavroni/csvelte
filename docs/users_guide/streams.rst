@@ -41,12 +41,12 @@ Because you can never really know until runtime whether a particular stream is r
 Create a stream using an URI
 ----------------------------
 
-PHP natively offers a multitude of possible stream wrappers [#]_. You can stream data using the local file system, FTP, SSL, HTTP, and cURL, just to name a few. Each stream wrapper works a little differently, so you'll need to consult PHP's streams_ documentation if you intend to use a stream wrapper not covered here.
+PHP natively offers a multitude of possible stream wrappers [#]_. You can stream data using the local file system, FTP, SSL or HTTP, just to name a few. Each stream wrapper works a little differently, so you'll need to consult PHP's streams_ documentation if you intend to use a stream wrapper not covered here.
 
 Local filesystem
 ~~~~~~~~~~~~~~~~
 
-The default and (arguably) most common stream wrapper is "file", which allows the streaming of local files. To instantiate an :php:class:`IO\\Stream` object using a local file, simply pass a valid file name (including its path) to the :php:meth:`IO\\Stream::open` method (file name may optionally be preceeded with ``file://`` but it is not required because "file" is the default stream wrapper). You may also optionally pass a file access mode string [#]_ as a second parameter to tell :php:class:`IO\\Stream` how you intend to use the stream. :php:class:`IO\\Stream` respects the rules specified by each of PHP's available access mode characters, so its behavior should be familiar if you've ever worked with PHP's :php:func:`fopen` function.
+To instantiate an :php:class:`IO\\Stream` object using a local file, simply pass a valid file name (including its path) to the :php:meth:`IO\\Stream::open` method (file name may optionally be preceeded with ``file://`` but it is not required because "file" is the default stream wrapper). You may also optionally pass a file access mode string [#]_ as a second parameter to tell :php:class:`IO\\Stream` how you intend to use the stream. :php:class:`IO\\Stream` respects the rules specified by each of PHP's available access mode characters, so its behavior should be familiar if you've ever worked with PHP's :php:func:`fopen` function.
 
 .. code-block:: php
 
@@ -99,38 +99,47 @@ To demonstrate how this works, let's assume we have a script called ``download_d
         ]
     ]);
 
-This example is pretty straight-forward, but the point is made. Context parameters can make our :php:class:`IO\\Stream` objects *extremely* flexible and powerful if used correctly. Unfortunately, beyond this brief introduction, stream context parameters are outside the scope of this documentation. If you'd like to learn more about them, please check out the PHP documentation regarding `stream context options and parameters`_.
+This example is pretty straight-forward, but the point is made. Context parameters can make our :php:class:`IO\\Stream` objects *extremely* flexible and powerful if used correctly. Unfortunately, beyond this brief introduction, stream context parameters are outside the scope of this documentation. If you'd like to learn more about them, please check out the PHP documentation regarding `stream context options and parameters`_ (although to be honest, their documentation isn't much better).
 
-Using an open :php:class:`SplFileObject` to create a stream
---------------------------------------------------
+The :php:func:`streamize` factory
+---------------------------------
 
-Although CSVelte cannot work with the ``SplFileObject`` class directly, it *can* convert it to a valid :php:class:`IO\\Stream` object, which it understands perfectly.
+.. todo::
 
-.. code-block:: php
+    Add a note about this being new in this version
 
-    <?php
-    $file = new \SplFileObject('./files/data.csv', 'r+b');
-    $stream = IO\Stream::streamize($file);
-
-.. warning::
-
-    The :php:class:`SplFileObject` class does not have any way to access its underlying stream resource, so although :php:meth:`IO\\Stream::streamize()` can accept an :php:class:`SplFileObject`, it's pretty limited in that it will always open the file in ``r+b`` (binary-safe read + write) mode, regardless of what mode was used to open the :php:class:`SplFileObject`. As a result, the internal file pointer will be moved to the beginning of the stream.
+CSVelte provides a namespaced stream factory function called :php:func:`CSVelte\\streamize()` for convenience. While the :php:class:`IO\\Resource` and :php:class:`IO\\Stream` classes require very specific instantiation parameters, this function does its best to convert anything you pass to it into a stream object. Let's take a look at a few examples.
 
 Create a stream from a standard PHP string
-------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Often times you may end up with a PHP string containing CSV data. In this case, there is a convenient method to convert that PHP string to an :php:class:`IO\\Stream` object so that it may be read by the :php:class:`Reader` class. Yup, you guessed it, :php:meth:`IO\\Stream::streamize()`!
+Often times you may end up with a PHP string containing CSV data. In this case you can use the :php:func:`CSVelte\\streamize()` factory to get an :php:class:`IO\\Stream` object representing your string. You can then pass the stream object to a :php:class:`Reader` object to parse its CSV data or to a :php:class:`Taster` to ascertain what flavor of CSV it contains.
 
 .. code-block:: php
 
     <?php
     $csv_string = some_func_that_returns_csv_string();
-    $stream = IO\Stream::streamize($csv_string);
+    $stream = CSVelte\streamize($csv_string);
 
-This also works for any object that has a __toString() magic method [#]_.
+There is nothing magic about how this works. CSVelte simply places your string into memory using the "php" stream wrapper [#]_  __toString() magic method [#]_.
+
+Using an open :php:class:`SplFileObject` to create a stream
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Although CSVelte cannot work with the ``SplFileObject`` class directly, :php:func:`CSVelte\\streamize()` *can* convert it to a valid :php:class:`IO\\Stream` object, which it understands perfectly.
+
+.. code-block:: php
+
+    <?php
+    $file = new \SplFileObject('./files/data.csv', 'r+b');
+    $stream = CSVelte\streamize($file);
+
+.. warning::
+
+    The :php:class:`SplFileObject` class does not have any way to access its underlying stream resource, so although :php:func:`CSVelte\\streamize()` can accept an :php:class:`SplFileObject`, it's pretty limited in that it will always open the file in ``r+b`` (binary-safe read + write) mode, regardless of what mode was used to open the :php:class:`SplFileObject`. As a result, the internal file pointer will be moved to the beginning of the file.
 
 Create a stream from an existing stream resource
-------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 In PHP, a stream is represented by a special variable called a resource. These variables are used throughout PHP to represent references to external resources (a database for instance). Because CSVelte makes such extensive use of PHP's native streams, I have implemented a :php:class:`IO\\Resource`  class that represents a stream resource. This allows me to instantiate a stream resource and pass it around without ever actually opening it (until the time it is actually needed--this is called lazy-loading or in this case lazy-opening). It also allows you to instantiate it using an already-open stream resource object as shown below. Just invoke it as if it were a function to get an :php:class:`IO\\Stream` object.
 
@@ -138,7 +147,7 @@ In PHP, a stream is represented by a special variable called a resource. These v
 
     Unfortunately, because PHP7 has reserved the word "resource" for future use, I will need to change the name of :php:class:`IO\\Resource`  to something else in my next release (most likely something like :php:class:`IO\\StreamResource` or :php:class:`IO\\Handle`).
 
-If you already have a stream resource that you've opened using :php:func:`fopen`, you can pass that resource directly to the :php:class:`IO\\Stream` constructor to create an :php:class:`IO\\Stream` object.
+If you already have a stream resource that you've opened using :php:func:`fopen`, you can pass that resource directly to the :php:class:`IO\\Resource` constructor to create a :php:class:`IO\\Resource` object. Then simply invoke it as if it were a function to get a Stream object.
 
 .. code-block:: php
 
@@ -161,4 +170,5 @@ If you already have a stream resource that you've opened using :php:func:`fopen`
 .. [#] PHP defines stream wrappers as "additional code which tells the stream how to handle specific protocols/encodings". See `PHP streams documentation`_ for a more complete description.
 .. [#] File access mode strings are a short (typically 1-3 characters) string containing very concise instructions about how a file or stream should be opened. See `fopen file modes`_ for a more detailed explanation.
 .. [#] Standard input and standard output are preconnected I/O channels, input typically being a data stream going into a program from the user and output being the stream where a program writes its output. See `standard streams`_ Wikipedia page for more on stdin/stdout.
+.. [#] See `php://temp`_ on php.net_ for more on storing temporary data using the "PHP" stream wrapper
 .. [#] See `magic methods`_ on php.net_ for more on __toString()
