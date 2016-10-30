@@ -2,6 +2,7 @@
 namespace CSVelteTest\IO;
 
 use \ArrayIterator;
+use CSVelte\Exception\NotYetImplementedException;
 use \SplFileObject;
 use CSVelte\Contract\Streamable;
 use CSVelte\IO\Stream;
@@ -350,6 +351,16 @@ class StreamTest extends IOTest
         $nonWritableStream = Stream::open($this->getFilePathFor('veryShort'), 'rb');
         $this->assertFalse($nonWritableStream->isWritable());
     }
+
+//    /**
+//     * @expectedException NotYetImplementedException
+//     */
+//    public function testSeekableStreamsThrowNotYetImplementedOnSeekLineMethod()
+//    {
+//        $stream = Stream::open($this->getFilePathFor('veryShort'));
+//        $this->assertTrue($stream->isSeekable());
+//        $stream->seekLine(1);
+//    }
 
     public function testStreamCanConvertStringIntoStreamWithStreamize()
     {
@@ -866,7 +877,6 @@ class StreamTest extends IOTest
         $iter = new IteratorStream(new ArrayIterator($arr));
         $this->assertFalse($iter->write('foo'));
     }
-
 
 
 }

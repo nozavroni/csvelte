@@ -158,13 +158,14 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * Return the internal pointer to the first column and return that object
      *
-     * @return void
-     * @access public
+     * @return null|AbstractRow
      */
     public function rewind()
     {
         $this->position = 0;
-        if ($this->valid()) return $this->current();
+        if ($this->valid()) {
+            return $this->current();
+        }
     }
 
     /**

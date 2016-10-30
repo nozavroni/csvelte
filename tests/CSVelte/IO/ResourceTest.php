@@ -41,6 +41,17 @@ class ResourceTest extends IOTest
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInstantiateStreamWithBadResourceTypeThrowsException()
+    {
+        $or = stream_context_create([
+            'foo' => ['bar' => 'this is a context resource']
+        ]);
+        $sr = new Resource($or);
+    }
+
+    /**
      * @expectedException CSVelte\Exception\IOException
      * @expectedExceptionCode CSVelte\Exception\IOException::ERR_STREAM_CONNECTION_FAILED
      */
