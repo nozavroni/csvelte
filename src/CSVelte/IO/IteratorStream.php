@@ -284,12 +284,11 @@ class IteratorStream implements Streamable
      */
     public function detach()
     {
-        $buffer = $this->buffer;
-        $iter = $this->iter;
+        $data = (string) $this;
         $this->buffer = null;
         $this->iter = null;
         $this->readable = false;
-        return [$iter, $buffer];
+        return $data;
     }
 
     /**

@@ -831,9 +831,7 @@ class StreamTest extends IOTest
         $iter = new ArrayIterator($arr);
         $buff = new BufferStream();
         $stream = new IteratorStream($iter, $buff);
-        $this->assertInternalType('array', $ret = $stream->detach());
-        $this->assertSame($iter, $ret[0]);
-        $this->assertSame($buff, $ret[1]);
+        $this->assertInternalType('string', $ret = $stream->detach());
         $this->assertFalse($stream->isReadable());
         $this->assertFalse($stream->read(5));
     }
