@@ -615,7 +615,7 @@ class Collection implements Countable, ArrayAccess
      *
      * @param int|mixed The offset to set
      * @param any The value to set it to
-     * @return boolean
+     * @return Collection
      */
     public function offsetSet($offset, $value)
     {
@@ -684,7 +684,7 @@ class Collection implements Countable, ArrayAccess
      *
      * @param boolean $multi Whether to count just the items in the collection or
      *     to count the items in each tabular data row.
-     * @return int|\CSVelte\Collection Either an integer count or a collection of counts
+     * @return string Either an integer count or a collection of counts
      */
     public function count($multi = false)
     {
@@ -771,7 +771,7 @@ class Collection implements Countable, ArrayAccess
      * Filter out unwanted items using a callback function.
      *
      * @param Callable $callback
-     * @return CSVelte\Collection A new collection with filtered items removed
+     * @return Collection A new collection with filtered items removed
      */
     public function filter(Callable $callback)
     {
@@ -823,7 +823,7 @@ class Collection implements Countable, ArrayAccess
      * Returns an array where the key is a value in the collection and the value
      * is the number of times that value appears in the collection.
      *
-     * @return CSVelte\Collection A collection of value frequencies (see description)
+     * @return Collection A collection of value frequencies (see description)
      */
     public function frequency()
     {
@@ -847,7 +847,7 @@ class Collection implements Countable, ArrayAccess
      * Returns a collection with duplicate values removed. If two-dimensional,
      * then each array within the collection will have its duplicates removed.
      *
-     * @return CSVelte\Collection A new collection with duplicate values removed.
+     * @return Collection A new collection with duplicate values removed.
      */
     public function unique()
     {
@@ -863,7 +863,7 @@ class Collection implements Countable, ArrayAccess
      * Returns a collection of arrays where the key is the duplicate value
      * and the value is an array of keys from the original collection.
      *
-     * @return CSVelte\Collection A new collection with duplicate values.
+     * @return Collection A new collection with duplicate values.
      */
     public function duplicates()
     {
@@ -881,7 +881,7 @@ class Collection implements Countable, ArrayAccess
      *
      * Get a new collection where the keys and values have been swapped.
      *
-     * @return CSVelte\Collection A new collection where keys/values have been swapped
+     * @return Collection A new collection where keys/values have been swapped
      */
     public function flip()
     {
@@ -895,7 +895,7 @@ class Collection implements Countable, ArrayAccess
      * first is the default.
      *
      * @param boolean Whether you want pairs in [k => v] rather than [k, v] format
-     * @return CSVelte\Collection A collection of key/value pairs
+     * @return Collection A collection of key/value pairs
      */
     public function pairs($alt = false)
     {
@@ -1059,7 +1059,7 @@ class Collection implements Countable, ArrayAccess
      *
      * @param Callable $callback The sorting function you want to use
      * @param boolean $preserve_keys Whether you want to preserve keys
-     * @return CSVelte\Collection A new collection sorted by $callback
+     * @return Collection A new collection sorted by $callback
      */
     public function sort(Callable $callback = null, $preserve_keys = true)
     {
@@ -1089,7 +1089,7 @@ class Collection implements Countable, ArrayAccess
      * @param string $key The key you want to order by
      * @param Callable $cmp The sorting comparison algorithm to use
      * @param boolean $preserve_keys Whether keys should be preserved
-     * @return CSVelte\Collection A new collection sorted by $cmp and $key
+     * @return Collection A new collection sorted by $cmp and $key
      */
     public function orderBy($key, Callable $cmp = null, $preserve_keys = true)
     {
@@ -1113,13 +1113,16 @@ class Collection implements Countable, ArrayAccess
      * trying to write a particular sorting algurithm that sorts forwards and back.
      *
      * @param boolean $preserve_keys Whether keys should be preserved
-     * @return CSVelte\Collection A new collection in reverse order
+     * @return Collection A new collection in reverse order
      */
     public function reverse($preserve_keys = true)
     {
         return new self(array_reverse($this->data, $preserve_keys));
     }
 
+    /**
+     * @param string $method
+     */
     protected function if2DMapInternalMethod($method)
     {
         if ($this->is2D()) {
