@@ -119,7 +119,7 @@ class BufferStream implements Streamable
      * Read in the specified amount of characters from the input source
      *
      * @param integer Amount of characters to read from input source
-     * @return string|boolean The specified amount of characters read from input source
+     * @return false|string The specified amount of characters read from input source
      */
     public function read($chars)
     {
@@ -138,7 +138,9 @@ class BufferStream implements Streamable
     public function readChunk($start = null, $length = null)
     {
         //dd($this->buffer, false);
-        if ($this->buffer === false) return false;
+        if ($this->buffer === false) {
+            return false;
+        }
         $top = substr($this->buffer, 0, $start);
         $data = substr($this->buffer, $start, $length);
         $bottom = substr($this->buffer, $start + $length);
@@ -186,7 +188,7 @@ class BufferStream implements Streamable
     /**
      * Return the current position within the stream/readable
      *
-     * @return int The current position within readable
+     * @return boolean The current position within readable
      */
     public function tell()
     {
