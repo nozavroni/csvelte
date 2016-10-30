@@ -44,7 +44,12 @@ class IteratorStream implements Streamable
      */
     protected $buffer;
 
-    protected $overflow;
+    /**
+     * Iterator to read from
+     *
+     * @var Traversable
+     */
+    protected $iter;
 
     /**
      * Is stream readable?
@@ -202,7 +207,7 @@ class IteratorStream implements Streamable
      * the lifetime of the object, but I don't think that is meaningful
      * and/or useful.
      *
-     * @return int The current position within readable
+     * @return int|false The current position within readable
      */
     public function tell()
     {
@@ -272,7 +277,7 @@ class IteratorStream implements Streamable
      *
      * After the stream has been detached, the stream is in an unusable state.
      *
-     * @return string|null Underlying PHP stream, if any
+     * @return array|Resource Underlying PHP stream, if any
      * @todo I'm not sure what detach is for so I don't know whether what I'm
      *     doing here is right. The reason I have the method at all is because
      *     psr7 StreamInterface has one.f
@@ -306,11 +311,11 @@ class IteratorStream implements Streamable
      * Write data to the output.
      *
      * @param string The data to write
-     * @return int The number of bytes written
+     * @return int|false The number of bytes written
      */
     public function write($data)
     {
-        return $this->writable;
+        return false;
     }
 
      /**

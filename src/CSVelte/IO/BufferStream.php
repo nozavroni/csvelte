@@ -186,7 +186,7 @@ class BufferStream implements Streamable
     /**
      * Return the current position within the stream/readable
      *
-     * @return int The current position within readable
+     * @return int|false The current position within readable
      */
     public function tell()
     {
@@ -246,7 +246,7 @@ class BufferStream implements Streamable
      *
      * After the stream has been detached, the stream is in an unusable state.
      *
-     * @return string|null Underlying PHP stream, if any
+     * @return BufferStream|null Underlying PHP stream, if any
      */
     public function detach()
     {
@@ -274,7 +274,7 @@ class BufferStream implements Streamable
      * Write data to the output.
      *
      * @param string The data to write
-     * @return int The number of bytes written
+     * @return false|int The number of bytes written
      */
     public function write($data)
     {
