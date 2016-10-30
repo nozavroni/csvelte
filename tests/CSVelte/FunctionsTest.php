@@ -10,7 +10,8 @@ use function
     CSVelte\stream_resource,
     CSVelte\streamize,
     CSVelte\taste,
-    CSVelte\collect;
+    CSVelte\collect,
+    CSVelte\getvalue;
 
 /**
  * CSVelte functions tests
@@ -187,5 +188,12 @@ class FunctionsTest extends UnitTestCase
     // {
     //
     // }
+
+    public function testGetValueAcceptsCallbackAndVariadicArguments()
+    {
+        $this->assertEquals('Hello, Luke Visinoni!', getvalue(function($first, $last) {
+            return "Hello, {$first} {$last}!";
+        }, 'Luke', 'Visinoni'));
+    }
 
 }

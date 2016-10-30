@@ -13,11 +13,14 @@
  */
 namespace CSVelte\IO;
 
+use InvalidArgumentException;
 use \Iterator;
 use CSVelte\IO\BufferStream;
 use CSVelte\Traits\IsReadable;
 use CSVelte\Traits\IsWritable;
 use CSVelte\Contract\Streamable;
+use Traversable;
+use function CSVelte\getvalue;
 
 /**
  * Iterator Stream.
@@ -80,12 +83,22 @@ class IteratorStream implements Streamable
      * @param \Iterator The iterator to stream data from
      * @param \CSVelte\IO\BufferIterator|null Either a buffer or null (to use
      *     default buffer)
+     * @todo this should expect a BufferInterface or a Bufferable rather than
+     * a BufferStream
      */
-    public function __construct(Iterator $iter, $buffer = null)
+    public function __construct(Traversable $iter, $buffer = null)
     {
         $this->iter = $iter;
+        if (is_null($buffer)) {
+            $buffer = new BufferStream;
+        }
         if (!($buffer instanceof BufferStream)) {
-            $buffer = new BufferStream();
+            throw new InvalidArgumentException(sprintf(
+                "%s expected %s as second argument, got: %s",
+                __CLASS__,
+                BufferStream::class,
+                is_object($buffer) ? get_class($buffer) : gettype($buffer)
+            ));
         }
         $this->buffer = $buffer;
     }
@@ -107,20 +120,21 @@ class IteratorStream implements Streamable
 
     public function read($bytes)
     {
-        if (is_null($this->buffer) || is_null($this->iter)) {
-            return false;
-        }
-        $data = '';
-        while (strlen($data) < $bytes) {
-            if ($this->buffer->isEmpty()) {
-                $this->inflateBuffer();
+        if ($this->buffer) {
+            $data = '';
+            while (strlen($data) < $bytes) {
+                if ($this->buffer->isEmpty()) {
+                    $this->inflateBuffer();
+                }
+
+                if (!$read = $this->buffer->read($bytes - strlen($data))) {
+                    break;
+                }
+                $data .= $read;
             }
-            if (!$read = $this->buffer->read($bytes - strlen($data))) {
-                break;
-            }
-            $data .= $read;
+            return $data;
         }
-        return $data;
+        return false;
     }
 
     protected function inflateBuffer()
@@ -178,6 +192,15 @@ class IteratorStream implements Streamable
 
     /**
      * Return the current position within the stream/readable
+     *
+     * I can't decide whether there is any meaningful way to "tell" the
+     * current position within this type of stream. For now I'm just
+     * going to return false because the nature of this type of stream
+     * means that it technically has no definitive beginning or end and
+     * therefor no absolute position. If a "tell" is truly needed, I
+     * suppose I could keep track of how many bytes have been read over
+     * the lifetime of the object, but I don't think that is meaningful
+     * and/or useful.
      *
      * @return int The current position within readable
      */
@@ -240,6 +263,7 @@ class IteratorStream implements Streamable
         if (method_exists($this->iter, 'close')) {
             $iter = $this->iter->close();
         }
+        $this->buffer = null;
         return $buff && $iter;
     }
 

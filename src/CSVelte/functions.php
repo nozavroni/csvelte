@@ -151,3 +151,13 @@ function collect($in = null)
 {
     return new Collection($in);
 }
+
+/**
+ * @param callable $callback
+ * @param array ...$args
+ * @return mixed
+ */
+function getvalue(Callable $callback, ...$args)
+{
+    return $callback(...$args);
+}

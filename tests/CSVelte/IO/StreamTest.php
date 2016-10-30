@@ -708,6 +708,25 @@ class StreamTest extends IOTest
 
     }
 
+    public function testBufferStreamReadChunk()
+    {
+        $buffer = new BufferStream();
+        $buffer->write("This is a string of text that I put into the buffer. I will now try to remove a chunk from the middle of it.");
+        $this->assertEquals('string', $buffer->readChunk(10, 6));
+        $this->assertEquals("This is a  of text that I put into the buffer. I will now try to remove a chunk from the middle of it.", $buffer->getContents());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testBufferStreamThrowsExceptionIfPassedBadSecondArgument()
+    {
+        $iter = new IteratorStream(
+            new ArrayIterator([1,2,3,4]),
+            'foo'
+        );
+    }
+
     public function testIteratorStreamUsingArrayIterator()
     {
         $array = explode("\n", $this->getFileContentFor('noHeaderCommaNoQuotes'));
@@ -807,6 +826,47 @@ class StreamTest extends IOTest
         $this->assertFalse($stream->isReadable());
         $this->assertFalse($stream->read(5));
     }
+
+    public function testIteratorStreamWriteReturnsFalse()
+    {
+        $arr = ['foo,bar,baz','bar,boo,faz','baz,poo,razz'];
+        $iter = new IteratorStream(new ArrayIterator($arr));
+        $this->assertFalse($iter->write('foo'));
+    }
+
+    public function testIteratorStreamIsSeekableReturnsFalse()
+    {
+        $arr = ['foo,bar,baz','bar,boo,faz','baz,poo,razz'];
+        $iter = new IteratorStream(new ArrayIterator($arr));
+        $this->assertFalse($iter->isSeekable());
+    }
+
+//    public function testIteratorStreamTellReturnsPositionWithinBuffer()
+    public function testIteratorStreamTellReturnsFalse()
+    {
+        $arr = ["foo,bar,baz\n","bar,boo,faz\n","baz,poo,razz\n"];
+        $iter = new IteratorStream(new ArrayIterator($arr));
+        $this->assertEquals("foo,bar,ba", $iter->read(10));
+        // this should either return false or return an integer representing
+        // the internal position within the stream
+        $this->assertFalse($iter->tell());
+    }
+
+    public function testIteratorStreamCloseMethodClosesBufferAndIterator()
+    {
+        $arr = ["foo,bar,baz\n","bar,boo,faz\n","baz,poo,razz\n"];
+        $iter = new IteratorStream(new ArrayIterator($arr));
+        $iter->close();
+        $this->assertFalse($iter->read(10));
+    }
+
+    public function testIteratorStreamWriteAlwaysReturnsFalse()
+    {
+        $arr = ["foo,bar,baz\n","bar,boo,faz\n","baz,poo,razz\n"];
+        $iter = new IteratorStream(new ArrayIterator($arr));
+        $this->assertFalse($iter->write('foo'));
+    }
+
 
 
 }

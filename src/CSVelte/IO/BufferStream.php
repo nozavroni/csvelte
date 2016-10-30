@@ -123,8 +123,26 @@ class BufferStream implements Streamable
      */
     public function read($chars)
     {
-        $data = substr($this->buffer, 0, $chars);
-        $this->buffer = substr($this->buffer, $chars);
+        return $this->readChunk(null, $chars);
+    }
+
+    /**
+     * Read a chunk of buffer data.
+     *
+     * Removes a specific chunk of data from the buffer and return it.
+     *
+     * @param int|null $start
+     * @param int|null $length
+     * @return string The chunk of data read from the buffer
+     */
+    public function readChunk($start = null, $length = null)
+    {
+        //dd($this->buffer, false);
+        if ($this->buffer === false) return false;
+        $top = substr($this->buffer, 0, $start);
+        $data = substr($this->buffer, $start, $length);
+        $bottom = substr($this->buffer, $start + $length);
+        $this->buffer = $top.$bottom;
         return $data;
     }
 
