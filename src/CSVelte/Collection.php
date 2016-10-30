@@ -115,7 +115,7 @@ class Collection implements Countable, ArrayAccess
      *
      * Set the data for this collection using $data
      *
-     * @param array|ArrayAccess|null $data Either an array or an object that can be accessed
+     * @param array|Iterator|null $data Either an array or an object that can be accessed
      *     as if it were an array.
      */
     public function __construct($data = null)
@@ -157,9 +157,7 @@ class Collection implements Countable, ArrayAccess
                 else {
                     if (is_callable($val)) {
                         return $this->map($val);
-                    } /*else {
-                        return $this->set($key, $val);
-                    }*/
+                    }
                 }
             } else {
                 $this->offsetSet($key, $val);
@@ -224,6 +222,9 @@ class Collection implements Countable, ArrayAccess
     {
         $this->assertArrayOrIterator($data);
         $coll = new self($this->data);
+        if (is_null($data)) {
+            return $coll;
+        }
         foreach ($data as $key => $val) {
             $coll->set($key, $val, $overwrite);
         }
@@ -567,8 +568,8 @@ class Collection implements Countable, ArrayAccess
      * index already has a value, it will be overwritten unless $overwrite is set
      * to false. In that case nothing happens.
      *
-     * @param any $key The key you want to set a value for
-     * @param any $value The value you want to set key to
+     * @param string $key The key you want to set a value for
+     * @param mixed $value The value you want to set key to
      * @param boolean $overwrite Whether to overwrite existing value
      * @return $this
      */
@@ -870,7 +871,7 @@ class Collection implements Countable, ArrayAccess
         $this->walk(function($val, $key) use (&$dups) {
             $dups[$val][] = $key;
         });
-        return (new self($dups))->filter(function($val, $key) {
+        return (new self($dups))->filter(function($val) {
             return (count($val) > 1);
         });
     }
@@ -1056,7 +1057,7 @@ class Collection implements Countable, ArrayAccess
      * default it uses a case-insensitive natural order algorithm, but you can
      * pass it any sorting algorithm you like.
      *
-     * @param Callable $sort_func The sorting function you want to use
+     * @param Callable $callback The sorting function you want to use
      * @param boolean $preserve_keys Whether you want to preserve keys
      * @return CSVelte\Collection A new collection sorted by $callback
      */
@@ -1145,7 +1146,6 @@ class Collection implements Countable, ArrayAccess
         return !$this->contains(function($val){
             return !is_array($val);
         });
-        return false;
     }
 
     /**

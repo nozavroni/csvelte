@@ -40,6 +40,17 @@ class ResourceTest extends IOTest
         $this->assertTrue($sr->isConnected());
     }
 
+//    public function testSetUriUsingObjectWithToStringMethod()
+//    {
+//        $stub = $this->createMock(Stream::class)
+//            ->method('__toString')
+//            ->willReturn($expected = 'php://temp');
+//        $resource = new Resource('php://input');
+//        dd($stub->__toString());
+//        $resource->setUri($stub);
+//        $this->assertEquals($expected, $resource->getUri());
+//    }
+
     /**
      * @expectedException \InvalidArgumentException
      */
