@@ -157,7 +157,7 @@ class BufferStream implements Streamable
      */
     public function __toString()
     {
-        return $this->getContents();
+        return (string) $this->getContents();
     }
 
     /**
@@ -169,7 +169,7 @@ class BufferStream implements Streamable
     {
         $buffer = $this->buffer;
         $this->buffer = "";
-        return $buffer;
+        return (string) $buffer;
     }
 
     /**

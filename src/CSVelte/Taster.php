@@ -489,9 +489,9 @@ class Taster
 
         // walk through each line from the data sample to determine which fields
         // are quoted and which aren't
-        $qsFunc = function($line, $line_no) use (&$quoting_styles, &$freq, $eol, $delim) {
+        $qsFunc = function($line) use (&$quoting_styles, &$freq, $eol, $delim) {
             $line = str_replace(self::PLACEHOLDER_NEWLINE, $eol, $line);
-            $qnqaFunc = function($field, $colpos) use (&$quoting_styles, &$freq, $delim) {
+            $qnqaFunc = function($field) use (&$quoting_styles, &$freq, $delim) {
                 $field = str_replace(self::PLACEHOLDER_DELIM, $delim, $field);
                 if ($this->isQuoted($field)) {
                     $field = $this->unQuote($field);
@@ -500,7 +500,6 @@ class Taster
                     // QUOTE_NONE can be ruled out
                     $quoting_styles->set(Flavor::QUOTE_NONE, false);
                 } else {
-                    $type = $this->lickDataType($field);
                     $freq->get('unquoted')->push($this->lickDataType($field));
                     // since we know there's at least one unquoted field,
                     // QUOTE_ALL can be ruled out
@@ -730,7 +729,7 @@ class Taster
             $row->walk(function($field_info, $col_no) use (&$hasHeader, $possibleHeader) {
                 extract($field_info);
                 try {
-                    extract($possibleHeader->get($col_no, null, true), EXTR_PREFIX_ALL, "header");
+                    extract((array) $possibleHeader->get($col_no, null, true), EXTR_PREFIX_ALL, "header");
                     if ($header_type == self::TYPE_STRING) {
                         // use length
                         if ($length != $header_length) $hasHeader++;
