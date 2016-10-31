@@ -107,7 +107,7 @@ class Taster
     // abababab
     const TYPE_ALPHA = 'alpha';
 
-    /** @var \CSVelte\Contract\Readable The source of data to examine */
+    /** @var \CSVelte\Contract\Streamable The source of data to examine */
     protected $input;
 
     /** @var string Sample of CSV data to use for tasting (determining CSV flavor) */
@@ -315,7 +315,7 @@ class Taster
         // lines, 6 times on 2 lines, and 7 times on 1 line)
         collect(explode($eol, $this->removeQuotedStrings($this->sample)))
             ->walk(function($line, $line_no) use (&$frequencies) {
-                $freq = collect(str_split($line))
+                collect(str_split($line))
                     ->filter(function($c) { return collect($this->delims)->contains($c); })
                     ->frequency()
                     ->sort()
@@ -340,7 +340,6 @@ class Taster
         // of times a char (possible delim) will occur on each line...
         $freqs = collect($frequencies);
         $modes = $freqs->mode();
-        $averages = $freqs->average();
         $freqs->walk(function($f, $chr) use ($modes, &$consistencies) {
             collect($f)->walk(function($num) use ($modes, $chr, &$consistencies) {
                 if ($expected = $modes->get($chr)) {
@@ -383,7 +382,7 @@ class Taster
 
              $decision = $dups->get($max);
              try {
-                 $delim = $this->guessDelimByDistribution($decision, $eol);
+                 return $this->guessDelimByDistribution($decision, $eol);
              } catch (TasterException $e) {
                  // if somehow we STILL can't come to a consensus, then fall back to a
                  // "preferred delimiters" list...
@@ -492,28 +491,29 @@ class Taster
 
         // walk through each line from the data sample to determine which fields
         // are quoted and which aren't
-        $that = $this;
-        $lines->walk(function($line, $line_no) use (&$quoting_styles, &$freq, $that, $eol, $delim) {
+        $qsFunc = function($line, $line_no) use (&$quoting_styles, &$freq, $eol, $delim) {
             $line = str_replace(self::PLACEHOLDER_NEWLINE, $eol, $line);
-            $fields = collect(explode($delim, $line))
-                ->walk(function($field, $colpos) use (&$quoting_styles, &$freq, $that, $delim) {
-                    $field = str_replace(self::PLACEHOLDER_DELIM, $delim, $field);
-                    if ($this->isQuoted($field)) {
-                        $field = $that->unQuote($field);
-                        $freq->get('quoted')->push($that->lickDataType($field));
-                        // since we know there's at least one quoted field,
-                        // QUOTE_NONE can be ruled out
-                        $quoting_styles->set(Flavor::QUOTE_NONE, false);
-                    } else {
-                        $type = $that->lickDataType($field);
-                        $freq->get('unquoted')->push($that->lickDataType($field));
-                        // since we know there's at least one unquoted field,
-                        // QUOTE_ALL can be ruled out
-                        $quoting_styles->set(Flavor::QUOTE_ALL, false);
-                    }
-                });
+            $qnqaFunc = function($field, $colpos) use (&$quoting_styles, &$freq, $delim) {
+                $field = str_replace(self::PLACEHOLDER_DELIM, $delim, $field);
+                if ($this->isQuoted($field)) {
+                    $field = $this->unQuote($field);
+                    $freq->get('quoted')->push($this->lickDataType($field));
+                    // since we know there's at least one quoted field,
+                    // QUOTE_NONE can be ruled out
+                    $quoting_styles->set(Flavor::QUOTE_NONE, false);
+                } else {
+                    $type = $this->lickDataType($field);
+                    $freq->get('unquoted')->push($this->lickDataType($field));
+                    // since we know there's at least one unquoted field,
+                    // QUOTE_ALL can be ruled out
+                    $quoting_styles->set(Flavor::QUOTE_ALL, false);
+                }
+            };
+            collect(explode($delim, $line))
+                ->walk($qnqaFunc->bindTo($this));
 
-        });
+        };
+        $lines->walk($qsFunc->bindTo($this));
 
         $types = $freq->get('quoted')->unique();
         $quoting_styles = $quoting_styles->filter(function($val) { return (bool) $val; });

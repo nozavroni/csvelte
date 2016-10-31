@@ -239,15 +239,11 @@ class Resource
     {
         if (!$this->isConnected()) {
             $e = null;
-            $errhandler = function ($errno, $errstr, $errfile, $errline) use (&$e) {
+            $errhandler = function () use (&$e) {
                 $e = new IOException(sprintf(
-                    "Could not open connection for %s using mode %s:\n\nError: #%d (%s)\n Found at: %s:%d",
+                    "Could not open connection for %s using mode %s",
                     $this->getUri(),
-                    $this->getMode(),
-                    $errno,
-                    $errstr,
-                    $errfile,
-                    $errline
+                    $this->getMode()
                 ), IOException::ERR_STREAM_CONNECTION_FAILED);
             };
             set_error_handler($errhandler->bindTo($this));
