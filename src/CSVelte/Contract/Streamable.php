@@ -40,7 +40,7 @@ interface Streamable
      * Read in the specified amount of characters from the input source
      *
      * @param integer Amount of characters to read from input source
-     * @return string|boolean The specified amount of characters read from input source
+     * @return string|false The specified amount of characters read from input source
      */
     public function read($chars);
 
@@ -50,7 +50,7 @@ interface Streamable
      *
      * @param string $eol Line terminator sequence/character
      * @param int $maxLength The maximum line length to return
-     * @return string The next line from the input source
+     * @return string|false The next line from the input source
      */
     public function readLine($eol = PHP_EOL, $maxLength = null);
 
@@ -81,7 +81,7 @@ interface Streamable
     /**
      * Return the current position within the stream/readable
      *
-     * @return int The current position within readable
+     * @return int|false The current position within readable
      */
     public function tell();
 

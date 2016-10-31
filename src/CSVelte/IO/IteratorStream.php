@@ -85,8 +85,8 @@ class IteratorStream implements Streamable
      * Instantiate a new iterator stream. The iterator is used to continually
      * refill a buffer as it is drained by read operations.
      *
-     * @param \Iterator The iterator to stream data from
-     * @param \CSVelte\IO\BufferIterator|null Either a buffer or null (to use
+     * @param \Traversable The iterator to stream data from
+     * @param \CSVelte\IO\BufferStream|null Either a buffer or null (to use
      *     default buffer)
      * @todo this should expect a BufferInterface or a Bufferable rather than
      * a BufferStream
@@ -142,6 +142,13 @@ class IteratorStream implements Streamable
         return false;
     }
 
+    /**
+     * Inflate the buffer.
+     *
+     * Loop through the iterator and fill the buffer with its contents.
+     *
+     * @return void
+     */
     protected function inflateBuffer()
     {
         while (!$this->buffer->isFull() && $this->iter->valid()) {
@@ -229,6 +236,8 @@ class IteratorStream implements Streamable
 
     /**
      * Rewind to beginning of stream
+     *
+     * @return void
      */
     public function rewind()
     {
@@ -276,11 +285,10 @@ class IteratorStream implements Streamable
      * Separates any underlying resources from the stream.
      *
      * After the stream has been detached, the stream is in an unusable state.
+     * Because there is no underlying stream resource, the actual data in the
+     * buffer is returned instead.
      *
-     * @return array|Resource Underlying PHP stream, if any
-     * @todo I'm not sure what detach is for so I don't know whether what I'm
-     *     doing here is right. The reason I have the method at all is because
-     *     psr7 StreamInterface has one.f
+     * @return string
      */
     public function detach()
     {

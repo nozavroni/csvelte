@@ -43,7 +43,7 @@ class Writer
     protected $flavor;
 
     /**
-     * @var \CSVelte\Contract\Writable
+     * @var \CSVelte\Contract\Streamable
      */
     protected $output;
 
@@ -60,7 +60,7 @@ class Writer
     /**
      * Class Constructor
      *
-     * @param \CSVelte\Contract\Writable $output An output source to write to
+     * @param \CSVelte\Contract\Streamable $output An output source to write to
      * @param \CSVelte\Flavor|array $flavor A flavor or set of formatting params
      */
     public function __construct(Streamable $output, $flavor = null)
@@ -75,7 +75,6 @@ class Writer
      *
      * @param void
      * @return \CSVelte\Flavor
-     * @access public
      */
     public function getFlavor()
     {
@@ -123,6 +122,12 @@ class Writer
         }
     }
 
+    /**
+     * Write the header row.
+     *
+     * @param HeaderRow $row
+     * @return int|false
+     */
     protected function writeHeaderRow(HeaderRow $row)
     {
         $eol = $this->getFlavor()->lineTerminator;
@@ -136,7 +141,6 @@ class Writer
      *
      * @param \Iterable|array $rows List of \Iterable|array
      * @return int number of lines written
-     * @access public
      */
     public function writeRows($rows)
     {
@@ -160,7 +164,6 @@ class Writer
      *
      * @param \Iterator|array of data items
      * @return CSVelte\Table\AbstractRow
-     * @access protected
      */
     protected function prepareRow(Iterator $row)
     {
@@ -177,7 +180,6 @@ class Writer
      *
      * @param string $data A string containing cell data
      * @return string quoted string data
-     * @access protected
      */
     protected function prepareData($data)
     {
@@ -187,6 +189,14 @@ class Writer
         return $this->quoteString($data);
     }
 
+    /**
+     * Enclose a string in quotes.
+     *
+     * Accepts a string and returns it with quotes around it.
+     *
+     * @param string $str The string to wrap in quotes
+     * @return string
+     */
     protected function quoteString($str)
     {
         $flvr = $this->getFlavor();
@@ -222,6 +232,15 @@ class Writer
         );
     }
 
+    /**
+     * Escape a string.
+     *
+     * Return a string with all special characters escaped.
+     *
+     * @param string $str The string to escape
+     * @param bool $isQuoted True if string is quoted
+     * @return string
+     */
     protected function escapeString($str, $isQuoted = true)
     {
         $flvr = $this->getFlavor();
