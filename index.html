@@ -68,8 +68,8 @@
         <p>CSVelte requires at least PHP5.6. For the most up-to-date installation instructions and user documentation, check out <a href="http://csvelte.phpcsv.com/">csvelte.phpcsv.com</a>!</p>
         <h4>Installation</h4>
         <h5>With Composer</h5>
-        <p>To install using Composer, just use the following command. Once CSVelte reaches a stable version, it will be simply a matter of <code class="inline">composer require nozavroni/csvelte</code> but for the time being you will need the <code class="inline">@dev-master</code> flag (or you can <a href="https://getcomposer.org/doc/04-schema.md#minimum-stability">lower your minimum-stability setting</a>) or Composer will complain and refuse to install. </p>
-        <pre><code class="bash">$ php composer.phar require nozavroni/csvelte @dev-master</code></pre>
+        <p>To install using Composer, just use the following command. Once CSVelte reaches a stable version, it will be simply a matter of <code class="inline">composer require nozavroni/csvelte</code> but for the time being you will need the <code class="inline">dev-master</code> flag (or you can <a href="https://getcomposer.org/doc/04-schema.md#minimum-stability">lower your minimum-stability setting</a>) or Composer will complain and refuse to install. </p>
+        <pre><code class="bash">$ composer require nozavroni/csvelte dev-master</code></pre>
         <h5>Without Composer (direct download)</h5>
         <p>It is highly recommended that you install CSVelte uisng <a href="https://getcomposer.org/">Composer</a>. It is easier, and it ensures that you will always have the correct dependencies installed. But if you insist, you may <a href="https://github.com/nozavroni/csvelte/releases">download the latest version of CSVelte</a> from Github. Extract the contents of the zip or tar archive to wherever you want the library to live on your system, and then include the <code class="php">src/autoload.php</code> file, which will add CSVelte to your include path and register CSVelte's autoload function for you. That's it. Happy coding.</p>
         <pre><code class="php">&lt;?php
