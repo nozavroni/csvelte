@@ -28,5 +28,4 @@ use CSVelte\Flavor as FlavorBase;
 class Excel extends FlavorBase
 {
     protected $escapeChar = null;
-    // protected $doubleQuote = true;
 }

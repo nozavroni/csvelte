@@ -196,4 +196,21 @@ class FunctionsTest extends UnitTestCase
         }, 'Luke', 'Visinoni'));
     }
 
+    public function testStreamizeAcceptsIOResourceObject()
+    {
+        $reg = new Resource($this->getFilePathFor('veryShort'), null, false);
+        $this->assertTrue($reg->isConnected());
+        $regstream = streamize($reg);
+        $this->assertInstanceOf(Stream::class, $regstream);
+        $this->assertTrue($reg->isConnected());
+
+        $lazy = new Resource($this->getFilePathFor('veryShort'), null, true);
+        $this->assertFalse($lazy->isConnected());
+        $lazystream = streamize($lazy);
+        $this->assertInstanceOf(Stream::class, $lazystream);
+        $this->assertFalse($lazy->isConnected());
+        $this->assertEquals("foo,bar,ba", $lazystream->read(10));
+        $this->assertTrue($lazy->isConnected());
+    }
+
 }

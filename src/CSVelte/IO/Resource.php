@@ -197,7 +197,7 @@ class Resource
     /**
      * Initialize resource with PHP resource variable.
      *
-     * Uses a PHP resource variable to initialize this class. 
+     * Uses a PHP resource variable to initialize this class.
      *
      * @param resource $handle The stream resource to initialize
      * @return bool
@@ -306,20 +306,18 @@ class Resource
     {
         $this->assertNotConnected(__METHOD__);
 
-        if (is_object($uri) && method_exists($uri, '__toString')) {
-            $uri = (string) $uri;
+        if (is_object($uri) && !method_exists($uri, '__toString')) {
+            throw new InvalidArgumentException(sprintf(
+                'Not a valid stream uri, expected "string", got: "%s"',
+                gettype($uri)
+            ));
         }
 
-        if (is_string($uri) && parse_url($uri)) {
+        $uri = (string) $uri;
+        if (/*is_string($uri) && */parse_url($uri)) {
             $this->uri = $uri;
             return $this;
         }
-
-        throw new InvalidArgumentException(sprintf(
-            'Not a valid stream uri, expected "%s", got: "%s"',
-            'string',
-            gettype($uri)
-        ));
     }
 
     /**

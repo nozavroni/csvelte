@@ -48,10 +48,9 @@ function streamize($obj = '')
         return $obj;
     }
 
-    // @todo add this
-    // if (($resource = $obj) instanceof Resource) {
-    //     return $resource() or $resource->stream();
-    // }
+    if ($obj instanceof Resource) {
+        return $obj();
+    }
 
     // @todo there needs to be a way to create a stream object from a resource
     //     object (other than streamize($resource)). I'm thinking something like
