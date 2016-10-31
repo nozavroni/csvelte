@@ -178,20 +178,8 @@ class Resource
     public function __construct($uri, $mode = null, $lazy = null, $use_include_path = null, $context_options = null, $context_params = null)
     {
         // first, check if we're wrapping an existing stream resource
-        if (is_resource($handle = $uri)) {
-            if (($resource_type = get_resource_type($handle)) != ($exp_resource_type = "stream")) {
-                throw new InvalidArgumentException(sprintf(
-                    'Invalid stream resource type for %s, expected "%s", got: "%s"',
-                    __METHOD__,
-                    $exp_resource_type,
-                    $resource_type
-                ));
-            }
-            // set all this manually
-            $meta = stream_get_meta_data($handle);
-            $this->setUri($meta['uri'])
-                 ->setMode($meta['mode']);
-            $this->conn = $handle;
+        if (is_resource($uri)) {
+            $this->initWithResource($uri);
             return;
         }
 
@@ -204,6 +192,32 @@ class Resource
         if (!$this->isLazy()) {
             $this->connect();
         }
+    }
+
+    /**
+     * Initialize resource with PHP resource variable.
+     *
+     * Uses a PHP resource variable to initialize this class. 
+     *
+     * @param resource $handle The stream resource to initialize
+     * @return bool
+     */
+    protected function initWithResource($handle)
+    {
+        if (($resource_type = get_resource_type($handle)) != ($exp_resource_type = "stream")) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid stream resource type for %s, expected "%s", got: "%s"',
+                __METHOD__,
+                $exp_resource_type,
+                $resource_type
+            ));
+        }
+        // set all this manually
+        $meta = stream_get_meta_data($handle);
+        $this->setUri($meta['uri'])
+            ->setMode($meta['mode']);
+        $this->conn = $handle;
+        return true;
     }
 
     /**
