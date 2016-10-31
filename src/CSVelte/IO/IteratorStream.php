@@ -268,7 +268,7 @@ class IteratorStream implements Streamable
     /**
      * Closes the stream and any underlying resources.
      *
-     * @return void
+     * @return boolean
      */
     public function close()
     {
