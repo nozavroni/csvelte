@@ -184,7 +184,7 @@ class Stream implements Streamable
     public function isSeekable()
     {
         if ($this->resource) {
-            return $this->getMetaData('seekable');
+            return (boolean) $this->getMetaData('seekable');
         }
         return false;
     }
@@ -262,7 +262,7 @@ class Stream implements Streamable
      *
      * After the stream has been detached, the stream is in an unusable state.
      *
-     * @return resource|null Underlying PHP stream, if any
+     * @return Resource|null Underlying PHP stream, if any
      */
     public function detach()
     {

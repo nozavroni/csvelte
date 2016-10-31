@@ -718,9 +718,9 @@ class Taster
                     'length' => strlen($field)
                 ]);
             };
-            $fields = collect(explode($delim, $line))->walk($getType->bindTo($this));
+            collect(explode($delim, $line))->walk($getType->bindTo($this));
         };
-        $lines = collect(explode(
+        collect(explode(
             $eol,
             $this->replaceQuotedSpecialChars($this->sample, $delim)
         ))
@@ -728,7 +728,7 @@ class Taster
 
         $hasHeader = 0;
         $possibleHeader = $types->shift();
-        $types->walk(function($row, $line_no) use (&$hasHeader, $possibleHeader) {
+        $types->walk(function($row) use (&$hasHeader, $possibleHeader) {
             $row->walk(function($field_info, $col_no) use (&$hasHeader, $possibleHeader) {
                 extract($field_info);
                 try {

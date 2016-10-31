@@ -12,6 +12,7 @@
  */
 namespace CSVelte\Table;
 
+use CSVelte\Collection;
 use \Iterator;
 use \Countable;
 use \ArrayAccess;
@@ -37,8 +38,8 @@ use function CSVelte\collect;
 abstract class AbstractRow implements Iterator, Countable, ArrayAccess
 {
     /**
-     * An array of fields for this row
-     * @var array
+     * An collection of fields for this row
+     * @var Collection
      */
     protected $fields;
 
@@ -52,7 +53,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * Class constructor
      *
      * @param array|Iterator An array (or anything that looks like one) of data (fields)
-     * @access public
      */
     public function __construct($fields)
     {
@@ -60,6 +60,14 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
              ->rewind();
     }
 
+    /**
+     * Set the row fields.
+     *
+     * Using either an array or iterator, set the fields for this row.
+     *
+     * @param array|Iterator $fields An array or iterator with the row's fields
+     * @return $this
+     */
     protected function setFields($fields)
     {
         if (!is_array($fields)) {
@@ -75,6 +83,11 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
         return $this;
     }
 
+    /**
+     * Return a string representation of this object
+     *
+     * @return string
+     */
     public function __toString()
     {
         return $this->join();
@@ -83,9 +96,8 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * Join fields together using specified delimiter
      *
-     * @param char The delimiter character
+     * @param string The delimiter character
      * @return string
-     * @access public
      */
     public function join($delimiter = ',')
     {
@@ -96,7 +108,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * Convert object to an array
      *
      * @return array representation of the object
-     * @access public
      */
     public function toArray()
     {
@@ -109,7 +120,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * Count fields within the row
      *
      * @return integer The amount of fields
-     * @access public
      */
     public function count()
     {
@@ -122,7 +132,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * Get the current column's data object
      *
      * @return string
-     * @access public
      */
     public function current()
     {
@@ -133,7 +142,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * Get the current key (column number or header, if available)
      *
      * @return string The "current" key
-     * @access public
      * @todo Figure out if this can return a CSVelte\Table\HeaderData object so long as it
      *     has a __toString() method that generated the right key...
      */
@@ -147,7 +155,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * Also returns the next column's data object if there is one
      *
      * @return CSVelte\Table\Data The "next" column's data
-     * @access public
      */
     public function next()
     {
@@ -186,7 +193,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      *
      * @param integer Offset
      * @return boolean
-     * @access public
      */
     public function offsetExists($offset)
     {
@@ -198,7 +204,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      *
      * @param integer|string Offset/index
      * @return CSVelte\Table\Data
-     * @access public
      */
     public function offsetGet($offset)
     {
@@ -211,7 +216,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * @param integer|string Offset/index
      * @param CSVelte\Table\Data
      * @return void
-     * @access public
      * @throws CSVelte\Exception\ImmutableException
      */
     public function offsetSet($offset, $value)
@@ -225,7 +229,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      *
      * @param integer|string Offset/index
      * @return void
-     * @access public
      * @throws CSVelte\Exception\ImmutableException
      * @todo I'm not sure if these objects will stay immutable or not yet...
      */
@@ -239,7 +242,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      *
      * @param string Message
      * @return void
-     * @access protected
      * @throws CSVelte\Exception\ImmutableException
      */
     protected function raiseImmutableException($msg = null)
