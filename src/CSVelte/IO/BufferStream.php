@@ -38,7 +38,7 @@ class BufferStream implements Streamable
 
     /**
      * Buffer contents
-     * @var string A string containing the buffer contents
+     * @var string|false A string containing the buffer contents
      */
     protected $buffer = '';
 
@@ -137,7 +137,6 @@ class BufferStream implements Streamable
      */
     public function readChunk($start = null, $length = null)
     {
-        //dd($this->buffer, false);
         if ($this->buffer === false) return false;
         $top = substr($this->buffer, 0, $start);
         $data = substr($this->buffer, $start, $length);

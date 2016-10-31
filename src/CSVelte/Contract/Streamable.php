@@ -67,7 +67,7 @@ interface Streamable
     /**
      * Read the remainder of the stream
      *
-     * @return string The remainder of the stream
+     * @return string|null The remainder of the stream
      */
     public function getContents();
 
@@ -123,7 +123,7 @@ interface Streamable
      *
      * After the stream has been detached, the stream is in an unusable state.
      *
-     * @return resource|null Underlying PHP stream, if any
+     * @return mixed Underlying PHP stream, if any
      */
     public function detach();
 
@@ -143,7 +143,7 @@ interface Streamable
      * Write data to the output.
      *
      * @param string The data to write
-     * @return int The number of bytes written
+     * @return int|false The number of bytes written
      */
     public function write($data);
 
@@ -164,7 +164,7 @@ interface Streamable
      *
      * @param integer Offset to seek to
      * @param integer Position from whence the offset should be applied
-     * @return boolean True if seek was successful
+     * @return boolean|false True if seek was successful
      */
     public function seek($offset, $whence = SEEK_SET);
 }

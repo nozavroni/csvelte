@@ -52,12 +52,6 @@ function streamize($obj = '')
         return $obj();
     }
 
-    // @todo there needs to be a way to create a stream object from a resource
-    //     object (other than streamize($resource)). I'm thinking something like
-    //     $resource = new Resource(); $stream = $resource->toStream(); or $resource->stream();
-    //     also possibly $resource = new Resource(); $stream = $resource();
-    //     I kinda like the idea of passing around a $resource and then just invoking
-    //     it to get a stream from it...
     if (is_resource($obj) && get_resource_type($obj) == 'stream') {
         return new Stream(new Resource($obj));
     }

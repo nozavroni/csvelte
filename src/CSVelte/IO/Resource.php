@@ -314,7 +314,7 @@ class Resource
         }
 
         $uri = (string) $uri;
-        if (/*is_string($uri) && */parse_url($uri)) {
+        if (parse_url($uri)) {
             $this->uri = $uri;
             return $this;
         }

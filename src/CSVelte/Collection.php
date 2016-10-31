@@ -136,7 +136,7 @@ class Collection implements Countable, ArrayAccess
      *
      * @param null|array $val If an array, it will be merged into the collection
      *     If both this arg and second arg are null, underlying data array will be returned
-     * @param null|any $key If null and first arg is callable, this method will call map with callable
+     * @param null|mixed $key If null and first arg is callable, this method will call map with callable
      *     If this value is not null but first arg is, it will call $this->offsetUnset($key)
      *     If this value is not null and first arg is anything other than callable, it will return $this->set($key, $val)
      * @see the description for various possible method signatures
@@ -240,9 +240,9 @@ class Collection implements Countable, ArrayAccess
      * with $val, $key as its arguments (in that order). If the callable returns
      * any truthy value, than this method will return true.
      *
-     * @param any|callable $val Either the value to check for or a callable that
+     * @param mixed|callable $val Either the value to check for or a callable that
      *     accepts $key,$val and returns true if collection contains $val
-     * @param any $key If not null, the only the value for this key will be checked
+     * @param mixed $key If not null, the only the value for this key will be checked
      * @return boolean True if this collection contains $val, $key
      */
     public function contains($val, $key = null)
@@ -519,7 +519,7 @@ class Collection implements Countable, ArrayAccess
      * second argument (this will change the behavior to check for a given key
      * at the row-level so it will likely only ever be numerical).
      *
-     * @param any $key The key you want to check
+     * @param mixed $key The key you want to check
      * @return boolean Whether there's a value at $key
      */
     public function has($key, $column = true)
@@ -540,8 +540,8 @@ class Collection implements Countable, ArrayAccess
      * a default may be specified. If you would like for this method to throw an
      * exception when there is no value at $key, pass true as the third argument
      *
-     * @param  any  $key      The key you want to test for
-     * @param  any  $default  The default to return if there is no value at $key
+     * @param  mixed  $key      The key you want to test for
+     * @param  mixed  $default  The default to return if there is no value at $key
      * @param  boolean $throwExc Whether to throw an exception on failure to find
      *     a value at the given key.
      * @return mixed            Either the value at $key or the specified default
@@ -614,7 +614,7 @@ class Collection implements Countable, ArrayAccess
      * Alias of self::set
      *
      * @param int|mixed The offset to set
-     * @param any The value to set it to
+     * @param mixed The value to set it to
      * @return Collection
      */
     public function offsetSet($offset, $value)
@@ -723,7 +723,7 @@ class Collection implements Countable, ArrayAccess
      * Note: return false from the collback to stop walking.
      *
      * @param Callable $callback A callback function to call for each item in the collection
-     * @param any $userdata Any extra data you'd like passed to your callback
+     * @param mixed $userdata Any extra data you'd like passed to your callback
      * @return $this
      */
     public function walk(Callable $callback, $userdata = null)
@@ -759,7 +759,7 @@ class Collection implements Countable, ArrayAccess
      * The final value is then returned.
      *
      * @param Callable $callback The function to reduce the collection
-     * @param any $initial The initial value to set the accumulative value to
+     * @param mixed $initial The initial value to set the accumulative value to
      * @return mixed Whatever the final value from the callback is
      */
     public function reduce(Callable $callback, $initial = null)

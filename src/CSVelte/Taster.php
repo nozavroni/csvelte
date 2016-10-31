@@ -136,9 +136,7 @@ class Taster
      * "Invoke" magic method.
      *
      * Called when an object is invoked as if it were a function. So, for instance,
-     * $taster = new Taster();
-     * $taster(); <-- invoke
-     * This is imply an alias to the lick method.
+     * This is simply an alias to the lick method.
      *
      * @return \CSVelte\Flavor A flavor object
      * @throws \CSVelte\Exception\TasterException
@@ -255,7 +253,7 @@ class Taster
          */
         $patterns = [];
         // delim can be anything but line breaks, quotes, alphanumeric, underscore, backslash, or any type of spaces
-        $antidelims = implode(array("\r", "\n", "\w", preg_quote('"', '/'), preg_quote("'", '/')/*, preg_quote('\\', '/')*/, preg_quote(chr(self::SPACE), '/')));
+        $antidelims = implode(array("\r", "\n", "\w", preg_quote('"', '/'), preg_quote("'", '/'), preg_quote(chr(self::SPACE), '/')));
         $delim = '(?P<delim>[^' . $antidelims . '])';
         $quote = '(?P<quoteChar>"|\'|`)'; // @todo I think MS Excel uses some strange encoding for fancy open/close quotes
         $patterns[] = '/' . $delim . ' ?' . $quote . '.*?\2\1/ms'; // ,"something", - anything but whitespace or quotes followed by a possible space followed by a quote followed by anything followed by same quote, followed by same anything but whitespace
