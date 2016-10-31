@@ -13,6 +13,7 @@
 namespace CSVelte\Table;
 
 use CSVelte\Exception\HeaderException;
+use \OutOfBoundsException;
 
 use function CSVelte\collect;
 

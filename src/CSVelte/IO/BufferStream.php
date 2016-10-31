@@ -233,11 +233,12 @@ class BufferStream implements Streamable
     /**
      * Closes the stream and any underlying resources.
      *
-     * @return void
+     * @return true
      */
     public function close()
     {
         $this->buffer = false;
+        return true;
     }
 
     /**

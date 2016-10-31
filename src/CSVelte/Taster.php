@@ -729,7 +729,8 @@ class Taster
             $row->walk(function($field_info, $col_no) use (&$hasHeader, $possibleHeader) {
                 extract($field_info);
                 try {
-                    extract((array) $possibleHeader->get($col_no, null, true), EXTR_PREFIX_ALL, "header");
+                    $col = $possibleHeader->get($col_no, null, true);
+                    extract($col, EXTR_PREFIX_ALL, "header");
                     if ($header_type == self::TYPE_STRING) {
                         // use length
                         if ($length != $header_length) $hasHeader++;

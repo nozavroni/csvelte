@@ -47,7 +47,7 @@ class IteratorStream implements Streamable
     /**
      * Iterator to read from
      *
-     * @var Traversable
+     * @var Iterator
      */
     protected $iter;
 
@@ -85,13 +85,13 @@ class IteratorStream implements Streamable
      * Instantiate a new iterator stream. The iterator is used to continually
      * refill a buffer as it is drained by read operations.
      *
-     * @param \Traversable The iterator to stream data from
+     * @param \Iterator The iterator to stream data from
      * @param \CSVelte\IO\BufferStream|null Either a buffer or null (to use
      *     default buffer)
      * @todo this should expect a BufferInterface or a Bufferable rather than
      * a BufferStream
      */
-    public function __construct(Traversable $iter, $buffer = null)
+    public function __construct(Iterator $iter, $buffer = null)
     {
         $this->iter = $iter;
         if (is_null($buffer)) {
