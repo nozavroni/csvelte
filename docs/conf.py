@@ -159,6 +159,7 @@ rst_prolog = """
 ..  _Python's CSV module: https://docs.python.org/2/library/csv.html
 ..  _ApiGen: http://www.apigen.org
 ..  _PHPUnit: http://phpunit.de/
+..  _mailing list: https://groups.google.com/forum/#!forum/csvelte-users
 
 ..  _comma-separated values: https://en.wikipedia.org/wiki/Comma-separated_values
 ..  _standard streams: https://en.wikipedia.org/wiki/Standard_streams

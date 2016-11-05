@@ -29,7 +29,7 @@ Because you can never really know until runtime whether a particular stream is r
 .. code-block:: php
 
     <?php
-    $stream = new Stream('http://www.example.com/data.csv');
+    $stream = Stream::open('http://www.example.com/data.csv');
     echo $stream->isReadable(); // outputs "true"
     echo $stream->isWritable(); // outputs "false"
     echo $stream->isSeekable(); // outputs "true" (seekable only for data that has already been read)
@@ -110,6 +110,17 @@ The :php:func:`streamize` factory
 
 CSVelte provides a namespaced stream factory function called :php:func:`CSVelte\\streamize()` for convenience. While the :php:class:`IO\\Resource` and :php:class:`IO\\Stream` classes require very specific instantiation parameters, this function does its best to convert anything you pass to it into a stream object. Let's take a look at a few examples.
 
+.. tip::
+
+    :php:func:`streamize` is a namespaced function. This means that in order to use it you need to use its fully-qualified name (:php:func:`CSVelte\\streamize`) unless you first import it into your current namespace with a "use" statement.
+
+    .. code-block:: php
+
+        // import the streamize function into your namespace
+        use function CSVelte\streamize;
+        // now you can use streamize without its fully-qualified name
+        $stream = streamize($var);
+
 Create a stream from a standard PHP string
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -121,7 +132,7 @@ Often times you may end up with a PHP string containing CSV data. In this case y
     $csv_string = some_func_that_returns_csv_string();
     $stream = CSVelte\streamize($csv_string);
 
-There is nothing magic about how this works. CSVelte simply places your string into memory using the "php" stream wrapper [#]_  __toString() magic method [#]_.
+There is nothing magic about how this works. CSVelte simply places your string into memory using the "php" stream wrapper [#]_. It can then be read from just like any other stream resource.
 
 Using an open :php:class:`SplFileObject` to create a stream
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -171,4 +182,3 @@ If you already have a stream resource that you've opened using :php:func:`fopen`
 .. [#] File access mode strings are a short (typically 1-3 characters) string containing very concise instructions about how a file or stream should be opened. See `fopen file modes`_ for a more detailed explanation.
 .. [#] Standard input and standard output are preconnected I/O channels, input typically being a data stream going into a program from the user and output being the stream where a program writes its output. See `standard streams`_ Wikipedia page for more on stdin/stdout.
 .. [#] See `php://temp`_ on php.net_ for more on storing temporary data using the "PHP" stream wrapper
-.. [#] See `magic methods`_ on php.net_ for more on __toString()

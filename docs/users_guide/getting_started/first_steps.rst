@@ -15,6 +15,10 @@ First, a few terms
         Another unfortunate side-effect of CSV coming in so many flavors is that you can never really be sure which flavor you're going to get. Making matters worse, the CSV format doesn't natively support meta data of any kind (well, with the possible exception of an optional header row). The only way you can ever 100% reliably determine the flavor of a dataset is to open the file and look at its content yourself. That's what a taster does. It's simply an object that, given a dataset, will analyze (taste) a sample of it, and return a flavor object, each of its attributes set to the taster's educated best guess.
     Stream
         Rather than attempt to write classes for each potential source or destination for CSV data, CSVelte instead relies on the power and flexibility of PHP's native streams_ functionality. A stream, according to php.net_, "is a resource object which exhibits streamable behavior. That is, it can be read from or written to in a linear fashion". CSVelte provides a class called :php:class:`IO\\Stream` which provides an object-oriented interface to this functionality.
+    Resource
+        In PHP, a resource is a special type of variable used to represent external objects. More specifically, a stream resource is a reference to a streamable data source, or even more specifically, to a specific position within that data source. For example, let's assume we're streaming a file from the local file system. A resource variable in this instance will point to a specific position within your file, changing as you read or seek through it.
+
+        I describe what a PHP resource is only so that you can understand the distinction between a PHP resource variable and a :php:class:`IO\\Resource` object within CSVelte. :php:class:`IO\\Resource` is a class used within CSVelte to represent a stream resource. It cannot be read from, it cannot be written to. It doesn't *do* anything. It simply wraps a native PHP stream resource, providing an object-oriented interface and some conveniences such as lazy-opening and the like. Within CSVelte, it's used wherever one would normally expect a native PHP stream resource.
 
 Getting down to business
 ------------------------
@@ -26,13 +30,55 @@ Producing a two-dimensional array from a CSV dataset
 
 During the initial research phase of writing this library, I did a Google search for "php csv" and a large portion of the results were various PHP message boards with users asking for an easy way to read a CSV file and produce a two-dimensional array containing its data. This is as good a place as any to start.
 
-Let's assume our CSV file is located on the local file system at ``/var/www/data/products.csv``. Our first step is going to be to create an :php:class:`IO\\Stream` object capable of reading our CSV file.
+Let's assume our CSV file is located on the local file system at ``/var/www/data/products.csv``. Our first step is going to be to create an :php:class:`IO\\Stream` object capable of reading our CSV file. To do that, we first need to instantiate a :php:class:`IO\\Resource` object using a valid stream URI. Every stream resource URI consists of a scheme followed by ``://``, followed by a path or identifier. Since we're accessing a local file, we want the ``file://`` scheme. So we simply prepend our file path with ``file://`` to get our stream URI: ``file:///var/www/data/products.csv`` . Finally, we can use this URI to instantiate a :php:class:`IO\\Resource` object.
 
 .. code-block:: php
 
-    $stream = IO\Stream::open('/var/www/data/products.csv');
+    $resource = new IO\Resource('file:///var/www/data/products.csv');
+
+Now that we have a resource object, we can use it to instantiate a stream object, which will give us all the I/O methods we need to read and write data to our local file.
+
+.. code-block:: php
+
+    $resource = new IO\Resource('file:///var/www/data/products.csv');
+    $stream = new IO\Stream($resource);
     // you can now ensure the stream object is readable by doing...
     $stream->isReadable(); // should return true
+
+.. note::
+
+A few shortcuts
+---------------
+
+Invoke the resource object
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For the sake of brevity in these examples, I'm going to show you a couple shortcuts you can use to reduce the amount of code it takes to get a stream object. First off, once you've instantiated a :php:class:`IO\\Resource` object, simply invoke it as if it were a function and it will return a :php:class:`IO\Stream` using your resource object.
+
+.. code-block:: php
+
+    $resource = new IO\Resource('file:///var/www/products.csv');
+    // invoke a resource object as if it were a function to get a stream
+    $stream = $resource();
+
+Skip the resource object
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+To create a stream object without first instantiating a :php:class:`IO\\Resource`, you can use the :php:meth:`IO\\Stream::open()` method, which does it for you. Its signature is very similar to the :php:class:`IO\\Resource` class's constructor.
+
+.. code-block:: php
+
+    // use the stream factory method to skip the resource object
+    $stream = IO\Stream::open('file:///var/www/products.csv');
+
+.. attention::
+
+    For the sake of brevity, I will use the latter of these two techniques to create a stream object. But in your own code, you do what works for you.
+
+The file stream wrapper
+-----------------------
+
+Although all stream URIs require a valid scheme to identify which stream wrapper is intended, ``file`` is a special case because it is the default stream wrapper or scheme. For this reason it is optional and may be omitted when constructing a stream URI. This means that our example URI could have just as easily been ``/var/www/data/products.csv``. And in fact, from here on out, we will leave out the ``file://`` portion when we reference stream URIs for the local filesystem.
 
 At this point, we need to instantiate a :php:class:`Reader` object to read/parse CSV data from the stream object we just created. We already know that our CSV file is formatted using a comma as its delimiter, a line feed as its line terminator, and it has a header row. Let's create a flavor object with those attributes.
 
@@ -47,9 +93,7 @@ At this point, we need to instantiate a :php:class:`Reader` object to read/parse
 Now, using our stream and flavor objects, we can finally instantiate the reader and call :php:meth:`Reader::toArray()` to get our two-dimensional array. Let's put it all together.
 
 .. code-block:: php
-   :emphasize-lines: 18
 
-    <?php
     // create a stream object to read from our local file...
     $stream = IO\Stream::open('/var/www/data/products.csv');
     if (!$stream->isReadable()) {
@@ -77,7 +121,7 @@ Now, using our stream and flavor objects, we can finally instantiate the reader 
 What if I don't know the CSV flavor?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The previous example looks simple enough, but what if we *didn't* know anything about our CSV data? What if we *didn't* know ahead of time what the delimiter and line terminator characters are? No big deal! Simply instantiate your reader the exact same way, only this time, omit the flavor parameter. In the absense of an explicit flavor, the reader will use its internal :php:class:`Taster` class to automatically determine these attributes for us (in other words, it will "taste" the CSV data and tell us its "flavor").
+The previous example looks simple enough, but what if we *didn't* know anything about our CSV data? What if we *didn't* know ahead of time what the delimiter and line terminator characters are? No big deal! Simply instantiate your reader the exact same way, only this time, omit the flavor parameter. In the absense of an explicit flavor, the reader will use the :php:class:`Taster` class internally to automatically determine these attributes for us (in other words, it will "taste" the CSV data and tell us its "flavor").
 
 .. code-block:: php
 
@@ -117,7 +161,7 @@ Well, I can't in good conscience show you how to convert a CSV file to a PHP arr
     9,Monica Federle,643,35,Nunavut,Storage & Organization
     10,Dorothy Badders,678,8.33,Nunavut,Paper
 
-Again, our first task is going to be creating an :php:class:`IO\\Stream` object. Only this time, we'll want to prepare it for writing by passing it the correct access mode string as its second constructor parameter. We want to create a new file on the local file system at ``/var/www/data/inventory.csv`` so we'll want to use "w" to open our stream in write mode [#]_.
+Again, our first task is going to be creating an :php:class:`IO\\Stream` object. Only this time, we'll want to prepare it for writing by passing the correct access mode string as the second parameter to :php:meth:`IO\\Stream::open()`. We want to create a new file on the local file system at ``/var/www/data/inventory.csv`` so we'll want to use "w" to open our stream in write mode [#]_.
 
 .. code-block:: php
 
@@ -127,11 +171,11 @@ Just as with our input stream and its :php:meth:`IO\\Stream::isReadable()` metho
 
 .. code-block:: php
 
-    $stream = IO\Stream::open('/var/www/data/inventory.csv', 'w');
+    $stream = IO\Stream::open($resource);
     // you can now ensure the stream object is writable by doing...
     $stream->isWritable(); // should return true
 
-Now that we have an output stream object to write our data for us, we can instantiate our :php:class:`Writer` object. If you have a specific flavor object, you can pass that to the writer as well. Otherwise it will use a default (the default is the flavor outlined by :rfc:`4180` [#]_). Let's put it all together.
+Now that we have an output stream object to write our data for us, we can instantiate our :php:class:`Writer` object. If you have a specific flavor object, you can pass that to the writer as well. Otherwise it will use the default (outlined by :rfc:`4180` [#]_). Let's put it all together.
 
 .. code-block:: php
 
@@ -160,7 +204,9 @@ Now that we have an output stream object to write our data for us, we can instan
 There's more than one way to skin a cat
 ---------------------------------------
 
-The two examples provided thus far offer solutions to arguably the two most common use cases involving CSV (for PHP anyway). So you may be asking yourself, "Shouldn't there be quicker, easier ways to do this?". And you'd be right. CSVelte provides shorter, simpler solutions to both these use cases. So why did I show you these verbose solutions rather than the simple ones? Because it's important that you see the entire interface (in all its power and flexibility) before I show you the facades and factory methods that abstract away all that flexibility for brevity and ease of use.
+The two examples provided thus far offer solutions to arguably the two most common use cases involving CSV (for PHP anyway). So you may be asking yourself, "Shouldn't there be quicker, easier ways to do this?". And you'd be right. CSVelte provides shorter, simpler solutions to both these use cases. So why did I show you these verbose solutions rather than the simple ones? Because it's important that you see the entire interface (in all its power and flexibility) before I show you the facades and factory methods that abstract away all that flexibility for brevity and ease of use. For simple tasks like these, it makes no sense to waste keystrokes on instantiating a resource and then a stream and then a reader. But there are vastly more complex problems that CSVelte aims to solve and for them, all this composition suddenly becomes an asset.
+
+In the next section we will explore streams and resources in detail, investigating all the ways we can use them to manipulate, read, and write CSV and tabular data.
 
 .. hint::
 
