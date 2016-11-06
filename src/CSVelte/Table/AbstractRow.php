@@ -16,9 +16,7 @@ use CSVelte\Collection;
 use \Iterator;
 use \Countable;
 use \ArrayAccess;
-use CSVelte\Flavor;
 
-use \OutOfBoundsException;
 use \InvalidArgumentException;
 use CSVelte\Exception\ImmutableException;
 

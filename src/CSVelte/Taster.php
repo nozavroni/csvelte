@@ -418,7 +418,9 @@ class Taster
      *
      * @param array $delims Possible delimiter characters (method chooses from
      *     this array of characters)
+     * @param string $eol The end-of-line character (or set of characters)
      * @return string The probable delimiter character
+     * @throws TasterException
      */
     protected function guessDelimByDistribution(array $delims, $eol = "\n")
     {
@@ -544,7 +546,7 @@ class Taster
     /**
      * Remove quotes around a piece of text (if there are any)
      *
-     * @param string The data to "unquote"
+     * @param string $data The data to "unquote"
      * @return string The data passed in, only with quotes stripped (off the edges)
      */
     protected function unQuote($data)
@@ -555,7 +557,7 @@ class Taster
     /**
      * Determine whether a particular string of data has quotes around it.
      *
-     * @param string The data to check
+     * @param string $data The data to check
      * @return boolean Whether the data is quoted or not
      */
     protected function isQuoted($data)
@@ -574,7 +576,7 @@ class Taster
      * nonnumeric or because it has some special character in it such as a delimiter
      * or newline or quote.
      *
-     * @param string The data to determine the type of
+     * @param string $data The data to determine the type of
      * @return string The type of data (one of the "DATA_" constants above)
      * @todo I could probably eliminate this method and use an anonymous function
      *     instead. It isn't used anywhere else and its name could be misleading.
@@ -602,8 +604,8 @@ class Taster
      * sub back in the real characters before doing anything else. Although
      * currently there is no dedicated method for doing so I just use str_replace
      *
-     * @param string The string to do the replacements on
-     * @param string The delimiter character to replace
+     * @param string $data The string to do the replacements on
+     * @param string $delim The delimiter character to replace
      * @return string The data with replacements performed
      * @todo I could probably pass in (maybe optionally) the newline character I
      *     want to replace as well. I'll do that if I need to.
@@ -628,7 +630,7 @@ class Taster
      * simpler type-checking method than this if it proves to be too expensive
      * to be practical.
      *
-     * @param string The string of data to check the type of
+     * @param string $data The string of data to check the type of
      * @return string One of the TYPE_ string constants above
      */
     protected function lickType($data)

@@ -53,52 +53,52 @@ class Collection implements Countable, ArrayAccess
      * Constants used as comparison operators in where() method
      */
 
-    /** @var const Use this operator constant to test for identity (exact same) **/
+    /** Use this operator constant to test for identity (exact same) **/
     const WHERE_ID = '===';
 
-    /** @var const Use this operator constant to test for non-identity **/
+    /** Use this operator constant to test for non-identity **/
     const WHERE_NID = '!==';
 
-    /** @var const Use this operator constant to test for equality **/
+    /** Use this operator constant to test for equality **/
     const WHERE_EQ = '==';
 
-    /** @var const Use this operator constant to test for non-equality **/
+    /** Use this operator constant to test for non-equality **/
     const WHERE_NEQ = '!=';
 
-    /** @var const Use this operator constant to test for less-than **/
+    /** Use this operator constant to test for less-than **/
     const WHERE_LT = '<';
 
-    /** @var const Use this operator constant to test for greater-than or equal-to **/
+    /** Use this operator constant to test for greater-than or equal-to **/
     const WHERE_LTE = '<=';
 
-    /** @var const Use this operator constant to test for greater-than **/
+    /** Use this operator constant to test for greater-than **/
     const WHERE_GT = '>';
 
-    /** @var const Use this operator constant to test for greater-than or equal-to **/
+    /** Use this operator constant to test for greater-than or equal-to **/
     const WHERE_GTE = '>=';
 
-    /** @var const Use this operator constant to test for case insensitive equality **/
+    /** Use this operator constant to test for case insensitive equality **/
     const WHERE_LIKE = 'like';
 
-    /** @var const Use this operator constant to test for case instensitiv inequality **/
+    /** Use this operator constant to test for case instensitiv inequality **/
     const WHERE_NLIKE = '!like';
 
-    /** @var const Use this operator constant to test for descendants or instances of a class **/
+    /** Use this operator constant to test for descendants or instances of a class **/
     const WHERE_ISA = 'instanceof';
 
-    /** @var const Use this operator constant to test for values that aren't descendants or instances of a class  **/
+    /** Use this operator constant to test for values that aren't descendants or instances of a class  **/
     const WHERE_NISA = '!instanceof';
 
-    /** @var const Use this operator constant to test for internal PHP types **/
+    /** Use this operator constant to test for internal PHP types **/
     const WHERE_TOF = 'typeof';
 
-    /** @var const Use this operator constant to test for internal PHP type (negated) **/
+    /** Use this operator constant to test for internal PHP type (negated) **/
     const WHERE_NTOF = '!typeof';
 
-    /** @var const Use this operator constant to test against a regex pattern **/
+    /** Use this operator constant to test against a regex pattern **/
     const WHERE_MATCH = 'match';
 
-    /** @var const Use this operator constant to test against a regex pattern (negated) **/
+    /** Use this operator constant to test against a regex pattern (negated) **/
     const WHERE_NMATCH = '!match';
 
     /**

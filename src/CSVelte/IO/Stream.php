@@ -19,13 +19,7 @@ use CSVelte\Traits\IsSeekable;
 
 use CSVelte\Contract\Streamable;
 
-use \SplFileObject;
-
 use \Exception;
-use \InvalidArgumentException;
-use CSVelte\Exception\NotYetImplementedException;
-use CSVelte\Exception\EndOfFileException;
-use CSVelte\Exception\IOException;
 
 /**
  * CSVelte Stream.

@@ -15,12 +15,10 @@ namespace CSVelte\IO;
 
 use InvalidArgumentException;
 use \Iterator;
-use CSVelte\IO\BufferStream;
 use CSVelte\Traits\IsReadable;
 use CSVelte\Traits\IsWritable;
 use CSVelte\Contract\Streamable;
-use Traversable;
-use function CSVelte\getvalue;
+use function CSVelte\invoke;
 
 /**
  * Iterator Stream.

@@ -15,13 +15,10 @@ namespace CSVelte;
 
 use CSVelte\Contract\Streamable;
 
-use \FilterIterator;
-use CSVelte\IO\Stream;
 use CSVelte\Table\Row;
 use CSVelte\Table\HeaderRow;
 use CSVelte\Reader\FilteredIterator as FilteredReader;
 
-use \InvalidArgumentException;
 use CSVelte\Exception\EndOfFileException;
 
 use function

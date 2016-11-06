@@ -13,8 +13,6 @@
  */
 namespace CSVelte;
 
-use CSVelte\Reader;
-use CSVelte\Flavor;
 use CSVelte\IO\Stream;
 
 use CSVelte\Exception\IOException;
