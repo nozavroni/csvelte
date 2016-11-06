@@ -16,11 +16,8 @@ use CSVelte\Contract\Streamable;
 
 use \Iterator;
 use \ArrayIterator;
-use CSVelte\Table\Data;
 use CSVelte\Table\HeaderRow;
 use CSVelte\Table\Row;
-use CSVelte\Flavor;
-use CSVelte\Reader;
 
 use \InvalidArgumentException;
 use CSVelte\Exception\WriterException;
@@ -30,7 +27,7 @@ use CSVelte\Exception\WriterException;
  * A PHP CSV utility library (formerly PHP CSV Utilities).
  *
  * @package   CSVelte
- * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
+ * @copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @todo Buffer write operations so that you can call things like setHeaderRow()
  *     and change flavor and all that jivey divey goodness at any time.
@@ -38,27 +35,35 @@ use CSVelte\Exception\WriterException;
 class Writer
 {
     /**
+     * The flavor (format) of CSV to write.
+     *
      * @var \CSVelte\Flavor
      */
     protected $flavor;
 
     /**
+     * The output stream to write to.
+     *
      * @var \CSVelte\Contract\Streamable
      */
     protected $output;
 
     /**
+     * The header row.
+     *
      * @var \Iterator
      */
     protected $headers;
 
     /**
-     * @var int lines of data written so far (not including header)
+     * Number of lines written so far (not including header)
+     *
+     * @var int
      */
     protected $written = 0;
 
     /**
-     * Class Constructor
+     * Class Constructor.
      *
      * @param \CSVelte\Contract\Streamable $output An output source to write to
      * @param \CSVelte\Flavor|array $flavor A flavor or set of formatting params
@@ -71,7 +76,7 @@ class Writer
     }
 
     /**
-     * Get the CSV flavor (or dialect) for this writer
+     * Get the CSV flavor (or dialect) for this writer.
      *
      * @param void
      * @return \CSVelte\Flavor

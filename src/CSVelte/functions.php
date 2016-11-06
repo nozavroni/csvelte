@@ -22,8 +22,6 @@ namespace CSVelte;
  */
 
 use \Iterator;
-use CSVelte\Taster;
-use CSVelte\Flavor;
 use CSVelte\IO\Stream;
 use CSVelte\IO\Resource;
 use CSVelte\IO\IteratorStream;
@@ -80,16 +78,49 @@ function streamize($obj = '')
     ));
 }
 
-function stream_resource($uri, $mode = null, $context = null, $lazy = true)
-{
+/**
+ * Stream resource factory.
+ *
+ * This method is just a shortcut to create a stream resource object using
+ * a stream URI string.
+ *
+ * @param string $uri A stream URI
+ * @param string $mode The access mode string
+ * @param array|resource $context An array or resource with stream context options
+ * @param bool $lazy Whether to lazy-open
+ * @return $this
+ * @since v0.2.1
+ */
+function stream_resource(
+    $uri,
+    $mode = null,
+    $context = null,
+    $lazy = true
+) {
     $res = (new Resource($uri, $mode))
         ->setContextResource($context);
     if (!$lazy) $res->connect();
     return $res;
 }
 
-function stream($uri, $mode = null, $context = null, $lazy = true)
-{
+/**
+ * Stream factory.
+ *
+ * This method is just a shortcut to create a stream object using a URI.
+ *
+ * @param string $uri A stream URI to open
+ * @param string $mode The access mode string
+ * @param array|resource $context An array or stream context resource of options
+ * @param bool $lazy Whether to lazy-open
+ * @return Stream
+ * @since v0.2.1
+ */
+function stream(
+    $uri,
+    $mode = null,
+    $context = null,
+    $lazy = true
+) {
     $res = stream_resource($uri, $mode, $context, $lazy);
     return new Stream($res);
 }
@@ -101,7 +132,7 @@ function stream($uri, $mode = null, $context = null, $lazy = true)
  * to auto-detect "flavor" (formatting attributes).
  *
  * @param \CSVelte\Contract\Streamable Any streamable class to analyze
- * @return \CSVelte\Flavor A flavor representing str                                                                                                                                                                                                                                                                                                                                                           eam's formatting attributes
+ * @return \CSVelte\Flavor A flavor representing stream's formatting attributes
  * @since v0.2.1
  */
 function taste(Streamable $str)
@@ -137,8 +168,8 @@ function taste_has_header(Streamable $str)
  *
  * @param array|Iterator $in Either an array or an iterator of data
  * @return \CSVelte\Collection A collection object containing data from $in
+ * @since v0.2.1
  * @see CSVelte\Collection::__construct() (alias)
- * )
  */
 function collect($in = null)
 {
@@ -146,11 +177,18 @@ function collect($in = null)
 }
 
 /**
- * @param callable $callback
- * @param array ...$args
- * @return mixed
+ * Invoke a callable and return result.
+ *
+ * Pass in a callable followed by whatever arguments you want passed to
+ * it and this function will invoke it with your arguments and return
+ * the result.
+ *
+ * @param callable $callback The callback function to invoke
+ * @param array ...$args The args to pass to your callable
+ * @return mixed The result of your invoked callable
+ * @since v0.2.1
  */
-function getvalue(Callable $callback, ...$args)
+function invoke(Callable $callback, ...$args)
 {
     return $callback(...$args);
 }

@@ -18,9 +18,6 @@ use \ArrayAccess;
 use \OutOfBoundsException;
 use \InvalidArgumentException;
 use \RuntimeException;
-use CSVelte\Collection;
-
-use function CSVelte\collect;
 
 /**
  * Collection class.
