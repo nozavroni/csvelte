@@ -37,9 +37,8 @@ trait IsSeekable
      * @param int $offset Offset to seek to
      * @param int $whence Position from whence to seek from
      * @param string $eol The line terminator string/char
-     * @return boolean True if successful
-     * @throws CSVelte\Exception\NotYetImplementedException because it isn't
-     *     implemented yet
+     * @return bool True if successful
+     * @throws NotYetImplementedException
      */
     public function seekLine($offset, $whence = SEEK_SET, $eol = PHP_EOL)
     {
@@ -49,8 +48,7 @@ trait IsSeekable
     /**
      * Assert that this file/stream object is readable.
      *
-     * @return void
-     * @throws CSVelte\Exception\IOException if stream isn't readable
+     * @throws IOException
      */
     protected function assertIsSeekable()
     {

@@ -140,7 +140,7 @@ class Flavor
      * passing them in an array as key => value pairs to the constructor. Once
      * the flavor object is created, its attributes cannot be changed.
      *
-     * @param array The attributes that define this particular flavor. These
+     * @param array $attributes The attributes that define this particular flavor. These
      *     attributes are immutable. They can only be set here.
      */
     public function __construct($attributes = null)
@@ -167,9 +167,7 @@ class Flavor
      * header row or it could simply mean that the flavor was instantiated with
      * no value for the header property.
      *
-     * @param void
      * @return boolean
-     * @access public
      */
     public function hasHeader()
     {
@@ -181,9 +179,7 @@ class Flavor
      * Assert that a particular attribute is valid (basically just that it exists)
      * and throw an exception otherwise
      *
-     * @param string The attribute to check validity of
-     * @return void
-     * @access protected
+     * @param string $attr The attribute to check validity of
      * @throws InvalidArgumentException
      * @internal
      * @todo This should accept a second parameter for value that asserts the value
@@ -202,9 +198,8 @@ class Flavor
      * attributes. If you need to change a flavor's attributes, call this method
      * instead, specifying which attributes are to be changed.
      *
-     * @param array An array of attribute name/values to change in the copied flavor
-     * @return CSVelte\Flavor A flavor object with your new attributes
-     * @access public
+     * @param array $attribs An array of attribute name/values to change in the copied flavor
+     * @return Flavor A flavor object with your new attributes
      * @todo I may want to remove the array type-hint so that this can accept
      *     array-like objects and iterables as well. Not sure...
      */
@@ -216,9 +211,8 @@ class Flavor
     /**
      * Attribute accessor magic method
      *
-     * @param string The attribute to "get"
+     * @param string $attr The attribute to "get"
      * @return string The attribute value
-     * @access public
      * @internal
      * @throws InvalidArgumentException
      */
@@ -232,18 +226,23 @@ class Flavor
      * Attribute accessor (setter) magic method.
      * Disabled because attributes are immutable (read-only)
      *
-     * @param string The attribute to "set"
-     * @param string The attribute value
-     * @return void
-     * @access public
+     * @param string $attr The attribute name you're attempting to set
+     * @param mixed $val The attribute value
+     * @throws ImmutableException
+     * @internal param The $string attribute to "set"
+     * @internal param The $string attribute value
      * @internal
-     * @throws CSVelte\Exception\ImmutableException
      */
     public function __set($attr, $val)
     {
         throw new ImmutableException("Cannot change attributes on an immutable object: " . self::class . "::\$" . $attr);
     }
 
+    /**
+     * Get this object as an array
+     *
+     * @return array This object as an array
+     */
     public function toArray()
     {
         return get_object_vars($this);

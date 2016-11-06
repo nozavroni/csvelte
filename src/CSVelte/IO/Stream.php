@@ -62,7 +62,7 @@ class Stream implements Streamable
      *
      * Instantiate a new stream object using a stream resource object.
      *
-     * @param \CSVelte\IO\Resource A stream resource object
+     * @param Resource $resource A stream resource object
      */
     public function __construct(Resource $resource)
     {
@@ -72,7 +72,7 @@ class Stream implements Streamable
     /**
      * Set stream resource object
      *
-     * @param \CSVelte\IO\Resource $resource A stream resource object
+     * @param Resource $resource A stream resource object
      */
     protected function setResource(Resource $resource)
     {
@@ -122,7 +122,16 @@ class Stream implements Streamable
     }
 
     /**
+     * Stream factory method.
      *
+     * Pass in a URI and optionally a mode string, context params, and whether or not you want
+     * lazy-opening, and it will give you back a Stream object.
+     *
+     * @param string $uri The stream URI you want to open
+     * @param string $mode The access mode string
+     * @param array|resource $context Stream resource context options/params
+     * @param boolean $lazy Whether or not you want this stream to lazy-open
+     * @return Stream
      * @see http://php.net/manual/en/function.fopen.php
      * @see http://php.net/manual/en/function.stream-context-create.php
      */
@@ -304,7 +313,7 @@ class Stream implements Streamable
      * @param int $length Number of bytes to read from stream
      * @return string|false The data read from stream or false if at end of
      *     file or some other problem.
-     * @throws CSVelte\Exception\IOException if stream not readable
+     * @throws \CSVelte\Exception\IOException if stream not readable
      */
     public function read($length)
     {
@@ -320,10 +329,9 @@ class Stream implements Streamable
      * wherever the stream's internal pointer is when this method is called. If
      * you want the ENTIRE stream's contents, use __toString() instead.
      *
-     * @param void
      * @return string The remaining contents of the file, beginning at internal
      *     pointer's current location
-     * @throws CSVelte\Exception\IOException
+     * @throws \CSVelte\Exception\IOException
      */
     public function getContents()
     {
@@ -368,7 +376,7 @@ class Stream implements Streamable
      *
      * @param string $str The data to be written to the stream
      * @return int The number of bytes written to the stream
-     * @throws CSVelte\Exception\IOException
+     * @throws \CSVelte\Exception\IOException
      */
     public function write($str)
     {
@@ -384,7 +392,7 @@ class Stream implements Streamable
      * @param int $offset The position to seek to
      * @param int $whence One of three native php ``SEEK_`` constants
      * @return boolean True on success false on failure
-     * @throws CSVelte\Exception\IOException
+     * @throws \CSVelte\Exception\IOException
      * @see http://php.net/manual/en/function.seek.php
      */
     public function seek($offset, $whence = SEEK_SET)

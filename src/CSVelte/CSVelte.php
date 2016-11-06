@@ -13,6 +13,7 @@
  */
 namespace CSVelte;
 
+use \Iterator;
 use CSVelte\IO\Stream;
 
 use CSVelte\Exception\IOException;
@@ -36,13 +37,12 @@ class CSVelte
      * Factory method for creating a new CSVelte\Reader object
      * Used to create a local file CSV reader object.
      *
-     * @param string The filename to read
-     * @param CSVelte\Flavor|array|null An explicit flavor object that will be
+     * @param string $filename The filename to read
+     * @param Flavor|array|null $flavor An explicit flavor object that will be
      *     passed to the reader or an array of flavor attributes to override the
      *     default flavor attributes
-     * @return CSVelte\Reader An iterator for specified CSV file
-     * @throws CSVelte\Exception\PermissionDeniedException
-     * @throws CSVelte\Exception\FileNotFoundException
+     * @return \CSVelte\Reader An iterator for specified CSV file
+     * @throws IOException
      */
     public static function reader($filename, $flavor = null)
     {
@@ -57,11 +57,11 @@ class CSVelte
      * Factory method for creating a new CSVelte\Reader object for reading
      * from a PHP string
      *
-     * @param string The CSV data to read
-     * @param CSVelte\Flavor|array|null An explicit flavor object that will be
+     * @param string $str The CSV data to read
+     * @param Flavor|array|null $flavor An explicit flavor object that will be
      *     passed to the reader or an array of flavor attributes to override the
      *     default flavor attributes
-     * @return CSVelte\Reader An iterator for provided CSV data
+     * @return Reader An iterator for provided CSV data
      */
     public static function stringReader($str, $flavor = null)
     {
@@ -75,11 +75,11 @@ class CSVelte
      * CSV data to a file. If file doesn't exist, it will be created. If it
      * already contains data, it will be overwritten.
      *
-     * @param string The filename to write to.
-     * @param CSVelte\Flavor|array|null An explicit flavor object that will be
+     * @param string $filename The filename to write to.
+     * @param Flavor|array|null $flavor An explicit flavor object that will be
      *     passed to the reader or an array of flavor attributes to override the
      *     default flavor attributes
-     * @return CSVelte\Writer A writer object for writing to given filename
+     * @return Writer A writer object for writing to given filename
      */
     public static function writer($filename, $flavor = null)
     {
@@ -93,9 +93,9 @@ class CSVelte
      * Facade method for exporting data to given filename. IF file doesn't exist
      * it will be created. If it does exist it will be overwritten.
      *
-     * @param string The filename to export data to
-     * @param Iterator|array Data to write to CSV file
-     * @param CSVelte\Flavor|array|null An explicit flavor object that will be
+     * @param string $filename The filename to export data to
+     * @param Iterator|array $data Data to write to CSV file
+     * @param Flavor|array|null $flavor An explicit flavor object that will be
      *     passed to the reader or an array of flavor attributes to override the
      *     default flavor attributes
      * @return int Number of rows written
@@ -113,8 +113,8 @@ class CSVelte
      * Assert that a particular file exists and is readable (user has permission
      * to read/access it)
      *
-     * @param string The name of the file you wish to check
-     * @throws CSVelte\Exception\IOException
+     * @param string $filename The name of the file you wish to check
+     * @throws IOException
      * @internal
      */
     protected static function assertFileIsReadable($filename)
@@ -128,8 +128,8 @@ class CSVelte
     /**
      * Assert that a particular file exists
      *
-     * @param string The name of the file you wish to check
-     * @throws CSVelte\Exception\IOException
+     * @param string $filename The name of the file you wish to check
+     * @throws IOException
      * @internal
      */
     protected static function assertFileExists($filename)

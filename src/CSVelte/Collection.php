@@ -198,7 +198,7 @@ class Collection implements Countable, ArrayAccess
     /**
      * Get array keys
      *
-     * @return \CSVelte\Collection The collection's keys (as a collection)
+     * @return Collection The collection's keys (as a collection)
      */
     public function keys()
     {
@@ -213,7 +213,7 @@ class Collection implements Countable, ArrayAccess
      *
      * @param array|iterator $data Data to merge into the collection
      * @param boolean $overwrite Whether existing values should be overwritten
-     * @return \CSVelte\Collection A new collection with $data merged into it
+     * @return Collection A new collection with $data merged into it
      */
     public function merge($data = null, $overwrite = true)
     {
@@ -269,7 +269,7 @@ class Collection implements Countable, ArrayAccess
      * @param string $comp The type of comparison operation ot use (such as "=="
      *     or "instanceof"). Must be one of the self::WHERE_* constants' values
      *     listed at the top of this class.
-     * @return \CSVelte\Collection A collection of rows that meet the criteria
+     * @return Collection A collection of rows that meet the criteria
      *     specified by $key, $val, and $comp
      */
     public function where($key, $val, $comp = null)
@@ -481,8 +481,8 @@ class Collection implements Countable, ArrayAccess
      * Note: This method is one of the few that will modify the collection in
      *       place rather than returning a new one.
      *
-     * @param mixed ... The item(s) to push onto the top of the collection. You may
-     *     also add additional arguments to add multiple items
+     * @param int $offset The offset (position) at which you want to insert an item
+     * @param mixed $item The item(s) to push onto the top of the collection
      * @return $this
      */
     public function insert($offset, $item)
@@ -499,9 +499,9 @@ class Collection implements Countable, ArrayAccess
      * Pad the collection to a specific length, filling it with a given value. A
      * new collection with padded values is returned.
      *
-     * @param  int $size The number of values you want this collection to have
-     * @param  any $with The value you want to pad the collection with
-     * @return \CSVelte\Collection A new collection, padded to specified size
+     * @param int $size The number of values you want this collection to have
+     * @param mixed $with The value you want to pad the collection with
+     * @return Collection A new collection, padded to specified size
      */
     public function pad($size, $with = null)
     {
@@ -517,7 +517,8 @@ class Collection implements Countable, ArrayAccess
      * at the row-level so it will likely only ever be numerical).
      *
      * @param mixed $key The key you want to check
-     * @return boolean Whether there's a value at $key
+     * @param bool $column True if you want to check a specific column
+     * @return bool Whether there's a value at $key
      */
     public function has($key, $column = true)
     {
@@ -610,8 +611,8 @@ class Collection implements Countable, ArrayAccess
     /**
      * Alias of self::set
      *
-     * @param int|mixed The offset to set
-     * @param mixed The value to set it to
+     * @param int|mixed $offset The offset to set
+     * @param mixed $value The value to set it to
      * @return Collection
      */
     public function offsetSet($offset, $value)
@@ -703,7 +704,7 @@ class Collection implements Countable, ArrayAccess
      * values of each call to $callback.
      *
      * @param Callable $callback A callback to apply to each item in the collection
-     * @return \CSVelte\Collection A collection of callback return values
+     * @return Collection A collection of callback return values
      */
     public function map(Callable $callback)
     {
@@ -733,6 +734,7 @@ class Collection implements Countable, ArrayAccess
      * Call a user function for each item in the collection. If function returns
      * false, loop is terminated.
      *
+     * @param callable $callback The callback function to call for each item
      * @return $this
      * @todo I'm not entirely sure what this method should do... return new
      *     collection? modify this one?
@@ -891,7 +893,7 @@ class Collection implements Countable, ArrayAccess
      * Return array can either be in [key,value] or [key => value] format. The
      * first is the default.
      *
-     * @param boolean Whether you want pairs in [k => v] rather than [k, v] format
+     * @param boolean $alt Whether you want pairs in [k => v] rather than [k, v] format
      * @return Collection A collection of key/value pairs
      */
     public function pairs($alt = false)
@@ -928,7 +930,7 @@ class Collection implements Countable, ArrayAccess
      *
      * If two-dimensional it will return a collection of averages.
      *
-     * @return mixed|CSVelte\Collection The average of all items in collection
+     * @return mixed|Collection The average of all items in collection
      */
     public function average()
     {
@@ -1118,7 +1120,14 @@ class Collection implements Countable, ArrayAccess
     }
 
     /**
-     * @param string $method
+     * Is method an internal 2D map internal method?
+     *
+     * This is an internal method used to check if a particular method is one of
+     * the 2D map methods.
+     *
+     * @internal
+     * @param string $method The method name to check
+     * @return boolean True if method is a 2D map internal method
      */
     protected function if2DMapInternalMethod($method)
     {

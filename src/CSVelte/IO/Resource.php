@@ -13,6 +13,7 @@
  */
 namespace CSVelte\IO;
 
+use CSVelte\Contract\Streamable;
 use \InvalidArgumentException;
 use CSVelte\Exception\IOException;
 
@@ -168,15 +169,23 @@ class Resource
      * Instantiates a stream resource. If lazy is set to true, the connection
      * is delayed until the first call to getResource().
      *
-     * @param string|resource $uri  The URI to connect to OR a stream resource handle
+     * @param string|resource $uri The URI to connect to OR a stream resource handle
      * @param string $mode The connection mode
      * @param boolean $lazy Whether connection should be deferred until an I/O
      *     operation is requested (such as read or write) on the attached stream
-     * @throws \CSVelte\Exception\IOException if connection fails
+     * @param boolean|null $use_include_path
+     * @param array|null $context_options
+     * @param array|null $context_params
      * @todo Does stream_get_meta_data belong in Stream or Resource?
      */
-    public function __construct($uri, $mode = null, $lazy = null, $use_include_path = null, $context_options = null, $context_params = null)
-    {
+    public function __construct(
+        $uri,
+        $mode = null,
+        $lazy = null,
+        $use_include_path = null,
+        $context_options = null,
+        $context_params = null
+    ) {
         // first, check if we're wrapping an existing stream resource
         if (is_resource($uri)) {
             $this->initWithResource($uri);
@@ -233,7 +242,7 @@ class Resource
      *
      * Creates and returns a Stream object for this resource
      *
-     * @return resource The underlying stream resource
+     * @return Streamable A stream for this resource
      */
     public function __invoke()
     {
@@ -286,7 +295,7 @@ class Resource
             return fclose($this->conn);
         }
         // return null if nothing to close
-        return;
+        return null;
     }
 
     /**
@@ -852,9 +861,8 @@ class Resource
      * Used internally to ensure that stream is not open, since some methods should
      * only be called on unopened stream resources.
      *
-     * @param  string The method that is asserting
-     * @return void
-     * @throws \CSVelte\Exception\IOException if stream is open
+     * @param  string $method The method that is asserting
+     * @throws IOException if stream is open
      */
     protected function assertNotConnected($method)
     {
@@ -868,8 +876,7 @@ class Resource
      *
      * Used internally to ensure that a given stream wrapper is valid and available
      *
-     * @param  string The name of the stream wrapper
-     * @return void
+     * @param  string $name The name of the stream wrapper
      * @throws \InvalidArgumentException if wrapper doesn't exist
      */
     protected function assertValidWrapper($name)

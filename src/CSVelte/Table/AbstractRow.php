@@ -152,7 +152,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * Advance the internal pointer to the next column's data object
      * Also returns the next column's data object if there is one
      *
-     * @return CSVelte\Table\Data The "next" column's data
+     * @return mixed The "next" column's data
      */
     public function next()
     {
@@ -163,7 +163,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * Return the internal pointer to the first column and return that object
      *
-     * @return null|AbstractRow
+     * @return null|mixed|AbstractRow
      */
     public function rewind()
     {
@@ -177,7 +177,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * Is the current position within the row's data fields valid?
      *
      * @return boolean
-     * @access public
      */
     public function valid()
     {
@@ -189,8 +188,9 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * Is there an offset at specified position
      *
-     * @param integer Offset
-     * @return boolean
+     * @param mixed $offset The offset to check existence of
+     * @return bool
+     * @internal param Offset $integer
      */
     public function offsetExists($offset)
     {
@@ -200,8 +200,8 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * Retrieve offset at specified position or by header name
      *
-     * @param integer|string Offset/index
-     * @return CSVelte\Table\Data
+     * @param mixed $offset The offset to get
+     * @return mixed The data at the specified position
      */
     public function offsetGet($offset)
     {
@@ -211,10 +211,9 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * Set offset at specified position
      *
-     * @param integer|string Offset/index
-     * @param CSVelte\Table\Data
-     * @return void
-     * @throws CSVelte\Exception\ImmutableException
+     * @param mixed $offset The array offset to set
+     * @param mixed $value The value to set $offset to
+     * @throws ImmutableException
      */
     public function offsetSet($offset, $value)
     {
@@ -225,9 +224,8 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * Unset offset at specified position/index
      *
-     * @param integer|string Offset/index
-     * @return void
-     * @throws CSVelte\Exception\ImmutableException
+     * @param mixed $offset The offset to unset
+     * @throws ImmutableException
      * @todo I'm not sure if these objects will stay immutable or not yet...
      */
     public function offsetUnset($offset)
@@ -238,9 +236,8 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * Raise (throw) immutable exception
      *
-     * @param string Message
-     * @return void
-     * @throws CSVelte\Exception\ImmutableException
+     * @param string $msg The message to pass to the exception
+     * @throws ImmutableException
      */
     protected function raiseImmutableException($msg = null)
     {

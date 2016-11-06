@@ -31,5 +31,5 @@ class Unix extends FlavorBase
     protected $escapeChar = '\\';
     protected $doubleQuote = false;
     protected $lineTerminator = "\n";
-    protected $quoteStyle = Flavor::QUOTE_NONNUMERIC;
+    protected $quoteStyle = FlavorBase::QUOTE_NONNUMERIC;
 }

@@ -118,7 +118,7 @@ class BufferStream implements Streamable
     /**
      * Read in the specified amount of characters from the input source
      *
-     * @param integer Amount of characters to read from input source
+     * @param integer $chars Amount of characters to read from input source
      * @return string|boolean The specified amount of characters read from input source
      */
     public function read($chars)
@@ -273,7 +273,7 @@ class BufferStream implements Streamable
     /**
      * Write data to the output.
      *
-     * @param string The data to write
+     * @param string $data The data to write
      * @return false|int The number of bytes written
      */
     public function write($data)
@@ -303,8 +303,8 @@ class BufferStream implements Streamable
     /**
      * Seek to specified offset.
      *
-     * @param integer Offset to seek to
-     * @param integer Position from whence the offset should be applied
+     * @param integer $offset Offset to seek to
+     * @param integer $whence Position from whence the offset should be applied
      * @return boolean True if seek was successful
      */
     public function seek($offset, $whence = SEEK_SET)

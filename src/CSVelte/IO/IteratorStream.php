@@ -18,7 +18,6 @@ use \Iterator;
 use CSVelte\Traits\IsReadable;
 use CSVelte\Traits\IsWritable;
 use CSVelte\Contract\Streamable;
-use function CSVelte\invoke;
 
 /**
  * Iterator Stream.
@@ -38,7 +37,7 @@ class IteratorStream implements Streamable
 
     /**
      * Buffer stream
-     * @var \CSVelte\IO\BufferStream A BufferStream object
+     * @var BufferStream A BufferStream object
      */
     protected $buffer;
 
@@ -84,7 +83,7 @@ class IteratorStream implements Streamable
      * refill a buffer as it is drained by read operations.
      *
      * @param \Iterator The iterator to stream data from
-     * @param \CSVelte\IO\BufferStream|null Either a buffer or null (to use
+     * @param BufferStream|null Either a buffer or null (to use
      *     default buffer)
      * @todo this should expect a BufferInterface or a Bufferable rather than
      * a BufferStream
@@ -144,8 +143,6 @@ class IteratorStream implements Streamable
      * Inflate the buffer.
      *
      * Loop through the iterator and fill the buffer with its contents.
-     *
-     * @return void
      */
     protected function inflateBuffer()
     {
@@ -234,8 +231,6 @@ class IteratorStream implements Streamable
 
     /**
      * Rewind to beginning of stream
-     *
-     * @return void
      */
     public function rewind()
     {
@@ -315,7 +310,7 @@ class IteratorStream implements Streamable
     /**
      * Write data to the output.
      *
-     * @param string The data to write
+     * @param string $data The data to write
      * @return int|false The number of bytes written
      */
     public function write($data)
@@ -341,8 +336,8 @@ class IteratorStream implements Streamable
     /**
      * Seek to specified offset.
      *
-     * @param integer Offset to seek to
-     * @param integer Position from whence the offset should be applied
+     * @param integer $offset Offset to seek to
+     * @param integer $whence Position from whence the offset should be applied
      * @return boolean True if seek was successful
      */
     public function seek($offset, $whence = SEEK_SET)

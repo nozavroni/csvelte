@@ -31,7 +31,7 @@ if (if $file->hasHeader()) {
 class HeaderException extends CSVelteException
 {
     /**
-     * @var constant Error code for invalid/inconsistent header/column count
+     * Error code for invalid/inconsistent header/column count
      */
     const ERR_HEADER_COUNT = 1;
 }

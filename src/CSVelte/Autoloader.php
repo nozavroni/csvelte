@@ -37,6 +37,8 @@ class Autoloader
 
     /**
      * Autoloader Constructor
+     *
+     * @param array $paths Paths to search for classes
      */
     public function __construct($paths = array())
     {
@@ -54,7 +56,7 @@ class Autoloader
      * path list and the method returns true. If one can't be found, it adds $path
      * to the search path list, as-is and returns false
      *
-     * @param string A path to add to the list of search paths
+     * @param string $path A path to add to the list of search paths
      * @return boolean
      */
     public function addPath($path)
@@ -107,9 +109,9 @@ class Autoloader
      * CSVelte's classes. It need not be called directly, but rather regestered
      * with the SPL's autoload queue using this class's register method.
      *
-     * @param  string The fully qualified class name to load
+     * @param string $className The fully qualified class name to load
      * @return boolean
-     * @see \CSVelte\Autoloader::register()
+     * @see Autoloader::register()
      */
     public function load($className)
     {

@@ -47,17 +47,17 @@ class Reader implements \Iterator
      * This class supports any sources of input that implements this interface.
      * This way I can read from local files, streams, FTP, any class that implements
      * the "Readable" interface
-     * @var \CSVelte\Contract\Streamable
+     * @var Contract\Streamable
      */
     protected $source;
 
     /**
-     * @var \CSVelte\Flavor The "flavor" or format of the CSV being read
+     * @var Flavor The "flavor" or format of the CSV being read
      */
     protected $flavor;
 
     /**
-     * @var \CSVelte\Table\Row|boolean Row currently loaded into memory
+     * @var Table\Row|boolean Row currently loaded into memory
      */
     protected $current;
 
@@ -67,7 +67,7 @@ class Reader implements \Iterator
     protected $line = 0;
 
     /**
-     * @var \CSVelte\Table\HeaderRow The header row (if any)
+     * @var Table\HeaderRow The header row (if any)
      */
     protected $header;
 
@@ -91,7 +91,7 @@ class Reader implements \Iterator
      * Initializes a reader object using an input source and optionally a flavor
      *
      * @param mixed $input The source of our CSV data
-     * @param \CSVelte\Flavor|array|null $flavor The "flavor" or format specification object
+     * @param Flavor|array|null $flavor The "flavor" or format specification object
      */
     public function __construct($input, $flavor = null)
     {
@@ -105,7 +105,8 @@ class Reader implements \Iterator
      *
      * Set the ``CSVelte\Flavor`` object, used to determine CSV format.
      *
-     * @param \CSVelte\Flavor|array|null $flavor Either an array or a flavor object
+     * @param Flavor|array|null $flavor Either an array or a flavor object
+     * @return $this
      */
     protected function setFlavor($flavor = null)
     {
@@ -145,9 +146,6 @@ class Reader implements \Iterator
 
     /**
      * Load a line into memory
-     *
-     * @return void ($this?)
-     * @access protected
      */
     protected function load()
     {
@@ -175,7 +173,7 @@ class Reader implements \Iterator
      *
      * @return string A CSV row (could possibly span multiple lines depending on
      *     quoting and escaping)
-     * @throws \CSVelte\Exception\EndOfFileException when eof has been reached
+     * @throws Exception\EndOfFileException when eof has been reached
      *     and the read buffer has all been returned
      */
     protected function readLine()
@@ -230,8 +228,7 @@ class Reader implements \Iterator
      *
      * Retreive the "flavor" object being used by the reader
      *
-     * @return \CSVelte\Flavor
-     * @access public
+     * @return Flavor
      */
     public function getFlavor()
     {
@@ -271,7 +268,6 @@ class Reader implements \Iterator
      * @param string $quo The quote character
      * @param string $eol Line terminator character/sequence
      * @return string The data with replacements performed
-     * @access protected
      * @internal
      * @todo I could probably pass in (maybe optionally) the newline character I
      *     want to replace as well. I'll do that if I need to.
@@ -325,7 +321,15 @@ class Reader implements \Iterator
     }
 
     /**
+     * "Unescape" a string.
+     *
+     * Replaces escaped characters with their unescaped versions.
+     *
      * @internal
+     * @param string $str The string to unescape
+     * @param string $esc The escape character used
+     * @param string $quo The quote character used
+     * @return mixed The string with characters unescaped
      * @todo This actually shouldn't even be necessary. Characters should be read
      *     in one at a time and a quote that follows another should just be ignored
      *     deeming this unnecessary.
@@ -338,9 +342,8 @@ class Reader implements \Iterator
     /**
      * Parse a line of CSV data into an array of columns
      *
-     * @param string A line of CSV data to parse
+     * @param string $line A line of CSV data to parse
      * @return array An array of columns
-     * @access protected
      * @internal
      */
     protected function parse($line)
@@ -358,7 +361,7 @@ class Reader implements \Iterator
     /**
      * Retrieve current row.
      *
-     * @return CSVelte\Table\Row The current row
+     * @return Table\Row The current row
      */
     public function current()
     {
@@ -368,7 +371,7 @@ class Reader implements \Iterator
     /**
      * Advance to the next row
      *
-     * @return CSVelte\Table\Row|null The current row (if there is one)
+     * @return Table\Row|null The current row (if there is one)
      */
     public function next()
     {
@@ -401,7 +404,7 @@ class Reader implements \Iterator
     /**
      * Rewind to the beginning of the dataset.
      *
-     * @return CSVelte\Table\Row|null The current row
+     * @return Table\Row|null The current row
      */
     public function rewind()
     {
@@ -418,7 +421,7 @@ class Reader implements \Iterator
     /**
      * Retrieve header row.
      *
-     * @return CSVelte\Table\HeaderRow|null The header row if there is one
+     * @return Table\HeaderRow|null The header row if there is one
      */
     public function header()
     {
@@ -459,7 +462,7 @@ class Reader implements \Iterator
     /**
      * Returns an iterator with rows from user-supplied filter functions removed
      *
-     * @return CSVelte\Reader\FilteredReader An iterator with filtered rows
+     * @return FilteredReader An iterator with filtered rows
      */
     public function filter()
     {

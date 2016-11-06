@@ -14,6 +14,7 @@ namespace CSVelte;
 
 use CSVelte\Contract\Streamable;
 
+use CSVelte\Table\AbstractRow;
 use \Iterator;
 use \ArrayIterator;
 use CSVelte\Table\HeaderRow;
@@ -37,14 +38,14 @@ class Writer
     /**
      * The flavor (format) of CSV to write.
      *
-     * @var \CSVelte\Flavor
+     * @var Flavor
      */
     protected $flavor;
 
     /**
      * The output stream to write to.
      *
-     * @var \CSVelte\Contract\Streamable
+     * @var Contract\Streamable
      */
     protected $output;
 
@@ -65,8 +66,8 @@ class Writer
     /**
      * Class Constructor.
      *
-     * @param \CSVelte\Contract\Streamable $output An output source to write to
-     * @param \CSVelte\Flavor|array $flavor A flavor or set of formatting params
+     * @param Contract\Streamable $output An output source to write to
+     * @param Flavor|array $flavor A flavor or set of formatting params
      */
     public function __construct(Streamable $output, $flavor = null)
     {
@@ -79,7 +80,7 @@ class Writer
      * Get the CSV flavor (or dialect) for this writer.
      *
      * @param void
-     * @return \CSVelte\Flavor
+     * @return Flavor
      */
     public function getFlavor()
     {
@@ -93,8 +94,8 @@ class Writer
      * likely buffer the output so that this may be called after writeRows()
      *
      * @param \Iterator|array A list of header values
-     * @return boolean
-     * @throws \CSVelte\Exception\WriterException
+     * @return $this
+     * @throws Exception\WriterException
      */
     public function setHeaderRow($headers)
     {
@@ -103,6 +104,7 @@ class Writer
         }
         if (is_array($headers)) $headers = new ArrayIterator($headers);
         $this->headers = $headers;
+        return $this;
     }
 
     /**
@@ -125,6 +127,7 @@ class Writer
             $this->written++;
             return $count;
         }
+        return false;
     }
 
     /**
@@ -144,7 +147,7 @@ class Writer
     /**
      * Write multiple rows
      *
-     * @param \Iterable|array $rows List of \Iterable|array
+     * @param \Iterator|array $rows List of \Iterable|array
      * @return int number of lines written
      */
     public function writeRows($rows)
@@ -167,8 +170,8 @@ class Writer
      * Prepare a row of data to be written
      * This means taking an array of data, and converting it to a Row object
      *
-     * @param \Iterator|array of data items
-     * @return CSVelte\Table\AbstractRow
+     * @param \Iterator $row of data items
+     * @return AbstractRow
      */
     protected function prepareRow(Iterator $row)
     {

@@ -36,7 +36,7 @@ trait IsWritable
      * @param string $line The line to be written to the stream
      * @param string $eol The end of line string
      * @return int The number of bytes written to the stream
-     * @throws CSVelte\Exception\IOException
+     * @throws IOException
      */
     public function writeLine($line, $eol = PHP_EOL)
     {
@@ -46,8 +46,7 @@ trait IsWritable
     /**
      * Assert that this file/stream object is readable.
      *
-     * @return void
-     * @throws CSVelte\Exception\IOException if stream isn't readable
+     * @throws IOException
      */
     protected function assertIsWritable()
     {

@@ -15,7 +15,7 @@
 namespace CSVelte\Reader;
 
 use CSVelte\Reader as CsvReader;
-use \FilterIterator;
+use FilterIterator;
 
 /**
  * Filtered Reader Iterator
@@ -71,6 +71,11 @@ class FilteredIterator extends FilterIterator
         return true;
     }
 
+    /**
+     * Return this object as an array
+     *
+     * @return array This object as an array
+     */
     public function toArray()
     {
         return array_map(function($row){

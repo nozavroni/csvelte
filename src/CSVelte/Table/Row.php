@@ -34,7 +34,6 @@ class Row extends AbstractRow
      * Get the current key (column number or header, if available)
      *
      * @return string The "current" key
-     * @access public
      * @todo Figure out if this can return a CSVelte\Table\HeaderData object so long as it
      *     has a __toString() method that generated the right key...
      */
@@ -50,9 +49,8 @@ class Row extends AbstractRow
     /**
      * Set the header row (so that it can be used to index the row)
      *
-     * @param \CSVelte\Table\HeaderRow $headers Header row to set
-     * @return void (return $this?)
-     * @access public
+     * @param AbstractRow|HeaderRow $headers Header row to set
+     * @throws HeaderException
      */
     public function setHeaderRow(AbstractRow $headers)
     {
@@ -79,9 +77,9 @@ class Row extends AbstractRow
     /**
      * Is there an offset at specified position?
      *
-     * @param integer Offset
-     * @return boolean
-     * @access public
+     * @param mixed $offset
+     * @return bool
+     * @internal param Offset $integer
      */
     public function offsetExists($offset)
     {
@@ -96,9 +94,8 @@ class Row extends AbstractRow
     /**
      * Retrieve data at specified column offset
      *
-     * @param integer Offset
-     * @return CSVelte\Table\Data
-     * @access public
+     * @param mixed $offset The offset to get
+     * @return mixed The value at $offset
      */
     public function offsetGet($offset)
     {

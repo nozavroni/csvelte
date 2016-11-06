@@ -96,6 +96,8 @@ class Taster
     const TYPE_DOUBLE = 'double';
     // I am a string. I can contain all kinds of stuff.
     const TYPE_STRING = 'string';
+    // 2010-04-23 04:23:00
+    const TYPE_DATETIME = 'datetime';
     // 10-Jul-15, 9/1/2007, April 1st, 2006, etc.
     const TYPE_DATE = 'date';
     // 10:00pm, 5pm, 13:08, etc.
@@ -107,7 +109,7 @@ class Taster
     // abababab
     const TYPE_ALPHA = 'alpha';
 
-    /** @var \CSVelte\Contract\Streamable The source of data to examine */
+    /** @var Contract\Streamable The source of data to examine */
     protected $input;
 
     /** @var string Sample of CSV data to use for tasting (determining CSV flavor) */
@@ -119,7 +121,8 @@ class Taster
     /**
      * Class constructor--accepts a CSV input source
      *
-     * @param \CSVelte\Contract\Streamable The source of CSV data
+     * @param Contract\Streamable The source of CSV data
+     * @throws TasterException
      * @todo It may be a good idea to skip the first line or two for the sample
      *     so that the header line(s) don't throw things off (with the exception
      *     of lickHeader() obviously)
@@ -138,8 +141,8 @@ class Taster
      * Called when an object is invoked as if it were a function. So, for instance,
      * This is simply an alias to the lick method.
      *
-     * @return \CSVelte\Flavor A flavor object
-     * @throws \CSVelte\Exception\TasterException
+     * @return Flavor A flavor object
+     * @throws TasterException
      */
     public function __invoke()
     {
@@ -153,8 +156,8 @@ class Taster
      * such as the delimiting character, quote character, or what types of data are quoted.
      * are quoted.
      *
-     * @return \CSVelte\Flavor The metadata that the CSV format doesn't provide
-     * @throws \CSVelte\Exception\TasterException
+     * @return Flavor The metadata that the CSV format doesn't provide
+     * @throws TasterException
      * @todo Implement a lickQuote method for when lickQuoteAndDelim method fails
      * @todo Should there bea lickEscapeChar method? the python module that inspired
      *     this library doesn't include one...
@@ -186,7 +189,7 @@ class Taster
      * within quotes when parsing a file. But this was before I wrote the
      * replaceQuotedSpecialChars method which (at least to me) makes more sense.
      *
-     * @param string The string to replace quoted strings within
+     * @param string $data The string to replace quoted strings within
      * @return string The input string with quoted strings removed
      * @todo Replace code that uses this method with the replaceQuotedSpecialChars
      *     method instead. I think it's cleaner.
@@ -237,6 +240,7 @@ class Taster
      * determine these characters some other way... (see lickDelimiter)
      *
      * @return array A two-row array containing quotechar, delimchar
+     * @throws TasterException
      * @todo make protected
      * @todo This should throw an exception if it cannot determine the delimiter
      *     this way.
@@ -292,9 +296,9 @@ class Taster
       * Take a list of likely delimiter characters and find the one that occurs
       * the most consistent amount of times within the provided data.
       *
-      * @param string The character(s) used for newlines
+      * @param string $eol The character(s) used for newlines
       * @return string One of four Flavor::QUOTING_* constants
-      * @see \CSVelte\Flavor for possible quote style constants
+      * @see Flavor for possible quote style constants
       * @todo Refactor this method--It needs more thorough testing against a wider
       *     variety of CSV data to be sure it works reliably. And I'm sure there
       *     are many performance and logic improvements that could be made. This

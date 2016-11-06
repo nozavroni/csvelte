@@ -36,8 +36,9 @@ use \InvalidArgumentException;
  * method to this function and it will find the best possible way to stream the
  * data from that object.
  *
- * @param mixed The item you want to stream
- * @return \CSVelte\IO\Stream A stream object
+ * @param mixed $obj The item you want to stream
+ * @return Streamable
+ * @throws InvalidArgumentException
  * @since v0.2.1
  */
 function streamize($obj = '')
@@ -131,8 +132,8 @@ function stream(
  * Pass any class that implements the "Streamable" interface to this function
  * to auto-detect "flavor" (formatting attributes).
  *
- * @param \CSVelte\Contract\Streamable Any streamable class to analyze
- * @return \CSVelte\Flavor A flavor representing stream's formatting attributes
+ * @param Contract\Streamable Any streamable class to analyze
+ * @return Flavor A flavor representing stream's formatting attributes
  * @since v0.2.1
  */
 function taste(Streamable $str)
@@ -144,7 +145,7 @@ function taste(Streamable $str)
 /**
  * Does dataset being streamed by $str have a header row?
  *
- * @param \CSVelte\Contract\Streamable $str Stream object
+ * @param Contract\Streamable $str Stream object
  * @return boolean Whether stream dataset has header
  * @since v0.2.1
  */
@@ -167,9 +168,9 @@ function taste_has_header(Streamable $str)
  * than simply instantiating a Collection object, but for now the two are identical.
  *
  * @param array|Iterator $in Either an array or an iterator of data
- * @return \CSVelte\Collection A collection object containing data from $in
+ * @return Collection A collection object containing data from $in
  * @since v0.2.1
- * @see CSVelte\Collection::__construct() (alias)
+ * @see Collection::__construct() (alias)
  */
 function collect($in = null)
 {

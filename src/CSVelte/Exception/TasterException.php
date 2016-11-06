@@ -22,17 +22,17 @@ namespace CSVelte\Exception;
 class TasterException extends CSVelteException
 {
     /**
-     * @var const Could not determine delimiter
+     * Could not determine delimiter
      */
     const ERR_DELIMITER = 1;
 
     /**
-     * @var const Could not determine quote and delimiter at the same time
+     * Could not determine quote and delimiter at the same time
      */
     const ERR_QUOTE_AND_DELIM = 2;
 
     /**
-     * @var const
+     * Invalid data sample
      */
     const ERR_INVALID_SAMPLE = 3;
 }
