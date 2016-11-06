@@ -129,7 +129,7 @@ class Stream implements Streamable
      *
      * @param string $uri The stream URI you want to open
      * @param string $mode The access mode string
-     * @param array|resource $context Stream resource context options/params
+     * @param null|resource $context Stream resource context options/params
      * @param boolean $lazy Whether or not you want this stream to lazy-open
      * @return Stream
      * @see http://php.net/manual/en/function.fopen.php

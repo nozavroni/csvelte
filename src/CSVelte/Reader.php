@@ -57,7 +57,7 @@ class Reader implements \Iterator
     protected $flavor;
 
     /**
-     * @var Table\Row|boolean Row currently loaded into memory
+     * @var Table\Row Row currently loaded into memory
      */
     protected $current;
 
@@ -421,7 +421,7 @@ class Reader implements \Iterator
     /**
      * Retrieve header row.
      *
-     * @return Table\HeaderRow|null The header row if there is one
+     * @return Table\HeaderRow The header row if there is one
      */
     public function header()
     {

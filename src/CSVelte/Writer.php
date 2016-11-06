@@ -127,7 +127,7 @@ class Writer
             $this->written++;
             return $count;
         }
-        return false;
+        return 0;
     }
 
     /**
