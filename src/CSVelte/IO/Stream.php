@@ -62,7 +62,7 @@ class Stream implements Streamable
      *
      * Instantiate a new stream object using a stream resource object.
      *
-     * @param Resource $resource A stream resource object
+     * @param \CSVelte\IO\Resource $resource A stream resource object
      */
     public function __construct(Resource $resource)
     {
@@ -223,11 +223,12 @@ class Stream implements Streamable
     }
 
     /**
-     * Accessor for internal stream resource.
+     * Get the Resource object.
      *
-     * Returns the internal stream resource pointer
+     * Returns the internal Resource object used as a drop-in replacement for
+     * PHP's native stream resource variables.
      *
-     * @return resource The open stream resource pointer
+     * @return \CSVelte\IO\Resource The Resource object
      */
     public function getResource()
     {

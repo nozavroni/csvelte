@@ -98,9 +98,11 @@ function stream_resource(
     $context = null,
     $lazy = true
 ) {
-    $res = (new Resource($uri, $mode))
+    $res = (new Resource($uri, $mode, null, true))
         ->setContextResource($context);
-    if (!$lazy) $res->connect();
+    if (!$lazy) {
+        $res->connect();
+    }
     return $res;
 }
 
@@ -123,7 +125,7 @@ function stream(
     $lazy = true
 ) {
     $res = stream_resource($uri, $mode, $context, $lazy);
-    return new Stream($res);
+    return $res();
 }
 
 /**

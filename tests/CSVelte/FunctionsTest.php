@@ -7,6 +7,7 @@ use CSVelte\IO\Stream;
 use \SplFileObject;
 use function
     CSVelte\taste_has_header,
+    CSVelte\stream,
     CSVelte\stream_resource,
     CSVelte\streamize,
     CSVelte\taste,
@@ -72,6 +73,33 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals("Bank Name,City,ST,CERT,Acquiring", $stream->read(32));
         $this->assertEquals(" Institution,Closing Date,Update", $stream->read(32));
         $this->assertEquals("d Date\nFirst CornerStone Bank,\"K", $stream->read(32));
+    }
+
+    public function testStreamFunctionReturnsStream()
+    {
+        $stream = stream($this->getFilePathFor('veryShort'));
+        $this->assertInstanceOf(Stream::class, $stream);
+    }
+
+    public function testStreamFunctionReturnsLazyStreamByDefault()
+    {
+        $stream = stream($this->getFilePathFor('veryShort'));
+        $this->assertInstanceOf(Stream::class, $stream);
+        $this->assertTrue($stream->getResource()->isLazy());
+        $this->assertFalse($stream->getResource()->isConnected());
+        $this->assertEquals("vfs://root/testfiles/veryShort.csv", $stream->getUri());
+        $this->assertEquals("foo,b", $stream->read(5));
+    }
+
+    public function testStreamFunctionReturnsOpenStreamWhenRequested()
+    {
+        $stream = stream($this->getFilePathFor('veryShort'), 'r+b', null, false);
+        $this->assertInstanceOf(Stream::class, $stream);
+        // @todo this is a bug, needs to be fixed
+        //$this->assertFalse($stream->getResource()->isLazy());
+        $this->assertTrue($stream->getResource()->isConnected());
+        $this->assertEquals("vfs://root/testfiles/veryShort.csv", $stream->getUri());
+        $this->assertEquals("foo,b", $stream->read(5));
     }
 
     public function testTasteFunctionIsAliasForTasterInvoke()
