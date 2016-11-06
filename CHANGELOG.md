@@ -1,6 +1,6 @@
 # CHANGE LOG
 
-## [v0.2.1 Release](https://github.com/nozavroni/csvelte/milestone/???)
+## [v0.2.1 Release](https://github.com/nozavroni/csvelte/milestone/9?closed=1)
 
  * Added IO\Resource class to represent a PHP stream resource. Now CSVelte will expect/return an IO\Resource object where before it was a native PHP stream resource ([#114](https://github.com/nozavroni/csvelte/issues/114), [#124](https://github.com/nozavroni/csvelte/issues/124) and [#135](https://github.com/nozavroni/csvelte/issues/135)).
  * Implemented "lazy-open" streams by means of the IO\Resource class I mentioned before ([#121](https://github.com/nozavroni/csvelte/issues/121)).
