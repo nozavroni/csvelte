@@ -11,7 +11,7 @@ use function
     CSVelte\streamize,
     CSVelte\taste,
     CSVelte\collect,
-    CSVelte\getvalue;
+    CSVelte\invoke;
 
 /**
  * CSVelte functions tests
@@ -191,7 +191,7 @@ class FunctionsTest extends UnitTestCase
 
     public function testGetValueAcceptsCallbackAndVariadicArguments()
     {
-        $this->assertEquals('Hello, Luke Visinoni!', getvalue(function($first, $last) {
+        $this->assertEquals('Hello, Luke Visinoni!', invoke(function($first, $last) {
             return "Hello, {$first} {$last}!";
         }, 'Luke', 'Visinoni'));
     }
