@@ -2,7 +2,7 @@
 namespace CSVelteTest;
 
 use CSVelte\Flavor;
-use CSVelte\IO\Resource;
+use CSVelte\IO\StreamResource;
 use CSVelte\IO\Stream;
 use \SplFileObject;
 use function
@@ -171,7 +171,7 @@ class FunctionsTest extends UnitTestCase
                 'vfs' => ['foo' => 'bar']
             ])
         );
-        $this->assertInstanceOf(Resource::class, $res);
+        $this->assertInstanceOf(StreamResource::class, $res);
         $this->assertFalse($res->isConnected());
         $this->assertTrue($res->isLazy());
         $this->assertEquals($ctxt, $res->getContext());
@@ -187,7 +187,7 @@ class FunctionsTest extends UnitTestCase
                 'vfs' => ['foo' => 'bar']
             ])
         );
-        $this->assertInstanceOf(Resource::class, $res);
+        $this->assertInstanceOf(StreamResource::class, $res);
         $this->assertInstanceOf(Stream::class, $res());
     }
 
@@ -226,13 +226,13 @@ class FunctionsTest extends UnitTestCase
 
     public function testStreamizeAcceptsIOResourceObject()
     {
-        $reg = new Resource($this->getFilePathFor('veryShort'), null, false);
+        $reg = new StreamResource($this->getFilePathFor('veryShort'), null, false);
         $this->assertTrue($reg->isConnected());
         $regstream = streamize($reg);
         $this->assertInstanceOf(Stream::class, $regstream);
         $this->assertTrue($reg->isConnected());
 
-        $lazy = new Resource($this->getFilePathFor('veryShort'), null, true);
+        $lazy = new StreamResource($this->getFilePathFor('veryShort'), null, true);
         $this->assertFalse($lazy->isConnected());
         $lazystream = streamize($lazy);
         $this->assertInstanceOf(Stream::class, $lazystream);

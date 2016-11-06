@@ -30,7 +30,7 @@ use CSVelte\Exception\IOException;
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
  * @since      v0.2.1
  */
-class Resource
+class StreamResource
 {
     /**
      * Available base access modes

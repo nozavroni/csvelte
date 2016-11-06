@@ -13,6 +13,7 @@
  */
 namespace CSVelte\IO;
 
+use CSVelte\Exception\IOException;
 use CSVelte\Traits\IsReadable;
 use CSVelte\Traits\IsWritable;
 use CSVelte\Traits\IsSeekable;
@@ -39,7 +40,7 @@ class Stream implements Streamable
     use IsReadable, IsWritable, IsSeekable;
 
     /**
-     * @var \CSVelte\IO\Resource A stream resource object
+     * @var StreamResource A stream resource object
      */
     protected $resource;
 
@@ -62,9 +63,9 @@ class Stream implements Streamable
      *
      * Instantiate a new stream object using a stream resource object.
      *
-     * @param \CSVelte\IO\Resource $resource A stream resource object
+     * @param StreamResource $resource A stream resource object
      */
-    public function __construct(Resource $resource)
+    public function __construct(StreamResource $resource)
     {
         $this->setResource($resource);
     }
@@ -72,9 +73,9 @@ class Stream implements Streamable
     /**
      * Set stream resource object
      *
-     * @param Resource $resource A stream resource object
+     * @param StreamResource $resource A stream resource object
      */
-    protected function setResource(Resource $resource)
+    protected function setResource(StreamResource $resource)
     {
         $this->resource = $resource;
     }
@@ -137,7 +138,7 @@ class Stream implements Streamable
      */
     public static function open($uri, $mode = null, $context = null, $lazy = false)
     {
-        $resource = (new Resource($uri, $mode))
+        $resource = (new StreamResource($uri, $mode))
             ->setContextResource($context);
         if (!$lazy) $resource->connect();
         return new self($resource);
@@ -225,10 +226,10 @@ class Stream implements Streamable
     /**
      * Get the Resource object.
      *
-     * Returns the internal Resource object used as a drop-in replacement for
+     * Returns the internal StreamResource object used as a drop-in replacement for
      * PHP's native stream resource variables.
      *
-     * @return \CSVelte\IO\Resource The Resource object
+     * @return StreamResource The Resource object
      */
     public function getResource()
     {
@@ -266,7 +267,7 @@ class Stream implements Streamable
      *
      * After the stream has been detached, the stream is in an unusable state.
      *
-     * @return Resource|null Underlying PHP stream, if any
+     * @return StreamResource|null Underlying PHP stream, if any
      */
     public function detach()
     {
@@ -314,7 +315,7 @@ class Stream implements Streamable
      * @param int $length Number of bytes to read from stream
      * @return string|false The data read from stream or false if at end of
      *     file or some other problem.
-     * @throws \CSVelte\Exception\IOException if stream not readable
+     * @throws IOException if stream not readable
      */
     public function read($length)
     {
@@ -332,7 +333,7 @@ class Stream implements Streamable
      *
      * @return string The remaining contents of the file, beginning at internal
      *     pointer's current location
-     * @throws \CSVelte\Exception\IOException
+     * @throws IOException
      */
     public function getContents()
     {
@@ -377,7 +378,7 @@ class Stream implements Streamable
      *
      * @param string $str The data to be written to the stream
      * @return int The number of bytes written to the stream
-     * @throws \CSVelte\Exception\IOException
+     * @throws IOException
      */
     public function write($str)
     {
@@ -393,7 +394,7 @@ class Stream implements Streamable
      * @param int $offset The position to seek to
      * @param int $whence One of three native php ``SEEK_`` constants
      * @return boolean True on success false on failure
-     * @throws \CSVelte\Exception\IOException
+     * @throws IOException
      * @see http://php.net/manual/en/function.seek.php
      */
     public function seek($offset, $whence = SEEK_SET)

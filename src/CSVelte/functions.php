@@ -23,7 +23,7 @@ namespace CSVelte;
 
 use \Iterator;
 use CSVelte\IO\Stream;
-use CSVelte\IO\Resource;
+use CSVelte\IO\StreamResource;
 use CSVelte\IO\IteratorStream;
 use CSVelte\Contract\Streamable;
 
@@ -47,12 +47,12 @@ function streamize($obj = '')
         return $obj;
     }
 
-    if ($obj instanceof Resource) {
+    if ($obj instanceof StreamResource) {
         return $obj();
     }
 
     if (is_resource($obj) && get_resource_type($obj) == 'stream') {
-        return new Stream(new Resource($obj));
+        return new Stream(new StreamResource($obj));
     }
 
     if ($obj instanceof Iterator) {
@@ -80,7 +80,7 @@ function streamize($obj = '')
 }
 
 /**
- * Stream resource factory.
+ * StreamResource factory.
  *
  * This method is just a shortcut to create a stream resource object using
  * a stream URI string.
@@ -89,7 +89,7 @@ function streamize($obj = '')
  * @param string $mode The access mode string
  * @param array|resource $context An array or resource with stream context options
  * @param bool $lazy Whether to lazy-open
- * @return $this
+ * @return StreamResource
  * @since v0.2.1
  */
 function stream_resource(
@@ -98,7 +98,7 @@ function stream_resource(
     $context = null,
     $lazy = true
 ) {
-    $res = (new Resource($uri, $mode, null, true))
+    $res = (new StreamResource($uri, $mode, null, true))
         ->setContextResource($context);
     if (!$lazy) {
         $res->connect();

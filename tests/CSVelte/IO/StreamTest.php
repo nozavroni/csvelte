@@ -2,13 +2,13 @@
 namespace CSVelteTest\IO;
 
 use \ArrayIterator;
-use CSVelte\Exception\NotYetImplementedException;
+use CSVelte\Exception\CSVelte\Exception\IOException;
 use \SplFileObject;
 use CSVelte\Contract\Streamable;
 use CSVelte\IO\Stream;
 use CSVelte\IO\BufferStream;
 use CSVelte\IO\IteratorStream;
-use CSVelte\IO\Resource;
+use CSVelte\IO\StreamResource;
 
 use function CSVelte\streamize;
 
@@ -26,7 +26,7 @@ class StreamTest extends IOTest
 {
     public function testInstantiateNewStreamWithLazyResource()
     {
-        $res = new Resource($this->getFilePathFor('veryShort'));
+        $res = new StreamResource($this->getFilePathFor('veryShort'));
         $stream = new Stream($res);
         $sr = $stream->getResource();
         $this->assertFalse($sr->isConnected());
@@ -38,7 +38,7 @@ class StreamTest extends IOTest
 
     public function testInstantiateNewStreamWithNotLazyResource()
     {
-        $res = new Resource($this->getFilePathFor('veryShort'), null, $isLazyExp = false);
+        $res = new StreamResource($this->getFilePathFor('veryShort'), null, $isLazyExp = false);
         $stream = new Stream($res);
         $sr = $stream->getResource();
         $this->assertTrue($sr->isConnected());
@@ -75,7 +75,7 @@ class StreamTest extends IOTest
             null,
             stream_context_create(['http' => ['method' => 'POST']])
         );
-        $resource = new Resource($handle);
+        $resource = new StreamResource($handle);
         $stream = new Stream($resource);
         $this->assertTrue($stream->isReadable());
         $this->assertTrue($stream->isWritable());
@@ -159,7 +159,7 @@ class StreamTest extends IOTest
     public function testCloseKillsConnection()
     {
         $res = fopen($this->getFilePathFor('veryShort'), 'r+b');
-        $stream = new Stream(new Resource($res));
+        $stream = new Stream(new StreamResource($res));
         $this->assertEquals("stream", get_resource_type($stream->getResource()->getHandle()));
         $this->assertEquals("stream", get_resource_type($res));
         $this->assertTrue($stream->getResource()->isConnected());
@@ -173,7 +173,7 @@ class StreamTest extends IOTest
     public function testDestructKillsConnection()
     {
         $res = fopen($this->getFilePathFor('veryShort'), 'r+b');
-        $stream = new Stream(new Resource($res));
+        $stream = new Stream(new StreamResource($res));
         $this->assertEquals("stream", get_resource_type($res));
         $stream = null;
         $this->assertNotEquals("stream", get_resource_type($res));
