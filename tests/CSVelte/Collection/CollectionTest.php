@@ -194,5 +194,165 @@ class CollectionTest extends UnitTestCase
         $this->assertFalse($coll->contains(function($val) {
             return $val instanceof Iterator;
         }));
+
+        // can also return true only for given index(es)
+        $this->assertTrue($coll->contains(function($val, $key) {
+            return strlen($val) > 3;
+        }, 'goo'));
+        $this->assertFalse($coll->contains(function($val, $key) {
+            return strlen($val) > 3;
+        }, 'boo'));
+
+        // check that $key can be used for truthiness checking...
+        $this->assertTrue($coll->contains(function($val, $key) {
+            if (is_string($key)) {
+                return strlen($val) > 3;
+            }
+            return false;
+        }, 'goo'));
+        $this->assertFalse($coll->contains(function($val, $key) {
+            if (is_numeric($key)) {
+                return strlen($val) > 3;
+            }
+            return false;
+        }, 'boo'));
+    }
+
+    public function testCollectionContainsAcceptsArrayForIndexParam()
+    {
+        $coll = Collection::factory([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar'
+        ]);
+
+        // pass an array of possible indexes
+        $this->assertTrue($coll->contains('bar', ['foo','boo']));
+        $this->assertFalse($coll->contains('bar', ['goo','too']));
+
+        // we also need to make sure this works with callables
+        $this->assertTrue($coll->contains(function($val, $key) {
+            return strlen($val) > 3;
+        }, ['goo','boo']));
+        $this->assertFalse($coll->contains(function($val, $key) {
+            return strlen($val) > 3;
+        }, ['foo','boo']));
+
+        // check that $key can be used for truthiness checking...
+        $this->assertFalse($coll->contains(function($val, $key) {
+            if (is_string($key)) {
+                return strlen($val) > 3;
+            }
+            return false;
+        }, ['foo','boo']));
+        $this->assertFalse($coll->contains(function($val, $key) {
+            if (is_numeric($key)) {
+                return strlen($val) > 3;
+            }
+            return false;
+        }, ['goo','boo']));
+    }
+
+    public function testPopReturnsAnItemAndRemovesItFromEnd()
+    {
+        $coll = Collection::factory(['a','b','c','d',$expected = 'pop goes the weasel']);
+        $this->assertEquals($expected, $coll->pop());
+        $this->assertEquals(['a','b','c','d'], $coll->toArray());
+        $this->assertEquals('d', $coll->pop());
+        $this->assertEquals(['a','b','c'], $coll->toArray());
+    }
+
+    public function testShiftReturnsAnItemAndRemovesItFromBeginning()
+    {
+        $coll = Collection::factory([$expected = 'a','b','c','d','pop goes the weasel']);
+        $this->assertEquals($expected, $coll->shift());
+        $this->assertEquals(['b','c','d','pop goes the weasel'], $coll->toArray());
+        $this->assertEquals('b', $coll->shift());
+        $this->assertEquals(['c','d','pop goes the weasel'], $coll->toArray());
+    }
+
+    public function testPushItemsOntoCollectionAddsToEnd()
+    {
+        $coll = Collection::factory(['a','b','c','d']);
+        $coll->push('e');
+        $this->assertEquals(['a','b','c','d','e'], $coll->toArray());
+        $this->assertEquals(['a','b','c','d','e','f','g',['h','i','j'], 'k'], $coll->push('f', 'g', ['h', 'i', 'j'], 'k')->toArray());
+    }
+
+    public function testUnshiftAddsToBeginningOfCollection()
+    {
+        $coll = Collection::factory(['a','b','c','d']);
+        $coll->unshift('e');
+        $this->assertEquals(['e','a','b','c','d'], $coll->toArray());
+        $this->assertEquals(['f','g',['h','i','j'],'k','e','a','b','c','d'], $coll->unshift('f', 'g', ['h', 'i', 'j'], 'k')->toArray());
+    }
+
+    public function testMapReturnsANewCollectionContainingValuesAfterCallback()
+    {
+        $coll = Collection::factory([0,1,2,3,4,5,6,7,8,9]);
+        $coll2 = $coll->map(function($val){
+            return $val + 1;
+        });
+        $this->assertInstanceOf(Collection::class, $coll2);
+        $this->assertEquals([1,2,3,4,5,6,7,8,9,10], $coll2->toArray());
+    }
+
+    public function testCollectionWalkCallbackModifyInPlace()
+    {
+        $coll = Collection::factory([1,2,3,4,5,6,7,8,9,0]);
+        $context = [
+            'extra_context' => 'foobar',
+            'more_context' => 'boofar'
+        ];
+        $coll->walk(function (&$value, $key, $udata) {
+            if ($key %2 == 0) $value++;
+            else $value--;
+            $value .= $udata['extra_context'];
+        }, $context);
+        $this->assertEquals([
+            '2foobar',
+            '1foobar',
+            '4foobar',
+            '3foobar',
+            '6foobar',
+            '5foobar',
+            '8foobar',
+            '7foobar',
+            '10foobar',
+            '-1foobar'
+        ], $coll->toArray());
+    }
+
+    public function testCollectionReduceReturnsSingleValueUsingCallback()
+    {
+        $coll = Collection::factory([
+            'mk'     => 'lady',
+            'lorrie' => 'sweet',
+            'luke'   => 'really cool guy',
+            'terry'  => 'what a fool'
+        ]);
+        $this->assertEquals('really cool guy', $coll->reduce(function($carry, $item) {
+            if (strlen($item) >= strlen($carry)) {
+                return $item;
+            }
+            return $carry;
+        }, null));
+
+    }
+
+    public function testCollectionFilterReturnsCollectionFilteredUsingCallback()
+    {
+        $coll = Collection::factory([
+            'mk'     => 'lady',
+            'lorrie' => 'sweet',
+            'luke'   => 'really cool guy',
+            'terry'  => 'what a fool'
+        ]);
+        $this->assertEquals([
+            'mk'     => 'lady',
+            'terry'  => 'what a fool'
+        ], $coll->filter(function($v, $k) {
+            return strpos($v, 'e') === false;
+        })->toArray());
     }
 }

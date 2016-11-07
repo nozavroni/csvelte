@@ -231,14 +231,18 @@ abstract class AbstractCollection /*implements Collectable*/
     {
         foreach ($this->data as $key => $val) {
             if (is_callable($value)) {
-                $found = $value($val);
+                $found = $value($val, $key);
             } else {
                 $found = ($value == $val);
             }
             if ($found) {
-                return (is_null($index)) ?
-                    true :
-                    $index == $key;
+                if (is_null($index)) {
+                    return true;
+                }
+                if (is_array($index)) {
+                    return in_array($key, $index);
+                }
+                return $key == $index;
             }
         }
         return false;
@@ -274,7 +278,8 @@ abstract class AbstractCollection /*implements Collectable*/
      */
     public function push(...$items)
     {
-        return self::factory(array_push($this->data, ...$items));
+        array_push($this->data, ...$items);
+        return self::factory($this->data);
     }
 
     /**
@@ -286,7 +291,8 @@ abstract class AbstractCollection /*implements Collectable*/
      */
     public function unshift(...$items)
     {
-        return self::factory(array_unshift($this->data, ...$items));
+        array_unshift($this->data, ...$items);
+        return self::factory($this->data);
     }
 
     /**
@@ -356,11 +362,11 @@ abstract class AbstractCollection /*implements Collectable*/
      * a new collection containing only the values that weren't filtered.
      *
      * @param callable $callback The callback function used to filter
-     * @param int $flag array_filter flag(s)
+     * @param int $flag array_filter flag(s) (ARRAY_FILTER_USE_KEY or ARRAY_FILTER_USE_BOTH)
      * @return Collection A new collection with only values that weren't filtered
      * @see php.net array_filter
      */
-    public function filter(callable $callback, $flag)
+    public function filter(callable $callback, $flag = ARRAY_FILTER_USE_BOTH)
     {
         return self::factory(array_filter($this->data, $callback, $flag));
     }
