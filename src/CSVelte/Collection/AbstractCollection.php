@@ -225,6 +225,7 @@ abstract class AbstractCollection /*implements Collectable*/
      * @param mixed|callable $value The value to check for
      * @param mixed $index The (optional) index to look under
      * @return boolean True if this collection contains $value
+     * @todo Maybe add $identical param for identical comparison (===)
      */
     public function contains($value, $index = null)
     {

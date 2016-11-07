@@ -13,6 +13,7 @@
  */
 namespace CSVelteTest\Collection;
 
+use \Iterator;
 use \ArrayIterator;
 use CSVelte\Collection\AbstractCollection;
 use CSVelte\Collection\Collection;
@@ -167,5 +168,31 @@ class CollectionTest extends UnitTestCase
         $in = ['foo' => 'bar', 'baz' => 'bin'];
         $coll = Collection::factory($in);
         $coll->merge('boo');
+    }
+
+    public function testCollectionContainsReturnsTrueIfRequestedValueInCollection()
+    {
+        $coll = Collection::factory([
+            'foo' => 'bar',
+            'boo' => 'far',
+            'goo' => 'czar'
+        ]);
+        $this->assertTrue($coll->contains('bar'));
+        $this->assertFalse($coll->contains('tar'));
+
+        // can also check key
+        $this->assertTrue($coll->contains('bar', 'foo'), "Ensure Container::contains() can pass a second param for key. ");
+        $this->assertFalse($coll->contains('far', 'poo'));
+
+        // can also accept a callable to determine if collection contains user-specified criteria
+        $this->assertTrue($coll->contains(function($val) {
+            return strlen($val) > 3;
+        }));
+        $this->assertFalse($coll->contains(function($val) {
+            return strlen($val) < 3;
+        }));
+        $this->assertFalse($coll->contains(function($val) {
+            return $val instanceof Iterator;
+        }));
     }
 }
