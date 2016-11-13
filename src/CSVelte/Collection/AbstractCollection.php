@@ -15,6 +15,7 @@ namespace CSVelte\Collection;
 
 use ArrayAccess;
 use Countable;
+use InvalidArgumentException;
 use Iterator;
 use CSVelte\Contract\Collectable;
 use CSVelte\Collection\Collection as BaseCollection;
@@ -34,7 +35,7 @@ use OutOfBoundsException;
  * @since v0.2.2
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
- * @todo Implement Serializable, Countable, other Interfaces
+ * @todo Implement Serializable, other Interfaces
  * @todo Implement __toString() in such a way that by deault it
  *     will return a CSV-formatted string but you can configure
  *     it to return other formats if you want
@@ -242,6 +243,7 @@ abstract class AbstractCollection implements
             $data = [];
         }
         $this->assertCorrectInputDataType($data);
+        $data = $this->prepareData($data);
         foreach ($data as $index => $value) {
             $this->set($index, $value);
         }
@@ -628,5 +630,25 @@ abstract class AbstractCollection implements
         return new $class($data);
     }
 
-    abstract protected function assertCorrectInputDataType($data);
+    protected function assertCorrectInputDataType($data)
+    {
+        if (!$this->isCorrectInputDataType($data)) {
+            throw new InvalidArgumentException(__CLASS__ . ' expected traversable data, got: ' . gettype ($data));
+        }
+    }
+
+    /**
+     * Convert input data to an array.
+     *
+     * Convert the input data to an array that can be worked with by a collection.
+     *
+     * @param mixed $data The input data
+     * @return array
+     */
+    protected function prepareData($data)
+    {
+        return $data;
+    }
+
+    abstract protected function isCorrectInputDataType($data);
 }

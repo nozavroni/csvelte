@@ -15,5 +15,26 @@ namespace CSVelte\Collection;
 
 class CharCollection extends AbstractCollection
 {
+    public function __toString()
+    {
+        return implode($this->data);
+    }
 
+    /**
+     * Convert input data to an array.
+     *
+     * Convert the input data to an array that can be worked with by a collection.
+     *
+     * @param mixed $data The input data
+     * @return array
+     */
+    protected function prepareData($data)
+    {
+        return str_split($data);
+    }
+
+    protected function isCorrectInputDataType($data)
+    {
+        return is_string($data);
+    }
 }

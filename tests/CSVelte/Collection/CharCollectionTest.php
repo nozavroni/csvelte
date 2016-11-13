@@ -11,22 +11,17 @@
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
+namespace CSVelteTest\Collection;
 
-namespace CSVelte\Collection;
+use CSVelte\Collection\CharCollection;
+use CSVelteTest\UnitTestCase;
 
-use \InvalidArgumentException;
-use function CSVelte\is_traversable;
-
-class Collection extends AbstractCollection
+class CharCollectionTest extends UnitTestCase
 {
-    /**
-     * Is correct input data type?
-     *
-     * @param mixed $data The data to assert correct type of
-     * @return bool
-     */
-    protected function isCorrectInputDataType($data)
+    public function testCharCollectionAcceptsString()
     {
-        return is_traversable($data);
+        $chars = new CharCollection($exp = 'A collection of chars');
+        $this->assertEquals($exp, (string) $chars);
+        $this->assertEquals(str_split($exp), $chars->toArray());
     }
 }
