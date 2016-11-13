@@ -355,4 +355,37 @@ class CollectionTest extends UnitTestCase
             return strpos($v, 'e') === false;
         })->toArray());
     }
+
+    public function testCollectionIsIterable()
+    {
+        $coll = Collection::factory($exp = [
+            'mk'     => 'lady',
+            'lorrie' => 'sweet',
+            'luke'   => 'really cool guy',
+            'terry'  => 'what a fool',
+        ]);
+        $this->assertInstanceOf(Iterator::class, $coll);
+        $this->assertEquals('mk', $coll->key());
+        $this->assertEquals('lady', $coll->current());
+        $this->assertTrue($coll->valid());
+        $this->assertEquals('sweet', $coll->next());
+        $this->assertEquals('lorrie', $coll->key());
+        $this->assertEquals('sweet', $coll->current());
+        $this->assertTrue($coll->valid());
+        $this->assertEquals('really cool guy', $coll->next());
+        $this->assertEquals('luke', $coll->key());
+        $this->assertEquals('really cool guy', $coll->current());
+        $this->assertTrue($coll->valid());
+        $this->assertEquals('what a fool', $coll->next());
+        $this->assertEquals('terry', $coll->key());
+        $this->assertEquals('what a fool', $coll->current());
+        $this->assertTrue($coll->valid());
+        $this->assertFalse($coll->next());
+        $this->assertFalse($coll->valid());
+        $this->assertEquals('lady', $coll->rewind());
+
+        foreach ($coll as $key => $val) {
+            $this->assertEquals($exp[$key], $val);
+        }
+    }
 }

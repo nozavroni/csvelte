@@ -16,6 +16,7 @@ namespace CSVelte\Collection;
 use CSVelte\Contract\Collectable;
 use CSVelte\Collection\Collection as BaseCollection;
 use function CSVelte\is_traversable;
+use Iterator;
 use OutOfBoundsException;
 
 /**
@@ -31,12 +32,19 @@ use OutOfBoundsException;
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  */
-abstract class AbstractCollection /*implements Collectable*/
+abstract class AbstractCollection implements
+    Iterator
+    /*Collectable*/
 {
     /**
      * @var array The collection of data this object represents
      */
     protected $data;
+
+    /**
+     * @var boolean True unless we have advanced past the end of the data array
+     */
+    protected $isValid = true;
 
     /**
      * AbstractCollection constructor.
@@ -74,6 +82,42 @@ abstract class AbstractCollection /*implements Collectable*/
             }
         }
     }
+
+    /** BEGIN Iterator methods */
+
+    public function current ()
+    {
+        return current($this->data);
+    }
+
+    public function key ()
+    {
+        return key($this->data);
+    }
+
+    public function next ()
+    {
+        $next = next($this->data);
+        $key = key($this->data);
+        if (isset($key)) {
+            return $next;
+        }
+        $this->isValid = false;
+        return false;
+    }
+
+    public function rewind ()
+    {
+        $this->isValid = true;
+        return reset($this->data);
+    }
+
+    public function valid ()
+    {
+        return $this->isValid;
+    }
+
+    /** END Iterator methods */
 
     /**
      * Set collection data.
@@ -464,7 +508,7 @@ abstract class AbstractCollection /*implements Collectable*/
                 $class = 'MultiCollection';
                 break;
             default:
-                $class = '\CSVelte\Collection\Collection';
+                $class = BaseCollection::class;
                 break;
         }
         return new $class($data);
