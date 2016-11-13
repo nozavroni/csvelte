@@ -13,6 +13,7 @@
  */
 namespace CSVelteTest\Collection;
 
+use ArrayAccess;
 use \Iterator;
 use \ArrayIterator;
 use CSVelte\Collection\AbstractCollection;
@@ -60,6 +61,22 @@ class CollectionTest extends UnitTestCase
         $iter = new ArrayIterator($arr);
         $iterColl = Collection::factory($iter);
         $this->assertEquals(iterator_to_array($iter), $iterColl->toArray());
+    }
+
+    public function testCollectionHas()
+    {
+        $arr = ['foo' => 'bar', 'baz' => 'bin'];
+        $arrColl = Collection::factory($arr);
+        $this->assertTrue($arrColl->has('foo'));
+        $this->assertFalse($arrColl->has('poo'));
+    }
+
+    public function testCollectionHasWorksOnNumericKeys()
+    {
+        $arr = ['foo', 'bar', 'baz', 'bin'];
+        $arrColl = Collection::factory($arr);
+        $this->assertTrue($arrColl->has(0));
+        $this->assertFalse($arrColl->has(5));
     }
 
     public function testCollectionGetReturnsValueAtIndex()
@@ -418,5 +435,35 @@ class CollectionTest extends UnitTestCase
             'terry'  => 'what a fool',
         ]);
         $this->assertTrue(is_traversable($coll));
+    }
+
+    public function testOffsetMethodsForCollectionArrayAccess()
+    {
+        $coll = Collection::factory($exp = [
+            'mk'     => 'lady',
+            'lorrie' => 'sweet',
+            'luke'   => 'really cool guy',
+            'terry'  => 'what a fool',
+        ]);
+        $this->assertInstanceOf(ArrayAccess::class, $coll);
+        $this->assertTrue($coll->offsetExists('mk'));
+        $this->assertFalse($coll->offsetExists('mom'));
+        $this->assertEquals('lady', $coll->offsetGet('mk'));
+        $this->assertNull($coll->offsetSet('mk', 'wife'));
+        $this->assertEquals('wife', $coll->offsetGet('mk'));
+        $coll->offsetSet('mom', 'saint');
+        $this->assertTrue($coll->offsetExists('mom'));
+        $this->assertEquals('saint', $coll->offsetGet('mom'));
+        $this->assertNull($coll->offsetUnset('mom'));
+        $this->assertFalse($coll->offsetExists('mom'));
+
+        // now we can test that array syntax works (it will)
+        $this->assertTrue(isset($coll['mk']));
+        $this->assertEquals('wife', $coll['mk']);
+        unset($coll['mk']);
+        $this->assertFalse(isset($coll['mk']));
+        $coll['foo'] = 'var';
+        $this->assertTrue(isset($coll['foo']));
+        $this->assertEquals('var', $coll['foo']);
     }
 }

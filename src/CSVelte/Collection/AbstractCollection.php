@@ -17,6 +17,7 @@ use CSVelte\Contract\Collectable;
 use CSVelte\Collection\Collection as BaseCollection;
 use function CSVelte\is_traversable;
 use Iterator;
+use ArrayAccess;
 use OutOfBoundsException;
 
 /**
@@ -31,9 +32,14 @@ use OutOfBoundsException;
  * @since v0.2.2
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo Implement Serializable, Countable, other Interfaces
+ * @todo Implement __toString() in such a way that by deault it
+ *     will return a CSV-formatted string but you can configure
+ *     it to return other formats if you want
  */
 abstract class AbstractCollection implements
-    Iterator
+    Iterator,
+    ArrayAccess
     /*Collectable*/
 {
     /**
@@ -71,7 +77,7 @@ abstract class AbstractCollection implements
             if (is_null($index)) {
                 return $this->toArray();
             } else {
-                return $this->unset($index);
+                return $this->delete($index);
             }
         } else {
             if (is_null($index)) {
@@ -84,6 +90,57 @@ abstract class AbstractCollection implements
     }
 
     /** BEGIN Iterator methods */
+
+    /** BEGIN ArrayAccess methods */
+
+    /**
+     * Whether a offset exists.
+     *
+     * @param mixed $offset An offset to check for.
+     * @return boolean true on success or false on failure.
+     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+     */
+    public function offsetExists($offset)
+    {
+        return $this->has($offset);
+    }
+
+    /**
+     * Offset to retrieve.
+     *
+     * @param mixed $offset The offset to retrieve.
+     * @return mixed Can return all value types.
+     * @link http://php.net/manual/en/arrayaccess.offsetget.php
+     */
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    /**
+     * Offset to set.
+     *
+     * @param mixed $offset The offset to assign the value to.
+     * @param mixed $value The value to set.
+     * @link http://php.net/manual/en/arrayaccess.offsetset.php
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->set($offset, $value);
+    }
+
+    /**
+     * Offset to unset.
+     *
+     * @param mixed $offset The offset to unset.
+     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+     */
+    public function offsetUnset($offset)
+    {
+        $this->delete($offset);
+    }
+
+    /** END ArrayAccess methods */
 
     /**
      * Return the current element.
@@ -178,6 +235,11 @@ abstract class AbstractCollection implements
         }
 
         return $this;
+    }
+
+    public function has($index)
+    {
+        return array_key_exists($index, $this->data);
     }
 
     /**
