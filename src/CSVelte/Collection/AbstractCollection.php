@@ -85,16 +85,41 @@ abstract class AbstractCollection implements
 
     /** BEGIN Iterator methods */
 
+    /**
+     * Return the current element.
+     *
+     * Returns the current element in the collection. The internal array pointer
+     * of the data array wrapped by the collection should not be advanced by this
+     * method. No side effects. Return current element only.
+     *
+     * @return mixed
+     */
     public function current ()
     {
         return current($this->data);
     }
 
+    /**
+     * Return the current key.
+     *
+     * Returns the current key in the collection. No side effects.
+     *
+     * @return mixed
+     */
     public function key ()
     {
         return key($this->data);
     }
 
+    /**
+     * Advance the internal pointer forward.
+     *
+     * Although this method will return the current value after advancing the
+     * pointer, you should not expect it to. The interface does not require it
+     * to return any value at all.
+     *
+     * @return mixed
+     */
     public function next ()
     {
         $next = next($this->data);
@@ -103,15 +128,30 @@ abstract class AbstractCollection implements
             return $next;
         }
         $this->isValid = false;
-        return false;
     }
 
+    /**
+     * Rewind the internal pointer.
+     *
+     * Return the internal pointer to the first element in the collection. Again,
+     * this method is not required to return anything by its interface, so you
+     * should not count on a return value.
+     *
+     * @return mixed
+     */
     public function rewind ()
     {
         $this->isValid = true;
         return reset($this->data);
     }
 
+    /**
+     * Is internal pointer in a valid position?
+     *
+     * If the internal pointer is advanced beyond the end of the collection, this method will return false.
+     *
+     * @return bool True if internal pointer isn't past the end
+     */
     public function valid ()
     {
         return $this->isValid;
@@ -211,7 +251,7 @@ abstract class AbstractCollection implements
     public function toArray()
     {
         $arr = [];
-        foreach ($this->data as $index => $value) {
+        foreach ($this as $index => $value) {
             if (is_object($value) && method_exists($value, 'toArray')) {
                 $value = $value->toArray();
             }

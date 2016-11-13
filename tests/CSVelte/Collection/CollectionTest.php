@@ -380,7 +380,7 @@ class CollectionTest extends UnitTestCase
         $this->assertEquals('terry', $coll->key());
         $this->assertEquals('what a fool', $coll->current());
         $this->assertTrue($coll->valid());
-        $this->assertFalse($coll->next());
+        $this->assertNull($coll->next());
         $this->assertFalse($coll->valid());
         $this->assertEquals('lady', $coll->rewind());
 
@@ -388,4 +388,25 @@ class CollectionTest extends UnitTestCase
             $this->assertEquals($exp[$key], $val);
         }
     }
+
+    public function testSPLIteratorFunctionsWorkOnCollection()
+    {
+        $coll = Collection::factory($exp = [
+            'mk'     => 'lady',
+            'lorrie' => 'sweet',
+            'luke'   => 'really cool guy',
+            'terry'  => 'what a fool',
+        ]);
+        $arr = iterator_to_array($coll);
+        $this->assertEquals($exp, $arr);
+        $this->assertEquals($arr, $coll->toArray());
+    }
+
+    //public function testToArrayUsesIteratorMethods()
+    //{
+        // @todo Need to stub the collection and change the "current" method to return something different
+        // so I can test that foreach always returns the value that current returns
+    //}
+
+//    public function test
 }
