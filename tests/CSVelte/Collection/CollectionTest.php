@@ -14,6 +14,7 @@
 namespace CSVelteTest\Collection;
 
 use ArrayAccess;
+use Countable;
 use \Iterator;
 use \ArrayIterator;
 use CSVelte\Collection\AbstractCollection;
@@ -465,5 +466,17 @@ class CollectionTest extends UnitTestCase
         $coll['foo'] = 'var';
         $this->assertTrue(isset($coll['foo']));
         $this->assertEquals('var', $coll['foo']);
+    }
+
+    public function testCollectionIsCountable()
+    {
+        $coll = Collection::factory($exp = [
+            'mk'     => 'lady',
+            'lorrie' => 'sweet',
+            'luke'   => 'really cool guy',
+            'terry'  => 'what a fool',
+        ]);
+        $this->assertInstanceOf(Countable::class, $coll);
+        $this->assertEquals(4, $coll->count());
     }
 }

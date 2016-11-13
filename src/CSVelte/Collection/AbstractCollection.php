@@ -13,11 +13,13 @@
  */
 namespace CSVelte\Collection;
 
+use ArrayAccess;
+use Countable;
+use Iterator;
 use CSVelte\Contract\Collectable;
 use CSVelte\Collection\Collection as BaseCollection;
 use function CSVelte\is_traversable;
-use Iterator;
-use ArrayAccess;
+
 use OutOfBoundsException;
 
 /**
@@ -38,8 +40,9 @@ use OutOfBoundsException;
  *     it to return other formats if you want
  */
 abstract class AbstractCollection implements
-    Iterator,
-    ArrayAccess
+    ArrayAccess,
+    Countable,
+    Iterator
     /*Collectable*/
 {
     /**
@@ -88,8 +91,6 @@ abstract class AbstractCollection implements
             }
         }
     }
-
-    /** BEGIN Iterator methods */
 
     /** BEGIN ArrayAccess methods */
 
@@ -141,6 +142,17 @@ abstract class AbstractCollection implements
     }
 
     /** END ArrayAccess methods */
+
+    /** BEGIN Countable methods */
+
+    public function count()
+    {
+        return count($this->data);
+    }
+
+    /** END Countable methods */
+
+    /** BEGIN Iterator methods */
 
     /**
      * Return the current element.
