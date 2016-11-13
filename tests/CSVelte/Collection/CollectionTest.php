@@ -19,6 +19,7 @@ use CSVelte\Collection\AbstractCollection;
 use CSVelte\Collection\Collection;
 use CSVelte\Contract\Collectable;
 use CSVelteTest\UnitTestCase;
+use function CSVelte\is_traversable;
 
 class CollectionTest extends UnitTestCase
 {
@@ -408,5 +409,14 @@ class CollectionTest extends UnitTestCase
         // so I can test that foreach always returns the value that current returns
     //}
 
-//    public function test
+    public function testCollectionReturnsTrueForIsTraversable()
+    {
+        $coll = Collection::factory($exp = [
+            'mk'     => 'lady',
+            'lorrie' => 'sweet',
+            'luke'   => 'really cool guy',
+            'terry'  => 'what a fool',
+        ]);
+        $this->assertTrue(is_traversable($coll));
+    }
 }
