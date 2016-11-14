@@ -17,7 +17,7 @@ class CharCollection extends AbstractCollection
 {
     public function __toString()
     {
-        return implode($this->data);
+        return implode("", $this->data);
     }
 
     /**
@@ -33,8 +33,8 @@ class CharCollection extends AbstractCollection
         return str_split($data);
     }
 
-    protected function isCorrectInputDataType($data)
+    protected function isConsistentDataStructure($data)
     {
-        return is_string($data);
+        return static::isCharacterSet($data);
     }
 }

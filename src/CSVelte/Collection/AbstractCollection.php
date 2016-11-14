@@ -18,7 +18,6 @@ use Countable;
 use InvalidArgumentException;
 use Iterator;
 use CSVelte\Contract\Collectable;
-use CSVelte\Collection\Collection as BaseCollection;
 use function CSVelte\is_traversable;
 
 use OutOfBoundsException;
@@ -610,29 +609,29 @@ abstract class AbstractCollection implements
      */
     public static function factory($data = null)
     {
-        switch (true) {
-            case false:
-                $class = 'CharCollection';
-                break;
-            case false:
-                $class = 'NumericCollection';
-                break;
-            case false:
-                $class = 'TabularCollection';
-                break;
-            case false:
-                $class = 'MultiCollection';
-                break;
-            default:
-                $class = BaseCollection::class;
-                break;
+        if (static::isTabular($data)) {
+            $class = TabularCollection::class;
+        } elseif (static::isMultiDimensional($data)) {
+            $class = MultiCollection::class;
+        } elseif (static::isAllNumeric($data)) {
+            $class = NumericCollection::class;
+        } elseif (static::isCharacterSet($data)) {
+            $class = CharCollection::class;
+        } else {
+            $class = Collection::class;
         }
         return new $class($data);
     }
 
+    /**
+     * Assert input data is of the correct structure
+     *
+     * @param mixed $data Data to check
+     * @throws InvalidArgumentException If invalid data structure
+     */
     protected function assertCorrectInputDataType($data)
     {
-        if (!$this->isCorrectInputDataType($data)) {
+        if (!$this->isConsistentDataStructure($data)) {
             throw new InvalidArgumentException(__CLASS__ . ' expected traversable data, got: ' . gettype ($data));
         }
     }
@@ -650,5 +649,104 @@ abstract class AbstractCollection implements
         return $data;
     }
 
-    abstract protected function isCorrectInputDataType($data);
+    /**
+     * Is input data tabular?
+     *
+     * Returns true if input data is tabular in nature. This means that it is a
+     * two-dimensional array with the same keys (columns) for each element (row).
+     *
+     * @param mixed $data The data structure to check
+     * @return boolean True if data structure is tabular
+     */
+    public static function isTabular($data)
+    {
+        if (!is_traversable($data)) {
+            return false;
+        }
+        foreach ($data as $row) {
+            if (!is_traversable($row)) {
+                return false;
+            }
+            $columns = array_keys($row);
+            if (!isset($cmp_columns)) {
+                $cmp_columns = $columns;
+            } else {
+                if ($cmp_columns != $columns) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check data for multiple dimensions.
+     *
+     * This method is to determine whether a data structure is multi-dimensional.
+     * That is to say, it is a traversable structure that contains at least one
+     * traversable structure.
+     *
+     * @param mixed $data The input data
+     * @return bool
+     */
+    public static function isMultiDimensional($data)
+    {
+        if (!is_traversable($data)) {
+            return false;
+        }
+        foreach ($data as $elem) {
+            if (is_traversable($elem)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Determine if structure contains all numeric values.
+     *
+     * @param mixed $data The input data
+     * @return bool
+     */
+    public static function isAllNumeric($data)
+    {
+        if (!is_traversable($data)) {
+            return false;
+        }
+        foreach ($data as $val) {
+            if (!is_numeric($val)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Is data a string of characters?
+     *
+     * Just checks to see if input is a string of characters or a string
+     * of digits.
+     *
+     * @param mixed $data Data to check
+     * @return bool
+     */
+    public static function isCharacterSet($data)
+    {
+        return is_string($data) || is_numeric($data);
+    }
+
+    /**
+     * Determine whether data is consistent with a given collection type.
+     *
+     * This method is used to determine whether input data is consistent with a
+     * given collection type. For instance, CharCollection requires a string.
+     * NumericCollection requires an array or traversable set of numeric data.
+     * TabularCollection requires a two-dimensional data structure where all the
+     * keys are the same in every row.
+     *
+     * @param mixed $data Data structure to check for consistency
+     * @return boolean
+     */
+    abstract protected function isConsistentDataStructure($data);
+
 }

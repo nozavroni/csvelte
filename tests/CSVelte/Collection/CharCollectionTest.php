@@ -24,4 +24,23 @@ class CharCollectionTest extends UnitTestCase
         $this->assertEquals($exp, (string) $chars);
         $this->assertEquals(str_split($exp), $chars->toArray());
     }
+
+    public function testContainsReturnsTrueIFCharInCollection()
+    {
+        $chars = new CharCollection($exp = 'A collection of chars');
+        $this->assertTrue($chars->contains('c'));
+        $this->assertFalse($chars->contains('Z'));
+    }
+
+    public function testMapRunsFuncForEveryChar()
+    {
+        $chars = new CharCollection($exp = 'A collection of chars');
+        $nl = $chars->map(function($char){
+            if ($char == ' ') {
+                return "\n";
+            }
+            return $char;
+        });
+        $this->assertEquals("A\ncollection\nof\nchars", (string) $nl);
+    }
 }

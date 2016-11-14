@@ -15,6 +15,10 @@ namespace CSVelteTest\Collection;
 
 use ArrayAccess;
 use Countable;
+use CSVelte\Collection\CharCollection;
+use CSVelte\Collection\MultiCollection;
+use CSVelte\Collection\NumericCollection;
+use CSVelte\Collection\TabularCollection;
 use \Iterator;
 use \ArrayIterator;
 use CSVelte\Collection\AbstractCollection;
@@ -42,6 +46,164 @@ class CollectionTest extends UnitTestCase
         $in = ['foo' => 'bar', 'baz' => 'bin'];
         $coll = Collection::factory($in);
         $this->assertEquals($in, $coll->toArray());
+    }
+
+    public function testCollectionFactoryReturnsTabularCollectionForTabularDataset()
+    {
+        $in = [
+            [
+                'foo' => 'far',
+                'woo' => 'war',
+                'too' => 'tar',
+                'coo' => 'car',
+                'roo' => 'rar'
+            ],
+            [
+                'foo' => 'yay',
+                'woo' => 'bay',
+                'too' => 'day',
+                'coo' => 'fay',
+                'roo' => 'stay'
+            ],
+            [
+                'foo' => 'poo',
+                'woo' => 'doo',
+                'too' => 'soo',
+                'coo' => 'woo',
+                'roo' => 'coo'
+            ],
+            [
+                'foo' => '---',
+                'woo' => '...',
+                'too' => '===',
+                'coo' => '~~~',
+                'roo' => ',,,'
+            ]
+        ];
+        $table = Collection::factory($in);
+        $this->assertInstanceOf(TabularCollection::class, $table);
+    }
+
+    public function testCollectionFactoryReturnsMultiCollectionForMultiDimensionalDataset()
+    {
+        $in = [
+            [
+                'foo' => 'far',
+                'woo' => 'war',
+                'too' => 'tar',
+                'coo' => 'car',
+                'roo' => 'rar'
+            ],
+            [
+                'foo' => 'yay',
+                'woo' => 'bay',
+                'too' => 'day',
+                'coo' => 'fay',
+                'roo' => 'stay'
+            ],
+            [
+                'foo' => 'poo',
+                'woo' => 'doo',
+                'too' => 'soo',
+                'coo' => 'woo',
+            ],
+            [
+                'foo' => '---',
+                'woo' => '...',
+                'too' => '===',
+                'coo' => '~~~',
+                'roo' => ',,,'
+            ]
+        ];
+        $multi = Collection::factory($in);
+        $this->assertInstanceOf(MultiCollection::class, $multi);
+        $in = [
+            [
+                'foo' => 'far',
+                'woo' => 'war',
+                'too' => 'tar',
+                'coo' => 'car',
+                'roo' => 'rar'
+            ],
+            [1,2,3,4,5],
+            'foobar',
+            [
+                'foo' => 'yay',
+                'woo' => 'bay',
+            ],
+            [
+                'foo' => '---',
+                'woo' => '...',
+                'too' => '===',
+                'coo' => '~~~',
+                'roo' => ',,,'
+            ]
+        ];
+        $multi = Collection::factory($in);
+        $this->assertInstanceOf(MultiCollection::class, $multi);
+        $in = [
+            [
+                'foo' => 'far',
+                'woo' => 'war',
+                'too' => 'tar',
+                'coo' => 'car',
+                'roo' => 'rar'
+            ],
+            1,2,3,4,5
+        ];
+        $multi = Collection::factory($in);
+        $this->assertInstanceOf(MultiCollection::class, $multi);
+    }
+
+    public function testCollectionFactoryReturnsNumericCollectionForNumericDataset()
+    {
+        $in = [1,2,3,4,5];
+        $numeric = Collection::factory($in);
+        $this->assertInstanceOf(NumericCollection::class, $numeric);
+        $in = [1,2.5,3,4,5];
+        $numeric = Collection::factory($in);
+        $this->assertInstanceOf(NumericCollection::class, $numeric);
+        $in = [0,0,0,0,'0'];
+        $numeric = Collection::factory($in);
+        $this->assertInstanceOf(NumericCollection::class, $numeric);
+        $in = ['0','123',10];
+        $numeric = Collection::factory($in);
+        $this->assertInstanceOf(NumericCollection::class, $numeric);
+        $in = [1,];
+        $numeric = Collection::factory($in);
+        $this->assertInstanceOf(NumericCollection::class, $numeric);
+    }
+
+    public function testCollectionFactoryReturnsCharCollectionForCharacterSet()
+    {
+        $chars = 'a set of characters';
+        $charColl = Collection::factory($chars);
+        $this->assertInstanceOf(CharCollection::class, $charColl);
+        $chars = '000';
+        $charColl = Collection::factory($chars);
+        $this->assertInstanceOf(CharCollection::class, $charColl);
+        $chars = 0;
+        $charColl = Collection::factory($chars);
+        $this->assertInstanceOf(CharCollection::class, $charColl);
+        $chars = 12345;
+        $charColl = Collection::factory($chars);
+        $this->assertInstanceOf(CharCollection::class, $charColl);
+    }
+
+    public function testCollectionFactoryReturnsCollectionForEverythingElse()
+    {
+        $chars = ['a set of characters'];
+        $charColl = Collection::factory($chars);
+        $this->assertInstanceOf(Collection::class, $charColl);
+        $chars = ['000', 0, 'zero'];
+        $charColl = Collection::factory($chars);
+        $this->assertInstanceOf(Collection::class, $charColl);
+        $chars = [0,1,2,3,4,5,'six'];
+        $charColl = Collection::factory($chars);
+        $this->assertInstanceOf(Collection::class, $charColl);
+        $chars = [12345, null, true, false];
+        $charColl = Collection::factory($chars);
+        $this->assertInstanceOf(Collection::class, $charColl);
     }
 
     /**
@@ -312,7 +474,7 @@ class CollectionTest extends UnitTestCase
         $coll2 = $coll->map(function($val){
             return $val + 1;
         });
-        $this->assertInstanceOf(Collection::class, $coll2);
+        $this->assertInstanceOf(AbstractCollection::class, $coll2);
         $this->assertEquals([1,2,3,4,5,6,7,8,9,10], $coll2->toArray());
     }
 

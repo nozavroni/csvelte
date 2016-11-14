@@ -13,7 +13,12 @@
  */
 namespace CSVelte\Collection;
 
+use function CSVelte\is_traversable;
+
 class MultiCollection extends AbstractCollection
 {
-
+    protected function isConsistentDataStructure($data)
+    {
+        return static::isMultiDimensional($data);
+    }
 }

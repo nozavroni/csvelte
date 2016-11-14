@@ -13,7 +13,37 @@
  */
 namespace CSVelte\Collection;
 
+use function CSVelte\is_traversable;
+
 class TabularCollection extends MultiCollection
 {
+    /**
+     * Is input data structure valid?
+     *
+     * In order to determine whether a given data structure is valid for a
+     * particular collection type (tabular, numeric, etc.), we have this method.
+     *
+     * @param mixed $data The data structure to check
+     * @return boolean True if data structure is tabular
+     */
+    protected function isConsistentDataStructure($data)
+    {
+        /*
+        $keys = array_map(function($value) {
+            if (is_traversable($value)) {
+                if (!is_array($value)) {
+                    $value = iterator_to_array($value);
+                }
+                return array_keys($value);
+            }
+        }, $data);
+        $unique = array_unique($keys);
+        if (count($unique) == 1) {
+            return true;
+        }
+        return false;
+        */
 
+        return static::isTabular($data);
+    }
 }

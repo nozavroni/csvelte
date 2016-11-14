@@ -13,7 +13,20 @@
  */
 namespace CSVelte\Collection;
 
+use function CSVelte\is_traversable;
+
 class NumericCollection extends AbstractCollection
 {
-
+    protected function isConsistentDataStructure($data)
+    {
+        if (!is_traversable($data)) {
+            return false;
+        }
+        foreach ($data as $val) {
+            if (!is_numeric($val)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

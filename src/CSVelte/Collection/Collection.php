@@ -25,7 +25,7 @@ class Collection extends AbstractCollection
      * @param mixed $data The data to assert correct type of
      * @return bool
      */
-    protected function isCorrectInputDataType($data)
+    protected function isConsistentDataStructure($data)
     {
         return is_traversable($data);
     }
