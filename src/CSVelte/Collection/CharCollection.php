@@ -15,6 +15,11 @@ namespace CSVelte\Collection;
 
 class CharCollection extends AbstractCollection
 {
+    /**
+     * Returns a string containing all the characters in the set.
+     *
+     * @return string
+     */
     public function __toString()
     {
         return implode("", $this->data);
@@ -30,11 +35,21 @@ class CharCollection extends AbstractCollection
      */
     protected function prepareData($data)
     {
+        if (!is_string($data)) {
+            $data = (string) $data;
+        }
         return str_split($data);
     }
 
+    /**
+     * Is data consistent with this collection type?
+     *
+     * @param mixed $data The data to check
+     * @return bool
+     */
     protected function isConsistentDataStructure($data)
     {
         return static::isCharacterSet($data);
     }
+
 }

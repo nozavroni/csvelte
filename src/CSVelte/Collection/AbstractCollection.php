@@ -591,6 +591,10 @@ abstract class AbstractCollection implements
      * Convert collection to string
      *
      * @return string A string representation of this collection
+     * @todo Eventually I would like to add a $delim property so that
+     *     I can easily join collection items together with a particular
+     * character (or set of characters). I would then add a few methods
+     * to change the delim property. It would default to a comma.
      */
     public function __toString()
     {

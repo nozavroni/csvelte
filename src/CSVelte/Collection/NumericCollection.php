@@ -29,4 +29,53 @@ class NumericCollection extends AbstractCollection
         }
         return true;
     }
+
+    /**
+     * Increment an item.
+     *
+     * Increment the item specified by $key by one value. Intended for integers
+     * but also works (using this term loosely) for letters. Any other data type
+     * it may modify is unintended behavior at best.
+     *
+     * This method modifies its internal data array rather than returning a new
+     * collection.
+     *
+     * @param  mixed $key The key of the item you want to increment.
+     * @param int $interval The interval that $key should be incremented by
+     * @return $this
+     */
+    public function increment($key, $interval = 1)
+    {
+        $val = $this->get($key, null, true);
+        for ($i = 0; $i < $interval; $i++) {
+            $val++;
+        }
+        $this->set($key, $val);
+        return $this;
+    }
+
+    /**
+     * Decrement an item.
+     *
+     * Frcrement the item specified by $key by one value. Intended for integers.
+     * Does not work for letters and if it does anything to anything else, it's
+     * unintended at best.
+     *
+     * This method modifies its internal data array rather than returning a new
+     * collection.
+     *
+     * @param mixed $key The key of the item you want to decrement.
+     * @param int $interval The interval that $key should be decremented by
+     * @return $this
+     */
+    public function decrement($key, $interval = 1)
+    {
+        $val = $this->get($key, null, true);
+        for ($i = 0; $i < $interval; $i++) {
+            $val--;
+        }
+        $this->set($key, $val);
+        return $this;
+    }
+
 }
