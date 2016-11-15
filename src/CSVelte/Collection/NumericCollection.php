@@ -167,11 +167,11 @@ class NumericCollection extends AbstractCollection
      * values and values are the number of times that value occurs in
      * the original collection.
      *
-     * @return Collection
+     * @return NumericCollection
      */
     public function counts()
     {
-        return static::factory(array_count_values($this->toArray()));
+        return new self(array_count_values($this->toArray()));
     }
 
 }
