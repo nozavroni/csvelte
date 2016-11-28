@@ -475,7 +475,7 @@ abstract class AbstractCollection implements
      * containing each iteration's return value.
      *
      * @param callable $callback The callback to apply
-     * @return Collection A new collection with callback return values
+     * @return AbstractCollection A new collection with callback return values
      */
     public function map(callable $callback)
     {

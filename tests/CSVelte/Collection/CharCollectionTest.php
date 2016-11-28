@@ -32,18 +32,70 @@ class CharCollectionTest extends UnitTestCase
         $this->assertFalse($chars->contains('Z'));
     }
 
-    // @todo The problem here is that factory returns a regular
-    //     collection object from the map method.
-//    public function testMapRunsFuncForEveryChar()
+    public function testMapRunsFuncForEveryChar()
+    {
+        $chars = new CharCollection($exp = 'A collection of chars');
+        $nl = $chars->map(function($char){
+            if ($char == ' ') {
+                return "\n";
+            }
+            return $char;
+        });
+        $this->assertEquals("A\ncollection\nof\nchars", (string) $nl);
+    }
+
+    public function testCountReturnsCharCount()
+    {
+        $chars = new CharCollection($exp = 'A character set');
+        $this->assertEquals(strlen($exp), $chars->count());
+        $this->assertEquals(strlen($exp), count($chars));
+    }
+
+    public function testHasReturnsTrueIfOffsetExists()
+    {
+        $chars = new CharCollection($exp = 'A character set');
+        $this->assertTrue($chars->has(5));
+        $this->assertFalse($chars->has(50));
+        $this->assertFalse($chars->has('c'));
+    }
+
+    /**
+     * @todo add method to grab a slice of a collection
+     */
+    public function testGetReturnsCharacterAtGivenOffset()
+    {
+        $chars = new CharCollection($exp = 'A character set');
+        $this->assertEquals('r', $chars->get(5));
+        $this->assertEquals('A', $chars->get(0));
+        $this->assertNull($chars->get(15));
+    }
+
+    public function testSetReplacesCharacterAtGivenOffset()
+    {
+        $chars = new CharCollection($exp = 'A character set');
+        $chars->set('5', 'p');
+        $this->assertEquals('p', $chars->get(5));
+        // @todo I'm not sure this is the behavior I want
+        $chars->set('3', 'poo');
+        $this->assertEquals('poo', $chars->get(3));
+        $this->assertEquals('A cpooapacter set', (string) $chars);
+    }
+
+    public function testDeleteRemovesCharacterAtGivenOffset()
+    {
+        $chars = new CharCollection($exp = 'A character set');
+        $chars->delete(5);
+        $this->assertEquals('A chaacter set', (string) $chars);
+    }
+
+    /**
+     * @todo Merge and a few other methods aren't really relevant to a character set. Probably should remove them from abstract collection?
+     */
+//    public function testMergeDoesWhateverItDoes()
 //    {
-//        $chars = new CharCollection($exp = 'A collection of chars');
-//        $nl = $chars->map(function($char){
-//            if ($char == ' ') {
-//                return "\n";
-//            }
-//            return $char;
-//        });
-//        dd($nl, false, true);
-//        $this->assertEquals("A\ncollection\nof\nchars", (string) $nl);
+//        $chars = new CharCollection($exp = 'A character set');
+//        // $chars->merge([12 => 'p', 15 => ' sandwich']);
+//        $chars->merge('foo');
+//        $this->assertEquals('A character pet sandwich', (string) $chars);
 //    }
 }

@@ -42,6 +42,20 @@ class CharCollection extends AbstractCollection
     }
 
     /**
+     * Apply a callback to each item in collection.
+     *
+     * Applies a callback to each item in collection and returns a new collection
+     * containing each iteration's return value.
+     *
+     * @param callable $callback The callback to apply
+     * @return AbstractCollection A new collection with callback return values
+     */
+    public function map(callable $callback)
+    {
+        return new self(implode('', array_map($callback, $this->data)));
+    }
+
+    /**
      * Is data consistent with this collection type?
      *
      * @param mixed $data The data to check
