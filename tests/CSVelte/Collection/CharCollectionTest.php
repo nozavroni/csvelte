@@ -14,9 +14,8 @@
 namespace CSVelteTest\Collection;
 
 use CSVelte\Collection\CharCollection;
-use CSVelteTest\UnitTestCase;
 
-class CharCollectionTest extends UnitTestCase
+class CharCollectionTest extends AbstractCollectionTest
 {
     public function testCharCollectionAcceptsString()
     {

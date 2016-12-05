@@ -680,6 +680,12 @@ abstract class AbstractCollection implements
                     return false;
                 }
             }
+            // if row contains an array it isn't tabular
+            if (array_reduce($row, function($carry, $item){
+                return is_array($item) && $carry;
+            }, true)) {
+                return false;
+            }
         }
         return true;
     }

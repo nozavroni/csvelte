@@ -3,9 +3,8 @@ namespace CSVelteTest\Collection;
 
 use CSVelte\Collection\Collection;
 use CSVelte\Collection\NumericCollection;
-use CSVelteTest\UnitTestCase;
 
-class NumericCollectionTest extends UnitTestCase
+class NumericCollectionTest extends AbstractCollectionTest
 {
     public function testIncrementDecrementAddsSubtractsOneFromGivenKey()
     {

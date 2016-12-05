@@ -23,11 +23,10 @@ use \Iterator;
 use \ArrayIterator;
 use CSVelte\Collection\AbstractCollection;
 use CSVelte\Collection\Collection;
-use CSVelte\Contract\Collectable;
-use CSVelteTest\UnitTestCase;
+//use CSVelte\Contract\Collectable;
 use function CSVelte\is_traversable;
 
-class CollectionTest extends UnitTestCase
+class CollectionTest extends AbstractCollectionTest
 {
 //    public function testCollectFactoryReturnsCollectable()
 //    {

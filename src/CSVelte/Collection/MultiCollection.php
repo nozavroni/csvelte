@@ -21,4 +21,24 @@ class MultiCollection extends AbstractCollection
     {
         return static::isMultiDimensional($data);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function contains($value, $index = null)
+    {
+        if (parent::contains($value, $index)) {
+            return true;
+        } else {
+            foreach ($this->data as $key => $arr) {
+                if (is_traversable($arr)) {
+                    $coll = static::factory($arr);
+                    if ($coll->contains($value, $index)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
