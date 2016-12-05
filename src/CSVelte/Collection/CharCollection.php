@@ -16,16 +16,6 @@ namespace CSVelte\Collection;
 class CharCollection extends AbstractCollection
 {
     /**
-     * Returns a string containing all the characters in the set.
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return implode("", $this->data);
-    }
-
-    /**
      * Convert input data to an array.
      *
      * Convert the input data to an array that can be worked with by a collection.
@@ -54,6 +44,25 @@ class CharCollection extends AbstractCollection
     {
         return new self(implode('', array_map($callback, $this->data)));
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function push(...$items)
+    {
+        $result = parent::push(...$items);
+        return new self(implode('', $result->toArray()));
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function unshift(...$items)
+    {
+        $result = parent::unshift(...$items);
+        return new self(implode('', $result->toArray()));
+    }
+
 
     /**
      * Is data consistent with this collection type?

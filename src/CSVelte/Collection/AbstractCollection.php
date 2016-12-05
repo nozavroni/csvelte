@@ -385,6 +385,7 @@ abstract class AbstractCollection implements
      * @param mixed $index The (optional) index to look under
      * @return boolean True if this collection contains $value
      * @todo Maybe add $identical param for identical comparison (===)
+     * @todo Allow negative offset for second param
      */
     public function contains($value, $index = null)
     {
@@ -598,7 +599,7 @@ abstract class AbstractCollection implements
      */
     public function __toString()
     {
-        return (string) $this->data;
+        return implode("", $this->data);
     }
 
     /**
@@ -736,7 +737,10 @@ abstract class AbstractCollection implements
      */
     public static function isCharacterSet($data)
     {
-        return is_string($data) || is_numeric($data);
+        return (
+            is_string($data) ||
+            is_numeric($data)
+        );
     }
 
     /**

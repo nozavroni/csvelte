@@ -98,4 +98,89 @@ class CharCollectionTest extends UnitTestCase
 //        $chars->merge('foo');
 //        $this->assertEquals('A character pet sandwich', (string) $chars);
 //    }
+
+    public function testContainsChecksForTheExistenceOfCharacter()
+    {
+        $chars = new CharCollection($exp = 'A character set');
+        $this->assertTrue($chars->contains('a'));
+        $this->assertFalse($chars->contains('b'));
+        $this->assertTrue($chars->contains('A'));
+        $this->assertFalse($chars->contains('C'));
+    }
+
+    public function testContainsChecksForTheExistenceOfCharacterAtGivenPosition()
+    {
+        $chars = new CharCollection($exp = 'A character set');
+        $this->assertTrue($chars->contains('a', 4));
+        $this->assertFalse($chars->contains('a', 0));
+        $this->assertTrue($chars->contains('A', 0));
+        $this->assertFalse($chars->contains('S', 12));
+    }
+
+    public function testContainsChecksForTheExistenceOfCharacterViaCallback()
+    {
+        $chars = new CharCollection($exp = 'A character set');
+        $this->assertTrue($chars->contains(function($val) {
+            return $val > 's';
+        }));
+        $this->assertTrue($chars->contains(function($val) {
+            return $val > 'S';
+        }));
+        $this->assertFalse($chars->contains(function($val) {
+            return $val > 8;
+        }));
+        $this->assertFalse($chars->contains(function($char) {
+            return is_numeric($char);
+        }));
+    }
+
+    public function testPopRemovesTheLastChar()
+    {
+        $me = new CharCollection($exp = 'Luke Visinoni');
+        $this->assertEquals('i', $me->pop());
+        $this->assertEquals('n', $me->pop());
+        $this->assertEquals('Luke Visino', (string) $me);
+    }
+
+    public function testShiftRemovesTheFirstChar()
+    {
+        $me = new CharCollection($exp = 'Luke Visinoni');
+        $this->assertEquals('L', $me->shift());
+        $this->assertEquals('u', $me->shift());
+        $this->assertEquals('ke Visinoni', (string) $me);
+    }
+
+    public function testPushAddsCharToEnd()
+    {
+        $me = new CharCollection($exp = 'Luke Visinoni');
+        $notme = $me->push('i');
+        $this->assertEquals('Luke Visinonii', (string) $notme);
+    }
+
+    public function testUnshiftAddsCharToBeginning()
+    {
+        $me = new CharCollection($exp = 'Luke Visinoni');
+        $notme = $me->unshift('i');
+        $this->assertEquals('iLuke Visinoni', (string) $notme);
+    }
+
+    public function testPadRepeatsCharacterXTimes()
+    {
+        $str = new CharCollection('-');
+        $str = $str->pad(10, '-');
+        $this->assertEquals('----------', (string) $str);
+    }
+
+    /**
+     * @todo When map callback returns str w/more than a single char
+     *       it causes problems. Come back to that.
+     */
+    public function testMapUsesCallbackOnEachChar()
+    {
+        $str = new CharCollection($exp = 'abcdefghijklmnopqrstuvwxyz');
+        $newstr = $str->map(function($char){
+            return ord($char) < 110 ? '-' : $char;
+        });
+        $this->assertEquals('-------------nopqrstuvwxyz', (string) $newstr);
+    }
 }
