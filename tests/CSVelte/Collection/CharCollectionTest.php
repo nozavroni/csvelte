@@ -183,4 +183,71 @@ class CharCollectionTest extends UnitTestCase
         });
         $this->assertEquals('-------------nopqrstuvwxyz', (string) $newstr);
     }
+
+    public function testWalkUsesCallbackOnEachChar()
+    {
+        $str = new CharCollection($exp = 'abcdefghijklmnopqrstuvwxyz');
+        $exp = [];
+        $str->walk(function($val, $key, $extra) use (&$exp) {
+            if ($key % 2 == 0) {
+                $exp[] = $val . $extra[0];
+            } else {
+                $exp[] = $val . $extra[1];
+            }
+        }, ['foo','bar']);
+        $this->assertEquals("afoo", $exp[0]);
+        $this->assertEquals("bbar", $exp[1]);
+    }
+
+    public function testReduceUsesCallbackToReturnSingleValue()
+    {
+        $str = new CharCollection($exp = 'abcdefghijklmnopqrstuvwxyz');
+        $isstr = $str->reduce(function($carry, $elem){
+            return (is_string($elem) && $carry);
+        }, true);
+        $this->assertTrue($isstr);
+        $isnum= $str->reduce(function($carry, $elem){
+            return (is_numeric($elem) && $carry);
+        }, true);
+        $this->assertFalse($isnum);
+    }
+
+    public function testFilterRemovesCorrectChars()
+    {
+        $str = new CharCollection($exp = 'abcdefghijklmnopqrstuvwxyz');
+        $newstr = $str->filter(function($val) {
+            return ($val > 'm');
+        });
+        $this->assertEquals('nopqrstuvwxyz', (string) $newstr);
+    }
+
+    public function testFirstReturnsFirstMatchingValue()
+    {
+        $str = new CharCollection($exp = 'I like char collections.');
+        $char = $str->first(function($val) {
+            return ($val > 'm');
+        });
+        $this->assertEquals('r', $char);
+    }
+
+    public function testLastReturnsLastMatchingValue()
+    {
+        $str = new CharCollection($exp = 'I like char collections.');
+        $char = $str->last(function($val) {
+            return ($val > 'm');
+        });
+        $this->assertEquals('s', $char);
+    }
+
+    public function testReverse()
+    {
+        $str = new CharCollection($exp = 'I like char collections.');
+        $this->assertEquals(strrev($exp), (string) $str->reverse());
+    }
+
+    public function testUnique()
+    {
+        $str = new CharCollection($exp = 'I like char collections.');
+        $this->assertEquals('I likecharotns.', (string) $str->unique());
+    }
 }

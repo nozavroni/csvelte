@@ -543,8 +543,8 @@ abstract class AbstractCollection implements
     public function first(callable $callback)
     {
         foreach ($this->data as $index => $value) {
-            if ($ret = $callback($value, $index)) {
-                return $ret;
+            if ($callback($value, $index)) {
+                return $value;
             }
         }
         return null;
