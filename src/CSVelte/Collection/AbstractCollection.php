@@ -389,7 +389,7 @@ abstract class AbstractCollection implements
      */
     public function contains($value, $index = null)
     {
-        foreach ($this->data as $key => $val) {
+        return (bool) $this->first(function($val, $key) use ($value, $index) {
             if (is_callable($value)) {
                 $found = $value($val, $key);
             } else {
@@ -404,8 +404,8 @@ abstract class AbstractCollection implements
                 }
                 return $key == $index;
             }
-        }
-        return false;
+            return false;
+        });
     }
 
     /**

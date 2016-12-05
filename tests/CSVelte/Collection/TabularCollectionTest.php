@@ -34,4 +34,30 @@ class TabularCollectionTest extends AbstractCollectionTest
             'verla.ohara@dibbert.com'
         ], $newcoll->toArray());
     }
+
+    public function testContainsWorksWithTabular()
+    {
+        $coll = Collection::factory($this->testdata[TabularCollection::class]['user']);
+        $this->assertTrue($coll->contains('gfriesen@hotmail.com'));
+        $this->assertTrue($coll->contains('gfriesen@hotmail.com', 'email'));
+        $this->assertFalse($coll->contains('gfriesen@hotmail.com', 'role'));
+        $this->assertTrue($coll->contains('gfriesen@hotmail.com', ['id','email','created']));
+    }
+
+    public function testContainsWithCallbackWorksWithTabular()
+    {
+        $coll = Collection::factory($this->testdata[TabularCollection::class]['user']);
+        $this->assertTrue($coll->contains(function($val) {
+            return $val['is_active'];
+        }));
+        $this->assertTrue($coll->contains(function($val) {
+            return !$val['is_active'];
+        }));
+        $this->assertTrue($coll->contains(function($val) {
+            return is_array($val) && array_key_exists('email', $val);
+        }));
+        $this->assertFalse($coll->contains(function($val) {
+            return is_array($val) && array_key_exists('username', $val);
+        }));
+    }
 }
