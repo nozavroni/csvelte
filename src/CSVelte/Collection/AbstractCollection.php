@@ -342,7 +342,7 @@ abstract class AbstractCollection implements
      */
     public function keys()
     {
-        return self::factory(array_keys($this->data));
+        return static::factory(array_keys($this->data));
     }
 
     /**
@@ -354,7 +354,7 @@ abstract class AbstractCollection implements
      */
     public function values()
     {
-        return self::factory(array_values($this->data));
+        return static::factory(array_values($this->data));
     }
 
     /**
@@ -368,7 +368,7 @@ abstract class AbstractCollection implements
     public function merge($data)
     {
         $this->assertCorrectInputDataType($data);
-        $coll = self::factory($this->data);
+        $coll = static::factory($this->data);
         foreach ($data as $index => $value) {
             $coll->set($index, $value);
         }
@@ -439,7 +439,7 @@ abstract class AbstractCollection implements
     public function push(...$items)
     {
         array_push($this->data, ...$items);
-        return self::factory($this->data);
+        return static::factory($this->data);
     }
 
     /**
@@ -452,7 +452,7 @@ abstract class AbstractCollection implements
     public function unshift(...$items)
     {
         array_unshift($this->data, ...$items);
-        return self::factory($this->data);
+        return static::factory($this->data);
     }
 
     /**
@@ -466,7 +466,7 @@ abstract class AbstractCollection implements
      */
     public function pad($size, $with = null)
     {
-        return self::factory(array_pad($this->data, $size, $with));
+        return static::factory(array_pad($this->data, $size, $with));
     }
 
     /**
@@ -480,7 +480,7 @@ abstract class AbstractCollection implements
      */
     public function map(callable $callback)
     {
-        return self::factory(array_map($callback, $this->data));
+        return static::factory(array_map($callback, $this->data));
     }
 
     /**
@@ -498,6 +498,24 @@ abstract class AbstractCollection implements
     {
         array_walk($this->data, $callback, $extraContext);
         return $this;
+    }
+
+    /**
+     * Get each key/value as an array pair
+     *
+     * Returns a collection of arrays where each item in the collection is [key,value]
+     *
+     * @return AbstractCollection
+     */
+    public function pairs()
+    {
+        return static::factory(array_map(
+            function ($key, $val) {
+                return [$key, $val];
+            },
+            array_keys($this->data),
+            array_values($this->data)
+        ));
     }
 
     /**
@@ -528,7 +546,7 @@ abstract class AbstractCollection implements
      */
     public function filter(callable $callback, $flag = ARRAY_FILTER_USE_BOTH)
     {
-        return self::factory(array_filter($this->data, $callback, $flag));
+        return static::factory(array_filter($this->data, $callback, $flag));
     }
 
     /**
@@ -573,7 +591,7 @@ abstract class AbstractCollection implements
      */
     public function reverse($preserveKeys = null)
     {
-        return self::factory(array_reverse($this->data, $preserveKeys));
+        return static::factory(array_reverse($this->data, $preserveKeys));
     }
 
     /**
@@ -585,7 +603,7 @@ abstract class AbstractCollection implements
      */
     public function unique()
     {
-        return self::factory(array_unique($this->data));
+        return static::factory(array_unique($this->data));
     }
 
     /**

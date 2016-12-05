@@ -640,4 +640,18 @@ class CollectionTest extends AbstractCollectionTest
         $this->assertInstanceOf(Countable::class, $coll);
         $this->assertEquals(4, $coll->count());
     }
+
+    public function testPairsReturnsKeyValPairs()
+    {
+        $coll = Collection::factory([
+            'foo' => 'bar',
+            'bin' => 'baz',
+            'boo' => 'far',
+        ]);
+        $this->assertEquals([
+            ['foo', 'bar'],
+            ['bin', 'baz'],
+            ['boo', 'far'],
+        ], $coll->pairs()->toArray());
+    }
 }

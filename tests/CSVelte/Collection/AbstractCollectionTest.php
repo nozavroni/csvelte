@@ -13,6 +13,7 @@
  */
 namespace CSVelteTest\Collection;
 
+use CSVelte\Collection\Collection;
 use CSVelte\Collection\MultiCollection;
 use CSVelte\Collection\TabularCollection;
 use CSVelteTest\UnitTestCase;
@@ -74,5 +75,6 @@ class AbstractCollectionTest extends UnitTestCase
                 'modified' => $created
             ];
         }
+        $this->testdata[Collection::class] = $faker->words(15);
     }
 }
