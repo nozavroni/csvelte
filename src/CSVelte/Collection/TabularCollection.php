@@ -28,25 +28,12 @@ class TabularCollection extends MultiCollection
      */
     protected function isConsistentDataStructure($data)
     {
-        /*
-        $keys = array_map(function($value) {
-            if (is_traversable($value)) {
-                if (!is_array($value)) {
-                    $value = iterator_to_array($value);
-                }
-                return array_keys($value);
-            }
-        }, $data);
-        $unique = array_unique($keys);
-        if (count($unique) == 1) {
-            return true;
-        }
-        return false;
-        */
-
         return static::isTabular($data);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function map(callable $callback)
     {
         $ret = [];
@@ -54,5 +41,31 @@ class TabularCollection extends MultiCollection
             $ret[$key] = $callback(static::factory($row));
         }
         return static::factory($ret);
+    }
+
+    public function average($column)
+    {
+        $coll = $this->getColumnAsCollection($column);
+        return $coll->sum() / $coll->count();
+    }
+
+    public function mode($column)
+    {
+        return $this->getColumnAsCollection($column)->mode();
+    }
+
+    public function sum($column)
+    {
+        return $this->getColumnAsCollection($column)->sum();
+    }
+
+    public function median($column)
+    {
+        return $this->getColumnAsCollection($column)->median();
+    }
+
+    protected function getColumnAsCollection($column)
+    {
+        return (new NumericCollection(array_column($this->data, $column)));
     }
 }
