@@ -121,4 +121,13 @@ class MultiCollectionTest extends AbstractCollectionTest
         // $this->assertFalse($coll->contains($func), 'names');
     }
 
+    public function testMapRunsCallbackAgainstEachItem()
+    {
+        $coll = Collection::factory($this->testdata[MultiCollection::class]['addresses']);
+        $coll2 = $coll->map(function($val) {
+            return strlen($val);
+        });
+        $this->assertEquals([18,22,19,21,20,30,27,14,32,24], $coll2->toArray());
+    }
+
 }

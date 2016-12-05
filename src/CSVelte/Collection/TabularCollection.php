@@ -46,4 +46,13 @@ class TabularCollection extends MultiCollection
 
         return static::isTabular($data);
     }
+
+    public function map(callable $callback)
+    {
+        $ret = [];
+        foreach ($this->data as $key => $row) {
+            $ret[$key] = $callback(static::factory($row));
+        }
+        return static::factory($ret);
+    }
 }

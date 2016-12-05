@@ -14,6 +14,7 @@
 namespace CSVelteTest\Collection;
 
 use CSVelte\Collection\MultiCollection;
+use CSVelte\Collection\TabularCollection;
 use CSVelteTest\UnitTestCase;
 use Faker;
 
@@ -43,6 +44,35 @@ class AbstractCollectionTest extends UnitTestCase
             $this->testdata[MultiCollection::class]['numeric'][] = $faker->randomNumber;
             $this->testdata[MultiCollection::class]['words'][] = $faker->words;
             $this->testdata[MultiCollection::class]['userAgent'][] = $faker->userAgent;
+        }
+        $this->testdata[TabularCollection::class] = [
+            'user' => [],
+            'profile' => []
+        ];
+        for($t = 1; $t <= 5; $t++) {
+            $created = $faker->dateTimeThisYear->format('YmdHis');
+            $profile_id = $t + 125;
+            $this->testdata[TabularCollection::class]['user'][] = [
+                'id' => $t,
+                'profile_id' => $profile_id,
+                'email' => $faker->email,
+                'password' => sha1($faker->asciify('**********')),
+                'role' => $faker->randomElement(['user','admin','user','user','user','user','user','moderator','moderator']),
+                'is_active' => $faker->boolean,
+                'created' => $created,
+                'modified' => $created
+            ];
+            $this->testdata[TabularCollection::class]['profile'][] = [
+                'id' => $profile_id,
+                'address' => $faker->streetAddress,
+                'city' => $faker->city,
+                'state' => $faker->stateAbbr,
+                'zipcode' => $faker->postcode,
+                'phone' => $faker->phoneNumber,
+                'bio' => $faker->paragraph,
+                'created' => $created,
+                'modified' => $created
+            ];
         }
     }
 }
