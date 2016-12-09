@@ -250,6 +250,12 @@ abstract class AbstractCollection implements
         return $this;
     }
 
+    /**
+     * Does this collection have a value at given index?
+     *
+     * @param mixed $index The index to check
+     * @return bool
+     */
     public function has($index)
     {
         return array_key_exists($index, $this->data);

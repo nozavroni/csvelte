@@ -104,6 +104,20 @@ class TabularCollectionTest extends AbstractCollectionTest
         }));
     }
 
+    public function testHasColumn()
+    {
+        $coll = new TabularCollection($this->testdata[TabularCollection::class]['user']);
+        $this->assertTrue($coll->hasColumn('email'));
+        $this->assertFalse($coll->hasColumn('foobar'));
+    }
+
+    public function testGetColumn()
+    {
+        $coll = new TabularCollection($this->testdata[TabularCollection::class]['user']);
+        $this->assertInstanceOf(AbstractCollection::class, $coll->getColumn('email'));
+        $this->assertEquals([1,2,3,4,5], $coll->getColumn('id')->toArray());
+    }
+
     public function testAverageColumn()
     {
         $coll = new TabularCollection($this->moretestdata);
@@ -126,6 +140,32 @@ class TabularCollectionTest extends AbstractCollectionTest
     {
         $coll = new TabularCollection($this->moretestdata);
         $this->assertEquals(15, $coll->median('numbers'));
+    }
+
+    public function testMaxColumn()
+    {
+        $coll = new TabularCollection($this->moretestdata);
+        $this->assertEquals(20, $coll->max('numbers'));
+    }
+
+    public function testMinColumn()
+    {
+        $coll = new TabularCollection($this->moretestdata);
+        $this->assertEquals(5, $coll->min('numbers'));
+    }
+
+    public function testCountsColumn()
+    {
+        $coll = new TabularCollection($this->moretestdata);
+        $this->assertEquals([
+            10 => 1,
+            17 => 1,
+            18 => 1,
+            11 => 1,
+            20 => 2,
+            15 => 3,
+            5 => 1
+        ], $coll->counts('numbers')->toArray());
     }
 
 }
