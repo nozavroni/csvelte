@@ -1,21 +1,21 @@
 <?php
-/**
- * CSVelte: Slender, elegant CSV for PHP.
- *
+
+/*
+ * CSVelte: Slender, elegant CSV for PHP
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   v0.2.1
+ * @version   {version}
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
 namespace CSVelte\IO;
 
+use CSVelte\Contract\Streamable;
 use CSVelte\Traits\IsReadable;
 use CSVelte\Traits\IsWritable;
-use CSVelte\Contract\Streamable;
 
 /**
  * Buffered Stream.
@@ -25,9 +25,12 @@ use CSVelte\Contract\Streamable;
  *
  * @package    CSVelte
  * @subpackage CSVelte\IO
+ *
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
+ *
  * @since      v0.2.1
+ *
  * @todo       Add methods to convert KB and MB to bytes so that you don't have
  *             to actually know how many bytes are in 16KB. You would just do
  *             $buffer = new BufferStream('16KB');
@@ -37,7 +40,8 @@ class BufferStream implements Streamable
     use IsReadable, IsWritable;
 
     /**
-     * Buffer contents
+     * Buffer contents.
+     *
      * @var string|false A string containing the buffer contents
      */
     protected $buffer = '';
@@ -45,31 +49,31 @@ class BufferStream implements Streamable
     /**
      * Is stream readable?
      *
-     * @var boolean Whether stream is readable
+     * @var bool Whether stream is readable
      */
     protected $readable = true;
 
     /**
      * Is stream writable?
      *
-     * @var boolean Whether stream is writable
+     * @var bool Whether stream is writable
      */
     protected $writable = true;
 
     /**
      * Is stream seekable?
      *
-     * @var boolean Whether stream is seekable
+     * @var bool Whether stream is seekable
      */
     protected $seekable = false;
 
     /**
      * @var array Stream meta data
      *            hwm: "high water mark" - once buffer reaches this number (in bytes)
-     *                 write() operations will begin returning false defaults to 16384 bytes (16KB)
+     *            write() operations will begin returning false defaults to 16384 bytes (16KB)
      */
     protected $meta = [
-        'hwm' => 16384
+        'hwm' => 16384,
     ];
 
     /**
@@ -82,12 +86,28 @@ class BufferStream implements Streamable
      * begin returning false.
      *
      * @param int Number (in bytes) representing buffer "high water mark"
+     * @param null|mixed $hwm
      */
     public function __construct($hwm = null)
     {
         if (!is_null($hwm)) {
             $this->meta['hwm'] = $hwm;
         }
+    }
+
+    /**
+     * Read the entire stream, beginning to end.
+     *
+     * In most stream implementations, __toString() differs from getContents()
+     * in that it returns the entire stream rather than just the remainder, but
+     * due to the way this stream works (sort of like a conveyor belt), this
+     * method is an alias to getContents()
+     *
+     * @return string The entire stream, beginning to end
+     */
+    public function __toString()
+    {
+        return (string) $this->getContents();
     }
 
     public function isEmpty()
@@ -108,7 +128,7 @@ class BufferStream implements Streamable
      * object will necessarily be readable. This method should tell the user
      * whether a stream is, in fact, readable.
      *
-     * @return boolean True if readable, false otherwise
+     * @return bool True if readable, false otherwise
      */
     public function isReadable()
     {
@@ -116,10 +136,11 @@ class BufferStream implements Streamable
     }
 
     /**
-     * Read in the specified amount of characters from the input source
+     * Read in the specified amount of characters from the input source.
      *
-     * @param integer $chars Amount of characters to read from input source
-     * @return string|boolean The specified amount of characters read from input source
+     * @param int $chars Amount of characters to read from input source
+     *
+     * @return string|bool The specified amount of characters read from input source
      */
     public function read($chars)
     {
@@ -133,42 +154,32 @@ class BufferStream implements Streamable
      *
      * @param int|null $start
      * @param int|null $length
+     *
      * @return string The chunk of data read from the buffer
      */
     public function readChunk($start = null, $length = null)
     {
-        if ($this->buffer === false) return false;
-        $top = substr($this->buffer, 0, $start);
-        $data = substr($this->buffer, $start, $length);
-        $bottom = substr($this->buffer, $start + $length);
-        $this->buffer = $top.$bottom;
+        if ($this->buffer === false) {
+            return false;
+        }
+        $top          = substr($this->buffer, 0, $start);
+        $data         = substr($this->buffer, $start, $length);
+        $bottom       = substr($this->buffer, $start + $length);
+        $this->buffer = $top . $bottom;
+
         return $data;
     }
 
     /**
-     * Read the entire stream, beginning to end.
-     *
-     * In most stream implementations, __toString() differs from getContents()
-     * in that it returns the entire stream rather than just the remainder, but
-     * due to the way this stream works (sort of like a conveyor belt), this
-     * method is an alias to getContents()
-     *
-     * @return string The entire stream, beginning to end
-     */
-    public function __toString()
-    {
-        return (string) $this->getContents();
-    }
-
-    /**
-     * Read the remainder of the stream
+     * Read the remainder of the stream.
      *
      * @return string The remainder of the stream
      */
     public function getContents()
     {
-        $buffer = $this->buffer;
-        $this->buffer = "";
+        $buffer       = $this->buffer;
+        $this->buffer = '';
+
         return (string) $buffer;
     }
 
@@ -183,7 +194,7 @@ class BufferStream implements Streamable
     }
 
     /**
-     * Return the current position within the stream/readable
+     * Return the current position within the stream/readable.
      *
      * @return int|false The current position within readable
      */
@@ -193,9 +204,9 @@ class BufferStream implements Streamable
     }
 
     /**
-     * Determine whether the end of the readable resource has been reached
+     * Determine whether the end of the readable resource has been reached.
      *
-     * @return boolean Whether we're at the end of the readable
+     * @return bool Whether we're at the end of the readable
      */
     public function eof()
     {
@@ -203,7 +214,7 @@ class BufferStream implements Streamable
     }
 
     /**
-     * File must be able to be rewound when the end is reached
+     * File must be able to be rewound when the end is reached.
      */
     public function rewind()
     {
@@ -217,9 +228,11 @@ class BufferStream implements Streamable
      * stream_get_meta_data() function.
      *
      * @param string $key Specific metadata to retrieve.
+     *
      * @return array|mixed|null Returns an associative array if no key is
-     *     provided. Returns a specific key value if a key is provided and the
-     *     value is found, or null if the key is not found.
+     *                          provided. Returns a specific key value if a key is provided and the
+     *                          value is found, or null if the key is not found.
+     *
      * @see http://php.net/manual/en/function.stream-get-meta-data.php
      */
     public function getMetadata($key = null)
@@ -227,6 +240,7 @@ class BufferStream implements Streamable
         if (!is_null($key)) {
             return isset($this->meta[$key]) ? $this->meta[$key] : null;
         }
+
         return $this->meta;
     }
 
@@ -238,6 +252,7 @@ class BufferStream implements Streamable
     public function close()
     {
         $this->buffer = false;
+
         return true;
     }
 
@@ -250,8 +265,9 @@ class BufferStream implements Streamable
      */
     public function detach()
     {
-        $buffer = $this->buffer;
+        $buffer       = $this->buffer;
         $this->buffer = false;
+
         return $buffer;
     }
 
@@ -263,7 +279,7 @@ class BufferStream implements Streamable
      * object will necessarily be writable. This method should tell the user
      * whether a stream is, in fact, writable.
      *
-     * @return boolean True if writable, false otherwise
+     * @return bool True if writable, false otherwise
      */
     public function isWritable()
     {
@@ -274,6 +290,7 @@ class BufferStream implements Streamable
      * Write data to the output.
      *
      * @param string $data The data to write
+     *
      * @return false|int The number of bytes written
      */
     public function write($data)
@@ -282,19 +299,20 @@ class BufferStream implements Streamable
             return false;
         }
         $this->buffer .= $data;
+
         return strlen($data);
     }
 
-     /**
-      * Seekability accessor.
-      *
-      * Despite the fact that any class that implements this interface must also
-      * define methods such as seek, that is no guarantee that an
-      * object will necessarily be seekable. This method should tell the user
-      * whether a stream is, in fact, seekable.
-      *
-      * @return boolean True if seekable, false otherwise
-      */
+    /**
+     * Seekability accessor.
+     *
+     * Despite the fact that any class that implements this interface must also
+     * define methods such as seek, that is no guarantee that an
+     * object will necessarily be seekable. This method should tell the user
+     * whether a stream is, in fact, seekable.
+     *
+     * @return bool True if seekable, false otherwise
+     */
     public function isSeekable()
     {
         return $this->seekable;
@@ -303,13 +321,13 @@ class BufferStream implements Streamable
     /**
      * Seek to specified offset.
      *
-     * @param integer $offset Offset to seek to
-     * @param integer $whence Position from whence the offset should be applied
-     * @return boolean True if seek was successful
+     * @param int $offset Offset to seek to
+     * @param int $whence Position from whence the offset should be applied
+     *
+     * @return bool True if seek was successful
      */
     public function seek($offset, $whence = SEEK_SET)
     {
         return $this->seekable;
     }
-
 }
