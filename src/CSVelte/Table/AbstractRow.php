@@ -171,7 +171,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
         return $this->fields->hasPosition($this->position);
     }
 
-    * @param mixed $offset
 /** Begin SPL ArrayAccess Methods **/
 
     /**
@@ -180,8 +179,6 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      * @param mixed $offset The offset to check existence of
      *
      * @return bool
-     *
-     * @internal param Offset $integer
      */
     public function offsetExists($offset)
     {
