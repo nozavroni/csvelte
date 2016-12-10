@@ -6,3 +6,5 @@ venv
 phpunit.xml
 -1
 *~
+phpunit
+
