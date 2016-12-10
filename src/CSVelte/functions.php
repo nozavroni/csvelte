@@ -25,6 +25,7 @@ use CSVelte\Contract\Streamable;
 use CSVelte\IO\IteratorStream;
 use CSVelte\IO\Stream;
 use CSVelte\IO\StreamResource;
+use CSVelte\Collection\AbstractCollection;
 use InvalidArgumentException;
 
 use Iterator;
@@ -214,4 +215,21 @@ function collect($in = null)
 function invoke(callable $callback, ...$args)
 {
     return $callback(...$args);
+}
+
+/**
+ * Determine if data is traversable.
+ *
+ * Pass in any variable and this function will tell you whether or not it
+ * is traversable. Basically this just means that it is either an array or an iterator.
+ * This function was written simply because I was tired of if statements that checked
+ * whether a variable was an array or a descendant of \Iterator. So I wrote this guy.
+ *
+ * @param mixed $input The variable to determine traversability
+ * 
+ * @return boolean True if $input is an array or an Iterator
+ */
+function is_traversable($input)
+{
+    return (is_array($input) || $input instanceof Iterator);
 }
