@@ -88,6 +88,9 @@ enabled:
   - unix_line_endings
   - whitespace_after_comma_in_array
 
+disabled:
+  - phpdoc_no_package
+
 finder:
   exclude:
     - ".venv"
