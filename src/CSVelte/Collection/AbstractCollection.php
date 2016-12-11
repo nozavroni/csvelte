@@ -613,7 +613,14 @@ abstract class AbstractCollection implements
         return $this;
     }
 
-    public function each(Closure $callback, $bindTo = null)
+    /**
+     * Iterate over each item that matches criteria in callback
+     *
+     * @param Closure|callable $callback A callback to use
+     * @param object $bindTo The object to bind to
+     * @return AbstractCollection
+     */
+    public function each(callable $callback, $bindTo = null)
     {
         if (is_null($bindTo)) {
             $bindTo = $this;

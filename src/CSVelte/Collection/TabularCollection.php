@@ -78,7 +78,7 @@ class TabularCollection extends MultiCollection
     public function hasRow($offset)
     {
         try {
-            $this->getColumn($column);
+            $this->getRow($offset);
             return true;
         } catch (OutOfBoundsException $e) {
             return false;
@@ -95,14 +95,7 @@ class TabularCollection extends MultiCollection
      */
     public function getRow($offset, $throw = true)
     {
-        $index = (int) $offset;
-        if (isset($this->data[$index])) {
-            return static::factory($this->data[$index]);
-        }
-        if ($throw) {
-            throw new OutOfBoundsException(__CLASS__ . " could not find row: " . $offset);
-        }
-        return false;
+        return $this->getValueAtPosition($offset);
     }
 
     /**
