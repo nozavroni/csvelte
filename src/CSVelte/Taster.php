@@ -14,6 +14,7 @@
 namespace CSVelte;
 
 use CSVelte\Collection\AbstractCollection;
+use CSVelte\Collection\CharCollection;
 use CSVelte\Collection\Collection;
 use CSVelte\Collection\MultiCollection;
 use CSVelte\Collection\NumericCollection;
@@ -123,8 +124,8 @@ class Taster
     /** @var string Sample of CSV data to use for tasting (determining CSV flavor) */
     protected $sample;
 
-    /** @var array Possible delimiter characters in (roughly) the order of likelihood */
-    protected $delims = [',', "\t", ';', '|', ':', '-', '_', '#', '/', '\\', '$', '+', '=', '&', '@'];
+    /** @var CharCollection Possible delimiter characters in (roughly) the order of likelihood */
+    protected $delims;
 
     /**
      * Class constructor--accepts a CSV input source.
@@ -139,7 +140,7 @@ class Taster
      */
     public function __construct(Streamable $input)
     {
-        $this->delims = collect($this->delims);
+        $this->delims = collect([',', "\t", ';', '|', ':', '-', '_', '#', '/', '\\', '$', '+', '=', '&', '@']);
         $this->input = $input;
         if (!$this->sample = $input->read(self::SAMPLE_SIZE)) {
             throw new TasterException('Invalid input, cannot read sample.', TasterException::ERR_INVALID_SAMPLE);
@@ -467,12 +468,11 @@ class Taster
 
         // now determine the mode for each char to decide the "expected" amount
         // of times a char (possible delim) will occur on each line...
-        $freqs = $frequencies;
         $modes = new NumericCollection([]);
-        foreach ($freqs as $char => $freq) {
+        foreach ($frequencies as $char => $freq) {
             $modes->set($char, collect($freq)->mode());
         }
-        $freqs->walk(function ($f, $chr) use ($modes, $consistencies) {
+        $frequencies->walk(function ($f, $chr) use ($modes, $consistencies) {
             collect($f)->walk(function ($num) use ($modes, $chr, $consistencies) {
                 if ($expected = $modes->get($chr)) {
                     if ($num == $expected) {
@@ -484,9 +484,8 @@ class Taster
             });
         });
 
-        $delims = $consistencies;
-        $max    = $delims->max();
-        $dups   = $delims->duplicates();
+        $max    = $consistencies->max();
+        $dups   = $consistencies->duplicates();
         if ($dups->has($max)) {
             // if more than one candidate, then look at where the character appeared
             // in the data. Was it relatively evenly distributed or was there a
@@ -515,15 +514,15 @@ class Taster
             } catch (TasterException $e) {
                 // if somehow we STILL can't come to a consensus, then fall back to a
                  // "preferred delimiters" list...
-                 foreach ($this->delims as $key => $val) {
-                     if ($delim = array_search($val, $decision)) {
-                         return $delim;
+                 foreach ($this->delims as $key => $chr) {
+                     if (collect($decision)->contains($chr)) {
+                         return $chr;
                      }
                  }
             }
         }
 
-        return $delims
+        return $consistencies
             ->sort()
             ->reverse()
             ->getKeyAtPosition(0);
