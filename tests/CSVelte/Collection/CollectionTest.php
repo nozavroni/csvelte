@@ -677,4 +677,78 @@ class CollectionTest extends AbstractCollectionTest
         $this->assertTrue($coll->hasPosition(4));
         $this->assertFalse($coll->hasPosition(5));
     }
+
+    public function testEachWithAlwaysFalseCallbackGivesEmptyIterator()
+    {
+        $coll = new Collection($this->testdata[Collection::class]);
+        $callback = function ($val, $key) {
+            return false;
+        };
+        $this->assertInstanceOf(AbstractCollection::class, $coll->each($callback));
+        $this->assertCount(0, $coll->each($callback));
+        $this->assertEquals([
+        ], $coll->each($callback)->toArray());
+    }
+
+    public function testEachIteratesWithCallbackAsFilter()
+    {
+        $coll = new Collection($this->testdata[Collection::class]);
+        $callback = function ($val, $key) {
+            return strlen($val) >= 5;
+        };
+        $this->assertInstanceOf(AbstractCollection::class, $coll->each($callback));
+        $this->assertCount(7, $coll->each($callback));
+        $this->assertEquals([
+            2 => 'voluptatem',
+            4 => 'quisquam',
+            5 => 'voluptatibus',
+            7 => 'veniam',
+            8 => 'omnis',
+            10 => 'cupiditate',
+            13 => 'numquam'
+        ], $coll->each($callback)->toArray());
+    }
+
+    public function testEachIteratesWithCallbackAsFilterForKey()
+    {
+        $coll = new Collection($this->testdata[Collection::class]);
+        $callback = function ($val, $key) {
+            return $key %2 == 0;
+        };
+        $this->assertInstanceOf(AbstractCollection::class, $coll->each($callback));
+        $this->assertCount(8, $coll->each($callback));
+        $this->assertEquals([
+            0 => 'et',
+            2 => 'voluptatem',
+            4 => 'quisquam',
+            6 => 'modi',
+            8 => 'omnis',
+            10 => 'cupiditate',
+            12 => 'ipsa',
+            14 => 'est'
+        ], $coll->each($callback)->toArray());
+    }
+
+    public function testEachIsAutomaticallyBoundToCollection()
+    {
+        $coll = new Collection($this->testdata[Collection::class]);
+        $callback = function ($val, $key) use ($coll) {
+            return ($this === $coll);
+        };
+        $this->assertInstanceOf(AbstractCollection::class, $coll->each($callback));
+        $this->assertCount(15, $coll->each($callback));
+    }
+
+    public function testEachCanBeBoundToArbitraryObject()
+    {
+        $coll1 = new Collection([1,2,3]);
+        $coll2 = new Collection([4,5,6]);
+        $coll3 = new Collection([7,8,9]);
+        $callback = function ($val, $key) {
+            return ($this->contains(4));
+        };
+        $this->assertInstanceOf(AbstractCollection::class, $coll1->each($callback));
+        $this->assertCount(3, $coll1->each($callback, $coll2));
+        $this->assertCount(0, $coll1->each($callback, $coll3));
+    }
 }

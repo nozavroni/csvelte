@@ -16,6 +16,7 @@ namespace CSVelte\Collection;
 use ArrayAccess;
 use ArrayIterator;
 use BadMethodCallException;
+use Closure;
 use Countable;
 use InvalidArgumentException;
 use Iterator;
@@ -212,7 +213,7 @@ abstract class AbstractCollection implements
      */
     public function rewind ()
     {
-        $this->isValid = true;
+        $this->isValid = !empty($this->data);
         return reset($this->data);
     }
 
@@ -248,6 +249,7 @@ abstract class AbstractCollection implements
         foreach ($data as $index => $value) {
             $this->set($index, $value);
         }
+        reset($this->data);
 
         return $this;
     }
@@ -609,6 +611,24 @@ abstract class AbstractCollection implements
     {
         array_walk($this->data, $callback, $extraContext);
         return $this;
+    }
+
+    public function each(Closure $callback, $bindTo = null)
+    {
+        if (is_null($bindTo)) {
+            $bindTo = $this;
+        }
+        if (!is_object($bindTo)) {
+            throw new InvalidArgumentException("Second argument must be an object.");
+        }
+        $cb = $callback->bindTo($bindTo);
+        $return = [];
+        foreach ($this as $key => $val) {
+            if ($cb($val, $key)) {
+                $return[$key] = $val;
+            }
+        }
+        return static::factory($return);
     }
 
     /**
