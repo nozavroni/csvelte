@@ -470,7 +470,7 @@ class Taster
         // of times a char (possible delim) will occur on each line...
         $modes = new NumericCollection([]);
         foreach ($frequencies as $char => $freq) {
-            $modes->set($char, collect($freq)->mode());
+            $modes->set($char, (new NumericCollection($freq))->mode());
         }
         $frequencies->walk(function ($f, $chr) use ($modes, $consistencies) {
             collect($f)->walk(function ($num) use ($modes, $chr, $consistencies) {
