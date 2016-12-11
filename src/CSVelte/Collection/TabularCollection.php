@@ -89,11 +89,10 @@ class TabularCollection extends MultiCollection
      * Get row at specified index.
      *
      * @param int $offset The row offset (starts from 0)
-     * @param bool $throw Whether or not to throw an exception if row does not exist
      *
      * @return AbstractCollection|false
      */
-    public function getRow($offset, $throw = true)
+    public function getRow($offset)
     {
         return $this->getValueAtPosition($offset);
     }

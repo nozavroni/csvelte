@@ -620,7 +620,7 @@ abstract class AbstractCollection implements
      * @param object $bindTo The object to bind to
      * @return AbstractCollection
      */
-    public function each(callable $callback, $bindTo = null)
+    public function each(Closure $callback, $bindTo = null)
     {
         if (is_null($bindTo)) {
             $bindTo = $this;
