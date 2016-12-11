@@ -14,7 +14,6 @@
 
 namespace CSVelte\Collection;
 
-use \InvalidArgumentException;
 use function CSVelte\is_traversable;
 
 class Collection extends AbstractCollection
@@ -27,6 +26,15 @@ class Collection extends AbstractCollection
      */
     protected function isConsistentDataStructure($data)
     {
-        return is_traversable($data);
+        // this collection may only contain scalar or null values
+        if (!is_traversable($data)) {
+            return false;
+        }
+        foreach ($data as $key => $val) {
+            if (is_traversable($val)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

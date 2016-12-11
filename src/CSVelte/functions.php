@@ -26,6 +26,7 @@ use CSVelte\IO\IteratorStream;
 use CSVelte\IO\Stream;
 use CSVelte\IO\StreamResource;
 use CSVelte\Collection\AbstractCollection;
+use CSVelte\Collection\Collection;
 use InvalidArgumentException;
 
 use Iterator;
@@ -188,14 +189,14 @@ function taste_has_header(Streamable $str)
  *
  * @param array|Iterator $in Either an array or an iterator of data
  *
- * @return Collection A collection object containing data from $in
+ * @return AbstractCollection A collection object containing data from $in
  *
  * @since v0.2.1
- * @see Collection::__construct() (alias)
+ * @see AbstractCollection::__construct() (alias)
  */
 function collect($in = null)
 {
-    return new Collection($in);
+    return Collection::factory($in);
 }
 
 /**

@@ -14,6 +14,8 @@
 namespace CSVelte\Collection;
 
 use ArrayAccess;
+use ArrayIterator;
+use BadMethodCallException;
 use Countable;
 use InvalidArgumentException;
 use Iterator;
@@ -48,7 +50,7 @@ abstract class AbstractCollection implements
     /**
      * @var array The collection of data this object represents
      */
-    protected $data;
+    protected $data = [];
 
     /**
      * @var boolean True unless we have advanced past the end of the data array
@@ -60,7 +62,7 @@ abstract class AbstractCollection implements
      *
      * @param mixed $data The data to wrap
      */
-    public function __construct($data)
+    public function __construct($data = [])
     {
         $this->setData($data);
     }
@@ -115,7 +117,7 @@ abstract class AbstractCollection implements
      */
     public function offsetGet($offset)
     {
-        return $this->get($offset);
+        return $this->get($offset, null, true);
     }
 
     /**
@@ -250,6 +252,15 @@ abstract class AbstractCollection implements
         return $this;
     }
 
+    public function sort($alg = null)
+    {
+        if (is_null($alg)) {
+            $alg = 'natcasesort';
+        }
+        $alg($this->data);
+        return static::factory($this->data);
+    }
+
     /**
      * Does this collection have a value at given index?
      *
@@ -273,6 +284,7 @@ abstract class AbstractCollection implements
      * @param bool $throw True if you want an exception to be thrown if no data found at $index
      * @throws OutOfBoundsException If $throw is true and $index isn't found
      * @return mixed The data found at $index or failing that, the $default
+     * @todo Use OffsetGet, OffsetSet, etc. internally here and on set, has, delete, etc.
      */
     public function get($index, $default = null, $throw = false)
     {
@@ -292,6 +304,7 @@ abstract class AbstractCollection implements
      *
      * @param mixed $index The index to set a value at
      * @param mixed $val The value to set $index to
+     *
      * @return $this
      */
     public function set($index, $val)
@@ -308,7 +321,9 @@ abstract class AbstractCollection implements
      *
      * @param mixed $index The index to unset
      * @param bool $throw True if you want an exception to be thrown if no data found at $index
+     *
      * @throws OutOfBoundsException If $throw is true and $index isn't found
+     *
      * @return $this
      */
     public function delete($index, $throw = false)
@@ -322,6 +337,76 @@ abstract class AbstractCollection implements
         }
 
         return $this;
+    }
+
+    /**
+     * Does this collection have a value at specified numerical position?
+     *
+     * Returns true if collection contains a value (any value including null)
+     * at specified numerical position.
+     *
+     * @param int $pos The position
+     *
+     * @return bool
+     *
+     * @todo I feel like it would make more sense  to have this start at position 1 rather than 0
+     */
+    public function hasPosition($pos)
+    {
+        try {
+            $this->getKeyAtPosition($pos);
+            return true;
+        } catch (OutOfBoundsException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Return value at specified numerical position.
+     *
+     * @param int $pos The numerical position
+     *
+     * @throws OutOfBoundsException if no pair at position
+     *
+     * @return mixed
+     */
+    public function getValueAtPosition($pos)
+    {
+        return $this->data[$this->getKeyAtPosition($pos)];
+    }
+
+    /**
+     * Return key at specified numerical position.
+     *
+     * @param int $pos The numerical position
+     *
+     * @throws OutOfBoundsException if no pair at position
+     *
+     * @return mixed
+     */
+    public function getKeyAtPosition($pos)
+    {
+        $i = 0;
+        foreach ($this as $key => $val) {
+            if ($i === $pos) {
+                return $key;
+            }
+            $i++;
+        }
+        throw new OutOfBoundsException("No element at expected position: $pos");
+    }
+
+    /**
+     * @param int $pos The numerical position
+     *
+     * @throws OutOfBoundsException if no pair at position
+     *
+     * @return array
+     */
+    public function getPairAtPosition($pos)
+    {
+        $pairs = $this->pairs();
+        return $pairs[$this->getKeyAtPosition($pos)];
     }
 
     /**
@@ -344,7 +429,7 @@ abstract class AbstractCollection implements
     /**
      * Get this collection's keys as a collection.
      *
-     * @return Collection Containing this collection's keys
+     * @return AbstractCollection Containing this collection's keys
      */
     public function keys()
     {
@@ -356,7 +441,7 @@ abstract class AbstractCollection implements
      *
      * This method returns this collection's values but completely re-indexed (numerically).
      *
-     * @return Collection Containing this collection's values
+     * @return AbstractCollection Containing this collection's values
      */
     public function values()
     {
@@ -369,7 +454,7 @@ abstract class AbstractCollection implements
      * Merges input data into this collection. Input can be an array or another collection. Returns a NEW collection object.
      *
      * @param Traversable|array $data The data to merge with this collection
-     * @return Collection A new collection with $data merged in
+     * @return AbstractCollection A new collection with $data merged in
      */
     public function merge($data)
     {
@@ -414,10 +499,30 @@ abstract class AbstractCollection implements
         });
     }
 
+
+    /**
+     * Get duplicate values.
+     *
+     * Returns a collection of arrays where the key is the duplicate value
+     * and the value is an array of keys from the original collection.
+     *
+     * @return AbstractCollection A new collection with duplicate values.
+     */
+    public function duplicates()
+    {
+        $dups = [];
+        $this->walk(function($val, $key) use (&$dups) {
+            $dups[$val][] = $key;
+        });
+        return static::factory($dups)->filter(function($val) {
+            return (count($val) > 1);
+        });
+    }
+
     /**
      * Pop an element off the end of this collection.
      *
-     * @return mixed The last item in this collection
+     * @return mixed The last item in this collectio n
      */
     public function pop()
     {
@@ -468,7 +573,7 @@ abstract class AbstractCollection implements
      *
      * @param int $size The number of items that should be in the collection
      * @param null $with The value to pad the collection with
-     * @return Collection A new collection padded to specified length
+     * @return AbstractCollection A new collection padded to specified length
      */
     public function pad($size, $with = null)
     {
@@ -547,7 +652,7 @@ abstract class AbstractCollection implements
      *
      * @param callable $callback The callback function used to filter
      * @param int $flag array_filter flag(s) (ARRAY_FILTER_USE_KEY or ARRAY_FILTER_USE_BOTH)
-     * @return Collection A new collection with only values that weren't filtered
+     * @return AbstractCollection A new collection with only values that weren't filtered
      * @see php.net array_filter
      */
     public function filter(callable $callback, $flag = ARRAY_FILTER_USE_BOTH)
@@ -593,7 +698,7 @@ abstract class AbstractCollection implements
      * Returns collection in reverse order.
      *
      * @param null $preserveKeys True if you want to preserve collection's keys
-     * @return Collection This collection in reverse order.
+     * @return AbstractCollection This collection in reverse order.
      */
     public function reverse($preserveKeys = null)
     {
@@ -605,7 +710,7 @@ abstract class AbstractCollection implements
      *
      * Returns a collection of all the unique items in this collection.
      *
-     * @return Collection This collection with duplicate items removed
+     * @return AbstractCollection This collection with duplicate items removed
      */
     public function unique()
     {
@@ -623,7 +728,56 @@ abstract class AbstractCollection implements
      */
     public function __toString()
     {
-        return implode("", $this->data);
+        return $this->join();
+    }
+
+    /**
+     * Join collection together using a delimiter.
+     *
+     * @param string $delimiter The delimiter string/char
+     *
+     * @return string
+     */
+    public function join($delimiter = '')
+    {
+        return implode($delimiter, $this->data);
+    }
+
+    /**
+     * Counts how many times each value occurs in a collection.
+     *
+     * Returns a new collection with values as keys and how many times that
+     * value appears in the collection. Works best with scalar values but will
+     * attempt to work on collections of objects as well.
+     *
+     * @return AbstractCollection
+     *
+     * @todo Right now, collections of arrays or objects are supported via the
+     * __toString() or spl_object_hash()
+     * @todo NumericCollection::counts() does the same thing...
+     */
+    public function frequency()
+    {
+        $frequency = [];
+        foreach ($this as $key => $val) {
+            if (!is_scalar($val)) {
+                if (!is_object($val)) {
+                    $val = new ArrayIterator($val);
+                }
+
+                if (method_exists($val, '__toString')) {
+                    $val = (string)$val;
+                } else {
+                    $val = spl_object_hash($val);
+                }
+            }
+            if (!isset($frequency[$val])) {
+                $frequency[$val] = 0;
+            }
+            $frequency[$val]++;
+        }
+
+        return static::factory($frequency);
     }
 
     /**
@@ -634,7 +788,7 @@ abstract class AbstractCollection implements
      * data and return it.
      *
      * @param mixed $data The data to wrap
-     * @return Collection A collection containing $data
+     * @return AbstractCollection A collection containing $data
      */
     public static function factory($data = null)
     {

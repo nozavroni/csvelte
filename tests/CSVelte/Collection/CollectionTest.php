@@ -40,6 +40,12 @@ class CollectionTest extends AbstractCollectionTest
         $this->assertInstanceOf(Collection::class, $coll);
     }
 
+    // @todo write this test
+    public function testCollectFactoryThrowsExceptionOnInvalidForceClassType()
+    {
+
+    }
+
     public function testCollectionFactoryPassesInputToCollection()
     {
         $in = ['foo' => 'bar', 'baz' => 'bin'];
@@ -653,5 +659,22 @@ class CollectionTest extends AbstractCollectionTest
             ['bin', 'baz'],
             ['boo', 'far'],
         ], $coll->pairs()->toArray());
+    }
+
+    public function testHasPositionReturnsNumericPositionRegardlessOfKeyType()
+    {
+        $coll = Collection::factory([
+            'foo' => 'bar',
+            0 => 'baz',
+            'test' => 'best',
+            10 => 'ten',
+            'fifth' => 'this is the fifth'
+        ]);
+        $this->assertTrue($coll->hasPosition(0));
+        $this->assertTrue($coll->hasPosition(1));
+        $this->assertTrue($coll->hasPosition(2));
+        $this->assertTrue($coll->hasPosition(3));
+        $this->assertTrue($coll->hasPosition(4));
+        $this->assertFalse($coll->hasPosition(5));
     }
 }

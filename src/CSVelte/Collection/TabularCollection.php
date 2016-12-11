@@ -13,8 +13,10 @@
  */
 namespace CSVelte\Collection;
 
-use function CSVelte\is_traversable;
+use BadMethodCallException;
 use OutOfBoundsException;
+use function CSVelte\is_traversable;
+use function CSVelte\collect;
 
 class TabularCollection extends MultiCollection
 {
@@ -68,6 +70,42 @@ class TabularCollection extends MultiCollection
     }
 
     /**
+     * Does this collection have a row at specified index?
+     *
+     * @param int $offset The column index
+     * @return bool
+     */
+    public function hasRow($offset)
+    {
+        try {
+            $this->getColumn($column);
+            return true;
+        } catch (OutOfBoundsException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Get row at specified index.
+     *
+     * @param int $offset The row offset (starts from 0)
+     * @param bool $throw Whether or not to throw an exception if row does not exist
+     *
+     * @return AbstractCollection|false
+     */
+    public function getRow($offset, $throw = true)
+    {
+        $index = (int) $offset;
+        if (isset($this->data[$index])) {
+            return static::factory($this->data[$index]);
+        }
+        if ($throw) {
+            throw new OutOfBoundsException(__CLASS__ . " could not find row: " . $offset);
+        }
+        return false;
+    }
+
+    /**
      * @inheritdoc
      */
     public function map(callable $callback)
@@ -77,6 +115,17 @@ class TabularCollection extends MultiCollection
             $ret[$key] = $callback(static::factory($row));
         }
         return static::factory($ret);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function walk(callable $callback, $extraContext = null)
+    {
+        foreach ($this as $offset => $row) {
+            $callback(static::factory($row), $offset, $extraContext);
+        }
+        return $this;
     }
 
 //    public function average($column)
@@ -110,8 +159,13 @@ class TabularCollection extends MultiCollection
      *
      * @param string $method The name of the method
      * @param array $args The argument list
+     *
+     * @throws BadMethodCallException If no method exists
+     *
      * @return mixed
+     *
      * @todo Add phpdoc comments for dynamic methods
+     * @todo throw BadMethodCallException
      */
     public function __call($method, $args)
     {
@@ -122,5 +176,6 @@ class TabularCollection extends MultiCollection
                 return call_user_func_array([$column, $method], $args);
             }
         }
+        throw new BadMethodCallException("Method does not exist: " . __CLASS__ . "::{$method}()");
     }
 }

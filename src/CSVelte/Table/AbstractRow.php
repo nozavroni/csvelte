@@ -15,7 +15,7 @@ namespace CSVelte\Table;
 
 use ArrayAccess;
 use Countable;
-use CSVelte\Collection;
+use CSVelte\Collection\AbstractCollection;
 use CSVelte\Exception\ImmutableException;
 
 use InvalidArgumentException;
@@ -41,7 +41,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * An collection of fields for this row.
      *
-     * @var Collection
+     * @var AbstractCollection
      */
     protected $fields;
 
@@ -182,7 +182,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return $this->fields->hasPosition($offset);
+        return $this->fields->offsetExists($offset);
     }
 
     /**
@@ -194,7 +194,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return $this->fields->getValueAtPosition($offset);
+        return $this->fields->offsetGet($offset);
     }
 
     /**

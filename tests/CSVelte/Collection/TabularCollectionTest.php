@@ -1,6 +1,7 @@
 <?php
 namespace CSVelteTest\Collection;
 
+use BadMethodCallException;
 use CSVelte\Collection\AbstractCollection;
 use CSVelte\Collection\Collection;
 use CSVelte\Collection\MultiCollection;
@@ -168,4 +169,17 @@ class TabularCollectionTest extends AbstractCollectionTest
         ], $coll->counts('numbers')->toArray());
     }
 
+    /**
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage Method does not exist: CSVelte\Collection\TabularCollection::nonExistantMethod()
+     */
+    public function testTabularCollectionThrowsBadMethodCallExceptionOnBadMethodCall()
+    {
+        $coll = new TabularCollection([
+            ['id' => 2, 'name' => 'Luke', 'email' => 'luke.visinoni@gmail.com'],
+            ['id' => 3, 'name' => 'Dave', 'email' => 'dave.mason@gmail.com'],
+            ['id' => 5, 'name' => 'Joe', 'email' => 'joe.rogan@gmail.com'],
+        ]);
+        $coll->nonExistantMethod('foo','bar');
+    }
 }
