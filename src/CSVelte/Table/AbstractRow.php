@@ -131,7 +131,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function key()
     {
-        return $this->position;
+        return $this->fields->getKeyAtPosition($this->position);
     }
 
     /**
@@ -245,7 +245,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
                 throw new InvalidArgumentException(__CLASS__ . ' requires an array, got: ' . gettype($fields));
             }
         }
-        $this->fields = collect(array_values($fields));
+        $this->fields = collect($fields)->values();
 
         return $this;
     }
