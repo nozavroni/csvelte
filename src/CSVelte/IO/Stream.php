@@ -1,25 +1,26 @@
 <?php
-/**
- * CSVelte: Slender, elegant CSV for PHP.
- *
+
+/*
+ * CSVelte: Slender, elegant CSV for PHP
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   v0.2.1
+ * @version   {version}
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
 namespace CSVelte\IO;
 
+use CSVelte\Contract\Streamable;
+use CSVelte\Exception\IOException;
 use CSVelte\Traits\IsReadable;
-use CSVelte\Traits\IsWritable;
 use CSVelte\Traits\IsSeekable;
 
-use CSVelte\Contract\Streamable;
+use CSVelte\Traits\IsWritable;
 
-use \Exception;
+use Exception;
 
 /**
  * CSVelte Stream.
@@ -30,8 +31,10 @@ use \Exception;
  *
  * @package    CSVelte
  * @subpackage CSVelte\IO
+ *
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
+ *
  * @since      v0.2
  */
 class Stream implements Streamable
@@ -39,7 +42,7 @@ class Stream implements Streamable
     use IsReadable, IsWritable, IsSeekable;
 
     /**
-     * @var \CSVelte\IO\Resource A stream resource object
+     * @var StreamResource A stream resource object
      */
     protected $resource;
 
@@ -51,7 +54,9 @@ class Stream implements Streamable
     /**
      * Meta data about stream resource.
      * Just contains the return value of stream_get_meta_data.
+     *
      * @var array The return value of stream_get_meta_data
+     *
      * @todo Not sure if this belongs in this class or in Resource. I'm leaving
      *     it here for now, simply because I'm worried Stream will become superfluous
      */
@@ -62,21 +67,11 @@ class Stream implements Streamable
      *
      * Instantiate a new stream object using a stream resource object.
      *
-     * @param \CSVelte\IO\Resource $resource A stream resource object
+     * @param StreamResource $resource A stream resource object
      */
-    public function __construct(Resource $resource)
+    public function __construct(StreamResource $resource)
     {
         $this->setResource($resource);
-    }
-
-    /**
-     * Set stream resource object
-     *
-     * @param Resource $resource A stream resource object
-     */
-    protected function setResource(Resource $resource)
-    {
-        $this->resource = $resource;
     }
 
     /**
@@ -103,7 +98,9 @@ class Stream implements Streamable
      * Returns the internal pointer to the position it was in once it's finished
      *
      * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
+     *
      * @return string
+     *
      * @todo I'm leaning towards getting rid of the code that places the cursor
      *     back at the position it was in... I'm not sure it's expected behavior
      */
@@ -118,6 +115,7 @@ class Stream implements Streamable
         } catch (Exception $e) {
             // eat any exception that may be thrown...
         }
+
         return $string;
     }
 
@@ -127,26 +125,31 @@ class Stream implements Streamable
      * Pass in a URI and optionally a mode string, context params, and whether or not you want
      * lazy-opening, and it will give you back a Stream object.
      *
-     * @param string $uri The stream URI you want to open
-     * @param string $mode The access mode string
+     * @param string        $uri     The stream URI you want to open
+     * @param string        $mode    The access mode string
      * @param null|resource $context Stream resource context options/params
-     * @param boolean $lazy Whether or not you want this stream to lazy-open
+     * @param bool          $lazy    Whether or not you want this stream to lazy-open
+     *
      * @return Stream
+     *
      * @see http://php.net/manual/en/function.fopen.php
      * @see http://php.net/manual/en/function.stream-context-create.php
      */
     public static function open($uri, $mode = null, $context = null, $lazy = false)
     {
-        $resource = (new Resource($uri, $mode))
+        $resource = (new StreamResource($uri, $mode))
             ->setContextResource($context);
-        if (!$lazy) $resource->connect();
+        if (!$lazy) {
+            $resource->connect();
+        }
+
         return new self($resource);
     }
 
     /**
      * Close stream resource.
      *
-     * @return boolean True on success or false on failure
+     * @return bool True on success or false on failure
      */
     public function close()
     {
@@ -161,7 +164,9 @@ class Stream implements Streamable
      * Get either the entire stream metadata array or a single value from it by key.
      *
      * @param string $key If set, must be one of ``stream_get_meta_data`` array keys
+     *
      * @return string|array Either a single value or whole array returned by ``stream_get_meta_data``
+     *
      * @see http://php.net/manual/en/function.stream-get-meta-data.php
      */
     public function getMetaData($key = null)
@@ -172,7 +177,10 @@ class Stream implements Streamable
             }
             // if a certain value was requested, return it
             // otherwise, return entire array
-            if (is_null($key)) return $this->meta;
+            if (is_null($key)) {
+                return $this->meta;
+            }
+
             return (array_key_exists($key, $this->meta)) ? $this->meta[$key] : null;
         }
     }
@@ -182,13 +190,14 @@ class Stream implements Streamable
      *
      * Returns true if possible to seek to a certain position within this stream
      *
-     * @return boolean True if stream is seekable
+     * @return bool True if stream is seekable
      */
     public function isSeekable()
     {
         if ($this->resource) {
-            return (boolean) $this->getMetaData('seekable');
+            return (bool) $this->getMetaData('seekable');
         }
+
         return false;
     }
 
@@ -197,13 +206,14 @@ class Stream implements Streamable
      *
      * Returns true if possible to read from this stream
      *
-     * @return boolean True if stream is readable
+     * @return bool True if stream is readable
      */
     public function isReadable()
     {
         if ($this->resource) {
             return $this->resource->isReadable();
         }
+
         return false;
     }
 
@@ -212,23 +222,24 @@ class Stream implements Streamable
      *
      * Returns true if possible to write to this stream
      *
-     * @return boolean True if stream is writable
+     * @return bool True if stream is writable
      */
     public function isWritable()
     {
         if ($this->resource) {
             return $this->resource->isWritable();
         }
+
         return false;
     }
 
     /**
      * Get the Resource object.
      *
-     * Returns the internal Resource object used as a drop-in replacement for
+     * Returns the internal StreamResource object used as a drop-in replacement for
      * PHP's native stream resource variables.
      *
-     * @return \CSVelte\IO\Resource The Resource object
+     * @return StreamResource The Resource object
      */
     public function getResource()
     {
@@ -266,14 +277,15 @@ class Stream implements Streamable
      *
      * After the stream has been detached, the stream is in an unusable state.
      *
-     * @return Resource|null Underlying PHP stream, if any
+     * @return StreamResource|null Underlying PHP stream, if any
      */
     public function detach()
     {
         // @todo I need to get a better understanding of when and why a stream
         // would need to be detached to properly implement this
-        $resource = $this->resource;
+        $resource       = $this->resource;
         $this->resource = null;
+
         return $resource;
     }
 
@@ -291,15 +303,17 @@ class Stream implements Streamable
                     $this->size = $stats['size'];
                 }
             }
+
             return $this->size;
         }
     }
 
     /**
-     * Returns the current position of the file read/write pointer
+     * Returns the current position of the file read/write pointer.
+     *
+     * @throws \RuntimeException on error.
      *
      * @return int Position of the file pointer
-     * @throws \RuntimeException on error.
      */
     public function tell()
     {
@@ -312,14 +326,19 @@ class Stream implements Streamable
      * Reads $length bytes (number of characters) from the stream
      *
      * @param int $length Number of bytes to read from stream
+     *
+     * @throws IOException if stream not readable
+     *
      * @return string|false The data read from stream or false if at end of
-     *     file or some other problem.
-     * @throws \CSVelte\Exception\IOException if stream not readable
+     *                      file or some other problem.
      */
     public function read($length)
     {
         $this->assertIsReadable();
-        if ($this->eof()) return false;
+        if ($this->eof()) {
+            return false;
+        }
+
         return fread($this->resource->getHandle(), $length);
     }
 
@@ -330,9 +349,10 @@ class Stream implements Streamable
      * wherever the stream's internal pointer is when this method is called. If
      * you want the ENTIRE stream's contents, use __toString() instead.
      *
+     * @throws IOException
+     *
      * @return string The remaining contents of the file, beginning at internal
-     *     pointer's current location
-     * @throws \CSVelte\Exception\IOException
+     *                pointer's current location
      */
     public function getContents()
     {
@@ -342,6 +362,7 @@ class Stream implements Streamable
                 $buffer .= $chunk;
             }
         }
+
         return $buffer;
     }
 
@@ -350,7 +371,7 @@ class Stream implements Streamable
      *
      * Returns true if internal pointer has reached the end of the stream.
      *
-     * @return boolean True if end of stream has been reached
+     * @return bool True if end of stream has been reached
      */
     public function eof()
     {
@@ -371,17 +392,20 @@ class Stream implements Streamable
     }
 
     /**
-     * Write to stream
+     * Write to stream.
      *
      * Writes a string to the stream (if it is writable)
      *
      * @param string $str The data to be written to the stream
+     *
+     * @throws IOException
+     *
      * @return int The number of bytes written to the stream
-     * @throws \CSVelte\Exception\IOException
      */
     public function write($str)
     {
         $this->assertIsWritable();
+
         return fwrite($this->resource->getHandle(), $str);
     }
 
@@ -392,14 +416,27 @@ class Stream implements Streamable
      *
      * @param int $offset The position to seek to
      * @param int $whence One of three native php ``SEEK_`` constants
-     * @return boolean True on success false on failure
-     * @throws \CSVelte\Exception\IOException
+     *
+     * @throws IOException
+     *
+     * @return bool True on success false on failure
+     *
      * @see http://php.net/manual/en/function.seek.php
      */
     public function seek($offset, $whence = SEEK_SET)
     {
         $this->assertIsSeekable();
+
         return fseek($this->resource->getHandle(), $offset, $whence) === 0;
     }
 
+    /**
+     * Set stream resource object.
+     *
+     * @param StreamResource $resource A stream resource object
+     */
+    protected function setResource(StreamResource $resource)
+    {
+        $this->resource = $resource;
+    }
 }

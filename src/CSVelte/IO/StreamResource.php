@@ -1,12 +1,12 @@
 <?php
-/**
- * CSVelte: Slender, elegant CSV for PHP.
- *
+
+/*
+ * CSVelte: Slender, elegant CSV for PHP
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   v0.2.1
+ * @version   {version}
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
@@ -14,8 +14,8 @@
 namespace CSVelte\IO;
 
 use CSVelte\Contract\Streamable;
-use \InvalidArgumentException;
 use CSVelte\Exception\IOException;
+use InvalidArgumentException;
 
 /**
  * Stream Resource.
@@ -26,17 +26,20 @@ use CSVelte\Exception\IOException;
  *
  * @package    CSVelte
  * @subpackage CSVelte\IO
+ *
  * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
  * @author     Luke Visinoni <luke.visinoni@gmail.com>
+ *
  * @since      v0.2.1
  */
-class Resource
+class StreamResource
 {
     /**
-     * Available base access modes
+     * Available base access modes.
+     *
      * @var string base access mode must be one of these letters
      */
-    protected static $bases = "rwaxc";
+    protected static $bases = 'rwaxc';
 
     /**
      * Hash of readable/writable stream open mode types.
@@ -49,6 +52,7 @@ class Resource
      * and the not suing me for outright theft (in this case).
      *
      * @var array Hash of readable and writable stream types
+     *
      * @todo I think I can get rid of this by simply checking whether base is a
      *     particular letter OR plus is present... try it
      * @todo Why are x and c (alone) not even on either of these lists?
@@ -57,14 +61,14 @@ class Resource
      */
     protected static $readWriteHash = [
         'read' => [
-            'r' => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
-            'rb' => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
+            'r'   => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
+            'rb'  => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
             'c+b' => true, 'rt' => true, 'w+t' => true, 'r+t' => true,
             'x+t' => true, 'c+t' => true, 'a+' => true,
         ],
         'write' => [
-            'w' => true, 'w+' => true, 'rw' => true, 'r+' => true, 'x+' => true,
-            'c+' => true, 'wb' => true, 'w+b' => true, 'r+b' => true,
+            'w'   => true, 'w+' => true, 'rw' => true, 'r+' => true, 'x+' => true,
+            'c+'  => true, 'wb' => true, 'w+b' => true, 'r+b' => true,
             'x+b' => true, 'c+b' => true, 'w+t' => true, 'r+t' => true,
             'x+t' => true, 'c+t' => true, 'a' => true, 'a+' => true,
         ],
@@ -95,7 +99,7 @@ class Resource
      * Determines whether the actual fopen for this resource should be delayed
      * until an I/O operation is performed.
      *
-     * @var boolean True if connection is lazy
+     * @var bool True if connection is lazy
      */
     protected $lazy;
 
@@ -105,11 +109,12 @@ class Resource
      * An associative array of context options and parameters.
      *
      * @var array An associative array of stream context options and params
+     *
      * @see http://php.net/manual/en/stream.contexts.php
      */
     protected $context = [
         'options' => [],
-        'params' => []
+        'params'  => [],
     ];
 
     /**
@@ -124,7 +129,7 @@ class Resource
     /**
      * Should fopen use include path?
      *
-     * @var boolean True if fopen should use the include path to find potential files
+     * @var bool True if fopen should use the include path to find potential files
      */
     protected $useIncludePath;
 
@@ -157,7 +162,7 @@ class Resource
     protected $readable = false;
 
     /**
-     * Does access mode string indicate writability
+     * Does access mode string indicate writability.
      *
      * @var bool Whether access mode indicates writability
      */
@@ -169,13 +174,14 @@ class Resource
      * Instantiates a stream resource. If lazy is set to true, the connection
      * is delayed until the first call to getResource().
      *
-     * @param string|resource $uri The URI to connect to OR a stream resource handle
-     * @param string $mode The connection mode
-     * @param boolean $lazy Whether connection should be deferred until an I/O
-     *     operation is requested (such as read or write) on the attached stream
-     * @param boolean|null $use_include_path
-     * @param array|null $context_options
-     * @param array|null $context_params
+     * @param string|resource|object $uri              The URI to connect to OR a stream resource handle
+     * @param string                 $mode             The connection mode
+     * @param bool                   $lazy             Whether connection should be deferred until an I/O
+     *                                                 operation is requested (such as read or write) on the attached stream
+     * @param bool|null              $use_include_path
+     * @param array|null             $context_options
+     * @param array|null             $context_params
+     *
      * @todo Does stream_get_meta_data belong in Stream or Resource?
      */
     public function __construct(
@@ -189,8 +195,10 @@ class Resource
         // first, check if we're wrapping an existing stream resource
         if (is_resource($uri)) {
             $this->initWithResource($uri);
+
             return;
         }
+//            throw new InvalidArgumentException("Argument one for " . __METHOD__ . " must be a URI or a stream resource.");
 
         // ok we're opening a new stream resource handle
         $this->setUri($uri)
@@ -204,33 +212,7 @@ class Resource
     }
 
     /**
-     * Initialize resource with PHP resource variable.
-     *
-     * Uses a PHP resource variable to initialize this class.
-     *
-     * @param resource $handle The stream resource to initialize
-     * @return bool
-     */
-    protected function initWithResource($handle)
-    {
-        if (($resource_type = get_resource_type($handle)) != ($exp_resource_type = "stream")) {
-            throw new InvalidArgumentException(sprintf(
-                'Invalid stream resource type for %s, expected "%s", got: "%s"',
-                __METHOD__,
-                $exp_resource_type,
-                $resource_type
-            ));
-        }
-        // set all this manually
-        $meta = stream_get_meta_data($handle);
-        $this->setUri($meta['uri'])
-            ->setMode($meta['mode']);
-        $this->conn = $handle;
-        return true;
-    }
-
-    /**
-     * Class destructor
+     * Class destructor.
      */
     public function __destruct()
     {
@@ -255,16 +237,17 @@ class Resource
      * File open is (by default) delayed until the user explicitly calls connect()
      * or they request the resource handle with getHandle().
      *
-     * @return boolean True if connection was successful
      * @throws \CSVelte\Exception\IOException if connection fails
+     *
+     * @return bool True if connection was successful
      */
     public function connect()
     {
         if (!$this->isConnected()) {
-            $e = null;
+            $e          = null;
             $errhandler = function () use (&$e) {
                 $e = new IOException(sprintf(
-                    "Could not open connection for %s using mode %s",
+                    'Could not open connection for %s using mode %s',
                     $this->getUri(),
                     $this->getMode()
                 ), IOException::ERR_STREAM_CONNECTION_FAILED);
@@ -277,8 +260,11 @@ class Resource
                 $this->getContext()
             );
             restore_error_handler();
-            if ($e) throw $e;
+            if ($e) {
+                throw $e;
+            }
         }
+
         return $this->isConnected();
     }
 
@@ -287,7 +273,7 @@ class Resource
      *
      * Close the connection to this stream (if open).
      *
-     * @return boolean|null Whether close was successful, or null if already closed
+     * @return bool|null Whether close was successful, or null if already closed
      */
     public function disconnect()
     {
@@ -305,9 +291,12 @@ class Resource
      * If you try to set the URI on an open resource, an IOException will be thrown
      *
      * @param string $uri The URI for this stream resource to open
-     * @return $this
-     * @throws \InvalidArgumentException if not a valid stream uri
+     *
+     * @throws \InvalidArgumentException      if not a valid stream uri
      * @throws \CSVelte\Exception\IOException if stream has already been opened
+     *
+     * @return $this
+     *
      * @todo I'm pretty sure that the parse_url function is too restrictive. It
      *     will reject URIs that are perfectly valid.
      */
@@ -315,7 +304,11 @@ class Resource
     {
         $this->assertNotConnected(__METHOD__);
 
-        if (is_object($uri) && !method_exists($uri, '__toString')) {
+        if (is_object($uri) && method_exists($uri, '__toString')) {
+            $uri = (string) $uri;
+        }
+
+        if (!is_string($uri)) {
             throw new InvalidArgumentException(sprintf(
                 'Not a valid stream uri, expected "string", got: "%s"',
                 gettype($uri)
@@ -325,6 +318,7 @@ class Resource
         $uri = (string) $uri;
         if (parse_url($uri)) {
             $this->uri = $uri;
+
             return $this;
         }
     }
@@ -338,18 +332,24 @@ class Resource
      * merciless theft of their code is alright.
      *
      * @param string $mode A 1-3 character string determining open mode
-     * @return $this
-     * @throws \InvalidArgumentException if not a valid stream access mode
+     *
+     * @throws \InvalidArgumentException      if not a valid stream access mode
      * @throws \CSVelte\Exception\IOException if stream has already been opened
+     *
+     * @return $this
+     *
      * @see http://php.net/manual/en/function.fopen.php
      * @see https://github.com/binsoul/io-stream/blob/master/src/AccessMode.php
      * @see https://raw.githubusercontent.com/guzzle/streams/master/src/Stream.php
+     *
      * @todo convert $mode to lower case and test it
      */
     public function setMode($mode = null)
     {
         $this->assertNotConnected(__METHOD__);
-        if (is_null($mode)) $mode = "r+b";
+        if (is_null($mode)) {
+            $mode = 'r+b';
+        }
 
         $mode = substr($mode, 0, 3);
         $rest = substr($mode, 1);
@@ -368,27 +368,14 @@ class Resource
     }
 
     /**
-     * Update access parameters.
-     *
-     * After changing any of the access mode parameters, this method must be
-     * called in order for readable and writable to stay accurate.
-     *
-     * @return $this
-     */
-    protected function updateAccess()
-    {
-        $this->readable = isset(self::$readWriteHash['read'][$this->getMode()]);
-        $this->writable = isset(self::$readWriteHash['write'][$this->getMode()]);
-        return $this;
-    }
-
-    /**
      * Set base access mode character.
      *
      * @param string $base The base mode character (must be one of "rwaxc")
-     * @return $this
-     * @throws \InvalidArgumentException If passed invalid base char
+     *
+     * @throws \InvalidArgumentException      If passed invalid base char
      * @throws \CSVelte\Exception\IOException if stream has already been opened
+     *
+     * @return $this
      */
     public function setBaseMode($base)
     {
@@ -397,29 +384,35 @@ class Resource
             throw new InvalidArgumentException("\"{$base}\" is not a valid base stream access mode.");
         }
         $this->base = $base;
+
         return $this->updateAccess();
     }
 
     /**
      * Set plus mode.
      *
-     * @param boolean $isPlus Whether base access mode should include the + sign
-     * @return $this
+     * @param bool $isPlus Whether base access mode should include the + sign
+     *
      * @throws \CSVelte\Exception\IOException if stream has already been opened
+     *
+     * @return $this
      */
     public function setIsPlus($isPlus)
     {
         $this->assertNotConnected(__METHOD__);
         $this->plus = $isPlus ? '+' : '';
+
         return $this->updateAccess();
     }
 
     /**
      * Set binary-safe mode.
      *
-     * @param boolean $isBinary Whether binary safe mode or not
-     * @return $this
+     * @param bool $isBinary Whether binary safe mode or not
+     *
      * @throws \CSVelte\Exception\IOException if stream has already been opened
+     *
+     * @return $this
      */
     public function setIsBinary($isBinary)
     {
@@ -427,15 +420,18 @@ class Resource
         if ($isBinary) {
             $this->flag = 'b';
         }
+
         return $this;
     }
 
     /**
      * Set text mode.
      *
-     * @param boolean $isText Whether text mode or not
-     * @return $this
+     * @param bool $isText Whether text mode or not
+     *
      * @throws \CSVelte\Exception\IOException if stream has already been opened
+     *
+     * @return $this
      */
     public function setIsText($isText)
     {
@@ -443,22 +439,7 @@ class Resource
         if ($isText) {
             $this->flag = 't';
         }
-        return $this;
-    }
 
-    /**
-     * Set lazy flag.
-     *
-     * Set the lazy flag, which tells the class whether to defer the connection
-     * until the user specifically requests it.
-     *
-     * @param boolean|null Whether or not to "lazily" open the stream
-     * @return $this
-     */
-    protected function setLazy($lazy)
-    {
-        if (is_null($lazy)) $lazy = true;
-        $this->lazy = (boolean) $lazy;
         return $this;
     }
 
@@ -469,14 +450,17 @@ class Resource
      * only be set if resource isn't open already. If called when resource is
      * already open an exception will be thrown.
      *
-     * @param boolean $use_include_path Whether to search include path for files
+     * @param bool $use_include_path Whether to search include path for files
+     *
      * @throws \CSVelte\Exception\IOException
+     *
      * @return $this
      */
     public function setUseIncludePath($use_include_path)
     {
         $this->assertNotConnected(__METHOD__);
-        $this->useIncludePath = (boolean) $use_include_path;
+        $this->useIncludePath = (bool) $use_include_path;
+
         return $this;
     }
 
@@ -488,7 +472,9 @@ class Resource
      *
      * @param array|null $options Stream context options
      * @param array|null $params  Stream Context params
+     *
      * @return $this
+     *
      * @see http://php.net/manual/en/stream.contexts.php
      */
     public function setContext($options = null, $params = null)
@@ -501,22 +487,27 @@ class Resource
         if (!is_null($params)) {
             $this->setContextParams($params);
         }
+
         return $this;
     }
 
     /**
-     * Set context resource directly
+     * Set context resource directly.
+     *
      * @param resource|null $context Stream context resource to set directly
+     *
      * @return $this
+     *
      * @see http://php.net/manual/en/function.stream-context-create.php
+     *
      * @todo Need to write a unit test for passing this method a null value
      */
     public function setContextResource($context)
     {
         if (!is_null($context)) {
-            if (!is_resource($context) || get_resource_type($context) != "stream-context") {
+            if (!is_resource($context) || get_resource_type($context) != 'stream-context') {
                 throw new InvalidArgumentException(sprintf(
-                    "Invalid argument for %s. Expecting resource of type \"stream-context\" but got: \"%s\"",
+                    'Invalid argument for %s. Expecting resource of type "stream-context" but got: "%s"',
                     __METHOD__,
                     gettype($context)
                 ));
@@ -524,30 +515,7 @@ class Resource
             // don't need to call updateContext() because its already a context resource
             $this->crh = $context;
         }
-        return $this;
-    }
 
-    /**
-     * Update the stream context.
-     *
-     * After setting/updating stream context options and/or params, this method
-     * must be called in order to update the stream context resource.
-     *
-     * @return $this
-     */
-    protected function updateContext()
-    {
-        // if already connected, set the options on the context resource
-        // otherwise, it will be set at connection time
-        if ($this->isConnected()) {
-            // set options and params on existing stream resource
-            stream_context_set_params(
-                $this->getContext(),
-                $this->getContextParams() + [
-                    'options' => $this->getContextOptions()
-                ]
-            );
-        }
         return $this;
     }
 
@@ -556,12 +524,15 @@ class Resource
      *
      * Sets stream context options for this stream resource.
      *
-     * @param array $options An array of stream context options
+     * @param array  $options An array of stream context options
      * @param string $wrapper The wrapper these options belong to (if no wrapper
-     *     argument, then $options should be an associative array with key being
-     *     a wrapper name and value being its options)
-     * @return $this
+     *                        argument, then $options should be an associative array with key being
+     *                        a wrapper name and value being its options)
+     *
      * @throws \InvalidArgumentException if passed invalid options or wrapper
+     *
+     * @return $this
+     *
      * @see http://php.net/manual/en/stream.contexts.php
      */
     public function setContextOptions($options, $wrapper = null)
@@ -574,9 +545,10 @@ class Resource
                 $this->context['options'][$wrapper] = $options;
             }
             $this->updateContext();
+
             return $this;
         }
-        throw new InvalidArgumentException("Context options must be an array, got: " . gettype($options));
+        throw new InvalidArgumentException('Context options must be an array, got: ' . gettype($options));
     }
 
     /**
@@ -585,8 +557,11 @@ class Resource
      * Set the context params for this stream resource.
      *
      * @param array $params An array of stream resource params
-     * @return $this
+     *
      * @throws \InvalidArgumentException if passed invalid params
+     *
+     * @return $this
+     *
      * @see http://php.net/manual/en/stream.contexts.php
      */
     public function setContextParams($params)
@@ -594,9 +569,10 @@ class Resource
         if (is_array($params)) {
             $this->context['params'] = $params;
             $this->updateContext();
+
             return $this;
         }
-        throw new InvalidArgumentException("Context parameters must be an array, got: " . gettype($params));
+        throw new InvalidArgumentException('Context parameters must be an array, got: ' . gettype($params));
     }
 
     /**
@@ -605,9 +581,11 @@ class Resource
      * Returns the stream context options for this stream resource. Either all
      * options for all wrappers, or just the options for the specified wrapper.
      *
-     * @param  string $wrapper If present, return options only for this wrapper
-     * @return array Context options (either all or for specified wrapper)
+     * @param string $wrapper If present, return options only for this wrapper
+     *
      * @throws \InvalidArgumentException if the wrapper doesn't exist
+     *
+     * @return array Context options (either all or for specified wrapper)
      */
     public function getContextOptions($wrapper = null)
     {
@@ -634,6 +612,7 @@ class Resource
 
     /**
      * Get stream context resource.
+     *
      * @return resource|null The stream context resource
      */
     public function getContext()
@@ -657,14 +636,16 @@ class Resource
      * call the connect() method, it is possible that it may throw an exception
      * if there is some issue with opening the stream.
      *
-     * @return resource The underlying stream resource handle
      * @throws \CSVelte\Exception\IOException
+     *
+     * @return resource The underlying stream resource handle
      */
     public function getHandle()
     {
         if (!$this->isConnected() && $this->isLazy()) {
             $this->connect();
         }
+
         return $this->conn;
     }
 
@@ -673,7 +654,7 @@ class Resource
      *
      * Tells you whether this stream resource is open or not.
      *
-     * @return boolean Whether the stream is open
+     * @return bool Whether the stream is open
      */
     public function isConnected()
     {
@@ -699,12 +680,13 @@ class Resource
      * that you would pass to the fopen function to tell it how to open a file/stream
      *
      * @return string The file/stream access mode
+     *
      * @see http://php.net/manual/en/function.fopen.php
      */
     public function getMode()
     {
         return sprintf(
-            "%s%s%s",
+            '%s%s%s',
             $this->base,
             $this->plus,
             $this->flag
@@ -713,25 +695,28 @@ class Resource
 
     /**
      * Is access mode binary-safe?
-     * @return boolean Whether binary-safe flag is set
+     *
+     * @return bool Whether binary-safe flag is set
      */
     public function isBinary()
     {
-        return $this->flag == "b";
+        return $this->flag == 'b';
     }
 
     /**
      * Is stream connected in text mode?
-     * @return boolean Whether text mode flag is set
+     *
+     * @return bool Whether text mode flag is set
      */
     public function isText()
     {
-        return $this->flag == "t";
+        return $this->flag == 't';
     }
 
     /**
      * Is this a lazy open resource?
-     * @return boolean Whether this is a lazily-opened resource
+     *
+     * @return bool Whether this is a lazily-opened resource
      */
     public function isLazy()
     {
@@ -740,7 +725,8 @@ class Resource
 
     /**
      * Should fopen search include path?
-     * @return boolean Whether fopen should search include path for files
+     *
+     * @return bool Whether fopen should search include path for files
      */
     public function getUseIncludePath()
     {
@@ -755,7 +741,7 @@ class Resource
      * whether or not the underlying stream actually supports read operations.
      * It simply refers to the access mode string passed to it by the user.
      *
-     * @return boolean Whether access mode indicates readability
+     * @return bool Whether access mode indicates readability
      */
     public function isReadable()
     {
@@ -770,7 +756,7 @@ class Resource
      * whether or not the underlying stream actually supports write operations.
      * It simply refers to the access mode string passed to it by the user.
      *
-     * @return boolean Whether access mode indicates writability
+     * @return bool Whether access mode indicates writability
      */
     public function isWritable()
     {
@@ -783,7 +769,7 @@ class Resource
      * Returns true if this stream resource's access mode positions the internal
      * cursor at the beginning of the stream.
      *
-     * @return boolean Whether cursor positioned at beginning of stream
+     * @return bool Whether cursor positioned at beginning of stream
      */
     public function isCursorPositionedAtBeginning()
     {
@@ -796,7 +782,7 @@ class Resource
      * Returns true if this stream resource's access mode positions the internal
      * cursor at the end of the stream.
      *
-     * @return boolean Whether cursor positioned at end of stream
+     * @return bool Whether cursor positioned at end of stream
      */
     public function isCursorPositionedAtEnd()
     {
@@ -809,7 +795,7 @@ class Resource
      * Returns true if this stream resource's access mode indicates truncation of
      * stream content to zero-length upon opening.
      *
-     * @return boolean Whether stream content is truncated on opening
+     * @return bool Whether stream content is truncated on opening
      */
     public function isTruncated()
     {
@@ -822,7 +808,7 @@ class Resource
      * Returns true if this stream's access mode implies that PHP will attempt to
      * create a file if none exists.
      *
-     * @return boolean Whether PHP should attempt to create file at $uri
+     * @return bool Whether PHP should attempt to create file at $uri
      */
     public function attemptsFileCreation()
     {
@@ -835,7 +821,7 @@ class Resource
      * Returns true if this stream's access mode implies that PHP will fail to
      * open a file if it already exists.
      *
-     * @return boolean Whether PHP should attempt to create file at $uri
+     * @return bool Whether PHP should attempt to create file at $uri
      */
     public function rejectsExistingFiles()
     {
@@ -848,11 +834,101 @@ class Resource
      * Returns true if write operations are appended to the end of the stream
      * regardless of the position of the read cursor.
      *
-     * @return boolean Whether write operations ore always appended
+     * @return bool Whether write operations ore always appended
      */
     public function appendsWriteOps()
     {
         return $this->base == 'w';
+    }
+
+    /**
+     * Initialize resource with PHP resource variable.
+     *
+     * Uses a PHP resource variable to initialize this class.
+     *
+     * @param resource $handle The stream resource to initialize
+     *
+     * @return bool
+     */
+    protected function initWithResource($handle)
+    {
+        if (($resource_type = get_resource_type($handle)) != ($exp_resource_type = 'stream')) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid stream resource type for %s, expected "%s", got: "%s"',
+                __METHOD__,
+                $exp_resource_type,
+                $resource_type
+            ));
+        }
+        // set all this manually
+        $meta = stream_get_meta_data($handle);
+        $this->setUri($meta['uri'])
+            ->setMode($meta['mode']);
+        $this->conn = $handle;
+
+        return true;
+    }
+
+    /**
+     * Update access parameters.
+     *
+     * After changing any of the access mode parameters, this method must be
+     * called in order for readable and writable to stay accurate.
+     *
+     * @return $this
+     */
+    protected function updateAccess()
+    {
+        $this->readable = isset(self::$readWriteHash['read'][$this->getMode()]);
+        $this->writable = isset(self::$readWriteHash['write'][$this->getMode()]);
+
+        return $this;
+    }
+
+    /**
+     * Set lazy flag.
+     *
+     * Set the lazy flag, which tells the class whether to defer the connection
+     * until the user specifically requests it.
+     *
+     * @param bool|null Whether or not to "lazily" open the stream
+     * @param mixed $lazy
+     *
+     * @return $this
+     */
+    protected function setLazy($lazy)
+    {
+        if (is_null($lazy)) {
+            $lazy = true;
+        }
+        $this->lazy               = (bool) $lazy;
+
+        return $this;
+    }
+
+    /**
+     * Update the stream context.
+     *
+     * After setting/updating stream context options and/or params, this method
+     * must be called in order to update the stream context resource.
+     *
+     * @return $this
+     */
+    protected function updateContext()
+    {
+        // if already connected, set the options on the context resource
+        // otherwise, it will be set at connection time
+        if ($this->isConnected()) {
+            // set options and params on existing stream resource
+            stream_context_set_params(
+                $this->getContext(),
+                $this->getContextParams() + [
+                    'options' => $this->getContextOptions(),
+                ]
+            );
+        }
+
+        return $this;
     }
 
     /**
@@ -861,7 +937,8 @@ class Resource
      * Used internally to ensure that stream is not open, since some methods should
      * only be called on unopened stream resources.
      *
-     * @param  string $method The method that is asserting
+     * @param string $method The method that is asserting
+     *
      * @throws IOException if stream is open
      */
     protected function assertNotConnected($method)
@@ -872,11 +949,12 @@ class Resource
     }
 
     /**
-     * Assert that given wrapper is a valid, registered stream wrapper
+     * Assert that given wrapper is a valid, registered stream wrapper.
      *
      * Used internally to ensure that a given stream wrapper is valid and available
      *
-     * @param  string $name The name of the stream wrapper
+     * @param string $name The name of the stream wrapper
+     *
      * @throws \InvalidArgumentException if wrapper doesn't exist
      */
     protected function assertValidWrapper($name)
@@ -885,5 +963,4 @@ class Resource
             throw new InvalidArgumentException("{$name} is not a known stream wrapper.");
         }
     }
-
 }

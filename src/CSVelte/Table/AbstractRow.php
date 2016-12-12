@@ -1,34 +1,37 @@
 <?php
-/**
+
+/*
  * CSVelte: Slender, elegant CSV for PHP
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   v0.2.1
+ * @version   {version}
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
 namespace CSVelte\Table;
 
-use CSVelte\Collection;
-use \Iterator;
-use \Countable;
-use \ArrayAccess;
-
-use \InvalidArgumentException;
+use ArrayAccess;
+use Countable;
+use CSVelte\Collection\AbstractCollection;
 use CSVelte\Exception\ImmutableException;
+
+use InvalidArgumentException;
+use Iterator;
 
 use function CSVelte\collect;
 
 /**
  * Table row abstract base class
- * Represents a row of tabular data (represented by CSVelte\Table\Data objects)
+ * Represents a row of tabular data (represented by CSVelte\Table\Data objects).
  *
  * @package CSVelte
  * @subpackage CSVelte\Table
+ *
  * @since v0.1
+ *
  * @todo On all of the ArrayAccess methods, the docblocks say that $offset can be
  *     either an integer offset or a string index, but that isn't true, they must
  *     be an integer offset. Fix docblocks.
@@ -36,21 +39,24 @@ use function CSVelte\collect;
 abstract class AbstractRow implements Iterator, Countable, ArrayAccess
 {
     /**
-     * An collection of fields for this row
-     * @var Collection
+     * An collection of fields for this row.
+     *
+     * @var AbstractCollection
      */
     protected $fields;
 
     /**
-     * Iterator position
+     * Iterator position.
+     *
      * @var int
      */
     protected $position;
 
     /**
-     * Class constructor
+     * Class constructor.
      *
      * @param array|Iterator An array (or anything that looks like one) of data (fields)
+     * @param mixed $fields
      */
     public function __construct($fields)
     {
@@ -59,30 +65,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     }
 
     /**
-     * Set the row fields.
-     *
-     * Using either an array or iterator, set the fields for this row.
-     *
-     * @param array|Iterator $fields An array or iterator with the row's fields
-     * @return $this
-     */
-    protected function setFields($fields)
-    {
-        if (!is_array($fields)) {
-            if (is_object($fields) && method_exists($fields, 'toArray')) {
-                $fields = $fields->toArray();
-            } elseif ($fields instanceof Iterator) {
-                $fields = iterator_to_array($fields);
-            } else {
-                throw new InvalidArgumentException(__CLASS__ . " requires an array, got: " . gettype($fields));
-            }
-        }
-        $this->fields = collect(array_values($fields));
-        return $this;
-    }
-
-    /**
-     * Return a string representation of this object
+     * Return a string representation of this object.
      *
      * @return string
      */
@@ -92,9 +75,11 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     }
 
     /**
-     * Join fields together using specified delimiter
+     * Join fields together using specified delimiter.
      *
      * @param string The delimiter character
+     * @param mixed $delimiter
+     *
      * @return string
      */
     public function join($delimiter = ',')
@@ -103,7 +88,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     }
 
     /**
-     * Convert object to an array
+     * Convert object to an array.
      *
      * @return array representation of the object
      */
@@ -112,22 +97,22 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
         return $this->fields->toArray();
     }
 
-    /** Begin SPL Countable Interface Method **/
+    // Begin SPL Countable Interface Method
 
     /**
-     * Count fields within the row
+     * Count fields within the row.
      *
-     * @return integer The amount of fields
+     * @return int The amount of fields
      */
     public function count()
     {
         return count($this->fields);
     }
 
-    /** Begin SPL Iterator Interface Methods **/
+    // Begin SPL Iterator Interface Methods
 
     /**
-     * Get the current column's data object
+     * Get the current column's data object.
      *
      * @return string
      */
@@ -137,31 +122,34 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     }
 
     /**
-     * Get the current key (column number or header, if available)
+     * Get the current key (column number or header, if available).
      *
      * @return string The "current" key
+     *
      * @todo Figure out if this can return a CSVelte\Table\HeaderData object so long as it
      *     has a __toString() method that generated the right key...
      */
     public function key()
     {
-        return $this->position;
+        return $this->fields->getKeyAtPosition($this->position);
     }
 
     /**
      * Advance the internal pointer to the next column's data object
-     * Also returns the next column's data object if there is one
+     * Also returns the next column's data object if there is one.
      *
      * @return mixed The "next" column's data
      */
     public function next()
     {
         $this->position++;
-        if ($this->valid()) return $this->current();
+        if ($this->valid()) {
+            return $this->current();
+        }
     }
 
     /**
-     * Return the internal pointer to the first column and return that object
+     * Return the internal pointer to the first column and return that object.
      *
      * @return null|mixed|AbstractRow
      */
@@ -176,43 +164,45 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * Is the current position within the row's data fields valid?
      *
-     * @return boolean
+     * @return bool
      */
     public function valid()
     {
         return $this->fields->hasPosition($this->position);
     }
 
-    /** Begin SPL ArrayAccess Methods **/
+    // Begin SPL ArrayAccess Methods
 
     /**
-     * Is there an offset at specified position
+     * Is there an offset at specified position.
      *
      * @param mixed $offset The offset to check existence of
+     *
      * @return bool
-     * @internal param Offset $integer
      */
     public function offsetExists($offset)
     {
-        return $this->fields->hasPosition($offset);
+        return $this->fields->offsetExists($offset);
     }
 
     /**
-     * Retrieve offset at specified position or by header name
+     * Retrieve offset at specified position or by header name.
      *
      * @param mixed $offset The offset to get
+     *
      * @return mixed The data at the specified position
      */
     public function offsetGet($offset)
     {
-        return $this->fields->getValueAtPosition($offset);
+        return $this->fields->offsetGet($offset);
     }
 
     /**
-     * Set offset at specified position
+     * Set offset at specified position.
      *
      * @param mixed $offset The array offset to set
-     * @param mixed $value The value to set $offset to
+     * @param mixed $value  The value to set $offset to
+     *
      * @throws ImmutableException
      */
     public function offsetSet($offset, $value)
@@ -222,10 +212,12 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     }
 
     /**
-     * Unset offset at specified position/index
+     * Unset offset at specified position/index.
      *
      * @param mixed $offset The offset to unset
+     *
      * @throws ImmutableException
+     *
      * @todo I'm not sure if these objects will stay immutable or not yet...
      */
     public function offsetUnset($offset)
@@ -234,9 +226,35 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     }
 
     /**
-     * Raise (throw) immutable exception
+     * Set the row fields.
+     *
+     * Using either an array or iterator, set the fields for this row.
+     *
+     * @param array|Iterator $fields An array or iterator with the row's fields
+     *
+     * @return $this
+     */
+    protected function setFields($fields)
+    {
+        if (!is_array($fields)) {
+            if (is_object($fields) && method_exists($fields, 'toArray')) {
+                $fields = $fields->toArray();
+            } elseif ($fields instanceof Iterator) {
+                $fields = iterator_to_array($fields);
+            } else {
+                throw new InvalidArgumentException(__CLASS__ . ' requires an array, got: ' . gettype($fields));
+            }
+        }
+        $this->fields = collect($fields)->values();
+
+        return $this;
+    }
+
+    /**
+     * Raise (throw) immutable exception.
      *
      * @param string $msg The message to pass to the exception
+     *
      * @throws ImmutableException
      */
     protected function raiseImmutableException($msg = null)

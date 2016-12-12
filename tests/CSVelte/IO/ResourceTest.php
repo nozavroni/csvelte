@@ -1,8 +1,10 @@
 <?php
 namespace CSVelteTest\IO;
 
+use CSVelte\Exception\IOException;
 use CSVelte\IO\Stream;
-use CSVelte\IO\Resource;
+use CSVelte\IO\StreamResource;
+use InvalidArgumentException;
 
 /**
  * CSVelte\IO\Stream Tests.
@@ -18,7 +20,7 @@ class ResourceTest extends IOTest
 {
     public function testInstantiateStreamResource()
     {
-        $sr = new Resource($this->getFilePathFor('veryShort'));
+        $sr = new StreamResource($this->getFilePathFor('veryShort'));
         $this->assertEquals($this->getFilePathFor('veryShort'), $sr->getUri());
         $this->assertEquals("r+b", $sr->getMode());
         $this->assertTrue($sr->isLazy());
@@ -34,7 +36,7 @@ class ResourceTest extends IOTest
 
     public function testOpenAndCloseResource()
     {
-        $sr = new Resource($this->getFilePathFor('veryShort'));
+        $sr = new StreamResource($this->getFilePathFor('veryShort'));
         $this->assertFalse($sr->isConnected());
         $this->assertTrue($sr->connect());
         $this->assertTrue($sr->isConnected());
@@ -45,7 +47,7 @@ class ResourceTest extends IOTest
 //        $stub = $this->createMock(Stream::class)
 //            ->method('__toString')
 //            ->willReturn($expected = 'php://temp');
-//        $resource = new Resource('php://input');
+//        $resource = new StreamResource('php://input');
 //        dd($stub->__toString());
 //        $resource->setUri($stub);
 //        $this->assertEquals($expected, $resource->getUri());
@@ -59,7 +61,7 @@ class ResourceTest extends IOTest
         $or = stream_context_create([
             'foo' => ['bar' => 'this is a context resource']
         ]);
-        $sr = new Resource($or);
+        $sr = new StreamResource($or);
     }
 
     /**
@@ -68,7 +70,7 @@ class ResourceTest extends IOTest
      */
     public function testInstantiateStreamResourceWithBadUriThrowsException()
     {
-        $sr = new Resource("I am not a uri", null, false);
+        $sr = new StreamResource("I am not a uri", null, false);
     }
 
     /**
@@ -77,7 +79,7 @@ class ResourceTest extends IOTest
      */
     public function testConnectStreamResourceWithBadUriThrowsException()
     {
-        $sr = new Resource("I am not a uri");
+        $sr = new StreamResource("I am not a uri");
         $this->assertFalse($sr->isConnected());
         $sr->connect();
     }
@@ -88,14 +90,30 @@ class ResourceTest extends IOTest
      */
     public function testgetHandleStreamResourceWithBadUriThrowsException()
     {
-        $sr = new Resource("I am not a uri");
+        $sr = new StreamResource("I am not a uri");
         $this->assertFalse($sr->isConnected());
         $sr->getHandle();
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testInstantiateStreamResourceWithNonStringNonStreamResourceThrowsException()
+    {
+        $sr = new StreamResource(false);
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetInvalidBaseModeThrowsException()
+    {
+        $sr = new StreamResource($this->getFilePathFor('veryShort'), 'luke');
+    }
+
     public function testInstantiateALazyResource()
     {
-        $sr = new Resource($this->getFilePathFor('veryShort'), null, true);
+        $sr = new StreamResource($this->getFilePathFor('veryShort'), null, true);
         $this->assertFalse($sr->isConnected());
         $this->assertTrue(is_resource($sr->getHandle()));
         $this->assertTrue($sr->isConnected());
@@ -103,7 +121,7 @@ class ResourceTest extends IOTest
 
     public function testModeFlags()
     {
-        $sr = new Resource($this->getFilePathFor('veryShort'), null, true);
+        $sr = new StreamResource($this->getFilePathFor('veryShort'), null, true);
         $this->assertEquals("r+b", $sr->getMode());
         $this->assertTrue($sr->isBinary());
         $this->assertFalse($sr->isText());
@@ -111,7 +129,7 @@ class ResourceTest extends IOTest
 
     public function testInstantiateVariousModes()
     {
-        $sr = new Resource($this->getFilePathFor('veryShort'), null, true);
+        $sr = new StreamResource($this->getFilePathFor('veryShort'), null, true);
         $this->assertEquals("r+b", $sr->getMode());
         $this->assertTrue($sr->isReadable());
         $this->assertTrue($sr->isWritable());
@@ -160,7 +178,7 @@ class ResourceTest extends IOTest
         $expContextParams = [
             "notification" => "stream_notification_callback"
         ];
-        $res = new Resource('http://www.example.com/');
+        $res = new StreamResource('http://www.example.com/');
         $res->setContext($expContextOptions, $expContextParams);
         $res->connect();
         $meta = stream_get_meta_data($res->getHandle());
@@ -177,7 +195,7 @@ class ResourceTest extends IOTest
     // @todo there should be addContextOptions() to add rather than overwrite
     public function testSetOptsAndParamsOnOpenConnectionAndThenChangeThemLater()
     {
-        $res = new Resource(
+        $res = new StreamResource(
             $uri = "http://www.example.com/data/foo.csv",
             $mode = 'rb',
             $lazy = false,
@@ -200,7 +218,7 @@ class ResourceTest extends IOTest
 
     public function testSetContextAfterInstantiationUsingContextResource()
     {
-        $res = new Resource(
+        $res = new StreamResource(
             $uri = "http://www.example.com/data/foo.csv",
             $mode = 'rb'
         );
@@ -216,7 +234,7 @@ class ResourceTest extends IOTest
      */
     public function testSetContextResourceWithInvalidTypeThrowsException()
     {
-        $res = new Resource(
+        $res = new StreamResource(
             $uri = "http://www.example.com/data/foo.csv",
             $mode = 'rb'
         );
@@ -231,19 +249,19 @@ class ResourceTest extends IOTest
      */
     public function testSetContextResourceWithInvalidResourceTypeThrowsException()
     {
-        $res = new Resource(
+        $res = new StreamResource(
             $uri = "http://www.example.com/data/foo.csv",
             $mode = 'rb'
         );
-        $context_options = ['http' => ['method' => 'POST']];
-        $context_params = ['notification' => 'some_func_callback'];
-        $context_resource = stream_context_create($context_options, $context_params);
+        // $context_options = ['http' => ['method' => 'POST']];
+        // $context_params = ['notification' => 'some_func_callback'];
+        // $context_resource = stream_context_create($context_options, $context_params);
         $res->setContextResource($res->getHandle());
     }
 
     public function testUseResourceAsFunctionReturnsStreamObjectForResource()
     {
-        $res = new Resource(
+        $res = new StreamResource(
             $uri = "http://www.example.com/data/foo.csv",
             $mode = 'rb'
         );
@@ -264,12 +282,12 @@ class ResourceTest extends IOTest
             stream_context_create(['http' => ['method' => 'POST']])
         );
         // this is going to have to work like this...
-        // $resource = Resource::factory($rh);
+        // $resource = StreamResource::factory($rh);
         // or maybe...
-        // $resource = Resource::wrap($handle); // winner! nevermind...
-        // $resource = Resource::accept($handle);
-        // $resource = Resource::adopt($handle);
-        $resource = new Resource($handle);
+        // $resource = StreamResource::wrap($handle); // winner! nevermind...
+        // $resource = StreamResource::accept($handle);
+        // $resource = StreamResource::adopt($handle);
+        $resource = new StreamResource($handle);
         // php://output, apparently, automatically changes this
         $this->assertEquals('wb', $resource->getMode());
         $this->assertTrue($resource->isWritable());
