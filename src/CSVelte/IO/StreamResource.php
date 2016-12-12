@@ -174,7 +174,7 @@ class StreamResource
      * Instantiates a stream resource. If lazy is set to true, the connection
      * is delayed until the first call to getResource().
      *
-     * @param string|resource $uri              The URI to connect to OR a stream resource handle
+     * @param string|resource|object $uri              The URI to connect to OR a stream resource handle
      * @param string          $mode             The connection mode
      * @param bool            $lazy             Whether connection should be deferred until an I/O
      *                                          operation is requested (such as read or write) on the attached stream
@@ -193,14 +193,12 @@ class StreamResource
         $context_params = null
     ) {
         // first, check if we're wrapping an existing stream resource
-        if (!is_string($uri)) {
-            if (is_resource($uri)) {
-                $this->initWithResource($uri);
+        if (is_resource($uri)) {
+            $this->initWithResource($uri);
 
-                return;
-            }
-            throw new InvalidArgumentException("Argument one for " . __METHOD__ . " must be a URI or a stream resource.");
+            return;
         }
+//            throw new InvalidArgumentException("Argument one for " . __METHOD__ . " must be a URI or a stream resource.");
 
         // ok we're opening a new stream resource handle
         $this->setUri($uri)
@@ -306,7 +304,11 @@ class StreamResource
     {
         $this->assertNotConnected(__METHOD__);
 
-        if (is_object($uri) && !method_exists($uri, '__toString')) {
+        if (is_object($uri) && method_exists($uri, '__toString')) {
+            $uri = (string) $uri;
+        }
+
+        if (!is_string($uri)) {
             throw new InvalidArgumentException(sprintf(
                 'Not a valid stream uri, expected "string", got: "%s"',
                 gettype($uri)
