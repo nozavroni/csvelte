@@ -106,6 +106,15 @@ function stream_resource(
     $context = null,
     $lazy = true
 ) {
+    if (is_array($context)) {
+        if (!isset($context['options'])) {
+            $context['options'] = [];
+        }
+        if (!isset($context['params'])) {
+            $context['params'] = [];
+        }
+        $context = stream_context_create($context['options'], $context['params']);
+    }
     $res = (new StreamResource($uri, $mode, null, true))
         ->setContextResource($context);
     if (!$lazy) {

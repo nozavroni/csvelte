@@ -120,32 +120,6 @@ class TabularCollection extends MultiCollection
         return $this;
     }
 
-//    public function average($column)
-//    {
-//        $coll = $this->getColumnAsCollection($column);
-//        return $coll->sum() / $coll->count();
-//    }
-//
-//    public function mode($column)
-//    {
-//        return $this->getColumnAsCollection($column)->mode();
-//    }
-//
-//    public function sum($column)
-//    {
-//        return $this->getColumnAsCollection($column)->sum();
-//    }
-//
-//    public function median($column)
-//    {
-//        return $this->getColumnAsCollection($column)->median();
-//    }
-//
-//    protected function getColumnAsCollection($column)
-//    {
-//        return static::factory(array_column($this->data, $column));
-//    }
-
     /**
      * Magic method call
      *

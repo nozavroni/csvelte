@@ -178,6 +178,55 @@ class FunctionsTest extends UnitTestCase
         $this->assertEquals($ctxarr, stream_context_get_options($res->getContext()));
     }
 
+    public function testStreamResourceFunctionAcceptsArray()
+    {
+        $res = stream_resource(
+            $this->getFilePathFor('headerDoubleQuote'),
+            'c+b',
+            [
+                'options' => [
+                    'http' => ['method' => 'post']
+                ],
+                'params' => [
+                ]
+            ]
+        );
+        $this->assertInstanceOf(StreamResource::class, $res);
+    }
+
+    public function testStreamResourceFunctionAcceptsArrayWithoutExpectedKeys()
+    {
+        $res = stream_resource(
+            $this->getFilePathFor('headerDoubleQuote'),
+            'c+b',
+            [
+                'params' => [
+                ]
+            ]
+        );
+        $this->assertInstanceOf(StreamResource::class, $res);
+        $res = stream_resource(
+            $this->getFilePathFor('headerDoubleQuote'),
+            'c+b',
+            [
+                'options' => [
+                    'http' => ['method' => 'post']
+                ],
+            ]
+        );
+        $this->assertInstanceOf(StreamResource::class, $res);
+        $this->assertEquals([
+            'http' => [
+                'method' => 'post'
+            ]
+        ], stream_context_get_options($res->getContext()));
+        $res = stream_resource(
+            $this->getFilePathFor('headerDoubleQuote'),
+            'c+b'
+        );
+        $this->assertInstanceOf(StreamResource::class, $res);
+    }
+
     public function testStreamResourceInvokeReturnsAStreamObject()
     {
         $res = stream_resource(

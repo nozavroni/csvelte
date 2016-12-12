@@ -193,10 +193,13 @@ class StreamResource
         $context_params = null
     ) {
         // first, check if we're wrapping an existing stream resource
-        if (is_resource($uri)) {
-            $this->initWithResource($uri);
+        if (!is_string($uri)) {
+            if (is_resource($uri)) {
+                $this->initWithResource($uri);
 
-            return;
+                return;
+            }
+            throw new InvalidArgumentException("Argument one for " . __METHOD__ . " must be a URI or a stream resource.");
         }
 
         // ok we're opening a new stream resource handle

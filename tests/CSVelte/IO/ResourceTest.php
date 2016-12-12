@@ -4,6 +4,7 @@ namespace CSVelteTest\IO;
 use CSVelte\Exception\IOException;
 use CSVelte\IO\Stream;
 use CSVelte\IO\StreamResource;
+use InvalidArgumentException;
 
 /**
  * CSVelte\IO\Stream Tests.
@@ -92,6 +93,14 @@ class ResourceTest extends IOTest
         $sr = new StreamResource("I am not a uri");
         $this->assertFalse($sr->isConnected());
         $sr->getHandle();
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testInstantiateStreamResourceWithNonStringNonStreamResourceThrowsException()
+    {
+        $sr = new StreamResource(false);
     }
 
     public function testInstantiateALazyResource()
