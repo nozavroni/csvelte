@@ -2,7 +2,7 @@
 namespace CSVelteTest;
 
 use CSVelte\Flavor;
-use CSVelte\IO\Resource;
+use CSVelte\IO\StreamResource;
 use CSVelte\IO\Stream;
 use \SplFileObject;
 use function
@@ -171,11 +171,60 @@ class FunctionsTest extends UnitTestCase
                 'vfs' => ['foo' => 'bar']
             ])
         );
-        $this->assertInstanceOf(Resource::class, $res);
+        $this->assertInstanceOf(StreamResource::class, $res);
         $this->assertFalse($res->isConnected());
         $this->assertTrue($res->isLazy());
         $this->assertEquals($ctxt, $res->getContext());
         $this->assertEquals($ctxarr, stream_context_get_options($res->getContext()));
+    }
+
+    public function testStreamResourceFunctionAcceptsArray()
+    {
+        $res = stream_resource(
+            $this->getFilePathFor('headerDoubleQuote'),
+            'c+b',
+            [
+                'options' => [
+                    'http' => ['method' => 'post']
+                ],
+                'params' => [
+                ]
+            ]
+        );
+        $this->assertInstanceOf(StreamResource::class, $res);
+    }
+
+    public function testStreamResourceFunctionAcceptsArrayWithoutExpectedKeys()
+    {
+        $res = stream_resource(
+            $this->getFilePathFor('headerDoubleQuote'),
+            'c+b',
+            [
+                'params' => [
+                ]
+            ]
+        );
+        $this->assertInstanceOf(StreamResource::class, $res);
+        $res = stream_resource(
+            $this->getFilePathFor('headerDoubleQuote'),
+            'c+b',
+            [
+                'options' => [
+                    'http' => ['method' => 'post']
+                ],
+            ]
+        );
+        $this->assertInstanceOf(StreamResource::class, $res);
+        $this->assertEquals([
+            'http' => [
+                'method' => 'post'
+            ]
+        ], stream_context_get_options($res->getContext()));
+        $res = stream_resource(
+            $this->getFilePathFor('headerDoubleQuote'),
+            'c+b'
+        );
+        $this->assertInstanceOf(StreamResource::class, $res);
     }
 
     public function testStreamResourceInvokeReturnsAStreamObject()
@@ -187,7 +236,7 @@ class FunctionsTest extends UnitTestCase
                 'vfs' => ['foo' => 'bar']
             ])
         );
-        $this->assertInstanceOf(Resource::class, $res);
+        $this->assertInstanceOf(StreamResource::class, $res);
         $this->assertInstanceOf(Stream::class, $res());
     }
 
@@ -226,13 +275,13 @@ class FunctionsTest extends UnitTestCase
 
     public function testStreamizeAcceptsIOResourceObject()
     {
-        $reg = new Resource($this->getFilePathFor('veryShort'), null, false);
+        $reg = new StreamResource($this->getFilePathFor('veryShort'), null, false);
         $this->assertTrue($reg->isConnected());
         $regstream = streamize($reg);
         $this->assertInstanceOf(Stream::class, $regstream);
         $this->assertTrue($reg->isConnected());
 
-        $lazy = new Resource($this->getFilePathFor('veryShort'), null, true);
+        $lazy = new StreamResource($this->getFilePathFor('veryShort'), null, true);
         $this->assertFalse($lazy->isConnected());
         $lazystream = streamize($lazy);
         $this->assertInstanceOf(Stream::class, $lazystream);

@@ -1,19 +1,19 @@
 <?php
-/**
+
+/*
  * CSVelte: Slender, elegant CSV for PHP
- *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   v0.2.1
+ * @version   {version}
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
  */
 namespace CSVelte;
 
-/**
+/*
  * Library Functions
  *
  * @package CSVelte
@@ -21,13 +21,15 @@ namespace CSVelte;
  * @since v0.2.1
  */
 
-use \Iterator;
-use CSVelte\IO\Stream;
-use CSVelte\IO\Resource;
-use CSVelte\IO\IteratorStream;
 use CSVelte\Contract\Streamable;
+use CSVelte\IO\IteratorStream;
+use CSVelte\IO\Stream;
+use CSVelte\IO\StreamResource;
+use CSVelte\Collection\AbstractCollection;
+use CSVelte\Collection\Collection;
+use InvalidArgumentException;
 
-use \InvalidArgumentException;
+use Iterator;
 
 /**
  * Stream - streams various types of values and objects.
@@ -37,8 +39,11 @@ use \InvalidArgumentException;
  * data from that object.
  *
  * @param mixed $obj The item you want to stream
- * @return Streamable
+ *
  * @throws InvalidArgumentException
+ *
+ * @return Streamable
+ *
  * @since v0.2.1
  */
 function streamize($obj = '')
@@ -47,12 +52,12 @@ function streamize($obj = '')
         return $obj;
     }
 
-    if ($obj instanceof Resource) {
+    if ($obj instanceof StreamResource) {
         return $obj();
     }
 
     if (is_resource($obj) && get_resource_type($obj) == 'stream') {
-        return new Stream(new Resource($obj));
+        return new Stream(new StreamResource($obj));
     }
 
     if ($obj instanceof Iterator) {
@@ -69,27 +74,30 @@ function streamize($obj = '')
             fwrite($res->getHandle(), $obj);
             fseek($res->getHandle(), 0);
         }
+
         return $stream;
     }
 
     throw new InvalidArgumentException(sprintf(
-        "Invalid argument type for %s: %s",
+        'Invalid argument type for %s: %s',
         __FUNCTION__,
         gettype($obj)
     ));
 }
 
 /**
- * Stream resource factory.
+ * StreamResource factory.
  *
  * This method is just a shortcut to create a stream resource object using
  * a stream URI string.
  *
- * @param string $uri A stream URI
- * @param string $mode The access mode string
+ * @param string         $uri     A stream URI
+ * @param string         $mode    The access mode string
  * @param array|resource $context An array or resource with stream context options
- * @param bool $lazy Whether to lazy-open
- * @return $this
+ * @param bool           $lazy    Whether to lazy-open
+ *
+ * @return StreamResource
+ *
  * @since v0.2.1
  */
 function stream_resource(
@@ -98,11 +106,21 @@ function stream_resource(
     $context = null,
     $lazy = true
 ) {
-    $res = (new Resource($uri, $mode, null, true))
+    if (is_array($context)) {
+        if (!isset($context['options'])) {
+            $context['options'] = [];
+        }
+        if (!isset($context['params'])) {
+            $context['params'] = [];
+        }
+        $context = stream_context_create($context['options'], $context['params']);
+    }
+    $res = (new StreamResource($uri, $mode, null, true))
         ->setContextResource($context);
     if (!$lazy) {
         $res->connect();
     }
+
     return $res;
 }
 
@@ -111,11 +129,13 @@ function stream_resource(
  *
  * This method is just a shortcut to create a stream object using a URI.
  *
- * @param string $uri A stream URI to open
- * @param string $mode The access mode string
+ * @param string         $uri     A stream URI to open
+ * @param string         $mode    The access mode string
  * @param array|resource $context An array or stream context resource of options
- * @param bool $lazy Whether to lazy-open
+ * @param bool           $lazy    Whether to lazy-open
+ *
  * @return Stream
+ *
  * @since v0.2.1
  */
 function stream(
@@ -125,6 +145,7 @@ function stream(
     $lazy = true
 ) {
     $res = stream_resource($uri, $mode, $context, $lazy);
+
     return $res();
 }
 
@@ -135,12 +156,15 @@ function stream(
  * to auto-detect "flavor" (formatting attributes).
  *
  * @param Contract\Streamable Any streamable class to analyze
+ *
  * @return Flavor A flavor representing stream's formatting attributes
+ *
  * @since v0.2.1
  */
 function taste(Streamable $str)
 {
     $taster = new Taster($str);
+
     return $taster();
 }
 
@@ -148,13 +172,16 @@ function taste(Streamable $str)
  * Does dataset being streamed by $str have a header row?
  *
  * @param Contract\Streamable $str Stream object
- * @return boolean Whether stream dataset has header
+ *
+ * @return bool Whether stream dataset has header
+ *
  * @since v0.2.1
  */
 function taste_has_header(Streamable $str)
 {
     $taster = new Taster($str);
-    $flv = $taster();
+    $flv    = $taster();
+
     return $taster->lickHeader(
         $flv->delimiter,
         $flv->lineTerminator
@@ -170,13 +197,15 @@ function taste_has_header(Streamable $str)
  * than simply instantiating a Collection object, but for now the two are identical.
  *
  * @param array|Iterator $in Either an array or an iterator of data
- * @return Collection A collection object containing data from $in
+ *
+ * @return AbstractCollection A collection object containing data from $in
+ *
  * @since v0.2.1
- * @see Collection::__construct() (alias)
+ * @see AbstractCollection::__construct() (alias)
  */
 function collect($in = null)
 {
-    return new Collection($in);
+    return Collection::factory($in);
 }
 
 /**
@@ -188,10 +217,29 @@ function collect($in = null)
  *
  * @param callable $callback The callback function to invoke
  * @param array ...$args The args to pass to your callable
+ *
  * @return mixed The result of your invoked callable
+ *
  * @since v0.2.1
  */
-function invoke(Callable $callback, ...$args)
+function invoke(callable $callback, ...$args)
 {
     return $callback(...$args);
+}
+
+/**
+ * Determine if data is traversable.
+ *
+ * Pass in any variable and this function will tell you whether or not it
+ * is traversable. Basically this just means that it is either an array or an iterator.
+ * This function was written simply because I was tired of if statements that checked
+ * whether a variable was an array or a descendant of \Iterator. So I wrote this guy.
+ *
+ * @param mixed $input The variable to determine traversability
+ * 
+ * @return boolean True if $input is an array or an Iterator
+ */
+function is_traversable($input)
+{
+    return (is_array($input) || $input instanceof Iterator);
 }
