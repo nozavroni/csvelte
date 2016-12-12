@@ -103,6 +103,14 @@ class ResourceTest extends IOTest
         $sr = new StreamResource(false);
     }
 
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetInvalidBaseModeThrowsException()
+    {
+        $sr = new StreamResource($this->getFilePathFor('veryShort'), 'luke');
+    }
+
     public function testInstantiateALazyResource()
     {
         $sr = new StreamResource($this->getFilePathFor('veryShort'), null, true);
