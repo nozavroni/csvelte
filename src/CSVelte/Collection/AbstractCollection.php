@@ -953,8 +953,7 @@ abstract class AbstractCollection implements
             is_numeric($data);
     }
 
-    * @param mixed $data
-/** END Iterator methods */
+    /** END Iterator methods */
 
     /**
      * Set collection data.
