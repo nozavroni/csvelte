@@ -112,7 +112,7 @@ abstract class AbstractCollection implements
         return $this->join();
     }
 
-    /** BEGIN ArrayAccess methods */
+    // BEGIN ArrayAccess methods
 
     /**
      * Whether a offset exists.
@@ -167,17 +167,18 @@ abstract class AbstractCollection implements
         $this->delete($offset);
     }
 
-    /** END ArrayAccess methods */
+    // END ArrayAccess methods
 
-    /** BEGIN Countable methods */
+    // BEGIN Countable methods
+
     public function count()
     {
         return count($this->data);
     }
 
-    /** END Countable methods */
+    // END Countable methods
 
-    /** BEGIN Iterator methods */
+    // BEGIN Iterator methods
 
     /**
      * Return the current element.

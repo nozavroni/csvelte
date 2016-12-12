@@ -97,7 +97,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
         return $this->fields->toArray();
     }
 
-    /** Begin SPL Countable Interface Method **/
+    // Begin SPL Countable Interface Method
 
     /**
      * Count fields within the row.
@@ -109,7 +109,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
         return count($this->fields);
     }
 
-    /** Begin SPL Iterator Interface Methods **/
+    // Begin SPL Iterator Interface Methods
 
     /**
      * Get the current column's data object.
@@ -171,7 +171,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
         return $this->fields->hasPosition($this->position);
     }
 
-    /** Begin SPL ArrayAccess Methods **/
+    // Begin SPL ArrayAccess Methods
 
     /**
      * Is there an offset at specified position.
