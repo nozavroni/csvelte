@@ -1,5 +1,4 @@
 <?php
-
 /*
  * CSVelte: Slender, elegant CSV for PHP
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
