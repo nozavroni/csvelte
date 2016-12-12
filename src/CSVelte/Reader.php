@@ -57,7 +57,7 @@ class Reader implements \Iterator
     protected $flavor;
 
     /**
-     * @var Table\Row Row currently loaded into memory
+     * @var Table\Row|null Row currently loaded into memory
      */
     protected $current;
 
@@ -328,7 +328,7 @@ class Reader implements \Iterator
                     }
                 }
             } catch (EndOfFileException $e) {
-                $this->current = false;
+                $this->current = null;
             }
         }
     }
