@@ -1,12 +1,12 @@
 <?php
-/**
+
+/*
  * CSVelte: Slender, elegant CSV for PHP
- *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   v${CSVELTE_DEV_VERSION}
+ * @version   {version}
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
@@ -17,28 +17,28 @@ use function CSVelte\is_traversable;
 
 class MultiCollection extends AbstractCollection
 {
-    protected function isConsistentDataStructure($data)
-    {
-        return static::isMultiDimensional($data);
-    }
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function contains($value, $index = null)
     {
         if (parent::contains($value, $index)) {
             return true;
-        } else {
-            foreach ($this->data as $key => $arr) {
-                if (is_traversable($arr)) {
-                    $coll = static::factory($arr);
-                    if ($coll->contains($value, $index)) {
-                        return true;
-                    }
+        }
+        foreach ($this->data as $key => $arr) {
+            if (is_traversable($arr)) {
+                $coll = static::factory($arr);
+                if ($coll->contains($value, $index)) {
+                    return true;
                 }
             }
         }
+        
         return false;
+    }
+
+    protected function isConsistentDataStructure($data)
+    {
+        return static::isMultiDimensional($data);
     }
 }

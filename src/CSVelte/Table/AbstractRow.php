@@ -171,7 +171,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
         return $this->fields->hasPosition($this->position);
     }
 
-/** Begin SPL ArrayAccess Methods **/
+    /** Begin SPL ArrayAccess Methods **/
 
     /**
      * Is there an offset at specified position.

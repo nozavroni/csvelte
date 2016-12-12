@@ -16,7 +16,6 @@ namespace CSVelte;
 use CSVelte\Collection\AbstractCollection;
 use CSVelte\Collection\CharCollection;
 use CSVelte\Collection\Collection;
-use CSVelte\Collection\MultiCollection;
 use CSVelte\Collection\NumericCollection;
 use CSVelte\Collection\TabularCollection;
 use CSVelte\Contract\Streamable;
@@ -141,7 +140,7 @@ class Taster
     public function __construct(Streamable $input)
     {
         $this->delims = collect([',', "\t", ';', '|', ':', '-', '_', '#', '/', '\\', '$', '+', '=', '&', '@']);
-        $this->input = $input;
+        $this->input  = $input;
         if (!$this->sample = $input->read(self::SAMPLE_SIZE)) {
             throw new TasterException('Invalid input, cannot read sample.', TasterException::ERR_INVALID_SAMPLE);
         }
@@ -234,15 +233,16 @@ class Taster
 
         // callback to build the aforementioned collection
         $buildTypes = function ($line, $line_no) use ($types, $delim, $eol) {
-
-            if ($line_no > 2) return;
-            $line = str_replace(self::PLACEHOLDER_NEWLINE, $eol, $line);
+            if ($line_no > 2) {
+                return;
+            }
+            $line    = str_replace(self::PLACEHOLDER_NEWLINE, $eol, $line);
             $getType = function ($field, $colpos) use ($types, $line, $line_no, $delim) {
-                $field = str_replace(self::PLACEHOLDER_DELIM, $delim, $field);
+                $field     = str_replace(self::PLACEHOLDER_DELIM, $delim, $field);
                 $fieldMeta = [
-                    "value" => $field,
-                    "type" => $this->lickType($this->unQuote($field)),
-                    "length" => strlen($field),
+                    'value'  => $field,
+                    'type'   => $this->lickType($this->unQuote($field)),
+                    'length' => strlen($field),
                 ];
                 // @todo TabularCollection should have a way to set a value using [row,column]
                 try {
@@ -254,7 +254,6 @@ class Taster
                 $types->set($line_no, $row);
             };
             collect(explode($delim, $line))->walk($getType->bindTo($this));
-
         };
 
         collect(explode(
@@ -263,7 +262,7 @@ class Taster
         ))
         ->walk($buildTypes->bindTo($this));
 
-        $hasHeader = new NumericCollection();
+        $hasHeader      = new NumericCollection();
         $possibleHeader = collect($types->shift());
         $types->walk(function (AbstractCollection $row) use ($hasHeader, $possibleHeader) {
             $row->walk(function (AbstractCollection $fieldMeta, $col_no) use ($hasHeader, $possibleHeader) {
@@ -389,7 +388,7 @@ class Taster
             }
         }
         if ($matches) {
-            $qcad = array_intersect_key($matches, array_flip(['quoteChar','delim']));
+            $qcad = array_intersect_key($matches, array_flip(['quoteChar', 'delim']));
             if (!empty($matches['quoteChar']) && !empty($matches['delim'])) {
                 try {
                     return [
