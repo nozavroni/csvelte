@@ -112,8 +112,7 @@ abstract class AbstractCollection implements
         return $this->join();
     }
 
-    * @param mixed $offset
-/** BEGIN ArrayAccess methods */
+    /** BEGIN ArrayAccess methods */
 
     /**
      * Whether a offset exists.
