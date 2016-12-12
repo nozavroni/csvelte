@@ -6,6 +6,7 @@ use CSVelteTest\UnitTestCase;
 use CSVelte\Table\AbstractRow;
 use CSVelte\Table\HeaderRow;
 use CSVelte\Table\Row;
+use OutOfBoundsException;
 
 /**
  * CSVelte\Table\Row Tests.
@@ -110,7 +111,7 @@ class RowTest extends UnitTestCase
     }
 
     /**
-     * @expectedException \OutOfBoundsException
+     * @expectedException OutOfBoundsException
      */
     public function testOffsetGetThrowsExceptionOnUnknownOffset()
     {

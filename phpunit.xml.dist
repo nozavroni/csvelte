@@ -15,7 +15,11 @@
           <file>tests/CSVelte/IO/ResourceTest.php</file>
           <file>tests/CSVelte/Table/RowTest.php</file>
           <file>tests/CSVelte/AutoloaderTest.php</file>
-          <file>tests/CSVelte/CollectionTest.php</file>
+          <file>tests/CSVelte/Collection/CollectionTest.php</file>
+          <file>tests/CSVelte/Collection/CharCollectionTest.php</file>
+          <file>tests/CSVelte/Collection/NumericCollectionTest.php</file>
+          <file>tests/CSVelte/Collection/MultiCollectionTest.php</file>
+          <file>tests/CSVelte/Collection/TabularCollectionTest.php</file>
           <file>tests/CSVelte/CSVelteTest.php</file>
           <file>tests/CSVelte/FlavorTest.php</file>
           <file>tests/CSVelte/FunctionsTest.php</file>
