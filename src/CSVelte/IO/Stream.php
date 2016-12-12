@@ -180,6 +180,7 @@ class Stream implements Streamable
             if (is_null($key)) {
                 return $this->meta;
             }
+
             return (array_key_exists($key, $this->meta)) ? $this->meta[$key] : null;
         }
     }
@@ -337,6 +338,7 @@ class Stream implements Streamable
         if ($this->eof()) {
             return false;
         }
+
         return fread($this->resource->getHandle(), $length);
     }
 

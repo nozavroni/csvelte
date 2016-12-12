@@ -21,11 +21,12 @@ namespace CSVelte;
  * @since v0.2.1
  */
 
+use CSVelte\Collection\AbstractCollection;
+use CSVelte\Collection\Collection;
 use CSVelte\Contract\Streamable;
 use CSVelte\IO\IteratorStream;
 use CSVelte\IO\Stream;
 use CSVelte\IO\StreamResource;
-use CSVelte\Collection\AbstractCollection;
 use InvalidArgumentException;
 
 use Iterator;
@@ -105,6 +106,15 @@ function stream_resource(
     $context = null,
     $lazy = true
 ) {
+    if (is_array($context)) {
+        if (!isset($context['options'])) {
+            $context['options'] = [];
+        }
+        if (!isset($context['params'])) {
+            $context['params'] = [];
+        }
+        $context = stream_context_create($context['options'], $context['params']);
+    }
     $res = (new StreamResource($uri, $mode, null, true))
         ->setContextResource($context);
     if (!$lazy) {
@@ -188,14 +198,14 @@ function taste_has_header(Streamable $str)
  *
  * @param array|Iterator $in Either an array or an iterator of data
  *
- * @return Collection A collection object containing data from $in
+ * @return AbstractCollection A collection object containing data from $in
  *
  * @since v0.2.1
- * @see Collection::__construct() (alias)
+ * @see AbstractCollection::__construct() (alias)
  */
 function collect($in = null)
 {
-    return new Collection($in);
+    return Collection::factory($in);
 }
 
 /**
@@ -226,10 +236,10 @@ function invoke(callable $callback, ...$args)
  * whether a variable was an array or a descendant of \Iterator. So I wrote this guy.
  *
  * @param mixed $input The variable to determine traversability
- * 
- * @return boolean True if $input is an array or an Iterator
+ *
+ * @return bool True if $input is an array or an Iterator
  */
 function is_traversable($input)
 {
-    return (is_array($input) || $input instanceof Iterator);
+    return is_array($input) || $input instanceof Iterator;
 }

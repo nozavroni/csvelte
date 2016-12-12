@@ -13,6 +13,11 @@
  */
 namespace CSVelte;
 
+use CSVelte\Collection\AbstractCollection;
+use CSVelte\Collection\CharCollection;
+use CSVelte\Collection\Collection;
+use CSVelte\Collection\NumericCollection;
+use CSVelte\Collection\TabularCollection;
 use CSVelte\Contract\Streamable;
 use CSVelte\Exception\TasterException;
 
@@ -118,8 +123,8 @@ class Taster
     /** @var string Sample of CSV data to use for tasting (determining CSV flavor) */
     protected $sample;
 
-    /** @var array Possible delimiter characters in (roughly) the order of likelihood */
-    protected $delims = [',', "\t", ';', '|', ':', '-', '_', '#', '/', '\\', '$', '+', '=', '&', '@'];
+    /** @var CharCollection Possible delimiter characters in (roughly) the order of likelihood */
+    protected $delims;
 
     /**
      * Class constructor--accepts a CSV input source.
@@ -134,7 +139,8 @@ class Taster
      */
     public function __construct(Streamable $input)
     {
-        $this->input = $input;
+        $this->delims = collect([',', "\t", ';', '|', ':', '-', '_', '#', '/', '\\', '$', '+', '=', '&', '@']);
+        $this->input  = $input;
         if (!$this->sample = $input->read(self::SAMPLE_SIZE)) {
             throw new TasterException('Invalid input, cannot read sample.', TasterException::ERR_INVALID_SAMPLE);
         }
@@ -222,50 +228,59 @@ class Taster
      */
     public function lickHeader($delim, $eol)
     {
-        $types      = collect();
-        $buildTypes = function ($line, $line_no) use (&$types, $delim, $eol) {
+        // this will be filled with the type and length of each column and each row
+        $types = new TabularCollection();
+
+        // callback to build the aforementioned collection
+        $buildTypes = function ($line, $line_no) use ($types, $delim, $eol) {
+            if ($line_no > 2) {
+                return;
+            }
             $line    = str_replace(self::PLACEHOLDER_NEWLINE, $eol, $line);
-            $getType = function ($field, $colpos) use (&$types, $line, $line_no, $delim) {
-                $field = str_replace(self::PLACEHOLDER_DELIM, $delim, $field);
-                // @todo Need a Collection::setTableField($x, $y) method
-                //       See notes in green binder about refactoring Collection
-                if (!$types->has($line_no)) {
-                    $types->set($line_no, collect());
-                }
-                $types->get($line_no)->set($colpos, [
+            $getType = function ($field, $colpos) use ($types, $line, $line_no, $delim) {
+                $field     = str_replace(self::PLACEHOLDER_DELIM, $delim, $field);
+                $fieldMeta = [
+                    'value'  => $field,
                     'type'   => $this->lickType($this->unQuote($field)),
                     'length' => strlen($field),
-                ]);
+                ];
+                // @todo TabularCollection should have a way to set a value using [row,column]
+                try {
+                    $row = $types->get($line_no);
+                } catch (OutOfBoundsException $e) {
+                    $row = [];
+                }
+                $row[$colpos] = $fieldMeta;
+                $types->set($line_no, $row);
             };
             collect(explode($delim, $line))->walk($getType->bindTo($this));
         };
+
         collect(explode(
             $eol,
             $this->replaceQuotedSpecialChars($this->sample, $delim)
         ))
         ->walk($buildTypes->bindTo($this));
 
-        $hasHeader      = 0;
-        $possibleHeader = $types->shift();
-        $types->walk(function ($row) use (&$hasHeader, $possibleHeader) {
-            $row->walk(function ($field_info, $col_no) use (&$hasHeader, $possibleHeader) {
-                extract($field_info);
+        $hasHeader      = new NumericCollection();
+        $possibleHeader = collect($types->shift());
+        $types->walk(function (AbstractCollection $row) use ($hasHeader, $possibleHeader) {
+            $row->walk(function (AbstractCollection $fieldMeta, $col_no) use ($hasHeader, $possibleHeader) {
                 try {
-                    $col = $possibleHeader->get($col_no, null, true);
-                    extract($col, EXTR_PREFIX_ALL, 'header');
-                    if ($header_type == self::TYPE_STRING) {
+                    $col = collect($possibleHeader->get($col_no, null, true));
+                    if ($fieldMeta->get('type') == self::TYPE_STRING) {
                         // use length
-                        if ($length != $header_length) {
-                            $hasHeader++;
+                        if ($fieldMeta->get('length') != $col->get('length')) {
+                            $hasHeader->push(1);
                         } else {
-                            $hasHeader--;
+                            $hasHeader->push(-1);
                         }
                     } else {
                         // use data type
-                        if ($type != $header_type) {
-                            $hasHeader++;
+                        if ($fieldMeta->get('type') != $col->get('type')) {
+                            $hasHeader->push(1);
                         } else {
-                            $hasHeader--;
+                            $hasHeader->push(-1);
                         }
                     }
                 } catch (OutOfBoundsException $e) {
@@ -275,7 +290,7 @@ class Taster
             });
         });
 
-        return $hasHeader > 0;
+        return $hasHeader->sum() > 0;
     }
 
     /**
@@ -373,23 +388,16 @@ class Taster
             }
         }
         if ($matches) {
-            try {
-                return [
-                    collect($matches)
-                        ->frequency()
-                        ->get('quoteChar')
-                        ->sort()
-                        ->reverse()
-                        ->getKeyAtPosition(0),
-                    collect($matches)
-                        ->frequency()
-                        ->get('delim')
-                        ->sort()
-                        ->reverse()
-                        ->getKeyAtPosition(0),
-                ];
-            } catch (OutOfBoundsException $e) {
-                // eat this exception and let the taster exception below be thrown instead...
+            $qcad = array_intersect_key($matches, array_flip(['quoteChar', 'delim']));
+            if (!empty($matches['quoteChar']) && !empty($matches['delim'])) {
+                try {
+                    return [
+                        collect($qcad['quoteChar'])->frequency()->sort()->reverse()->getKeyAtPosition(0),
+                        collect($qcad['delim'])->frequency()->sort()->reverse()->getKeyAtPosition(0),
+                    ];
+                } catch (OutOfBoundsException $e) {
+                    // eat this exception and let the taster exception below be thrown instead...
+                }
             }
         }
         throw new TasterException('quoteChar and delimiter cannot be determined', TasterException::ERR_QUOTE_AND_DELIM);
@@ -414,15 +422,15 @@ class Taster
      */
     protected function lickDelimiter($eol = "\n")
     {
-        $frequencies   = [];
-        $consistencies = [];
+        $frequencies   = collect();
+        $consistencies = new NumericCollection();
 
         // build a table of characters and their frequencies for each line. We
         // will use this frequency table to then build a table of frequencies of
         // each frequency (in 10 lines, "tab" occurred 5 times on 7 of those
         // lines, 6 times on 2 lines, and 7 times on 1 line)
         collect(explode($eol, $this->removeQuotedStrings($this->sample)))
-            ->walk(function ($line, $line_no) use (&$frequencies) {
+            ->walk(function ($line, $line_no) use ($frequencies) {
                 collect(str_split($line))
                     ->filter(function ($c) {
                         return collect($this->delims)->contains($c);
@@ -430,44 +438,54 @@ class Taster
                     ->frequency()
                     ->sort()
                     ->reverse()
-                    ->walk(function ($count, $char) use (&$frequencies, $line_no) {
-                        $frequencies[$char][$line_no] = $count;
+                    ->walk(function ($count, $char) use ($frequencies, $line_no) {
+                        try {
+                            $char_counts = $frequencies->get($char, null, true);
+                        } catch (OutOfBoundsException $e) {
+                            $char_counts = [];
+                        }
+                        $char_counts[$line_no] = $count;
+                        $frequencies->set($char, $char_counts);
                     });
             })
             // the above only finds frequencies for characters if they exist in
             // a given line. This will go back and fill in zeroes where a char
             // didn't occur at all in a given line (needed to determine mode)
-            ->walk(function ($line, $line_no) use (&$frequencies) {
-                collect($frequencies)
-                    ->walk(function ($counts, $char) use ($line_no, &$frequencies) {
-                        if (!isset($frequencies[$char][$line_no])) {
-                            $frequencies[$char][$line_no] = 0;
-                        }
-                    });
+            ->walk(function ($line, $line_no) use ($frequencies) {
+                $frequencies->walk(function ($counts, $char) use ($line_no, $frequencies) {
+                    try {
+                        $char_counts = $frequencies->get($char, null, true);
+                    } catch (OutOfBoundsException $e) {
+                        $char_counts = [];
+                    }
+                    if (!array_key_exists($line_no, $char_counts)) {
+                        $char_counts[$line_no] = 0;
+                    }
+                    $frequencies->set($char, $char_counts);
+                });
             });
 
         // now determine the mode for each char to decide the "expected" amount
         // of times a char (possible delim) will occur on each line...
-        $freqs = collect($frequencies);
-        $modes = $freqs->mode();
-        $freqs->walk(function ($f, $chr) use ($modes, &$consistencies) {
-            collect($f)->walk(function ($num) use ($modes, $chr, &$consistencies) {
+        $modes = new NumericCollection([]);
+        foreach ($frequencies as $char => $freq) {
+            $modes->set($char, (new NumericCollection($freq))->mode());
+        }
+        $frequencies->walk(function ($f, $chr) use ($modes, $consistencies) {
+            collect($f)->walk(function ($num) use ($modes, $chr, $consistencies) {
                 if ($expected = $modes->get($chr)) {
                     if ($num == $expected) {
                         // met the goal, yay!
-                        if (!isset($consistencies[$chr])) {
-                            $consistencies[$chr] = 0;
-                        }
-                        $consistencies[$chr]++;
+                        $cc = $consistencies->get($chr, 0);
+                        $consistencies->set($chr, ++$cc);
                     }
                 }
             });
         });
 
-        $delims = collect($consistencies);
-        $max    = $delims->max();
-        $dups   = $delims->duplicates();
-        if ($dups->has($max, false)) {
+        $max    = $consistencies->max();
+        $dups   = $consistencies->duplicates();
+        if ($dups->has($max)) {
             // if more than one candidate, then look at where the character appeared
             // in the data. Was it relatively evenly distributed or was there a
             // specific area that the character tended to appear? Dates will have a
@@ -484,27 +502,28 @@ class Taster
             // at least the same general area. Use the delimiter that is the most
             // consistent in that way...
 
-             /**
-              * @todo Add a method here to figure out where duplicate best-match
-              *     delimiter(s) fall within each line and then, depending on
-              *     which one has the best distribution, return that one.
-              */
-             $decision = $dups->get($max);
+            /**
+             * @todo Add a method here to figure out where duplicate best-match
+             *     delimiter(s) fall within each line and then, depending on
+             *     which one has the best distribution, return that one.
+             */
+            $decision = $dups->get($max);
             try {
                 return $this->guessDelimByDistribution($decision, $eol);
             } catch (TasterException $e) {
                 // if somehow we STILL can't come to a consensus, then fall back to a
                  // "preferred delimiters" list...
-                 foreach ($this->delims as $key => $val) {
-                     if ($delim = array_search($val, $decision)) {
-                         return $delim;
+                 foreach ($this->delims as $key => $chr) {
+                     if (collect($decision)->contains($chr)) {
+                         return $chr;
                      }
                  }
             }
         }
 
-        return $delims
+        return $consistencies
             ->sort()
+            ->reverse()
             ->getKeyAtPosition(0);
     }
 

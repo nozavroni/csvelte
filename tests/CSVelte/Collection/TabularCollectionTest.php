@@ -1,6 +1,7 @@
 <?php
 namespace CSVelteTest\Collection;
 
+use BadMethodCallException;
 use CSVelte\Collection\AbstractCollection;
 use CSVelte\Collection\Collection;
 use CSVelte\Collection\MultiCollection;
@@ -104,6 +105,42 @@ class TabularCollectionTest extends AbstractCollectionTest
         }));
     }
 
+    public function testCollectionHasRow()
+    {
+        $coll = new TabularCollection($this->testdata[TabularCollection::class]['user']);
+        $this->assertTrue($coll->hasRow(0));
+        $this->assertTrue($coll->hasRow(1));
+        $this->assertTrue($coll->hasRow(2));
+        $this->assertTrue($coll->hasRow(3));
+        $this->assertTrue($coll->hasRow(4));
+        $this->assertFalse($coll->hasRow(5));
+    }
+
+    public function testCollectionGetRow()
+    {
+        $coll = new TabularCollection($this->testdata[TabularCollection::class]['user']);
+        $firstrow = $coll->getRow(0);
+        unset($firstrow['created']);
+        unset($firstrow['modified']);
+        $this->assertEquals([
+            'id' => 1,
+            'profile_id' => 126,
+            'email' => 'ohauck@bahringer.info',
+            'password' => '60a2409dea624661573516a31e3a1ea412076237',
+            'role' => 'moderator',
+            'is_active' => false
+        ], $firstrow);
+    }
+
+    /**
+     * @expectedException \OutOfBoundsException
+     */
+    public function testCollectionGetRowThrowsExceptionForMissingRow()
+    {
+        $coll = new TabularCollection($this->testdata[TabularCollection::class]['user']);
+        $firstrow = $coll->getRow(10);
+    }
+
     public function testHasColumn()
     {
         $coll = new TabularCollection($this->testdata[TabularCollection::class]['user']);
@@ -168,4 +205,17 @@ class TabularCollectionTest extends AbstractCollectionTest
         ], $coll->counts('numbers')->toArray());
     }
 
+    /**
+     * @expectedException BadMethodCallException
+     * @expectedExceptionMessage Method does not exist: CSVelte\Collection\TabularCollection::nonExistantMethod()
+     */
+    public function testTabularCollectionThrowsBadMethodCallExceptionOnBadMethodCall()
+    {
+        $coll = new TabularCollection([
+            ['id' => 2, 'name' => 'Luke', 'email' => 'luke.visinoni@gmail.com'],
+            ['id' => 3, 'name' => 'Dave', 'email' => 'dave.mason@gmail.com'],
+            ['id' => 5, 'name' => 'Joe', 'email' => 'joe.rogan@gmail.com'],
+        ]);
+        $coll->nonExistantMethod('foo','bar');
+    }
 }

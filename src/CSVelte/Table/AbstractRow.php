@@ -15,7 +15,7 @@ namespace CSVelte\Table;
 
 use ArrayAccess;
 use Countable;
-use CSVelte\Collection;
+use CSVelte\Collection\AbstractCollection;
 use CSVelte\Exception\ImmutableException;
 
 use InvalidArgumentException;
@@ -41,7 +41,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
     /**
      * An collection of fields for this row.
      *
-     * @var Collection
+     * @var AbstractCollection
      */
     protected $fields;
 
@@ -97,7 +97,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
         return $this->fields->toArray();
     }
 
-    /** Begin SPL Countable Interface Method **/
+    // Begin SPL Countable Interface Method
 
     /**
      * Count fields within the row.
@@ -109,7 +109,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
         return count($this->fields);
     }
 
-    /** Begin SPL Iterator Interface Methods **/
+    // Begin SPL Iterator Interface Methods
 
     /**
      * Get the current column's data object.
@@ -131,7 +131,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function key()
     {
-        return $this->position;
+        return $this->fields->getKeyAtPosition($this->position);
     }
 
     /**
@@ -171,7 +171,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
         return $this->fields->hasPosition($this->position);
     }
 
-/** Begin SPL ArrayAccess Methods **/
+    // Begin SPL ArrayAccess Methods
 
     /**
      * Is there an offset at specified position.
@@ -182,7 +182,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function offsetExists($offset)
     {
-        return $this->fields->hasPosition($offset);
+        return $this->fields->offsetExists($offset);
     }
 
     /**
@@ -194,7 +194,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
      */
     public function offsetGet($offset)
     {
-        return $this->fields->getValueAtPosition($offset);
+        return $this->fields->offsetGet($offset);
     }
 
     /**
@@ -245,7 +245,7 @@ abstract class AbstractRow implements Iterator, Countable, ArrayAccess
                 throw new InvalidArgumentException(__CLASS__ . ' requires an array, got: ' . gettype($fields));
             }
         }
-        $this->fields = collect(array_values($fields));
+        $this->fields = collect($fields)->values();
 
         return $this;
     }

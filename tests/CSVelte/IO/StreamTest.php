@@ -2,7 +2,7 @@
 namespace CSVelteTest\IO;
 
 use \ArrayIterator;
-use CSVelte\Exception\CSVelte\Exception\IOException;
+use CSVelte\Exception\NotYetImplementedException;
 use \SplFileObject;
 use CSVelte\Contract\Streamable;
 use CSVelte\IO\Stream;
