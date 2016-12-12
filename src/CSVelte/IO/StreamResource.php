@@ -175,12 +175,12 @@ class StreamResource
      * is delayed until the first call to getResource().
      *
      * @param string|resource|object $uri              The URI to connect to OR a stream resource handle
-     * @param string          $mode             The connection mode
-     * @param bool            $lazy             Whether connection should be deferred until an I/O
-     *                                          operation is requested (such as read or write) on the attached stream
-     * @param bool|null       $use_include_path
-     * @param array|null      $context_options
-     * @param array|null      $context_params
+     * @param string                 $mode             The connection mode
+     * @param bool                   $lazy             Whether connection should be deferred until an I/O
+     *                                                 operation is requested (such as read or write) on the attached stream
+     * @param bool|null              $use_include_path
+     * @param array|null             $context_options
+     * @param array|null             $context_params
      *
      * @todo Does stream_get_meta_data belong in Stream or Resource?
      */

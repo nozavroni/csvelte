@@ -1,12 +1,12 @@
 <?php
-/**
+
+/*
  * CSVelte: Slender, elegant CSV for PHP
- *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   v${CSVELTE_DEV_VERSION}
+ * @version   {version}
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
@@ -15,15 +15,14 @@ namespace CSVelte\Collection;
 
 use ArrayAccess;
 use ArrayIterator;
-use BadMethodCallException;
 use Closure;
 use Countable;
+use CSVelte\Contract\Collectable;
 use InvalidArgumentException;
 use Iterator;
-use CSVelte\Contract\Collectable;
-use function CSVelte\is_traversable;
-
 use OutOfBoundsException;
+
+use function CSVelte\is_traversable;
 
 /**
  * Class AbstractCollection.
@@ -34,9 +33,12 @@ use OutOfBoundsException;
  * whole slew of convenient methods for free.
  *
  * @package CSVelte\Collection
+ *
  * @since v0.2.2
+ *
  * @author Luke Visinoni <luke.visinoni@gmail.com>
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ *
  * @todo Implement Serializable, other Interfaces
  * @todo Implement __toString() in such a way that by deault it
  *     will return a CSV-formatted string but you can configure
@@ -54,7 +56,7 @@ abstract class AbstractCollection implements
     protected $data = [];
 
     /**
-     * @var boolean True unless we have advanced past the end of the data array
+     * @var bool True unless we have advanced past the end of the data array
      */
     protected $isValid = true;
 
@@ -73,8 +75,9 @@ abstract class AbstractCollection implements
      *
      * Magic "invoke" method. Called when object is invoked as if it were a function.
      *
-     * @param mixed $val The value (depends on other param value)
+     * @param mixed $val   The value (depends on other param value)
      * @param mixed $index The index (depends on other param value)
+     *
      * @return mixed (Depends on parameter values)
      */
     public function __invoke($val = null, $index = null)
@@ -82,27 +85,44 @@ abstract class AbstractCollection implements
         if (is_null($val)) {
             if (is_null($index)) {
                 return $this->toArray();
-            } else {
-                return $this->delete($index);
             }
-        } else {
-            if (is_null($index)) {
-                // @todo cast $val to array?
-                return $this->merge($val);
-            } else {
-                return $this->set($val, $index);
-            }
+
+            return $this->delete($index);
         }
+        if (is_null($index)) {
+            // @todo cast $val to array?
+                return $this->merge($val);
+        }
+
+        return $this->set($val, $index);
     }
 
-    /** BEGIN ArrayAccess methods */
+    /**
+     * Convert collection to string.
+     *
+     * @return string A string representation of this collection
+     *
+     * @todo Eventually I would like to add a $delim property so that
+     *     I can easily join collection items together with a particular
+     * character (or set of characters). I would then add a few methods
+     * to change the delim property. It would default to a comma.
+     */
+    public function __toString()
+    {
+        return $this->join();
+    }
+
+    * @param mixed $offset
+/** BEGIN ArrayAccess methods */
 
     /**
      * Whether a offset exists.
      *
      * @param mixed $offset An offset to check for.
-     * @return boolean true on success or false on failure.
-     * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+     *
+     * @return bool true on success or false on failure.
+     *
+     * @see http://php.net/manual/en/arrayaccess.offsetexists.php
      */
     public function offsetExists($offset)
     {
@@ -113,8 +133,10 @@ abstract class AbstractCollection implements
      * Offset to retrieve.
      *
      * @param mixed $offset The offset to retrieve.
+     *
      * @return mixed Can return all value types.
-     * @link http://php.net/manual/en/arrayaccess.offsetget.php
+     *
+     * @see http://php.net/manual/en/arrayaccess.offsetget.php
      */
     public function offsetGet($offset)
     {
@@ -125,8 +147,9 @@ abstract class AbstractCollection implements
      * Offset to set.
      *
      * @param mixed $offset The offset to assign the value to.
-     * @param mixed $value The value to set.
-     * @link http://php.net/manual/en/arrayaccess.offsetset.php
+     * @param mixed $value  The value to set.
+     *
+     * @see http://php.net/manual/en/arrayaccess.offsetset.php
      */
     public function offsetSet($offset, $value)
     {
@@ -137,7 +160,8 @@ abstract class AbstractCollection implements
      * Offset to unset.
      *
      * @param mixed $offset The offset to unset.
-     * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+     *
+     * @see http://php.net/manual/en/arrayaccess.offsetunset.php
      */
     public function offsetUnset($offset)
     {
@@ -147,7 +171,6 @@ abstract class AbstractCollection implements
     /** END ArrayAccess methods */
 
     /** BEGIN Countable methods */
-
     public function count()
     {
         return count($this->data);
@@ -166,7 +189,7 @@ abstract class AbstractCollection implements
      *
      * @return mixed
      */
-    public function current ()
+    public function current()
     {
         return current($this->data);
     }
@@ -178,7 +201,7 @@ abstract class AbstractCollection implements
      *
      * @return mixed
      */
-    public function key ()
+    public function key()
     {
         return key($this->data);
     }
@@ -192,10 +215,10 @@ abstract class AbstractCollection implements
      *
      * @return mixed
      */
-    public function next ()
+    public function next()
     {
         $next = next($this->data);
-        $key = key($this->data);
+        $key  = key($this->data);
         if (isset($key)) {
             return $next;
         }
@@ -211,9 +234,10 @@ abstract class AbstractCollection implements
      *
      * @return mixed
      */
-    public function rewind ()
+    public function rewind()
     {
         $this->isValid = !empty($this->data);
+
         return reset($this->data);
     }
 
@@ -224,34 +248,9 @@ abstract class AbstractCollection implements
      *
      * @return bool True if internal pointer isn't past the end
      */
-    public function valid ()
+    public function valid()
     {
         return $this->isValid;
-    }
-
-    /** END Iterator methods */
-
-    /**
-     * Set collection data.
-     *
-     * Sets the collection data.
-     *
-     * @param array $data The data to wrap
-     * @return $this
-     */
-    protected function setData($data)
-    {
-        if (is_null($data)) {
-            $data = [];
-        }
-        $this->assertCorrectInputDataType($data);
-        $data = $this->prepareData($data);
-        foreach ($data as $index => $value) {
-            $this->set($index, $value);
-        }
-        reset($this->data);
-
-        return $this;
     }
 
     public function sort($alg = null)
@@ -260,6 +259,7 @@ abstract class AbstractCollection implements
             $alg = 'natcasesort';
         }
         $alg($this->data);
+
         return static::factory($this->data);
     }
 
@@ -267,6 +267,7 @@ abstract class AbstractCollection implements
      * Does this collection have a value at given index?
      *
      * @param mixed $index The index to check
+     *
      * @return bool
      */
     public function has($index)
@@ -281,11 +282,14 @@ abstract class AbstractCollection implements
      * value for when the collection doesn't find a value at the given index. It can
      * also optionally throw an OutOfBoundsException if no value is found.
      *
-     * @param mixed $index The index of the data you want to get
+     * @param mixed $index   The index of the data you want to get
      * @param mixed $default The default value to return if none available
-     * @param bool $throw True if you want an exception to be thrown if no data found at $index
+     * @param bool  $throw   True if you want an exception to be thrown if no data found at $index
+     *
      * @throws OutOfBoundsException If $throw is true and $index isn't found
+     *
      * @return mixed The data found at $index or failing that, the $default
+     *
      * @todo Use OffsetGet, OffsetSet, etc. internally here and on set, has, delete, etc.
      */
     public function get($index, $default = null, $throw = false)
@@ -294,8 +298,9 @@ abstract class AbstractCollection implements
             return $this->data[$index];
         }
         if ($throw) {
-            throw new OutOfBoundsException(__CLASS__ . " could not find value at index " . $index);
+            throw new OutOfBoundsException(__CLASS__ . ' could not find value at index ' . $index);
         }
+
         return $default;
     }
 
@@ -305,7 +310,7 @@ abstract class AbstractCollection implements
      * Setter for this collection. Allows setting a value at a given index.
      *
      * @param mixed $index The index to set a value at
-     * @param mixed $val The value to set $index to
+     * @param mixed $val   The value to set $index to
      *
      * @return $this
      */
@@ -322,7 +327,7 @@ abstract class AbstractCollection implements
      * Unset (delete) value at the given index.
      *
      * @param mixed $index The index to unset
-     * @param bool $throw True if you want an exception to be thrown if no data found at $index
+     * @param bool  $throw True if you want an exception to be thrown if no data found at $index
      *
      * @throws OutOfBoundsException If $throw is true and $index isn't found
      *
@@ -357,6 +362,7 @@ abstract class AbstractCollection implements
     {
         try {
             $this->getKeyAtPosition($pos);
+
             return true;
         } catch (OutOfBoundsException $e) {
             return false;
@@ -408,6 +414,7 @@ abstract class AbstractCollection implements
     public function getPairAtPosition($pos)
     {
         $pairs = $this->pairs();
+
         return $pairs[$this->getKeyAtPosition($pos)];
     }
 
@@ -425,6 +432,7 @@ abstract class AbstractCollection implements
             }
             $arr[$index] = $value;
         }
+
         return $arr;
     }
 
@@ -456,6 +464,7 @@ abstract class AbstractCollection implements
      * Merges input data into this collection. Input can be an array or another collection. Returns a NEW collection object.
      *
      * @param Traversable|array $data The data to merge with this collection
+     *
      * @return AbstractCollection A new collection with $data merged in
      */
     public function merge($data)
@@ -465,6 +474,7 @@ abstract class AbstractCollection implements
         foreach ($data as $index => $value) {
             $coll->set($index, $value);
         }
+
         return $coll;
     }
 
@@ -475,14 +485,16 @@ abstract class AbstractCollection implements
      * and tells you whether or not this collection contains that value. If the $index param is specified, only that index will be looked under.
      *
      * @param mixed|callable $value The value to check for
-     * @param mixed $index The (optional) index to look under
-     * @return boolean True if this collection contains $value
+     * @param mixed          $index The (optional) index to look under
+     *
+     * @return bool True if this collection contains $value
+     *
      * @todo Maybe add $identical param for identical comparison (===)
      * @todo Allow negative offset for second param
      */
     public function contains($value, $index = null)
     {
-        return (bool) $this->first(function($val, $key) use ($value, $index) {
+        return (bool) $this->first(function ($val, $key) use ($value, $index) {
             if (is_callable($value)) {
                 $found = $value($val, $key);
             } else {
@@ -495,12 +507,13 @@ abstract class AbstractCollection implements
                 if (is_array($index)) {
                     return in_array($key, $index);
                 }
+
                 return $key == $index;
             }
+
             return false;
         });
     }
-
 
     /**
      * Get duplicate values.
@@ -513,11 +526,12 @@ abstract class AbstractCollection implements
     public function duplicates()
     {
         $dups = [];
-        $this->walk(function($val, $key) use (&$dups) {
+        $this->walk(function ($val, $key) use (&$dups) {
             $dups[$val][] = $key;
         });
-        return static::factory($dups)->filter(function($val) {
-            return (count($val) > 1);
+
+        return static::factory($dups)->filter(function ($val) {
+            return count($val) > 1;
         });
     }
 
@@ -547,11 +561,13 @@ abstract class AbstractCollection implements
      * Returns a new collection with $items added.
      *
      * @param array $items Any number of arguments will be pushed onto the
+     *
      * @return mixed The first item in this collection
      */
     public function push(...$items)
     {
         array_push($this->data, ...$items);
+
         return static::factory($this->data);
     }
 
@@ -565,6 +581,7 @@ abstract class AbstractCollection implements
     public function unshift(...$items)
     {
         array_unshift($this->data, ...$items);
+
         return static::factory($this->data);
     }
 
@@ -573,8 +590,9 @@ abstract class AbstractCollection implements
      *
      * Returns a new collection, padded to the given size, with the given value.
      *
-     * @param int $size The number of items that should be in the collection
+     * @param int  $size The number of items that should be in the collection
      * @param null $with The value to pad the collection with
+     *
      * @return AbstractCollection A new collection padded to specified length
      */
     public function pad($size, $with = null)
@@ -589,6 +607,7 @@ abstract class AbstractCollection implements
      * containing each iteration's return value.
      *
      * @param callable $callback The callback to apply
+     *
      * @return AbstractCollection A new collection with callback return values
      */
     public function map(callable $callback)
@@ -602,22 +621,26 @@ abstract class AbstractCollection implements
      * Applies a callback to each item in collection. The callback should return
      * false to filter any item from the collection.
      *
-     * @param callable $callback The callback function
-     * @param null $extraContext Extra context to pass as third param in callback
+     * @param callable $callback     The callback function
+     * @param null     $extraContext Extra context to pass as third param in callback
+     *
      * @return $this
+     *
      * @see php.net array_walk
      */
     public function walk(callable $callback, $extraContext = null)
     {
         array_walk($this->data, $callback, $extraContext);
+
         return $this;
     }
 
     /**
-     * Iterate over each item that matches criteria in callback
+     * Iterate over each item that matches criteria in callback.
      *
      * @param Closure|callable $callback A callback to use
-     * @param object $bindTo The object to bind to
+     * @param object           $bindTo   The object to bind to
+     *
      * @return AbstractCollection
      */
     public function each(Closure $callback, $bindTo = null)
@@ -626,20 +649,21 @@ abstract class AbstractCollection implements
             $bindTo = $this;
         }
         if (!is_object($bindTo)) {
-            throw new InvalidArgumentException("Second argument must be an object.");
+            throw new InvalidArgumentException('Second argument must be an object.');
         }
-        $cb = $callback->bindTo($bindTo);
+        $cb     = $callback->bindTo($bindTo);
         $return = [];
         foreach ($this as $key => $val) {
             if ($cb($val, $key)) {
                 $return[$key] = $val;
             }
         }
+
         return static::factory($return);
     }
 
     /**
-     * Get each key/value as an array pair
+     * Get each key/value as an array pair.
      *
      * Returns a collection of arrays where each item in the collection is [key,value]
      *
@@ -663,7 +687,8 @@ abstract class AbstractCollection implements
      * single value.
      *
      * @param callable $callback The callback function used to reduce
-     * @param null $initial The initial carry value
+     * @param null     $initial  The initial carry value
+     *
      * @return mixed The single value produced by reduction algorithm
      */
     public function reduce(callable $callback, $initial = null)
@@ -678,8 +703,10 @@ abstract class AbstractCollection implements
      * a new collection containing only the values that weren't filtered.
      *
      * @param callable $callback The callback function used to filter
-     * @param int $flag array_filter flag(s) (ARRAY_FILTER_USE_KEY or ARRAY_FILTER_USE_BOTH)
+     * @param int      $flag     array_filter flag(s) (ARRAY_FILTER_USE_KEY or ARRAY_FILTER_USE_BOTH)
+     *
      * @return AbstractCollection A new collection with only values that weren't filtered
+     *
      * @see php.net array_filter
      */
     public function filter(callable $callback, $flag = ARRAY_FILTER_USE_BOTH)
@@ -694,6 +721,7 @@ abstract class AbstractCollection implements
      * that causes the callback function to return true.
      *
      * @param callable $callback The callback function
+     *
      * @return null|mixed The first item in the collection that causes callback to return true
      */
     public function first(callable $callback)
@@ -703,6 +731,7 @@ abstract class AbstractCollection implements
                 return $value;
             }
         }
+
         return null;
     }
 
@@ -713,11 +742,13 @@ abstract class AbstractCollection implements
      * that causes the callback function to return true.
      *
      * @param callable $callback The callback function
+     *
      * @return null|mixed The last item in the collection that causes callback to return true
      */
     public function last(callable $callback)
     {
         $reverse = $this->reverse(true);
+
         return $reverse->first($callback);
     }
 
@@ -725,6 +756,7 @@ abstract class AbstractCollection implements
      * Returns collection in reverse order.
      *
      * @param null $preserveKeys True if you want to preserve collection's keys
+     *
      * @return AbstractCollection This collection in reverse order.
      */
     public function reverse($preserveKeys = null)
@@ -742,20 +774,6 @@ abstract class AbstractCollection implements
     public function unique()
     {
         return static::factory(array_unique($this->data));
-    }
-
-    /**
-     * Convert collection to string
-     *
-     * @return string A string representation of this collection
-     * @todo Eventually I would like to add a $delim property so that
-     *     I can easily join collection items together with a particular
-     * character (or set of characters). I would then add a few methods
-     * to change the delim property. It would default to a comma.
-     */
-    public function __toString()
-    {
-        return $this->join();
     }
 
     /**
@@ -793,7 +811,7 @@ abstract class AbstractCollection implements
                 }
 
                 if (method_exists($val, '__toString')) {
-                    $val = (string)$val;
+                    $val = (string) $val;
                 } else {
                     $val = spl_object_hash($val);
                 }
@@ -815,6 +833,7 @@ abstract class AbstractCollection implements
      * data and return it.
      *
      * @param mixed $data The data to wrap
+     *
      * @return AbstractCollection A collection containing $data
      */
     public static function factory($data = null)
@@ -830,33 +849,8 @@ abstract class AbstractCollection implements
         } else {
             $class = Collection::class;
         }
+
         return new $class($data);
-    }
-
-    /**
-     * Assert input data is of the correct structure
-     *
-     * @param mixed $data Data to check
-     * @throws InvalidArgumentException If invalid data structure
-     */
-    protected function assertCorrectInputDataType($data)
-    {
-        if (!$this->isConsistentDataStructure($data)) {
-            throw new InvalidArgumentException(__CLASS__ . ' expected traversable data, got: ' . gettype ($data));
-        }
-    }
-
-    /**
-     * Convert input data to an array.
-     *
-     * Convert the input data to an array that can be worked with by a collection.
-     *
-     * @param mixed $data The input data
-     * @return array
-     */
-    protected function prepareData($data)
-    {
-        return $data;
     }
 
     /**
@@ -866,7 +860,8 @@ abstract class AbstractCollection implements
      * two-dimensional array with the same keys (columns) for each element (row).
      *
      * @param mixed $data The data structure to check
-     * @return boolean True if data structure is tabular
+     *
+     * @return bool True if data structure is tabular
      */
     public static function isTabular($data)
     {
@@ -886,12 +881,13 @@ abstract class AbstractCollection implements
                 }
             }
             // if row contains an array it isn't tabular
-            if (array_reduce($row, function($carry, $item){
+            if (array_reduce($row, function ($carry, $item) {
                 return is_array($item) && $carry;
             }, true)) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -903,6 +899,7 @@ abstract class AbstractCollection implements
      * traversable structure.
      *
      * @param mixed $data The input data
+     *
      * @return bool
      */
     public static function isMultiDimensional($data)
@@ -915,6 +912,7 @@ abstract class AbstractCollection implements
                 return true;
             }
         }
+
         return false;
     }
 
@@ -922,6 +920,7 @@ abstract class AbstractCollection implements
      * Determine if structure contains all numeric values.
      *
      * @param mixed $data The input data
+     *
      * @return bool
      */
     public static function isAllNumeric($data)
@@ -934,6 +933,7 @@ abstract class AbstractCollection implements
                 return false;
             }
         }
+
         return true;
     }
 
@@ -944,14 +944,69 @@ abstract class AbstractCollection implements
      * of digits.
      *
      * @param mixed $data Data to check
+     *
      * @return bool
      */
     public static function isCharacterSet($data)
     {
-        return (
+        return
             is_string($data) ||
-            is_numeric($data)
-        );
+            is_numeric($data);
+    }
+
+    * @param mixed $data
+/** END Iterator methods */
+
+    /**
+     * Set collection data.
+     *
+     * Sets the collection data.
+     *
+     * @param array $data The data to wrap
+     *
+     * @return $this
+     */
+    protected function setData($data)
+    {
+        if (is_null($data)) {
+            $data = [];
+        }
+        $this->assertCorrectInputDataType($data);
+        $data = $this->prepareData($data);
+        foreach ($data as $index => $value) {
+            $this->set($index, $value);
+        }
+        reset($this->data);
+
+        return $this;
+    }
+
+    /**
+     * Assert input data is of the correct structure.
+     *
+     * @param mixed $data Data to check
+     *
+     * @throws InvalidArgumentException If invalid data structure
+     */
+    protected function assertCorrectInputDataType($data)
+    {
+        if (!$this->isConsistentDataStructure($data)) {
+            throw new InvalidArgumentException(__CLASS__ . ' expected traversable data, got: ' . gettype($data));
+        }
+    }
+
+    /**
+     * Convert input data to an array.
+     *
+     * Convert the input data to an array that can be worked with by a collection.
+     *
+     * @param mixed $data The input data
+     *
+     * @return array
+     */
+    protected function prepareData($data)
+    {
+        return $data;
     }
 
     /**
@@ -964,8 +1019,8 @@ abstract class AbstractCollection implements
      * keys are the same in every row.
      *
      * @param mixed $data Data structure to check for consistency
-     * @return boolean
+     *
+     * @return bool
      */
     abstract protected function isConsistentDataStructure($data);
-
 }

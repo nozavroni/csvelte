@@ -21,12 +21,12 @@ namespace CSVelte;
  * @since v0.2.1
  */
 
+use CSVelte\Collection\AbstractCollection;
+use CSVelte\Collection\Collection;
 use CSVelte\Contract\Streamable;
 use CSVelte\IO\IteratorStream;
 use CSVelte\IO\Stream;
 use CSVelte\IO\StreamResource;
-use CSVelte\Collection\AbstractCollection;
-use CSVelte\Collection\Collection;
 use InvalidArgumentException;
 
 use Iterator;
@@ -236,10 +236,10 @@ function invoke(callable $callback, ...$args)
  * whether a variable was an array or a descendant of \Iterator. So I wrote this guy.
  *
  * @param mixed $input The variable to determine traversability
- * 
- * @return boolean True if $input is an array or an Iterator
+ *
+ * @return bool True if $input is an array or an Iterator
  */
 function is_traversable($input)
 {
-    return (is_array($input) || $input instanceof Iterator);
+    return is_array($input) || $input instanceof Iterator;
 }

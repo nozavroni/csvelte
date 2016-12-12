@@ -1,12 +1,12 @@
 <?php
-/**
+
+/*
  * CSVelte: Slender, elegant CSV for PHP
- *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   v${CSVELTE_DEV_VERSION}
+ * @version   {version}
  * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
  * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
@@ -16,27 +16,15 @@ namespace CSVelte\Collection;
 use function CSVelte\is_traversable;
 
 /**
- * Class NumericCollection
+ * Class NumericCollection.
  *
  * @package CSVelte\Collection
+ *
  * @todo $this->set('foo', 'bar'); should throw an exception because only
  *     numeric values are allowed. Either that or converted to int.
  */
 class NumericCollection extends AbstractCollection
 {
-    protected function isConsistentDataStructure($data)
-    {
-        if (!is_traversable($data)) {
-            return false;
-        }
-        foreach ($data as $val) {
-            if (!is_numeric($val)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     /**
      * Increment an item.
      *
@@ -47,8 +35,9 @@ class NumericCollection extends AbstractCollection
      * This method modifies its internal data array rather than returning a new
      * collection.
      *
-     * @param  mixed $key The key of the item you want to increment.
-     * @param int $interval The interval that $key should be incremented by
+     * @param mixed $key      The key of the item you want to increment.
+     * @param int   $interval The interval that $key should be incremented by
+     *
      * @return $this
      */
     public function increment($key, $interval = 1)
@@ -58,6 +47,7 @@ class NumericCollection extends AbstractCollection
             $val++;
         }
         $this->set($key, $val);
+
         return $this;
     }
 
@@ -71,8 +61,9 @@ class NumericCollection extends AbstractCollection
      * This method modifies its internal data array rather than returning a new
      * collection.
      *
-     * @param mixed $key The key of the item you want to decrement.
-     * @param int $interval The interval that $key should be decremented by
+     * @param mixed $key      The key of the item you want to decrement.
+     * @param int   $interval The interval that $key should be decremented by
+     *
      * @return $this
      */
     public function decrement($key, $interval = 1)
@@ -82,6 +73,7 @@ class NumericCollection extends AbstractCollection
             $val--;
         }
         $this->set($key, $val);
+
         return $this;
     }
 
@@ -115,6 +107,7 @@ class NumericCollection extends AbstractCollection
         $counts = $this->counts()->toArray();
         arsort($counts);
         $mode = key($counts);
+
         return (strpos($mode, '.')) ? floatval($mode) : intval($mode);
     }
 
@@ -126,14 +119,15 @@ class NumericCollection extends AbstractCollection
     public function median()
     {
         $count = $this->count();
-        $data = $this->toArray();
+        $data  = $this->toArray();
         natcasesort($data);
         $middle = $count / 2;
         $values = array_values($data);
         if ($count % 2 == 0) {
             // even number, use middle
-            $low = $values[$middle - 1];
+            $low  = $values[$middle - 1];
             $high = $values[$middle];
+
             return ($low + $high) / 2;
         }
         // odd number return median
@@ -174,4 +168,17 @@ class NumericCollection extends AbstractCollection
         return new self(array_count_values($this->toArray()));
     }
 
+    protected function isConsistentDataStructure($data)
+    {
+        if (!is_traversable($data)) {
+            return false;
+        }
+        foreach ($data as $val) {
+            if (!is_numeric($val)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
