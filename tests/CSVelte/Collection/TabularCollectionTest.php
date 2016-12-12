@@ -4,7 +4,8 @@ namespace CSVelteTest\Collection;
 use BadMethodCallException;
 use CSVelte\Collection\AbstractCollection;
 use CSVelte\Collection\Collection;
-use CSVelte\Collection\Criteria;
+use CSVelte\Collection\MultiCollection;
+
 use CSVelte\Collection\TabularCollection;
 use function CSVelte\is_traversable;
 
@@ -216,21 +217,5 @@ class TabularCollectionTest extends AbstractCollectionTest
             ['id' => 5, 'name' => 'Joe', 'email' => 'joe.rogan@gmail.com'],
         ]);
         $coll->nonExistantMethod('foo','bar');
-    }
-
-    public function testWhereEqual()
-    {
-        $coll = new TabularCollection($this->testdata[TabularCollection::class]['user']);
-        $results = $coll->where('id', 3, Criteria::EQ);
-        $test = $results->toArray();
-        unset($test[2]['created'], $test[2]['modified']);
-        $this->assertEquals([2 => [
-            'id' => 3,
-            'profile_id' => 128,
-            'email' => 'jaylin.mueller@yahoo.com',
-            'password' => 'd59354ad55084f436485612a6610752fff8ed74d',
-             'role' => 'user',
-             'is_active' => false,
-        ]], $test);
     }
 }

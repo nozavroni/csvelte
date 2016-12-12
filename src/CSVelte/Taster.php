@@ -15,6 +15,7 @@ namespace CSVelte;
 
 use CSVelte\Collection\AbstractCollection;
 use CSVelte\Collection\CharCollection;
+use CSVelte\Collection\Collection;
 use CSVelte\Collection\NumericCollection;
 use CSVelte\Collection\TabularCollection;
 use CSVelte\Contract\Streamable;
@@ -23,6 +24,8 @@ use CSVelte\Exception\TasterException;
 use DateTime;
 use Exception;
 use OutOfBoundsException;
+
+use function CSVelte\collect;
 
 /**
  * CSVelte\Taster
