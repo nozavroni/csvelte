@@ -13,9 +13,8 @@
 namespace CSVelteTest;
 
 use CSVelte\Dialect;
-use PHPUnit_Framework_TestCase;
 
-class DialectTest extends PHPUnit_Framework_TestCase
+class DialectTest extends UnitTestCase
 {
     public function testDefaultDialectAttributesAreConsistentWithCSVW()
     {
