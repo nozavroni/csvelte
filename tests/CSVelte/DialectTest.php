@@ -43,6 +43,7 @@ class DialectTest extends PHPUnit_Framework_TestCase
             ->setIsDoubleQuote(false)
             ->setEncoding("utf-16")
             ->setHasHeader(false)
+            ->setHeaderRowCount(2)
             ->setLineTerminators(["\r"])
             ->setQuoteChar("'")
             ->setIsSkipBlankRows(true)
@@ -57,6 +58,7 @@ class DialectTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($dialect->isDoubleQuote());
         $this->assertSame("utf-16", $dialect->getEncoding());
         $this->assertFalse($dialect->hasHeader());
+        $this->assertSame(2, $dialect->getHeaderRowCount());
         $this->assertSame(["\r"], $dialect->getLineTerminators());
         $this->assertSame("'", $dialect->getQuoteChar());
         $this->assertTrue($dialect->isSkipBlankRows());
@@ -65,5 +67,47 @@ class DialectTest extends PHPUnit_Framework_TestCase
         $this->assertSame(1, $dialect->getSkipRows());
         $this->assertTrue($dialect->isTrim());
         $this->assertSame(Dialect::QUOTE_ALL, $dialect->getQuoteStyle());
+    }
+
+    public function testDialectAllowsAllAttributesToBeSetFromConstructor()
+    {
+        $dialect = new Dialect([
+            'commentPrefix' => "//",
+            'delimiter' => "\t",
+            'doubleQuote' => false,
+            'encoding' => "utf-16",
+            'header' => false,
+            'headerRowCount' => 2,
+            'lineTerminators' => ["\r"],
+            'quoteChar' => "'",
+            'skipBlankRows' => true,
+            'skipColumns' => 1,
+            'skipInitialSpace' => true,
+            'skipRows' => 1,
+            'trim' => true,
+            'quoteStyle' => Dialect::QUOTE_ALL
+        ]);
+
+        $this->assertSame('//', $dialect->getCommentPrefix());
+        $this->assertSame("\t", $dialect->getDelimiter());
+        $this->assertFalse($dialect->isDoubleQuote());
+        $this->assertSame("utf-16", $dialect->getEncoding());
+        $this->assertFalse($dialect->hasHeader());
+        $this->assertSame(2, $dialect->getHeaderRowCount());
+        $this->assertSame(["\r"], $dialect->getLineTerminators());
+        $this->assertSame("'", $dialect->getQuoteChar());
+        $this->assertTrue($dialect->isSkipBlankRows());
+        $this->assertSame(1, $dialect->getSkipColumns());
+        $this->assertTrue($dialect->isSkipInitialSpace());
+        $this->assertSame(1, $dialect->getSkipRows());
+        $this->assertTrue($dialect->isTrim());
+        $this->assertSame(Dialect::QUOTE_ALL, $dialect->getQuoteStyle());
+    }
+
+    public function testSettersTryToBeFlexible()
+    {
+        $dialect = new Dialect;
+        $dialect->setLineTerminators("\n");
+        $this->assertSame(["\n"], $dialect->getLineTerminators());
     }
 }

@@ -13,7 +13,8 @@
 namespace CSVelte;
 
 use Traversable;
-use function Noz\to_array;
+use function Noz\collect,
+             Noz\to_array;
 
 class Dialect
 {
@@ -50,7 +51,18 @@ class Dialect
      */
     public function __construct($attribs = null)
     {
-
+        $attribs = to_array($attribs, true);
+        foreach ($attribs as $attr => $val) {
+            if (property_exists($this, $attr)) {
+                // find the appropriate setter...
+                foreach (['set', 'setIs', 'setHas'] as $prefix) {
+                    $setter = $prefix . ucfirst(strtolower($attr));
+                    if (method_exists($this, $setter)) {
+                        $this->{$setter}($val);
+                    }
+                }
+            }
+        }
     }
 
     public function setCommentPrefix($commentPrefix)
@@ -106,6 +118,17 @@ class Dialect
     public function hasHeader()
     {
         return $this->header;
+    }
+
+    public function setHeaderRowCount($headerRowCount)
+    {
+        $this->headerRowCount = (int) $headerRowCount;
+        return $this;
+    }
+
+    public function getHeaderRowCount()
+    {
+        return $this->headerRowCount;
     }
 
     public function setLineTerminators($lineTerminators)
