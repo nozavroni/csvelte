@@ -32,9 +32,9 @@ use CSVelte\IO\IteratorStream;
  *
  * @return Streamable
  *
- * @since v0.2.1
+ * @since v0.3
  */
-function streamize($obj = '')
+function to_stream($obj = '')
 {
     if ($obj instanceof Streamable) {
         return $obj;
@@ -48,6 +48,7 @@ function streamize($obj = '')
         return new Stream(new StreamResource($obj));
     }
 
+    // @todo this is currently how SplFileObject objects are handled; there's gotta be a better way
     if ($obj instanceof Iterator) {
         return new IteratorStream($obj);
     }

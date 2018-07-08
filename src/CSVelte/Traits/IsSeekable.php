@@ -37,7 +37,12 @@ trait IsSeekable
      */
     public function seekLine($offset, $whence = SEEK_SET, $eol = PHP_EOL)
     {
-        throw new NotYetImplementedException('This method not yet implemented.');
+        throw new NotYetImplementedException(sprintf(
+            'This method not yet implemented.',
+            $offset,
+            $whence,
+            $eol // these are simply here to satisfy my code analysis tools
+        ));
     }
 
     abstract public function isSeekable();
