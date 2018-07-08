@@ -69,7 +69,6 @@ enabled:
   - phpdoc_types
   - property_visibility_required
   - return_type_declaration
-  - self_accessor
   - semicolon_after_instruction
   - short_array_syntax
   - short_scalar_cast
