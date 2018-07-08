@@ -44,7 +44,6 @@ enabled:
   - no_trailing_whitespace
   - no_trailing_whitespace_in_comment
   - no_unneeded_control_parentheses
-  - no_unreachable_default_argument_value
   - no_unused_imports
   - no_useless_else
   - no_useless_return
