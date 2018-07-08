@@ -31,7 +31,7 @@ class DialectTest extends PHPUnit_Framework_TestCase
         $this->assertSame(0, $dialect->getSkipColumns());
         $this->assertFalse($dialect->isSkipInitialSpace());
         $this->assertSame(0, $dialect->getSkipRows());
-        $this->assertFalse($dialect->isTrim());
+        $this->assertSame(Dialect::TRIM_ALL, $dialect->getTrim());
         $this->assertSame(Dialect::QUOTE_MINIMAL, $dialect->getQuoteStyle());
     }
 
@@ -50,7 +50,7 @@ class DialectTest extends PHPUnit_Framework_TestCase
             ->setSkipColumns(1)
             ->setIsSkipInitialSpace(true)
             ->setSkipRows(1)
-            ->setIsTrim(true)
+            ->setTrim(Dialect::TRIM_NONE)
             ->setQuoteStyle(Dialect::QUOTE_ALL);
 
         $this->assertSame('//', $dialect->getCommentPrefix());
@@ -65,7 +65,7 @@ class DialectTest extends PHPUnit_Framework_TestCase
         $this->assertSame(1, $dialect->getSkipColumns());
         $this->assertTrue($dialect->isSkipInitialSpace());
         $this->assertSame(1, $dialect->getSkipRows());
-        $this->assertTrue($dialect->isTrim());
+        $this->assertSame(Dialect::TRIM_NONE, $dialect->getTrim());
         $this->assertSame(Dialect::QUOTE_ALL, $dialect->getQuoteStyle());
     }
 
@@ -84,7 +84,7 @@ class DialectTest extends PHPUnit_Framework_TestCase
             'skipColumns' => 1,
             'skipInitialSpace' => true,
             'skipRows' => 1,
-            'trim' => true,
+            'trim' => Dialect::TRIM_START,
             'quoteStyle' => Dialect::QUOTE_ALL
         ]);
 
@@ -100,7 +100,7 @@ class DialectTest extends PHPUnit_Framework_TestCase
         $this->assertSame(1, $dialect->getSkipColumns());
         $this->assertTrue($dialect->isSkipInitialSpace());
         $this->assertSame(1, $dialect->getSkipRows());
-        $this->assertTrue($dialect->isTrim());
+        $this->assertSame(Dialect::TRIM_START, $dialect->getTrim());
         $this->assertSame(Dialect::QUOTE_ALL, $dialect->getQuoteStyle());
     }
 
