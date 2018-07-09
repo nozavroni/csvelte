@@ -312,4 +312,12 @@ class StreamResourceTest extends IOTest
         $stream = to_stream($resource);
         $this->assertInstanceOf(Stream::class, $stream);
     }
+
+    public function testStreamResourceAcceptsStringyObjectAsUri()
+    {
+        $stringy = Stream::open('php://temp', 'r+');
+        $stringy->write('php://temp');
+        $resource = new StreamResource($stringy, 'r+');
+        $this->assertEquals('php://temp', $resource->getUri());
+    }
 }
