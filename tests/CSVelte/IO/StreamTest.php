@@ -749,6 +749,15 @@ class StreamTest extends IOTest
         );
     }
 
+    public function testBufferStreamToStringReturnsStreamContents()
+    {
+        $buffer = new BufferStream();
+        $buffer->write('This is the string that is being buffered.');
+        $buffer->read(10);
+        $this->assertSame("e string that is being buffered.", (string) $buffer);
+        $this->assertSame("", (string) $buffer, "Calling __toString() again should return an empty string since it is the equivalent of calling read on the entire buffer.");
+    }
+
     public function testIteratorStreamUsingArrayIterator()
     {
         $array = explode("\n", $this->getFileContentFor('noHeaderCommaNoQuotes'));
