@@ -22,13 +22,10 @@ use InvalidArgumentException;
  * me to provide a nice, clean, easy-to-use interface for opening stream
  * resources in a particular mode as well as to lazy-open a stream.
  *
- * @package    CSVelte
- * @subpackage CSVelte\IO
- *
- * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author     Luke Visinoni <luke.visinoni@gmail.com>
- *
- * @since      v0.2.1
+ * @since v0.2.1
+ * @todo  Annoyingly, this class is currently receiving an "F" from my code analysis tool because of its supposed
+ *        complexity. I believe the high number of methods is the issue. Despite its high number of methods, I don't
+ *        feel like this class is overly complex. I would like to find a way to configure the tool to ignore this.
  */
 class StreamResource
 {
@@ -196,7 +193,6 @@ class StreamResource
 
             return;
         }
-//            throw new InvalidArgumentException("Argument one for " . __METHOD__ . " must be a URI or a stream resource.");
 
         // ok we're opening a new stream resource handle
         $this->setUri($uri)
@@ -291,7 +287,7 @@ class StreamResource
      * Set the stream URI. Can only be set if the connection isn't open yet.
      * If you try to set the URI on an open resource, an IOException will be thrown
      *
-     * @param string $uri The URI for this stream resource to open
+     * @param string|object $uri The URI for this stream resource to open
      *
      * @throws \InvalidArgumentException      if not a valid stream uri
      * @throws \CSVelte\Exception\IOException if stream has already been opened
@@ -902,7 +898,7 @@ class StreamResource
         if (is_null($lazy)) {
             $lazy = true;
         }
-        $this->lazy               = (bool) $lazy;
+        $this->lazy = (bool) $lazy;
 
         return $this;
     }

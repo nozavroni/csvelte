@@ -14,6 +14,7 @@ namespace CSVelteTest\IO;
 
 use CSVelte\IO\Stream;
 use CSVelte\IO\StreamResource;
+use function CSVelte\to_stream;
 use InvalidArgumentException;
 
 class StreamResourceTest extends IOTest
@@ -296,5 +297,19 @@ class StreamResourceTest extends IOTest
         $this->assertTrue($resource->isCursorPositionedAtBeginning());
         $this->assertFalse($resource->isCursorPositionedAtEnd());
         $this->assertTrue($resource->isTruncated());
+    }
+
+    public function testToStreamAcceptsStreamResource()
+    {
+        $resource = fopen('php://temp', 'r+');
+        $stream = to_stream($resource);
+        $this->assertInstanceOf(Stream::class, $stream);
+    }
+
+    public function testToStreamAcceptsStreamResourceObject()
+    {
+        $resource = new StreamResource('php://temp', 'r+');
+        $stream = to_stream($resource);
+        $this->assertInstanceOf(Stream::class, $stream);
     }
 }
