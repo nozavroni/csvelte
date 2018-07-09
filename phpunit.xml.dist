@@ -12,6 +12,7 @@
     <testsuites>
       <testsuite name="Core CSVelte Functionality">
           <file>tests/CSVelte/DialectTest.php</file>
+          <file>tests/CSVelte/SnifferTest.php</file>
           <file>tests/CSVelte/IO/StreamResourceTest.php</file>
           <file>tests/CSVelte/IO/StreamTest.php</file>
       </testsuite>

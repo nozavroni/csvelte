@@ -12,10 +12,19 @@
  */
 namespace CSVelteTest;
 
+use CSVelte\Sniffer;
+
+use function CSVelte\to_stream;
+
 class SnifferTest extends UnitTestCase
 {
-    public function testInstantiateWithSample()
+    public function testInstantiateWithCustomDelimiterSet()
     {
-
+        $sniffer = new Sniffer(to_stream());
+        $this->assertSame([',', "\t", ';', '|', ':', '-', '_', '#', '/', '\\', '$', '+', '=', '&', '@'], $sniffer->getPossibleDelimiters());
+        $sniffer->setPossibleDelimiters($delims = [',', "\t", '|']);
+        $this->assertSame($delims, $sniffer->getPossibleDelimiters());
+        $sniffer = new Sniffer(to_stream(), $delims);
+        $this->assertSame($delims, $sniffer->getPossibleDelimiters());
     }
 }
