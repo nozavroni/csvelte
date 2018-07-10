@@ -63,8 +63,8 @@ class Dialect
     /** @var int How many header rows are expected within the data */
     protected $headerRowCount = 1;
 
-    /** @var array A list of line-ending characters or character sequences */
-    protected $lineTerminators = ["\r\n", "\n"];
+    /** @var string The line ending character or character sequence */
+    protected $lineTerminator = "\r\n";
 
     /** @var string The quoting character (used to quote columns depending on quoteStyle) */
     protected $quoteChar = '"';
@@ -252,26 +252,26 @@ class Dialect
     }
 
     /**
-     * Set line terminator character(s) or character sequence(s)
+     * Set line terminator character or character sequence
      *
-     * @param array|Traversable $lineTerminators A list of line terminators
+     * @param string $lineTerminator The line ending character(s)
      *
      * @return self
      */
-    public function setLineTerminators($lineTerminators)
+    public function setLineTerminator($lineTerminator)
     {
-        $this->lineTerminators = to_array($lineTerminators, true);
+        $this->lineTerminator = (string) $lineTerminator;
         return $this;
     }
 
     /**
-     * Get line terminator(s)
+     * Get line terminator
      *
-     * @return array
+     * @return string
      */
-    public function getLineTerminators()
+    public function getLineTerminator()
     {
-        return $this->lineTerminators;
+        return $this->lineTerminator;
     }
 
     /**

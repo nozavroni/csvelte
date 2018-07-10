@@ -24,7 +24,7 @@ class DialectTest extends UnitTestCase
         $this->assertTrue($dialect->isDoubleQuote());
         $this->assertSame("utf-8", $dialect->getEncoding());
         $this->assertTrue($dialect->hasHeader());
-        $this->assertSame(["\r\n", "\n"], $dialect->getLineTerminators());
+        $this->assertSame("\r\n", $dialect->getLineTerminator());
         $this->assertSame('"', $dialect->getQuoteChar());
         $this->assertFalse($dialect->isSkipBlankRows());
         $this->assertSame(0, $dialect->getSkipColumns());
@@ -43,7 +43,7 @@ class DialectTest extends UnitTestCase
             ->setEncoding("utf-16")
             ->setHasHeader(false)
             ->setHeaderRowCount(2)
-            ->setLineTerminators(["\r"])
+            ->setLineTerminator("\r")
             ->setQuoteChar("'")
             ->setIsSkipBlankRows(true)
             ->setSkipColumns(1)
@@ -58,7 +58,7 @@ class DialectTest extends UnitTestCase
         $this->assertSame("utf-16", $dialect->getEncoding());
         $this->assertFalse($dialect->hasHeader());
         $this->assertSame(2, $dialect->getHeaderRowCount());
-        $this->assertSame(["\r"], $dialect->getLineTerminators());
+        $this->assertSame("\r", $dialect->getLineTerminator());
         $this->assertSame("'", $dialect->getQuoteChar());
         $this->assertTrue($dialect->isSkipBlankRows());
         $this->assertSame(1, $dialect->getSkipColumns());
@@ -77,7 +77,7 @@ class DialectTest extends UnitTestCase
             'encoding' => "utf-16",
             'header' => false,
             'headerRowCount' => 2,
-            'lineTerminators' => ["\r"],
+            'lineTerminator' => "\r",
             'quoteChar' => "'",
             'skipBlankRows' => true,
             'skipColumns' => 1,
@@ -93,7 +93,7 @@ class DialectTest extends UnitTestCase
         $this->assertSame("utf-16", $dialect->getEncoding());
         $this->assertFalse($dialect->hasHeader());
         $this->assertSame(2, $dialect->getHeaderRowCount());
-        $this->assertSame(["\r"], $dialect->getLineTerminators());
+        $this->assertSame("\r", $dialect->getLineTerminator());
         $this->assertSame("'", $dialect->getQuoteChar());
         $this->assertTrue($dialect->isSkipBlankRows());
         $this->assertSame(1, $dialect->getSkipColumns());
@@ -101,12 +101,5 @@ class DialectTest extends UnitTestCase
         $this->assertSame(1, $dialect->getSkipRows());
         $this->assertSame(Dialect::TRIM_START, $dialect->getTrim());
         $this->assertSame(Dialect::QUOTE_ALL, $dialect->getQuoteStyle());
-    }
-
-    public function testSettersTryToBeFlexible()
-    {
-        $dialect = new Dialect;
-        $dialect->setLineTerminators("\n");
-        $this->assertSame(["\n"], $dialect->getLineTerminators());
     }
 }
