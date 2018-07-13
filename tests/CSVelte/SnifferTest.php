@@ -27,4 +27,20 @@ class SnifferTest extends UnitTestCase
         $sniffer = new Sniffer(to_stream(), $delims);
         $this->assertSame($delims, $sniffer->getPossibleDelimiters());
     }
+
+    public function testSniffQuoteAndDelim()
+    {
+        $stream = to_stream(fopen('/Users/luke/Downloads/slashdashcomma.txt', 'r+'));
+        $sniffer = new Sniffer($stream);
+        dd($sniffer->guessDelimByDistribution(
+            $stream->read(3000),
+            [",", "/"],
+            "\n"
+        ));
+    }
+
+//    public function testSniffQuoteAndDelimStrategy()
+//    {
+//
+//    }
 }

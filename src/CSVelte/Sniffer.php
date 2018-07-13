@@ -295,37 +295,26 @@ class Sniffer
     public function guessDelimByDistribution($data, $delims, $eol)
     {
         $lines = collect(explode($eol, $this->removeQuotedStrings($data)));
-        $distrib = $lines->filter(function($line) {
-                return s($line)->length() > 1;
-            })
-            ->map(function($line, $line_no) use ($delims) {
-                $line = s($line);
-                $len = $line->length();
-                $sections = collect($line->getIterator())->split(static::DISTRIB_SECTIONS);
-                return $sections->map(function($section) use ($delims) {
-                    return collect($section)->intersect($delims)->frequency()->map(function($freq, $char) use ($section) {
-                        // return what percentage of this "section" is the proposed delim char
-                        return round($freq / count($section) * 100);
+        return collect($delims)->flip()->map(function($x, $char) use ($lines) {
+
+            // standard deviation
+            $sd = $lines->map(function($line, $line_no) use ($char) {
+                $delimited = collect(s($line)->split($char))
+                    ->map(function($str) {
+                        return $str->length();
                     });
-                })
-                // fill in empty values with 0's
-                ->map(function($dist) use ($delims) {
-                    return collect($delims)->flip()->map(function($val, $char) use ($dist) { return $dist->has($char) ? $dist->get($char) : 0; })->toArray();
-                })
-                ->toArray();
+                // standard deviation
+                $avg = $delimited->average();
+                return sqrt($delimited->fold(function($d, $len) use ($avg) {
+                    return $d->add(pow($len - $avg, 2));
+                }, new Collection)
+                ->sum() / $delimited->count());
             });
+            return $sd->average();
 
-        // work out standard deviation
-        $destrib = $distrib->fold(function($accum, $line, $line_no) use ($delims) {
-            foreach ($delims as $delim) {
-                $accum[$delim][] = collect($line)->map(function ($section, $key) use ($delim) {
-                    return $section[$delim];
-                })->toArray();
-            }
-            return $accum;
-        }, []);
-
-        return $delims[0];
+        })
+            ->sort()
+            ->getKeyAt(1);
     }
 
     protected function sniffQuotingStyle($delimiter, $eols)
