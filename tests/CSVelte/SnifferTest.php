@@ -14,6 +14,7 @@ namespace CSVelteTest;
 
 use CSVelte\Sniffer;
 
+use CSVelte\Sniffer\SniffLineTerminatorByCount;
 use function CSVelte\to_stream;
 
 class SnifferTest extends UnitTestCase
@@ -28,19 +29,15 @@ class SnifferTest extends UnitTestCase
         $this->assertSame($delims, $sniffer->getPossibleDelimiters());
     }
 
-    public function testSniffQuoteAndDelim()
+    public function testSniffLineTerminatorByCount()
     {
-        $stream = to_stream(fopen('/Users/luke/Downloads/slashdashcomma.txt', 'r+'));
-        $sniffer = new Sniffer($stream);
-        dd($sniffer->guessDelimByDistribution(
-            $stream->read(3000),
-            [",", "/"],
-            "\n"
-        ));
-    }
+        $nl = to_stream($this->getFileContentFor('commaNewlineHeader'));
+        $nlcr = to_stream(str_replace("\n", "\r\n", $this->getFileContentFor('commaNewlineHeader')));
+        $cr = to_stream(str_replace("\n", "\r", $this->getFileContentFor('commaNewlineHeader')));
 
-//    public function testSniffQuoteAndDelimStrategy()
-//    {
-//
-//    }
+        $sniffer = new SniffLineTerminatorByCount;
+        $this->assertSame("\n", $sniffer->sniff($nl->read(1500)));
+        $this->assertSame("\r\n", $sniffer->sniff($nlcr->read(1500)));
+        $this->assertSame("\r", $sniffer->sniff($cr->read(1500)));
+    }
 }

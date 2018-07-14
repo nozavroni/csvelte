@@ -15,6 +15,7 @@ namespace CSVelte;
 use CSVelte\Contract\Streamable;
 
 use CSVelte\Exception\SnifferException;
+use CSVelte\Sniffer\SniffLineTerminatorByCount;
 use Noz\Collection\Collection;
 use function Noz\to_array;
 use RuntimeException;
@@ -26,14 +27,6 @@ class Sniffer
 {
     /** CSV data sample size - sniffer will use this many bytes to make its determinations */
     const SAMPLE_SIZE = 2500;
-    const DISTRIB_SECTIONS = 10;
-
-    /**
-     * End-of-line constants
-     */
-    const EOL_WINDOWS = 0;
-    const EOL_UNIX    = 1;
-    const EOL_OTHER   = 2;
 
     /**
      * ASCII character codes for "invisibles".
@@ -42,13 +35,6 @@ class Sniffer
     const LINE_FEED       = 10;
     const CARRIAGE_RETURN = 13;
     const SPACE           = 32;
-
-    /**
-     * Placeholder strings -- hold the place of newlines and delimiters contained
-     * within quoted text so that the explode method doesn't split incorrectly.
-     */
-    const PLACEHOLDER_NEWLINE = '[__NEWLINE__]';
-    const PLACEHOLDER_DELIM   = '[__DELIMIT__]';
 
     /**
      * @var array A list of possible delimiters to check for (in order of preference)
@@ -145,25 +131,10 @@ class Sniffer
      *
      * @return string
      */
-    protected function sniffLineTerminator($data)
+    public function sniffLineTerminator($data)
     {
-        // in this case we really only care about newlines so we pass in a comma as the delim
-        $str = $this->replaceQuotedSpecialChars($data, ',');
-        $eols = [
-            static::EOL_WINDOWS => "\r\n",  // 0x0D - 0x0A - Windows, DOS OS/2
-            static::EOL_UNIX    => "\n",    // 0x0A -      - Unix, OSX
-            static::EOL_OTHER   => "\r",    // 0x0D -      - Other
-        ];
-
-        $curCount = 0;
-        $curEol = PHP_EOL;
-        foreach ($eols as $k => $eol) {
-            if (($count = substr_count($str, $eol)) > $curCount) {
-                $curCount = $count;
-                $curEol   = $eol;
-            }
-        }
-        return $curEol;
+        $sniffer = new SniffLineTerminatorByCount();
+        return $sniffer->sniff($data);
     }
 
     /**
@@ -340,33 +311,5 @@ class Sniffer
     protected function removeQuotedStrings($data)
     {
         return preg_replace($pattern = '/(["\'])(?:(?=(\\\\?))\2.)*?\1/sm', $replace = '', $data);
-    }
-
-    /**
-     * Replace all instances of newlines and whatever character you specify (as
-     * the delimiter) that are contained within quoted text. The replacements are
-     * simply a special placeholder string. This is done so that I can use the
-     * very unsmart "explode" function and not have to worry about it exploding
-     * on delimiters or newlines within quotes. Once I have exploded, I typically
-     * sub back in the real characters before doing anything else. Although
-     * currently there is no dedicated method for doing so I just use str_replace.
-     *
-     * @param string $data  The string to do the replacements on
-     * @param string $delim The delimiter character to replace
-     *
-     * @return string The data with replacements performed
-     */
-    protected function replaceQuotedSpecialChars($data, $delim = null, $eol = null)
-    {
-        if (is_null($eol)) {
-            $eol = "\r\n|\r|\n";
-        }
-        return preg_replace_callback('/([\'"])(.*)\1/imsU', function ($matches) use ($delim, $eol) {
-            $ret = preg_replace("/({$eol})/", self::PLACEHOLDER_NEWLINE, $matches[0]);
-            if (!is_null($delim)) {
-                $ret = str_replace($delim, self::PLACEHOLDER_DELIM, $ret);
-            }
-            return $ret;
-        }, $data);
     }
 }
