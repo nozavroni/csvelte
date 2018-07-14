@@ -21,6 +21,15 @@ class SniffLineTerminatorByCount extends AbstractSniffer
     const EOL_UNIX    = 1;
     const EOL_OTHER   = 2;
 
+    /**
+     * Guess line terminator in a string of data
+     *
+     * Using the number of times it occurs, guess which line terminator is most likely.
+     *
+     * @param string $data The data to analyze
+     *
+     * @return string
+     */
     public function sniff($data)
     {
         // in this case we really only care about newlines so we pass in a comma as the delim

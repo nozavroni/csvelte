@@ -42,6 +42,13 @@ abstract class AbstractSniffer
         return $this;
     }
 
+    protected function getOption($option)
+    {
+        if (array_key_exists($option, $this->options)) {
+            return $this->options[$option];
+        };
+    }
+
     /**
      * Replace all instances of newlines and whatever character you specify (as
      * the delimiter) that are contained within quoted text. The replacements are
@@ -70,5 +77,12 @@ abstract class AbstractSniffer
         }, $data);
     }
 
+    /**
+     * Analyze data (sniff)
+     *
+     * @param string $data The data to analyze (sniff)
+     *
+     * @return string|string[]
+     */
     abstract public function sniff($data);
 }

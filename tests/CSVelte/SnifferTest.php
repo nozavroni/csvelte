@@ -15,6 +15,7 @@ namespace CSVelteTest;
 use CSVelte\Sniffer;
 
 use CSVelte\Sniffer\SniffLineTerminatorByCount;
+use CSVelte\Sniffer\SniffQuoteAndDelimByAdjacency;
 use function CSVelte\to_stream;
 
 class SnifferTest extends UnitTestCase
@@ -39,5 +40,14 @@ class SnifferTest extends UnitTestCase
         $this->assertSame("\n", $sniffer->sniff($nl->read(1500)));
         $this->assertSame("\r\n", $sniffer->sniff($nlcr->read(1500)));
         $this->assertSame("\r", $sniffer->sniff($cr->read(1500)));
+    }
+
+    public function testSniffQuoteAndDelimByAdjacency()
+    {
+        $data = $this->getFileContentFor('noHeaderCommaQuoteAll');
+        $sniffer = new SniffQuoteAndDelimByAdjacency([
+            'lineTerminator' => "\n"
+        ]);
+        $this->assertSame(['"', ','], $sniffer->sniff($data));
     }
 }
