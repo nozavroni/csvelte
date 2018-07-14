@@ -16,6 +16,7 @@ use CSVelte\Contract\Streamable;
 
 use CSVelte\Exception\SnifferException;
 use CSVelte\Sniffer\SniffDelimiterByConsistency;
+use CSVelte\Sniffer\SniffDelimiterByDistribution;
 use CSVelte\Sniffer\SniffLineTerminatorByCount;
 use CSVelte\Sniffer\SniffQuoteAndDelimByAdjacency;
 use Noz\Collection\Collection;
@@ -133,7 +134,7 @@ class Sniffer
      *
      * @return string
      */
-    public function sniffLineTerminator($data)
+    protected function sniffLineTerminator($data)
     {
         $sniffer = new SniffLineTerminatorByCount();
         return $sniffer->sniff($data);
@@ -153,9 +154,6 @@ class Sniffer
      * @param string $lineTerminator The line terminator char/sequence
      *
      * @return array A two-row array containing quotechar, delimchar
-     *
-     * @todo This should throw an exception if it cannot determine the delimiter this way.
-     * @todo This should check for any line endings not just \n
      */
     protected function sniffQuoteAndDelim($data, $lineTerminator)
     {
@@ -166,51 +164,17 @@ class Sniffer
     /**
      * @todo To make this class more oop and test-friendly, implement strategy pattern here with each delim sniffing method implemented in its own strategy class.
      */
-    protected function sniffDelimiter($data, $eol)
+    protected function sniffDelimiter($data, $lineTerminator)
     {
-        $consistency = new SniffDelimiterByConsistency([
-            'lineTerminator' => $eol,
-            'delimiters' => $this->getPossibleDelimiters()
-        ]);
+        $delimiters = $this->getPossibleDelimiters();
+        $consistency = new SniffDelimiterByConsistency(compact('lineTerminator', 'delimiters'));
         $winners = $consistency->sniff($data);
         if (count($winners) > 1) {
-            /**
-             * @todo Add a method here to figure out where duplicate best-match
-             *     delimiter(s) fall within each line and then, depending on
-             *     which one has the best distribution, return that one.
-             */
-            try {
-                return $this->guessDelimByDistribution($data, $winners, $eol);
-            } catch (SnifferException $e) {
-                // if we still can't come to a decision, just return the first one on the preferred list
-
-            }
+            $delimiters = $winners;
+            return (new SniffDelimiterByDistribution(compact('lineTerminator', 'delimiters')))
+                ->sniff($data);
         }
-    }
-
-    public function guessDelimByDistribution($data, $delims, $eol)
-    {
-        $lines = collect(explode($eol, $this->removeQuotedStrings($data)));
-        return collect($delims)->flip()->map(function($x, $char) use ($lines) {
-
-            // standard deviation
-            $sd = $lines->map(function($line, $line_no) use ($char) {
-                $delimited = collect(s($line)->split($char))
-                    ->map(function($str) {
-                        return $str->length();
-                    });
-                // standard deviation
-                $avg = $delimited->average();
-                return sqrt($delimited->fold(function($d, $len) use ($avg) {
-                    return $d->add(pow($len - $avg, 2));
-                }, new Collection)
-                ->sum() / $delimited->count());
-            });
-            return $sd->average();
-
-        })
-            ->sort()
-            ->getKeyAt(1);
+        return current($winners);
     }
 
     protected function sniffQuotingStyle($delimiter, $eols)

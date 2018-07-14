@@ -15,6 +15,7 @@ namespace CSVelteTest;
 use CSVelte\Sniffer;
 
 use CSVelte\Sniffer\SniffDelimiterByConsistency;
+use CSVelte\Sniffer\SniffDelimiterByDistribution;
 use CSVelte\Sniffer\SniffLineTerminatorByCount;
 use CSVelte\Sniffer\SniffQuoteAndDelimByAdjacency;
 use function CSVelte\to_stream;
@@ -70,5 +71,15 @@ class SnifferTest extends UnitTestCase
             'delimiters' => [',', "\t", ';', '|', ':', '-', '_', '#', '/', '\\', '$', '+', '=', '&', '@']
         ]);
         $this->assertSame([',',':','/','@'], $sniffer->sniff($data));
+    }
+
+    public function testSniffDelimiterByDistribution()
+    {
+        $data = $this->getFileContentFor('commaDelimTie');
+        $sniffer = new SniffDelimiterByDistribution([
+            'lineTerminator' => "\n",
+            'delimiters' => [',', ':', '/', '@']
+        ]);
+        $this->assertSame(',', $sniffer->sniff($data));
     }
 }
