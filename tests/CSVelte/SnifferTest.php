@@ -14,6 +14,7 @@ namespace CSVelteTest;
 
 use CSVelte\Sniffer;
 
+use CSVelte\Sniffer\SniffDelimiterByConsistency;
 use CSVelte\Sniffer\SniffLineTerminatorByCount;
 use CSVelte\Sniffer\SniffQuoteAndDelimByAdjacency;
 use function CSVelte\to_stream;
@@ -49,5 +50,25 @@ class SnifferTest extends UnitTestCase
             'lineTerminator' => "\n"
         ]);
         $this->assertSame(['"', ','], $sniffer->sniff($data));
+    }
+
+    public function testSniffDelimiterByConsistency()
+    {
+        $data = $this->getFileContentFor('headerTabSingleQuotes');
+        $sniffer = new SniffDelimiterByConsistency([
+            'lineTerminator' => "\n",
+            'delimiters' => [',', "\t", ';', '|', ':', '-', '_', '#', '/', '\\', '$', '+', '=', '&', '@']
+        ]);
+        $this->assertSame(["\t"], $sniffer->sniff($data));
+    }
+
+    public function testSniffDelimiterByConsistencyReturnsTie()
+    {
+        $data = $this->getFileContentFor('commaDelimTie');
+        $sniffer = new SniffDelimiterByConsistency([
+            'lineTerminator' => "\n",
+            'delimiters' => [',', "\t", ';', '|', ':', '-', '_', '#', '/', '\\', '$', '+', '=', '&', '@']
+        ]);
+        $this->assertSame(['@','/',':',','], $sniffer->sniff($data));
     }
 }

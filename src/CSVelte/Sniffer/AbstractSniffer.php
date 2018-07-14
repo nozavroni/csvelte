@@ -78,6 +78,21 @@ abstract class AbstractSniffer
     }
 
     /**
+     * Replaces all quoted columns with a blank string. I was using this method
+     * to prevent explode() from incorrectly splitting at delimiters and newlines
+     * within quotes when parsing a file. But this was before I wrote the
+     * replaceQuotedSpecialChars method which (at least to me) makes more sense.
+     *
+     * @param string $data The string to replace quoted strings within
+     *
+     * @return string The input string with quoted strings removed
+     */
+    protected function removeQuotedStrings($data)
+    {
+        return preg_replace($pattern = '/(["\'])(?:(?=(\\\\?))\2.)*?\1/sm', $replace = '', $data);
+    }
+
+    /**
      * Analyze data (sniff)
      *
      * @param string $data The data to analyze (sniff)

@@ -15,6 +15,7 @@ namespace CSVelte;
 use CSVelte\Contract\Streamable;
 
 use CSVelte\Exception\SnifferException;
+use CSVelte\Sniffer\SniffDelimiterByConsistency;
 use CSVelte\Sniffer\SniffLineTerminatorByCount;
 use CSVelte\Sniffer\SniffQuoteAndDelimByAdjacency;
 use Noz\Collection\Collection;
@@ -167,64 +168,23 @@ class Sniffer
      */
     protected function sniffDelimiter($data, $eol)
     {
-        // build a table of characters and their frequencies for each line. We
-        // will use this frequency table to then build a table of frequencies of
-        // each frequency (in 10 lines, "tab" occurred 5 times on 7 of those
-        // lines, 6 times on 2 lines, and 7 times on 1 line)
-        // @todo it would probably make for more consistent results if you popped the last line since it will most likely be truncated due to the arbitrary nature of the sample size
-        $lines = collect(explode($eol, $this->removeQuotedStrings($data)));
-        $frequencies = $lines->map(function($line) use ($eol) {
-            $preferred = array_flip($this->getPossibleDelimiters());
-            return collect($preferred)
-                ->map(function() { return 0; })
-                ->merge(collect(s($line)->chars())->frequency()->kintersect($preferred))
-                ->toArray();
-        });
+        $consistency = new SniffDelimiterByConsistency([
+            'lineTerminator' => $eol,
+            'delimiters' => $this->getPossibleDelimiters()
+        ]);
+        $winners = $consistency->sniff($data);
+        if (count($winners) > 1) {
+            /**
+             * @todo Add a method here to figure out where duplicate best-match
+             *     delimiter(s) fall within each line and then, depending on
+             *     which one has the best distribution, return that one.
+             */
+            try {
+                return $this->guessDelimByDistribution($data, $winners, $eol);
+            } catch (SnifferException $e) {
+                // if we still can't come to a decision, just return the first one on the preferred list
 
-        // now determine the mode for each char to decide the "expected" amount
-        // of times a char (possible delim) will occur on each line...
-        $modes = collect($this->getPossibleDelimiters())
-            ->flip()
-            ->map(function($freq, $delim) use ($frequencies) {
-                return $frequencies->getColumn($delim)->mode();
-            })
-            ->filter();
-
-        /** @var Collection $consistencies */
-        $consistencies = $frequencies->fold(function(Collection $accum, $freq, $line_no) use ($modes) {
-
-            $modes->each(function($expected, $char) use ($accum, $freq) {
-                /** @var Collection $freq */
-                if (collect($freq)->get($char) == $expected) {
-                    $matches = $accum->get($char, 0);
-                    $accum->set($char, ++$matches);
-                }
-            });
-            return $accum;
-
-        }, new Collection)
-            ->sort()
-            ->reverse();
-
-        $winners = $consistencies->filter(function($freq) use ($consistencies) {
-            return $freq === $consistencies->max();
-        });
-
-        if ($winners->count() == 1) {
-            return $consistencies->getKeyAt(1);
-        }
-
-        /**
-         * @todo Add a method here to figure out where duplicate best-match
-         *     delimiter(s) fall within each line and then, depending on
-         *     which one has the best distribution, return that one.
-         */
-        $decision = $winners->keys()->toArray();
-        try {
-            return $this->guessDelimByDistribution($data, $decision, $eol);
-        } catch (SnifferException $e) {
-            // if we still can't come to a decision, just return the first one on the preferred list
-
+            }
         }
     }
 
@@ -261,20 +221,5 @@ class Sniffer
     protected function sniffHeader($delimiter, $eols)
     {
         return true;
-    }
-
-    /**
-     * Replaces all quoted columns with a blank string. I was using this method
-     * to prevent explode() from incorrectly splitting at delimiters and newlines
-     * within quotes when parsing a file. But this was before I wrote the
-     * replaceQuotedSpecialChars method which (at least to me) makes more sense.
-     *
-     * @param string $data The string to replace quoted strings within
-     *
-     * @return string The input string with quoted strings removed
-     */
-    protected function removeQuotedStrings($data)
-    {
-        return preg_replace($pattern = '/(["\'])(?:(?=(\\\\?))\2.)*?\1/sm', $replace = '', $data);
     }
 }
