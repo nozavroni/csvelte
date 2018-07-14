@@ -16,6 +16,7 @@ use CSVelte\Contract\Streamable;
 
 use CSVelte\Exception\SnifferException;
 use CSVelte\Sniffer\SniffLineTerminatorByCount;
+use CSVelte\Sniffer\SniffQuoteAndDelimByAdjacency;
 use Noz\Collection\Collection;
 use function Noz\to_array;
 use RuntimeException;
@@ -157,44 +158,8 @@ class Sniffer
      */
     protected function sniffQuoteAndDelim($data, $lineTerminator)
     {
-        /**
-         * @var array An array of pattern matches
-         */
-        $matches = null;
-        /**
-         * @var array An array of patterns (regex)
-         */
-        $patterns = [];
-        // delim can be anything but line breaks, quotes, alphanumeric, underscore, backslash, or any type of spaces
-        $antidelims = implode(["\r", "\n", "\w", preg_quote('"', '/'), preg_quote("'", '/'), preg_quote(chr(self::SPACE), '/')]);
-        $delim      = "(?P<delim>[^{$antidelims}])";
-        $quote      = "(?P<quoteChar>\"|'|`)"; // @todo I think MS Excel uses some strange encoding for fancy open/close quotes
-        $patterns[] = "/{$delim} ?{$quote}.*?\2\1/ms"; // ,"something", - anything but whitespace or quotes followed by a possible space followed by a quote followed by anything followed by same quote, followed by same anything but whitespace
-        $patterns[] = "/(?:^|{$lineTerminator}){$quote}.*?\1{$delim} ?/ms"; // 'something', - beginning of line or line break, followed by quote followed by anything followed by quote followed by anything but whitespace or quotes
-        $patterns[] = "/{$delim} ?{$quote}.*?\2(?:^|{$lineTerminator})/ms"; // ,'something' - anything but whitespace or quote followed by possible space followed by quote followed by anything followed by quote, followed by end of line
-        $patterns[] = "/(?:^|{$lineTerminator}){$quote}.*?\2(?:$|{$lineTerminator})/ms"; // 'something' - beginning of line followed by quote followed by anything followed by quote followed by same quote followed by end of line
-        foreach ($patterns as $pattern) {
-            // @todo I had to add the error suppression char here because it was
-            //     causing undefined offset errors with certain data sets. strange...
-            if (@preg_match_all($pattern, $data, $matches) && $matches) {
-                break;
-            }
-        }
-        if ($matches) {
-            $qcad = collect($matches)->kintersect(array_flip(['quoteChar', 'delim']));
-            try {
-                return $qcad->map(function($val) {
-                    return collect($val)->frequency()->sort()->reverse()->getKeyAt(1);
-                    })
-                    ->ksort()
-                    ->reverse()
-                    ->values()
-                    ->toArray();
-            } catch (RuntimeException $e) {
-                // eat this exception and let the taster exception below be thrown instead...
-            }
-        }
-        throw new SnifferException('quoteChar and delimiter cannot be determined', SnifferException::ERR_QUOTE_AND_DELIM);
+        $sniffer = new SniffQuoteAndDelimByAdjacency(compact('lineTerminator'));
+        return $sniffer->sniff($data);
     }
 
     /**
