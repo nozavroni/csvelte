@@ -69,6 +69,6 @@ class SnifferTest extends UnitTestCase
             'lineTerminator' => "\n",
             'delimiters' => [',', "\t", ';', '|', ':', '-', '_', '#', '/', '\\', '$', '+', '=', '&', '@']
         ]);
-        $this->assertSame(['@','/',':',','], $sniffer->sniff($data));
+        $this->assertSame([',',':','/','@'], $sniffer->sniff($data));
     }
 }

@@ -74,9 +74,14 @@ class SniffDelimiterByConsistency extends AbstractSniffer
             ->reverse();
 
         $winners = $consistencies->filter(function($freq) use ($consistencies) {
-            return $freq === $consistencies->max();
-        })->keys();
+                return $freq === $consistencies->max();
+            })
+            ->keys();
 
-        return $winners->toArray();
+        // return winners in order of preference
+        return collect($delimiters)
+            ->intersect($winners)
+            ->values()
+            ->toArray();
     }
 }
