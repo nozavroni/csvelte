@@ -55,7 +55,7 @@ class SniffQuoteStyle extends AbstractSniffer
                         $styles[Dialect::QUOTE_NONE] = false;
                         if (s($value)->containsAny([static::PLACEHOLDER_DELIM, static::PLACEHOLDER_NEWLINE, '"', "'"])) {
                             $quoted->add(Dialect::QUOTE_MINIMAL);
-                        } elseif (preg_match('/^[^0-9]+$/', (string) $value)) {
+                        } elseif (!is_numeric((string) $value)) {
                             $quoted->add(Dialect::QUOTE_NONNUMERIC);
                         } else {
                             $quoted->add(Dialect::QUOTE_ALL);
@@ -75,8 +75,8 @@ class SniffQuoteStyle extends AbstractSniffer
 
         $types = $quoted->distinct();
 
-        // if there are both non-numeric and minimal present, default to nonnumeric
-        if ($types->count() == 2 && $types->contains(Dialect::QUOTE_NONNUMERIC) && $types->contains(Dialect::QUOTE_MINIMAL)) {
+        if ($types->contains(Dialect::QUOTE_NONNUMERIC) && $types->contains(Dialect::QUOTE_MINIMAL)) {
+            // if both non-numeric and minimal then it isn't minimal
             $types = $types->filter(function($type) {
                 return $type !== Dialect::QUOTE_MINIMAL;
             });
