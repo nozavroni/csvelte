@@ -12,12 +12,14 @@
  */
 namespace CSVelteTest;
 
+use CSVelte\Dialect;
 use CSVelte\Sniffer;
 
 use CSVelte\Sniffer\SniffDelimiterByConsistency;
 use CSVelte\Sniffer\SniffDelimiterByDistribution;
 use CSVelte\Sniffer\SniffLineTerminatorByCount;
 use CSVelte\Sniffer\SniffQuoteAndDelimByAdjacency;
+use CSVelte\Sniffer\SniffQuoteStyle;
 use function CSVelte\to_stream;
 
 class SnifferTest extends UnitTestCase
@@ -81,5 +83,21 @@ class SnifferTest extends UnitTestCase
             'delimiters' => [',', ':', '/', '@']
         ]);
         $this->assertSame(',', $sniffer->sniff($data));
+    }
+
+    public function testSniffQuoteStyle()
+    {
+        $all  = $this->getFileContentFor('noHeaderCommaQuoteAll');
+        $none = $this->getFileContentFor('noHeaderCommaNoQuotes');
+        $min  = $this->getFileContentFor('noHeaderCommaQuoteMinimal');
+        $nan  = $this->getFileContentFor('headerCommaQuoteNonnumeric');
+        $sniffer = new SniffQuoteStyle([
+            'delimiter' => ',',
+            'lineTerminator' => "\n"
+        ]);
+        $this->assertSame(Dialect::QUOTE_ALL, $sniffer->sniff($all));
+        $this->assertSame(Dialect::QUOTE_NONE, $sniffer->sniff($none));
+        $this->assertSame(Dialect::QUOTE_MINIMAL, $sniffer->sniff($min));
+        $this->assertSame(Dialect::QUOTE_NONNUMERIC, $sniffer->sniff($nan));
     }
 }

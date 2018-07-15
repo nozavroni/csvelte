@@ -52,11 +52,7 @@ abstract class AbstractSniffer
     /**
      * Replace all instances of newlines and whatever character you specify (as
      * the delimiter) that are contained within quoted text. The replacements are
-     * simply a special placeholder string. This is done so that I can use the
-     * very unsmart "explode" function and not have to worry about it exploding
-     * on delimiters or newlines within quotes. Once I have exploded, I typically
-     * sub back in the real characters before doing anything else. Although
-     * currently there is no dedicated method for doing so I just use str_replace.
+     * simply a special placeholder string.
      *
      * @param string $data  The string to do the replacements on
      * @param string $delim The delimiter character to replace
@@ -69,9 +65,9 @@ abstract class AbstractSniffer
             $eol = "\r\n|\r|\n";
         }
         return preg_replace_callback('/([\'"])(.*)\1/imsU', function ($matches) use ($delim, $eol) {
-            $ret = preg_replace("/({$eol})/", self::PLACEHOLDER_NEWLINE, $matches[0]);
+            $ret = preg_replace("/({$eol})/", static::PLACEHOLDER_NEWLINE, $matches[0]);
             if (!is_null($delim)) {
-                $ret = str_replace($delim, self::PLACEHOLDER_DELIM, $ret);
+                $ret = str_replace($delim, static::PLACEHOLDER_DELIM, $ret);
             }
             return $ret;
         }, $data);
