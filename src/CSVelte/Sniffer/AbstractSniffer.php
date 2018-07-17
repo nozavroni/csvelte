@@ -88,6 +88,11 @@ abstract class AbstractSniffer
         return preg_replace($pattern = '/(["\'])(?:(?=(\\\\?))\2.)*?\1/sm', $replace = '', $data);
     }
 
+    protected function unQuote($string)
+    {
+        return preg_replace('/^(["\'])(.*)\1$/', '\2', (string) $string);
+    }
+
     /**
      * Analyze data (sniff)
      *

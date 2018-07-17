@@ -13,9 +13,6 @@
 namespace CSVelte\Sniffer;
 
 use CSVelte\Dialect;
-use CSVelte\Sniffer;
-use CSVelte\Exception\SnifferException;
-use RuntimeException;
 
 use function Noz\collect;
 use function Stringy\create as s;
@@ -51,7 +48,7 @@ class SniffQuoteStyle extends AbstractSniffer
                 foreach ($values as $value) {
                     if ($this->isQuoted($value)) {
                         // remove surrounding quotes
-                        $value = preg_replace('/^(["\'])(.*)\1$/', '\2', $value);
+                        $value = $this->unQuote($value);
                         $styles[Dialect::QUOTE_NONE] = false;
                         if (s($value)->containsAny([static::PLACEHOLDER_DELIM, static::PLACEHOLDER_NEWLINE, '"', "'"])) {
                             $quoted->add(Dialect::QUOTE_MINIMAL);

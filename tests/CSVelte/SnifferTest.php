@@ -17,6 +17,7 @@ use CSVelte\Sniffer;
 
 use CSVelte\Sniffer\SniffDelimiterByConsistency;
 use CSVelte\Sniffer\SniffDelimiterByDistribution;
+use CSVelte\Sniffer\SniffHeaderByDataType;
 use CSVelte\Sniffer\SniffLineTerminatorByCount;
 use CSVelte\Sniffer\SniffQuoteAndDelimByAdjacency;
 use CSVelte\Sniffer\SniffQuoteStyle;
@@ -100,4 +101,36 @@ class SnifferTest extends UnitTestCase
         $this->assertSame(Dialect::QUOTE_MINIMAL, $sniffer->sniff($min));
         $this->assertSame(Dialect::QUOTE_NONNUMERIC, $sniffer->sniff($nan));
     }
+
+    public function testSniffHeaderByDataType()
+    {
+        $no1 = $this->getFileContentFor('noHeaderCommaQuoteAll');
+        $no2 = $this->getFileContentFor('noHeaderCommaNoQuotes');
+        $no3 = $this->getFileContentFor('noHeaderCommaQuoteMinimal');
+        $no4 = $this->getFileContentFor('commaDelimTie');
+        $no5 = $this->getFileContentFor('veryShort');
+        $yes1 = $this->getFileContentFor('commaNewlineHeader');
+        $yes2 = $this->getFileContentFor('headerDoubleQuote');
+        $yes3 = $this->getFileContentFor('headerCommaQuoteNonnumeric');
+        $sniffer = new SniffHeaderByDataType([
+            'delimiter' => ','
+        ]);
+        $this->assertFalse($sniffer->sniff($no1));
+        $this->assertFalse($sniffer->sniff($no2));
+        $this->assertFalse($sniffer->sniff($no3));
+        $this->assertFalse($sniffer->sniff($no4));
+        $this->assertTrue($sniffer->sniff($yes1));
+        $this->assertTrue($sniffer->sniff($yes2));
+        $this->assertTrue($sniffer->sniff($yes3));
+    }
+
+    // @todo finish this later by calling sniff(), then removing the top line, calling sniff again, remove top line again, until you get false.
+    // @note it's actually not quite that simple. If I want to support multiple headers, there needs to be a way to specify which header represents the
+    //       column names, allow for some headers to have different amount(s) of columns, and all kinds of other stuff that I'm
+    //       just not ready to support yet. Come back to this after everything else is supported. I created an issue on github
+    //       for this here:
+//    public function testSniffHeaderCanSniffMultipleHeaders()
+//    {
+//
+//    }
 }
