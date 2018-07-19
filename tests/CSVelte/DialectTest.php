@@ -24,7 +24,7 @@ class DialectTest extends UnitTestCase
         $this->assertTrue($dialect->isDoubleQuote());
         $this->assertSame("utf-8", $dialect->getEncoding());
         $this->assertTrue($dialect->hasHeader());
-        $this->assertSame("\r\n", $dialect->getLineTerminator());
+        $this->assertSame("\n", $dialect->getLineTerminator());
         $this->assertSame('"', $dialect->getQuoteChar());
         $this->assertFalse($dialect->isSkipBlankRows());
         $this->assertSame(0, $dialect->getSkipColumns());

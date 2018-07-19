@@ -64,7 +64,7 @@ class Dialect
     protected $headerRowCount = 1;
 
     /** @var string The line ending character or character sequence */
-    protected $lineTerminator = "\r\n";
+    protected $lineTerminator = "\n";
 
     /** @var string The quoting character (used to quote columns depending on quoteStyle) */
     protected $quoteChar = '"';
