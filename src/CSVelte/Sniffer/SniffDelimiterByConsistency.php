@@ -58,18 +58,18 @@ class SniffDelimiterByConsistency extends AbstractSniffer
             ->filter();
 
         /** @var Collection $consistencies */
-        $consistencies = $frequencies->fold(function(Collection $accum, $freq, $line_no) use ($modes) {
+        $consistencies = $frequencies->recollect(function(Collection $accum, $freq, $line_no) use ($modes) {
 
-            $modes->each(function($expected, $char) use ($accum, $freq) {
-                /** @var Collection $freq */
-                if (collect($freq)->get($char) == $expected) {
-                    $matches = $accum->get($char, 0);
-                    $accum->set($char, ++$matches);
-                }
-            });
-            return $accum;
+                $modes->each(function($expected, $char) use ($accum, $freq) {
+                    /** @var Collection $freq */
+                    if (collect($freq)->get($char) == $expected) {
+                        $matches = $accum->get($char, 0);
+                        $accum->set($char, ++$matches);
+                    }
+                });
+                return $accum;
 
-        }, new Collection)
+            })
             ->sort()
             ->reverse();
 

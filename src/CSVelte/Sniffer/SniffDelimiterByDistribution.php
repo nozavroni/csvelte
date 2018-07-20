@@ -43,10 +43,10 @@ class SniffDelimiterByDistribution extends AbstractSniffer
                         });
                     // standard deviation
                     $avg = $delimited->average();
-                    return sqrt($delimited->fold(function($d, $len) use ($avg) {
+                    return sqrt($delimited->recollect(function(Collection $d, $len) use ($avg) {
                             return $d->add(pow($len - $avg, 2));
-                        }, new Collection)
-                            ->sum() / $delimited->count());
+                        })
+                        ->sum() / $delimited->count());
                 });
                 return $sd->average();
 
