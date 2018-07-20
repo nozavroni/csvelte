@@ -121,6 +121,14 @@ class ReaderTest extends UnitTestCase
         $this->assertEquals(4, $reader->key());
     }
 
+    public function testFetchRowReturnsFalseIfAtEndOfInput()
+    {
+        $source = to_stream(fopen($this->getFilePathFor('commaNewlineHeader'), 'r+'));
+        $reader = new Reader($source);
+        $source->seek($source->getSize());
+        $this->assertFalse($reader->fetchRow());
+    }
+
     /** BEGIN: SPL implementation method tests */
 
     public function testCurrentReturnsCurrentLineFromInput()

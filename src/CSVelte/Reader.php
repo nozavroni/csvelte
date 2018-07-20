@@ -94,12 +94,15 @@ class Reader implements Iterator, Countable
     /**
      * Fetch a single row
      *
-     * Fetch the next row from the CSV data.
+     * Fetch the next row from the CSV data. If no more data available, returns false.
      *
-     * @return array
+     * @return array|false
      */
     public function fetchRow()
     {
+        if (!$this->valid()) {
+            return false;
+        }
         $line = $this->current();
         $this->next();
         return $line;
