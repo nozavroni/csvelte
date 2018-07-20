@@ -92,6 +92,20 @@ class Reader implements Iterator, Countable
     }
 
     /**
+     * Fetch a single row
+     *
+     * Fetch the next row from the CSV data.
+     *
+     * @return array
+     */
+    public function fetchRow()
+    {
+        $line = $this->current();
+        $this->next();
+        return $line;
+    }
+
+    /**
      * Set input stream
      *
      * @param Streamable $stream The input stream to read from

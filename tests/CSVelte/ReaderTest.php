@@ -84,6 +84,43 @@ class ReaderTest extends UnitTestCase
         ], $reader->current());
     }
 
+    public function testFetchRowReturnsCurrentRowAndAdvancesPointerToNextLine()
+    {
+        $source = to_stream(fopen($this->getFilePathFor('commaNewlineHeader'), 'r+'));
+        $reader = new Reader($source);
+        $this->assertEquals(1, $reader->key());
+        $this->assertSame([
+            'Bank Name' => 'First CornerStone Bank',
+            'City' => "King of\nPrussia",
+            'ST' => 'PA',
+            'CERT' => '35312',
+            'Acquiring Institution' => 'First-Citizens Bank & Trust Company',
+            'Closing Date' => '6-May-16',
+            'Updated Date' => '25-May-16'
+        ], $reader->fetchRow());
+        $this->assertEquals(2, $reader->key());
+        $this->assertSame([
+            'Bank Name' => 'Trust Company Bank',
+            'City' => 'Memphis',
+            'ST' => 'TN',
+            'CERT' => '9956',
+            'Acquiring Institution' => 'The Bank of Fayette County',
+            'Closing Date' => '29-Apr-16',
+            'Updated Date' => '25-May-16'
+        ], $reader->fetchRow());
+        $this->assertEquals(3, $reader->key());
+        $this->assertSame([
+            'Bank Name' => 'North Milwaukee State Bank',
+            'City' => 'Milwaukee',
+            'ST' => 'WI',
+            'CERT' => '20364',
+            'Acquiring Institution' => 'First-Citizens Bank & Trust Company',
+            'Closing Date' => '11-Mar-16',
+            'Updated Date' => '16-Jun-16'
+        ], $reader->fetchRow());
+        $this->assertEquals(4, $reader->key());
+    }
+
     /** BEGIN: SPL implementation method tests */
 
     public function testCurrentReturnsCurrentLineFromInput()
