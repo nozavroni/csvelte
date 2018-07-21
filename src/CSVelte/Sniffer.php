@@ -17,8 +17,10 @@ use CSVelte\Contract\Streamable;
 use CSVelte\Exception\SnifferException;
 use CSVelte\Sniffer\SniffDelimiterByConsistency;
 use CSVelte\Sniffer\SniffDelimiterByDistribution;
+use CSVelte\Sniffer\SniffHeaderByDataType;
 use CSVelte\Sniffer\SniffLineTerminatorByCount;
 use CSVelte\Sniffer\SniffQuoteAndDelimByAdjacency;
+use CSVelte\Sniffer\SniffQuoteStyle;
 use Noz\Collection\Collection;
 use function Noz\to_array;
 use RuntimeException;
@@ -120,8 +122,8 @@ class Sniffer
          * @todo Should this be null? Because doubleQuote = true means this = null
          */
         $escapeChar = '\\';
-        $quoteStyle = $this->sniffQuotingStyle($delimiter, $lineTerminator);
-        $header     = $this->sniffHeader($delimiter, $lineTerminator);
+        $quoteStyle = $this->sniffQuotingStyle($sample, $delimiter, $lineTerminator);
+        $header     = $this->sniffHeader($sample, $delimiter, $lineTerminator);
         $encoding   = s($sample)->getEncoding();
 
         return new Dialect(compact('quoteChar', 'escapeChar', 'delimiter', 'lineTerminator', 'quoteStyle', 'header', 'encoding'));
@@ -161,9 +163,6 @@ class Sniffer
         return $sniffer->sniff($data);
     }
 
-    /**
-     * @todo To make this class more oop and test-friendly, implement strategy pattern here with each delim sniffing method implemented in its own strategy class.
-     */
     protected function sniffDelimiter($data, $lineTerminator)
     {
         $delimiters = $this->getPossibleDelimiters();
@@ -177,13 +176,15 @@ class Sniffer
         return current($winners);
     }
 
-    protected function sniffQuotingStyle($delimiter, $eols)
+    protected function sniffQuotingStyle($data, $delimiter, $lineTerminator)
     {
-        return Dialect::QUOTE_MINIMAL;
+        $sniffer = new SniffQuoteStyle(compact( 'lineTerminator', 'delimiter'));
+        return $sniffer->sniff($data);
     }
 
-    protected function sniffHeader($delimiter, $eols)
+    protected function sniffHeader($data, $delimiter, $lineTerminator)
     {
-        return true;
+        $sniffer = new SniffHeaderByDataType(compact( 'lineTerminator', 'delimiter'));
+        return $sniffer->sniff($data);
     }
 }
