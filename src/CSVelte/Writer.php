@@ -15,6 +15,10 @@ namespace CSVelte;
 use CSVelte\Contract\Streamable;
 use Noz\Collection\Collection;
 
+use function Noz\collect;
+use function Stringy\create as s;
+use Traversable;
+
 class Writer
 {
     /** @var Streamable The output stream to write to */
@@ -77,7 +81,73 @@ class Writer
      */
     protected function setOutputStream(Streamable $stream)
     {
-        $this->input = $stream;
+        $this->output = $stream;
         return $this;
+    }
+
+    /**
+     * Insert a single record into CSV output
+     *
+     * Returns total bytes written to the output stream.
+     *
+     * @param array|Traversable $data A row of data to write to the CSV output
+     *
+     * @return false|int
+     */
+    public function insertRow($data)
+    {
+        $d = $this->getDialect();
+        $data = collect($data)
+            ->map(function($field) use ($d) {
+                if ($qstyle = $d->getQuoteStyle()) {
+                    $wrap = false;
+                    switch ($qstyle) {
+                        case Dialect::QUOTE_ALL:
+                            $wrap = true;
+                            break;
+                        case Dialect::QUOTE_MINIMAL:
+                            if (s($field)->containsAny([$d->getQuoteChar(), $d->getDelimiter(), $d->getLineTerminator()])) {
+                                $wrap = true;
+                            }
+                            break;
+                        case Dialect::QUOTE_NONNUMERIC:
+                            if (is_numeric((string) $field)) {
+                                $wrap = true;
+                            }
+                            break;
+                    }
+                    if ($wrap) {
+                        $field = s($field);
+                        if ($field->contains($d->getQuoteChar())) {
+                            $escapeChar = $d->isDoubleQuote() ? $d->getQuoteChar() : '\\' /*$d->getEscapeChar()*/;
+                            $field = $field->replace($d->getQuoteChar(), $d->getQuoteChar() . $d->getQuoteChar());
+                        }
+                        $field = $field->surround($d->getQuoteChar());
+                    }
+                }
+                return (string) $field;
+            });
+        $str = s($data->join($d->getDelimiter()))
+            ->append($d->getLineTerminator());
+
+        return $this->output->write((string) $str);
+    }
+
+    /**
+     * Write multiple rows to CSV output
+     *
+     * Returns total bytes written to the output stream.
+     *
+     * @param array|Traversable $data An array of rows of data to write to the CSV output
+     *
+     * @return int
+     */
+    public function insertAll($data)
+    {
+        return collect($data)
+            ->map(function($row, $lineNo, $i) {
+                return $this->insertRow($row);
+            })
+            ->sum();
     }
 }

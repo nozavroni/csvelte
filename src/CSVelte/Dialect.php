@@ -22,6 +22,8 @@ use function Noz\collect,
  * Due to CSV being without any definitive format definition for so long, many dialects of it exist. This class allows
  * the creation of reusable "dialects" for commonly used flavors of CSV. You can make one for Excel CSV, another for
  * tab delimited CSV, another for pipe-delimited, etc.
+ *
+ * @todo Where is escapeChar? Do we just use a backslash if doubleQuote is false?
  */
 class Dialect
 {

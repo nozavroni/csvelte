@@ -161,7 +161,10 @@ class Reader implements Iterator, Countable
             ->trimRight($d->getLineTerminator())
             ->split($d->getDelimiter() . "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
         if (!is_null($this->header)) {
-            $fields = $fields->rekey($this->header);
+            // @todo there may be cases where this gives a false positive...
+            if (count($fields) == count($this->header)) {
+                $fields = $fields->rekey($this->header);
+            }
         }
         return $fields->map(function(Stringy $field, $pos) use ($d) {
             if ($d->isDoubleQuote()) {
