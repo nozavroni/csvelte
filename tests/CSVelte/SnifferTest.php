@@ -22,6 +22,7 @@ use CSVelte\Sniffer\SniffLineTerminatorByCount;
 use CSVelte\Sniffer\SniffQuoteAndDelimByAdjacency;
 use CSVelte\Sniffer\SniffQuoteStyle;
 use function CSVelte\to_stream;
+use function Noz\collect;
 
 class SnifferTest extends UnitTestCase
 {

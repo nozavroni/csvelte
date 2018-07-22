@@ -12,9 +12,13 @@
  */
 namespace CSVelte\Sniffer;
 
+use CSVelte\Dialect;
+use CSVelte\Reader;
+use Noz\Collection\Collection;
+
+use function CSVelte\to_stream;
 use function Noz\collect;
 use function Stringy\create as s;
-use Stringy\Stringy;
 
 class SniffHeaderByDataType extends AbstractSniffer
 {
@@ -34,52 +38,58 @@ class SniffHeaderByDataType extends AbstractSniffer
     public function sniff($data)
     {
         $delimiter = $this->getOption('delimiter');
-        $data = s($data);
-        $lines = collect($data->lines())
-            ->map(function($line) use ($delimiter) {
-                return s($this->replaceQuotedSpecialChars($line, $delimiter));
-            });
-        $header = collect($lines->shift()->split($delimiter))
-            ->map(function($val){ return $this->unQuote($val); })
-            ->map(function($val) {
-                return [
-                    'type' => $this->getType($val),
-                    'length' => s($val)->length()
-                ];
-            });
+        $getFieldInfo = function($val) {
+            return [
+                'value' => $val,
+                'type' => $this->getType($val),
+                'length' => s($val)->length()
+            ];
+        };
+        $reader = new Reader(to_stream($data), new Dialect(['delimiter' => $delimiter, 'header' => false]));
+        $lines = collect($reader->toArray());
+        $header = collect($lines->shift()) ->map($getFieldInfo);
         $lines->pop(); // get rid of the last line because it may be incomplete
-        $comparison = $lines->slice(0, 10)
-            ->map(function($line, $line_no) use ($header, $delimiter) {
-                /** @var Stringy $line */
-                $values = collect($line->split($delimiter));
-                return $values->map(function($str, $pos) use ($header) {
-                    $comp = $header->get($pos);
-                    $type = $this->getType($str);
-                    return [
-                        // true if same, false otherwise
-                        'type' => $comp['type'] == $type,
-                        // return the difference in length
-                        'length' => $comp['length'] - s($str)->length()
-                    ];
-                });
-            });
-
-        $hasHeader = collect();
-        $comparison->each(function($line) use ($hasHeader) {
-            foreach ($line as $val) {
-                if ($val['type']) {
-                    $hasHeader->add(1);
-                } else {
-                    if ($val['length'] === 0) {
-                        $hasHeader->add(1);
-                    } else {
-                        $hasHeader->add(-1);
-                    }
-                }
-            }
+        $comparison = $lines->slice(0, 10)->map(function($fields) use ($getFieldInfo) {
+            return array_map($getFieldInfo, $fields);
         });
 
-        return $hasHeader->sum() > 0;
+        /**
+         * @var Collection $header
+         * @var Collection $noHeader
+         */
+        list($header, $noHeader) = $header->map(function($hval, $hind) use ($comparison) {
+
+                $isHeader = 0;
+                $type = $comparison->getColumn($hind)->getColumn('type');
+                $length = $comparison->getColumn($hind)->getColumn('length');
+                if ($distinct = $type->distinct()) {
+                    if ($distinct->count() == 1) {
+                        if ($distinct->getValueAt(1) != $hval['type']) {
+                            $isHeader = 1;
+                        }
+                    }
+                }
+
+                if (!$isHeader) {
+                    // use standard deviation to determine if header is wildly different length than others
+                    $mean = $length->average();
+                    $sd = sqrt($length->map(function ($len) use ($mean) {
+                        return pow($len - $mean, 2);
+                    })->average());
+
+                    $diff_head_avg = abs($hval['length'] - $mean);
+                    if ($diff_head_avg > $sd) {
+                        $isHeader = 1;
+                    }
+                }
+                return $isHeader;
+
+            })
+            ->partition(function($val) {
+                return (bool) $val;
+            });
+
+        return $header->count() > $noHeader->count();
     }
 
     protected function getType($value)
@@ -88,15 +98,28 @@ class SniffHeaderByDataType extends AbstractSniffer
         switch (true) {
             case is_numeric($value):
                 return 'numeric';
+            // note - the order of these is important, do not change unless you know what you're doing
             case is_string($value):
+                if (preg_match('/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/i', $value)) {
+                    return 'email';
+                }
+                if (preg_match('/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/i', $value)) {
+                    return 'url';
+                }
                 if (strtotime($value) !== false) {
                     return 'datetime';
                 }
                 if (preg_match('/^[+-]?[¥£€$]\d+(\.\d+)$/', $value)) {
                     return 'currency';
                 }
-                if ($str->isAlpha()) {
-                    return 'alpha';
+                if (preg_match('/^[a-z0-9_-]{1,35}$/i', $value)) {
+                    return 'identifier';
+                }
+                if (preg_match('/^[a-z0-9 _\/&\(\),\.?\'!-]{1,50}$/i', $value)) {
+                    return 'text_short';
+                }
+                if (preg_match('/^[a-z0-9 _\/&\(\),\.?\'!-]{100,}$/i', $value)) {
+                    return 'text_long';
                 }
                 if ($str->isAlphanumeric()) {
                     return 'alnum';
@@ -108,6 +131,6 @@ class SniffHeaderByDataType extends AbstractSniffer
                     return 'json';
                 }
         }
-        return 'unknown';
+        return 'other';
     }
 }

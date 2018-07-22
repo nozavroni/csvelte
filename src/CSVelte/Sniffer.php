@@ -123,7 +123,7 @@ class Sniffer
          */
         $escapeChar = '\\';
         $quoteStyle = $this->sniffQuotingStyle($sample, $delimiter, $lineTerminator);
-        $header     = $this->sniffHeader($sample, $delimiter, $lineTerminator);
+        $header     = $this->sniffHasHeader($sample, $delimiter, $lineTerminator);
         $encoding   = s($sample)->getEncoding();
 
         return new Dialect(compact('quoteChar', 'escapeChar', 'delimiter', 'lineTerminator', 'quoteStyle', 'header', 'encoding'));
@@ -182,9 +182,9 @@ class Sniffer
         return $sniffer->sniff($data);
     }
 
-    protected function sniffHeader($data, $delimiter, $lineTerminator)
+    protected function sniffHasHeader($data, $delimiter, $lineTerminator)
     {
-        $sniffer = new SniffHeaderByDataType(compact( 'lineTerminator', 'delimiter'));
+        $sniffer = new SniffHeaderByDataType(compact(  'lineTerminator', 'delimiter'));
         return $sniffer->sniff($data);
     }
 }
