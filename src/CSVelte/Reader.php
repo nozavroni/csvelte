@@ -159,7 +159,7 @@ class Reader implements Iterator, Countable
         $d = $this->getDialect();
         $fields = collect(s($line)
             ->trimRight($d->getLineTerminator())
-            ->split($d->getDelimiter() . "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
+            ->split(" *{$d->getDelimiter()} *(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
         if (!is_null($this->header)) {
             // @todo there may be cases where this gives a false positive...
             if (count($fields) == count($this->header)) {
