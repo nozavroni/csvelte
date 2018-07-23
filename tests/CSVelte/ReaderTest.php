@@ -139,6 +139,14 @@ class ReaderTest extends UnitTestCase
         $this->assertEquals('FL', $rows[1]['statecode']);
     }
 
+    // @see https://github.com/nozavroni/csvelte/issues/191
+    public function testBugFixReaderIgnoresLastLineIfNoFinalLineEnding()
+    {
+        $csv = "\"policyID\",\"statecode\",\"county\",\"eq_site_limit\",\"hu_site_limit\",\"fl_site_limit\",\"fr_site_limit\", \"tiv_2011\",\"tiv_2012\",\"eq_site_deductible\",\"hu_site_deductible\",\"fl_site_deductible\",\"fr_site_deductible\",\"point_latitude\",\"point_longitude\",\"line\",\"construction\",\"point_granularity\"\n119736, \"FL\" ,\"CLAY COUNTY\",498960,498960,498960,498960,498960,792148.9,0,9979.2,0,0,30.102261,-81.711777,\"Residential\",\"Masonry\",1";
+        $reader = new Reader(to_stream($csv));
+        $this->assertCount(1, $reader->toArray());
+    }
+
     /** BEGIN: SPL implementation method tests */
 
     public function testCurrentReturnsCurrentLineFromInput()
