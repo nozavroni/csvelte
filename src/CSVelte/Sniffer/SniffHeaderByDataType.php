@@ -92,6 +92,15 @@ class SniffHeaderByDataType extends AbstractSniffer
         return $header->count() > $noHeader->count();
     }
 
+    /**
+     * Get string's type
+     *
+     * Returns one of a handful of "types".
+     *
+     * @param string $value A string to get the type of
+     *
+     * @return string
+     */
     protected function getType($value)
     {
         $str = s($value);
