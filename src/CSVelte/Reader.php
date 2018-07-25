@@ -106,6 +106,9 @@ class Reader implements Iterator, Countable
     public function getRow($offset = null)
     {
         if (!is_null($offset)) {
+            if ($offset < 0) {
+                return collect($this->toArray())->getValueAt($offset);
+            }
             foreach ($this as $key => $row) {
                 if ($key === $offset) {
                     return $row;
