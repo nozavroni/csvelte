@@ -38,6 +38,9 @@ class Reader implements Iterator, Countable
     /** @var int The current line number */
     protected $lineNo;
 
+    /** @var bool Determines whether we've reached the end of the data */
+    protected $valid;
+
     /**
      * Reader constructor.
      *
@@ -100,7 +103,7 @@ class Reader implements Iterator, Countable
      */
     public function fetchRow()
     {
-        if (!$this->valid()) {
+        if (!$this->valid() || $this->input->eof()) {
             return false;
         }
         $line = $this->current();
@@ -159,7 +162,7 @@ class Reader implements Iterator, Countable
         $d = $this->getDialect();
         $fields = collect(s($line)
             ->trimRight($d->getLineTerminator())
-            ->split($d->getDelimiter() . "(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
+            ->split(" *{$d->getDelimiter()} *(?=([^\"]*\"[^\"]*\")*[^\"]*$)"));
         if (!is_null($this->header)) {
             // @todo there may be cases where this gives a false positive...
             if (count($fields) == count($this->header)) {
@@ -215,7 +218,13 @@ class Reader implements Iterator, Countable
      */
     public function valid()
     {
-        return !$this->input->eof();
+        if ($this->valid === false) {
+            return false;
+        }
+        if ($this->input->tell() >= $this->input->getSize()) {
+            $this->valid = false;
+        }
+        return true;
     }
 
     /**
@@ -228,6 +237,7 @@ class Reader implements Iterator, Countable
      */
     public function rewind()
     {
+        $this->valid = null;
         $this->lineNo = 1;
         $this->input->rewind();
         if ($this->getDialect()->hasHeader()) {
