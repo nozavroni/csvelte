@@ -106,10 +106,8 @@ class Reader implements Iterator, Countable
     public function getRow($offset = null)
     {
         if (!is_null($offset)) {
-            $this->rewind();
-            $i = 0;
-            while ($row = $this->getRow()) {
-                if ($offset === $i++) {
+            foreach ($this as $key => $row) {
+                if ($key === $offset) {
                     return $row;
                 }
             }
