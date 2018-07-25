@@ -38,6 +38,9 @@ class Reader implements Iterator, Countable
     /** @var int The current line number */
     protected $lineNo;
 
+    /** @var bool Determines whether we've reached the end of the data */
+    protected $valid;
+
     /**
      * Reader constructor.
      *
@@ -100,7 +103,7 @@ class Reader implements Iterator, Countable
      */
     public function fetchRow()
     {
-        if (!$this->valid()) {
+        if (!$this->valid() || $this->input->eof()) {
             return false;
         }
         $line = $this->current();
@@ -215,7 +218,13 @@ class Reader implements Iterator, Countable
      */
     public function valid()
     {
-        return !$this->input->eof();
+        if ($this->valid === false) {
+            return false;
+        }
+        if ($this->input->tell() >= $this->input->getSize()) {
+            $this->valid = false;
+        }
+        return true;
     }
 
     /**
@@ -228,6 +237,7 @@ class Reader implements Iterator, Countable
      */
     public function rewind()
     {
+        $this->valid = null;
         $this->lineNo = 1;
         $this->input->rewind();
         if ($this->getDialect()->hasHeader()) {

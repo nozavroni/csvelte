@@ -24,7 +24,7 @@ trait IsReadable
     /**
      * Read single line.
      * Read the next line from the file (moving the internal pointer down a line).
-     * Returns multiple lines if newline character(s) fall within a quoted string.
+     * Returns multiple lines if newline character(s) fall within a quoted string (I dont think this is true)
      *
      * @param string|array $eol       A string or array of strings to be used as EOL char/sequence
      * @param int          $maxLength Maximum number of bytes to return (line will be truncated to this -1 if set)
@@ -39,8 +39,8 @@ trait IsReadable
      */
     public function readLine($eol = PHP_EOL, $maxLength = null)
     {
-        $size                     = 0;
-        $buffer                   = false;
+        $size = 0;
+        $buffer = false;
         if (!is_array($eol)) {
             $eol = [$eol];
         }
