@@ -88,7 +88,7 @@ class ReaderTest extends UnitTestCase
     {
         $source = to_stream(fopen($this->getFilePathFor('commaNewlineHeader'), 'r+'));
         $reader = new Reader($source);
-        $this->assertEquals(1, $reader->key());
+        $this->assertEquals(0, $reader->key());
         $this->assertSame([
             'Bank Name' => 'First CornerStone Bank',
             'City' => "King of\nPrussia",
@@ -98,7 +98,7 @@ class ReaderTest extends UnitTestCase
             'Closing Date' => '6-May-16',
             'Updated Date' => '25-May-16'
         ], $reader->getRow());
-        $this->assertEquals(2, $reader->key());
+        $this->assertEquals(1, $reader->key());
         $this->assertSame([
             'Bank Name' => 'Trust Company Bank',
             'City' => 'Memphis',
@@ -108,7 +108,7 @@ class ReaderTest extends UnitTestCase
             'Closing Date' => '29-Apr-16',
             'Updated Date' => '25-May-16'
         ], $reader->getRow());
-        $this->assertEquals(3, $reader->key());
+        $this->assertEquals(2, $reader->key());
         $this->assertSame([
             'Bank Name' => 'North Milwaukee State Bank',
             'City' => 'Milwaukee',
@@ -118,7 +118,7 @@ class ReaderTest extends UnitTestCase
             'Closing Date' => '11-Mar-16',
             'Updated Date' => '16-Jun-16'
         ], $reader->getRow());
-        $this->assertEquals(4, $reader->key());
+        $this->assertEquals(3, $reader->key());
     }
 
     public function testGetRowReturnsFalseIfAtEndOfInput()
@@ -206,8 +206,8 @@ class ReaderTest extends UnitTestCase
         $csv = "\"policyID\",\"statecode\",\"county\",\"eq_site_limit\",\"hu_site_limit\",\"fl_site_limit\",\"fr_site_limit\", \"tiv_2011\",\"tiv_2012\",\"eq_site_deductible\",\"hu_site_deductible\",\"fl_site_deductible\",\"fr_site_deductible\",\"point_latitude\",\"point_longitude\",\"line\",\"construction\",\"point_granularity\"\n119736, \"FL\" ,\"CLAY COUNTY\",498960,498960,498960,498960,498960,792148.9,0,9979.2,0,0,30.102261,-81.711777,\"Residential\",\"Masonry\",1\n";
         $reader = new Reader(to_stream($csv));
         $rows = $reader->toArray();
-        $this->assertEquals('tiv_2011', array_keys($rows[1])[7]);
-        $this->assertEquals('FL', $rows[1]['statecode']);
+        $this->assertEquals('tiv_2011', array_keys($rows[0])[7]);
+        $this->assertEquals('FL', $rows[0]['statecode']);
     }
 
     // @see https://github.com/nozavroni/csvelte/issues/191
@@ -218,7 +218,7 @@ class ReaderTest extends UnitTestCase
         $rows = $reader->toArray();
         $this->assertCount(2, $rows);
         $this->assertSame([
-            1 => [
+            0 => [
                 'newlineId' => '119736',
                 'statecode' => 'FL',
                 'county' => 'CLAY COUNTY',
@@ -238,7 +238,7 @@ class ReaderTest extends UnitTestCase
                 'construction' => 'Masonry',
                 'point_granularity' => '1'
             ],
-            2 => [
+            1 => [
                 'newlineId' => '119736',
                 'statecode' => 'FL',
                 'county' => 'CLAY COUNTY',
@@ -325,14 +325,14 @@ class ReaderTest extends UnitTestCase
             5 => 'Closing Date',
             6 => 'Updated Date'
         ], $reader->current());
-        $this->assertSame(1, $reader->key());
+        $this->assertSame(0, $reader->key());
     }
 
     public function testKeyReturnsLineNumberNotIncludingHeaderLine()
     {
         $source = fopen($this->getFilePathFor('commaNewlineHeader'), 'r+');
         $reader = new Reader(to_stream($source));
-        $this->assertSame(1, $reader->key());
+        $this->assertSame(0, $reader->key());
         $this->assertSame([
             'Bank Name' => 'First CornerStone Bank',
             'City' => "King of\nPrussia",

@@ -264,7 +264,7 @@ class Reader implements Iterator, Countable
     public function rewind()
     {
         $this->valid = null;
-        $this->lineNo = 1;
+        $this->lineNo = 0;
         $this->input->rewind();
         if ($this->getDialect()->hasHeader()) {
             $this->loadLine();
