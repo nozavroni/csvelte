@@ -97,7 +97,7 @@ class ReaderTest extends UnitTestCase
             'Acquiring Institution' => 'First-Citizens Bank & Trust Company',
             'Closing Date' => '6-May-16',
             'Updated Date' => '25-May-16'
-        ], $reader->fetchRow());
+        ], $reader->getRow());
         $this->assertEquals(2, $reader->key());
         $this->assertSame([
             'Bank Name' => 'Trust Company Bank',
@@ -107,7 +107,7 @@ class ReaderTest extends UnitTestCase
             'Acquiring Institution' => 'The Bank of Fayette County',
             'Closing Date' => '29-Apr-16',
             'Updated Date' => '25-May-16'
-        ], $reader->fetchRow());
+        ], $reader->getRow());
         $this->assertEquals(3, $reader->key());
         $this->assertSame([
             'Bank Name' => 'North Milwaukee State Bank',
@@ -117,18 +117,18 @@ class ReaderTest extends UnitTestCase
             'Acquiring Institution' => 'First-Citizens Bank & Trust Company',
             'Closing Date' => '11-Mar-16',
             'Updated Date' => '16-Jun-16'
-        ], $reader->fetchRow());
+        ], $reader->getRow());
         $this->assertEquals(4, $reader->key());
     }
 
-    public function testFetchRowReturnsFalseIfAtEndOfInput()
+    public function testGetRowReturnsFalseIfAtEndOfInput()
     {
         $source = to_stream(fopen($this->getFilePathFor('commaNewlineHeader'), 'r+'));
         $reader = new Reader($source);
         $source->seek($source->getSize());
-        $this->assertFalse($reader->fetchRow());
+        $this->assertFalse($reader->getRow());
     }
-
+    
     // @see https://github.com/nozavroni/csvelte/issues/190
     public function testBugFixReaderSplitsFieldsIncorrectlyWhenHasSpacesAroundDelimiter()
     {
