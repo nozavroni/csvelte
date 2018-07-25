@@ -9,20 +9,14 @@
  */
 require_once __DIR__ . '/../vendor/autoload.php';
 
-function dd($input, $exit = true, $label = null)
-{
-    if (is_null($label)) {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 1);
-        $label = 'File: ';
-        $label .= pathinfo($trace[0]['file'], PATHINFO_FILENAME);
-        $label .= ":" . $trace[0]['line'];
-        echo $label . "\n";
-    } else {
-        echo $label . "\n" . implode(array_map(function($c){ return "-"; }, str_split($label))) . "\n";
+use Symfony\Component\VarDumper\VarDumper;
+
+if (!function_exists('dd')) {
+    function dd($input, $exit = true)
+    {
+        VarDumper::dump($input);
+        if ($exit) exit;
     }
-    var_dump($input);
-    echo "\n";
-    if ($exit) exit;
 }
 
 /**
@@ -37,14 +31,8 @@ function dd($input, $exit = true, $label = null)
  *     visible versions, but it appears that json_encode does this pretty well
  *     for me. Neato!
  */
-function si($in, $exit = true, $dump = true)
+function si($in, $exit = true)
 {
-    $out = json_encode($in);
-    if ($dump) return var_dump($out);
-    else {
-        if ($exit) exit($out);
-    }
-    return $out;
+    dd(json_encode($in), $exit);
 }
 
-function with($obj) { return $obj; }

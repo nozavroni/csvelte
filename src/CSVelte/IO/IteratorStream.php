@@ -1,15 +1,14 @@
 <?php
-
-/*
+/**
  * CSVelte: Slender, elegant CSV for PHP
+ *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   {version}
- * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @copyright Copyright (c) 2018 Luke Visinoni
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ * @license   See LICENSE file (MIT license)
  */
 namespace CSVelte\IO;
 
@@ -24,14 +23,6 @@ use Iterator;
  *
  * A read-only stream that uses an iterable to continuously fill up a buffer as
  * read operations deplete it.
- *
- * @package    CSVelte
- * @subpackage CSVelte\IO
- *
- * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author     Luke Visinoni <luke.visinoni@gmail.com>
- *
- * @since      v0.2.1
  */
 class IteratorStream implements Streamable
 {
@@ -173,8 +164,8 @@ class IteratorStream implements Streamable
         $contents = '';
         while (!$this->eof()) {
             $contents .= $this->read(
-                // kind of arbitrary... we have to specify something for the
-                // chunk length, so I just used the buffer's "high water mark"
+            // kind of arbitrary... we have to specify something for the
+            // chunk length, so I just used the buffer's "high water mark"
                 $this->buffer->getMetadata('hwm')
             );
         }

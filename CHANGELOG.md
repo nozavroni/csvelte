@@ -1,5 +1,12 @@
 # CHANGE LOG
 
+## [v0.3 Release]()
+
+ * Changed CSVelte\Flavor to CSVelte\Dialect to be more consistent with CSVW
+ * Changed CSVelte\Taster to CSVelte\Sniffer because Taster no longer makes sense (also now more consistent with python csv package)
+ * Moved all Collection-related functionality into its own library (nozavroni/collect)
+ * Removed all CSVelte functions with the exception of `CSVelte\streamize`, which has been renamed to `CSVelte\to_stream`.
+
 ## [v0.2.2 Release]()
 
  * Refactored CSVelte\Collection class, introducing a variety of specialized collection classes ([#141](https://github.com/nozavroni/csvelte/issues/141)).

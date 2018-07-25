@@ -1,16 +1,27 @@
 <?php
+/**
+ * CSVelte: Slender, elegant CSV for PHP
+ *
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
+ *
+ * @copyright Copyright (c) 2018 Luke Visinoni
+ * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @license   See LICENSE file (MIT license)
+ */
 namespace CSVelteTest\IO;
 
-use \ArrayIterator;
-use CSVelte\Exception\NotYetImplementedException;
-use \SplFileObject;
+use ArrayIterator;
 use CSVelte\Contract\Streamable;
-use CSVelte\IO\Stream;
 use CSVelte\IO\BufferStream;
 use CSVelte\IO\IteratorStream;
+use InvalidArgumentException;
+use SplFileObject;
+use CSVelte\IO\Stream;
 use CSVelte\IO\StreamResource;
 
-use function CSVelte\streamize;
+use function CSVelte\to_stream;
 
 /**
  * CSVelte\IO\Stream Tests.
@@ -93,7 +104,7 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testInstantiateWithContextNotArrayThrowsException()
     {
@@ -115,8 +126,8 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException CSVelte\Exception\IOException
-     * @expectedExceptionCode CSVelte\Exception\IOException::ERR_STREAM_CONNECTION_FAILED
+     * @expectedException \CSVelte\Exception\IOException
+     * @expectedExceptionCode \CSVelte\Exception\IOException::ERR_STREAM_CONNECTION_FAILED
      */
     public function testInstantiateThrowsExceptionIfInvalidStreamURI()
     {
@@ -124,7 +135,7 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testInstantiateThrowsExceptionIfInvalidStreamResource()
     {
@@ -196,8 +207,8 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException CSVelte\Exception\IOException
-     * @expectedExceptionCode CSVelte\Exception\IOException::ERR_NOT_READABLE
+     * @expectedException \CSVelte\Exception\IOException
+     * @expectedExceptionCode \CSVelte\Exception\IOException::ERR_NOT_READABLE
      */
     public function testReadThrowsExceptionIfNotReadable()
     {
@@ -352,64 +363,64 @@ class StreamTest extends IOTest
         $this->assertFalse($nonWritableStream->isWritable());
     }
 
-//    /**
-//     * @expectedException NotYetImplementedException
-//     */
-//    public function testSeekableStreamsThrowNotYetImplementedOnSeekLineMethod()
-//    {
-//        $stream = Stream::open($this->getFilePathFor('veryShort'));
-//        $this->assertTrue($stream->isSeekable());
-//        $stream->seekLine(1);
-//    }
+    /**
+     * @expectedException \CSVelte\Exception\NotYetImplementedException
+     */
+    public function testSeekableStreamsThrowNotYetImplementedOnSeekLineMethod()
+    {
+        $stream = Stream::open($this->getFilePathFor('veryShort'));
+        $this->assertTrue($stream->isSeekable());
+        $stream->seekLine(1);
+    }
 
-    public function testStreamCanConvertStringIntoStreamWithStreamize()
+    public function testStreamCanConvertStringIntoStreamWithToStream()
     {
         $csv_string = $this->getFileContentFor('veryShort');
-        $csv_stream = streamize($csv_string);
+        $csv_stream = to_stream($csv_string);
         $this->assertEquals($csv_string, $csv_stream->read(37));
     }
 
-    public function testStreamCanConvertEmptyStringIntoStreamWithStreamizeWithNoParams()
+    public function testStreamCanConvertEmptyStringIntoStreamWithToStreamWithNoParams()
     {
-        $csv_stream = streamize();
+        $csv_stream = to_stream();
         $this->assertEquals('', $csv_stream->read(10));
     }
 
-    public function testStreamCanConvertObjectWithToStringMethodIntoStreamWithStreamize()
+    public function testStreamCanConvertObjectWithToStringMethodIntoStreamWithToStream()
     {
         // Create a stub for non-existant StreamableClass.
         $csv_obj = $this->getMockBuilder('StreamableClass')
-                        ->setMethods(['__toString'])
-                        ->getMock();
+            ->setMethods(['__toString'])
+            ->getMock();
 
         // Configure the stub.
         $csv_obj->method('__toString')
-             ->willReturn($csv_string = $this->getFileContentFor('veryShort'));
+            ->willReturn($csv_string = $this->getFileContentFor('veryShort'));
 
         // test it
-        $csv_stream = streamize($csv_obj);
+        $csv_stream = to_stream($csv_obj);
         $this->assertEquals($csv_string, $csv_stream->read(37));
     }
 
-    public function testStreamizeCanStreamSplFileObject()
+    public function testToStreamCanStreamSplFileObject()
     {
         $fileObj = new SplFileObject($fn = $this->getFilePathFor('headerCommaQuoteNonnumeric'));
-        $this->assertInstanceOf(Streamable::class, $stream = streamize($fileObj));
+        $this->assertInstanceOf(Streamable::class, $stream = to_stream($fileObj));
         $this->assertEquals(file_get_contents($fn), $stream->__toString());
     }
 
-    // public function testStreamizeCanStreamSplFileObjectAndSetCorrectPosition()
-    // {
-    //     $fileObj = new SplFileObject($fn = $this->getFilePathFor('headerCommaQuoteNonnumeric'));
-    //     $fileObj->read($pos = 25);
-    //     $stream = streamize($fileObj);
-    //     $this->assertEquals($pos, $stream->tell());
-    //     //$this->assertEquals($pos, $fileObj->ftell());
-    // }
+//     public function testToStreamCanStreamSplFileObjectAndSetCorrectPosition()
+//     {
+//         $fileObj = new SplFileObject($fn = $this->getFilePathFor('headerCommaQuoteNonnumeric'));
+//         $fileObj->fread($pos = 25);
+//         $stream = to_stream($fileObj);
+//         $this->assertEquals($pos, $stream->tell());
+//         //$this->assertEquals($pos, $fileObj->ftell());
+//     }
 
     /**
-     * @expectedException CSVelte\Exception\IOException
-     * @expectedExceptionCode CSVelte\Exception\IOException::ERR_NOT_WRITABLE
+     * @expectedException \CSVelte\Exception\IOException
+     * @expectedExceptionCode \CSVelte\Exception\IOException::ERR_NOT_WRITABLE
      */
     public function testWriteToNonWritableStreamThrowsIOException()
     {
@@ -418,7 +429,7 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testStreamThrowsExceptionIfContextIsNotAnArray()
     {
@@ -522,7 +533,7 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException CSVelte\Exception\IOException
+     * @expectedException \CSVelte\Exception\IOException
      */
     public function testDetachedStreamThrowsExceptionOnRead()
     {
@@ -532,7 +543,7 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException CSVelte\Exception\IOException
+     * @expectedException \CSVelte\Exception\IOException
      */
     public function testDetachedStreamThrowsExceptionOnWrite()
     {
@@ -542,7 +553,7 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException CSVelte\Exception\IOException
+     * @expectedException \CSVelte\Exception\IOException
      */
     public function testDetachedStreamThrowsExceptionOnSeek()
     {
@@ -552,26 +563,26 @@ class StreamTest extends IOTest
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
-    public function testStreamizeWithIntegerThrowsInvalidArgumentException()
+    public function testToStreamWithIntegerThrowsInvalidArgumentException()
     {
         $intval = 1;
-        streamize($intval);
+        to_stream($intval);
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
-    public function testStreamizeWithNonStringObjectThrowsInvalidArgumentException()
+    public function testToStreamWithNonStringObjectThrowsInvalidArgumentException()
     {
         $obj = new \stdClass;
-        streamize($obj);
+        to_stream($obj);
     }
 
-    public function testStreamizeWithNoArguments()
+    public function testToStreamWithNoArguments()
     {
-        $stream = streamize();
+        $stream = to_stream();
         $this->assertTrue($stream->isReadable());
         $this->assertTrue($stream->isWritable());
         $this->assertTrue($stream->isSeekable());
@@ -581,10 +592,10 @@ class StreamTest extends IOTest
         $this->assertEquals("helloworld", (string) $stream);
     }
 
-    public function testStreamizeStream()
+    public function testToStreamStream()
     {
-        $stream = streamize("helloworld");
-        $streamcopy = streamize($stream);
+        $stream = to_stream("helloworld");
+        $streamcopy = to_stream($stream);
         $this->assertEquals((string) $stream, (string) $streamcopy);
     }
 
@@ -736,6 +747,15 @@ class StreamTest extends IOTest
             new ArrayIterator([1,2,3,4]),
             'foo'
         );
+    }
+
+    public function testBufferStreamToStringReturnsStreamContents()
+    {
+        $buffer = new BufferStream();
+        $buffer->write('This is the string that is being buffered.');
+        $buffer->read(10);
+        $this->assertSame("e string that is being buffered.", (string) $buffer);
+        $this->assertSame("", (string) $buffer, "Calling __toString() again should return an empty string since it is the equivalent of calling read on the entire buffer.");
     }
 
     public function testIteratorStreamUsingArrayIterator()

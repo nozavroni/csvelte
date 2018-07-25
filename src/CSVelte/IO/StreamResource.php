@@ -1,19 +1,17 @@
 <?php
-
-/*
+/**
  * CSVelte: Slender, elegant CSV for PHP
+ *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   {version}
- * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @copyright Copyright (c) 2018 Luke Visinoni
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ * @license   See LICENSE file (MIT license)
  */
 namespace CSVelte\IO;
 
-use CSVelte\Contract\Streamable;
 use CSVelte\Exception\IOException;
 use InvalidArgumentException;
 
@@ -24,13 +22,10 @@ use InvalidArgumentException;
  * me to provide a nice, clean, easy-to-use interface for opening stream
  * resources in a particular mode as well as to lazy-open a stream.
  *
- * @package    CSVelte
- * @subpackage CSVelte\IO
- *
- * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author     Luke Visinoni <luke.visinoni@gmail.com>
- *
- * @since      v0.2.1
+ * @since v0.2.1
+ * @todo  Annoyingly, this class is currently receiving an "F" from my code analysis tool because of its supposed
+ *        complexity. I believe the high number of methods is the issue. Despite its high number of methods, I don't
+ *        feel like this class is overly complex. I would like to find a way to configure the tool to ignore this.
  */
 class StreamResource
 {
@@ -189,7 +184,7 @@ class StreamResource
         $mode = null,
         $lazy = null,
         $use_include_path = null,
-        $context_options = null,
+        $context_options = null, // this should just be an array -> $context
         $context_params = null
     ) {
         // first, check if we're wrapping an existing stream resource
@@ -198,14 +193,13 @@ class StreamResource
 
             return;
         }
-//            throw new InvalidArgumentException("Argument one for " . __METHOD__ . " must be a URI or a stream resource.");
 
         // ok we're opening a new stream resource handle
         $this->setUri($uri)
-             ->setMode($mode)
-             ->setLazy($lazy)
-             ->setUseIncludePath($use_include_path)
-             ->setContext($context_options, $context_params);
+            ->setMode($mode)
+            ->setLazy($lazy)
+            ->setUseIncludePath($use_include_path)
+            ->setContext($context_options, $context_params);
         if (!$this->isLazy()) {
             $this->connect();
         }
@@ -224,7 +218,9 @@ class StreamResource
      *
      * Creates and returns a Stream object for this resource
      *
-     * @return Streamable A stream for this resource
+     * @todo Should add a getStream() method and return $this->>getStream() from this instead
+     *
+     * @return Stream A stream for this resource
      */
     public function __invoke()
     {
@@ -237,13 +233,14 @@ class StreamResource
      * File open is (by default) delayed until the user explicitly calls connect()
      * or they request the resource handle with getHandle().
      *
-     * @throws \CSVelte\Exception\IOException if connection fails
+     * @throws IOException if connection fails
      *
      * @return bool True if connection was successful
      */
     public function connect()
     {
         if (!$this->isConnected()) {
+            /** @var IOException $e */
             $e          = null;
             $errhandler = function () use (&$e) {
                 $e = new IOException(sprintf(
@@ -290,7 +287,7 @@ class StreamResource
      * Set the stream URI. Can only be set if the connection isn't open yet.
      * If you try to set the URI on an open resource, an IOException will be thrown
      *
-     * @param string $uri The URI for this stream resource to open
+     * @param string|object $uri The URI for this stream resource to open
      *
      * @throws \InvalidArgumentException      if not a valid stream uri
      * @throws \CSVelte\Exception\IOException if stream has already been opened
@@ -360,9 +357,9 @@ class StreamResource
 
         $this->flag = '';
         $this->setBaseMode($base)
-             ->setIsPlus($plus == '+')
-             ->setIsText($flag == 't')
-             ->setIsBinary($flag == 'b');
+            ->setIsPlus($plus == '+')
+            ->setIsText($flag == 't')
+            ->setIsBinary($flag == 'b');
 
         return $this;
     }
@@ -901,7 +898,7 @@ class StreamResource
         if (is_null($lazy)) {
             $lazy = true;
         }
-        $this->lazy               = (bool) $lazy;
+        $this->lazy = (bool) $lazy;
 
         return $this;
     }

@@ -1,28 +1,21 @@
 <?php
-
-/*
+/**
  * CSVelte: Slender, elegant CSV for PHP
+ *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   {version}
- * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @copyright Copyright (c) 2018 Luke Visinoni
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ * @license   See LICENSE file (MIT license)
  */
 namespace CSVelte\Exception;
 
 /**
- * CSVelte\Exception\NotYetImplementedException
- * This is just an exception I use internally for methods that I must include due
- * to inheritance or what-have-you but that I have yet to implement.
+ * NotYetImplementedException
  *
- * @package   CSVelte\Exception
- *
- * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @todo This is thrown when user attempts to use a feature that is not yet implemented. Once I release v1.0, I intend
+ *       to remove this exception entirely, but until then it helps me keep certain interfaces consistent.
  */
-class NotYetImplementedException extends CSVelteException
-{
-}
+class NotYetImplementedException extends CSVelteException {}
