@@ -128,7 +128,45 @@ class ReaderTest extends UnitTestCase
         $source->seek($source->getSize());
         $this->assertFalse($reader->getRow());
     }
-    
+
+    public function testGetColumnReturnsColumn()
+    {
+        $source = to_stream(fopen($this->getFilePathFor('commaNewlineHeader'), 'r+'));
+        $reader = new Reader($source);
+        $column = $reader->getColumn('CERT');
+        $this->assertSame([
+            0 => '35312',
+            1 => '9956',
+            2 => '20364',
+            3 => '35156',
+            4 => '35259',
+            5 => '34112',
+            6 => '57772',
+            7 => '32102',
+            8 => '33938',
+            9 => '20290',
+            10 => '17557',
+            11 => '34983',
+            12 => '34738',
+            13 => '916',
+            14 => '4862',
+            15 => '28462',
+            16 => '58125',
+            17 => '12483',
+            18 => '21793',
+            19 => '10450',
+            20 => '32368',
+            21 => '32284',
+            22 => '57866',
+            23 => '15062',
+            24 => '58531',
+            25 => '35096',
+            26 => '34296',
+            27 => '17967',
+            28 => '5732'
+        ], $column);
+    }
+
     // @see https://github.com/nozavroni/csvelte/issues/190
     public function testBugFixReaderSplitsFieldsIncorrectlyWhenHasSpacesAroundDelimiter()
     {

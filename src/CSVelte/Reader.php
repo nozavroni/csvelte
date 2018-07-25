@@ -112,6 +112,20 @@ class Reader implements Iterator, Countable
     }
 
     /**
+     * Get the column at given $index
+     *
+     * @param int|string $index The column index
+     *
+     * @return array
+     */
+    public function getColumn($index)
+    {
+        return collect($this->toArray())
+            ->getColumn($index)
+            ->toArray();
+    }
+
+    /**
      * Set input stream
      *
      * @param Streamable $stream The input stream to read from
