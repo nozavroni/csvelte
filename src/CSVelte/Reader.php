@@ -99,10 +99,22 @@ class Reader implements Iterator, Countable
      *
      * Get the next row from the CSV data. If no more data available, returns false.
      *
+     * @param int $offset An optional row offset (negative offsets not yet supported)
+     *
      * @return array|false
      */
-    public function getRow()
+    public function getRow($offset = null)
     {
+        if (!is_null($offset)) {
+            $this->rewind();
+            $i = 0;
+            while ($row = $this->getRow()) {
+                if ($offset === $i++) {
+                    return $row;
+                }
+            }
+            return false;
+        }
         if (!$this->valid() || $this->input->eof()) {
             return false;
         }

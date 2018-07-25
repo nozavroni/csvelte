@@ -129,6 +129,39 @@ class ReaderTest extends UnitTestCase
         $this->assertFalse($reader->getRow());
     }
 
+    public function testGetRowUsingOffsetReturnsRowAtGivenOffset()
+    {
+        $source = to_stream(fopen($this->getFilePathFor('commaNewlineHeader'), 'r+'));
+        $reader = new Reader($source);
+        $this->assertSame([
+            "Bank Name" => "Premier Bank",
+            "City" => "Denver",
+            "ST" => "CO",
+            "CERT" => "34112",
+            "Acquiring Institution" => "United Fidelity \r\n \r \r \n \r\n Bank, fsb",
+            "Closing Date" => "10-Jul-15",
+            "Updated Date" => "17-Dec-15"
+        ], $reader->getRow(5));
+        $this->assertSame([
+            "Bank Name" => "First National Bank of Crestview",
+            "City" => "Crestview",
+            "ST" => "FL",
+            "CERT" => "17557",
+            "Acquiring Institution" => "First NBC Bank",
+            "Closing Date" => "16-Jan-15",
+            "Updated Date" => "15-Jan-16"
+        ], $reader->getRow(10));
+        $this->assertSame([
+            "Bank Name" => "Millennium Bank, National\n Association",
+            "City" => "Sterling",
+            "ST" => "VA",
+            "CERT" => "35096",
+            "Acquiring Institution" => "WashingtonFirst Bank",
+            "Closing Date" => "28-Feb-14",
+            "Updated Date" => "3-Mar-15"
+        ], $reader->getRow(25));
+    }
+
     public function testGetColumnReturnsColumn()
     {
         $source = to_stream(fopen($this->getFilePathFor('commaNewlineHeader'), 'r+'));
