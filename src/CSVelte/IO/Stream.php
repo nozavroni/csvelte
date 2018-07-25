@@ -1,45 +1,25 @@
 <?php
-
-/*
+/**
  * CSVelte: Slender, elegant CSV for PHP
+ *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   {version}
- * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @copyright Copyright (c) 2018 Luke Visinoni
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ * @license   See LICENSE file (MIT license)
  */
 namespace CSVelte\IO;
 
 use CSVelte\Contract\Streamable;
 use CSVelte\Exception\IOException;
-use CSVelte\Traits\IsReadable;
-use CSVelte\Traits\IsSeekable;
-
-use CSVelte\Traits\IsWritable;
-
+use CSVelte\Traits;
 use Exception;
 
-/**
- * CSVelte Stream.
- *
- * Represents a stream for input/output. Implements both readable and writable
- * interfaces so that it can be passed to either ``CSVelte\Reader`` or
- * ``CSVelte\Writer``.
- *
- * @package    CSVelte
- * @subpackage CSVelte\IO
- *
- * @copyright  (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author     Luke Visinoni <luke.visinoni@gmail.com>
- *
- * @since      v0.2
- */
 class Stream implements Streamable
 {
-    use IsReadable, IsWritable, IsSeekable;
+    use Traits\IsReadable, Traits\IsWritable, Traits\IsSeekable;
 
     /**
      * @var StreamResource A stream resource object
@@ -59,6 +39,8 @@ class Stream implements Streamable
      *
      * @todo Not sure if this belongs in this class or in Resource. I'm leaving
      *     it here for now, simply because I'm worried Stream will become superfluous
+     *
+     * @todo THERE IS NO NEED FOR STREAM AND STREAMRESOURCE -- it was a cute idea, but just combine them and stop being a big chode
      */
     protected $meta;
 

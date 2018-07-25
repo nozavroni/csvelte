@@ -1,30 +1,17 @@
 <?php
-
-/*
+/**
  * CSVelte: Slender, elegant CSV for PHP
+ *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   {version}
- * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @copyright Copyright (c) 2018 Luke Visinoni
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ * @license   See LICENSE file (MIT license)
  */
 namespace CSVelte\Contract;
 
-/**
- * Streamable Interface.
- *
- * Implementors of this class will be acceptable by the reader, writer, taster,
- * and various other classes that expect stream-like data. This interface replaces
- * the old Readable, Writable, and Seekable interfaces which were useless.
- *
- * @package CSVelte
- * @subpackage Contract (Interfaces)
- *
- * @since v0.2.1
- */
 interface Streamable
 {
     /**

@@ -1,294 +1,153 @@
 <?php
-
-/*
+/**
  * CSVelte: Slender, elegant CSV for PHP
+ *
  * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
  * standardization efforts, CSVelte was written in an effort to take all the
  * suck out of working with CSV.
  *
- * @version   {version}
- * @copyright Copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
+ * @copyright Copyright (c) 2018 Luke Visinoni
  * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @license   https://github.com/deni-zen/csvelte/blob/master/LICENSE The MIT License (MIT)
+ * @license   See LICENSE file (MIT license)
  */
 namespace CSVelte;
 
-use ArrayIterator;
-
 use CSVelte\Contract\Streamable;
-use CSVelte\Exception\WriterException;
-use CSVelte\Table\AbstractRow;
-use CSVelte\Table\HeaderRow;
-use CSVelte\Table\Row;
+use Noz\Collection\Collection;
 
-use InvalidArgumentException;
-use Iterator;
+use function Noz\collect;
+use function Stringy\create as s;
+use Traversable;
 
-/**
- * CSVelte Writer Base Class
- * A PHP CSV utility library (formerly PHP CSV Utilities).
- *
- * @package   CSVelte
- *
- * @copyright (c) 2016 Luke Visinoni <luke.visinoni@gmail.com>
- * @author    Luke Visinoni <luke.visinoni@gmail.com>
- *
- * @todo Buffer write operations so that you can call things like setHeaderRow()
- *     and change flavor and all that jivey divey goodness at any time.
- */
 class Writer
 {
-    /**
-     * The flavor (format) of CSV to write.
-     *
-     * @var Flavor
-     */
-    protected $flavor;
-
-    /**
-     * The output stream to write to.
-     *
-     * @var Contract\Streamable
-     */
+    /** @var Streamable The output stream to write to */
     protected $output;
 
-    /**
-     * The header row.
-     *
-     * @var \Iterator
-     */
-    protected $headers;
+    /** @var Dialect The *dialect* of CSV to write */
+    protected $dialect;
+
+    /** @var Collection The header row */
+    protected $header;
 
     /**
-     * Number of lines written so far (not including header).
+     * Writer constructor.
      *
-     * @var int
-     */
-    protected $written = 0;
-
-    /**
-     * Class Constructor.
+     * Although this is the constructor, I don't envision it being used much in userland. I think much more common
+     * methods of creating writers will be available within CSVelte base class such as CSVelte::toSplFileObject,
+     * CSVelte::toPath(), CSVelte::toOutputBuffer(), etc.
      *
-     * @param Contract\Streamable $output An output source to write to
-     * @param Flavor|array        $flavor A flavor or set of formatting params
+     * @param Streamable $output The destination streamable being written to
+     * @param Dialect $dialect The dialect being written
      */
-    public function __construct(Streamable $output, $flavor = null)
+    public function __construct(Streamable $output, Dialect $dialect = null)
     {
-        if (!($flavor instanceof Flavor)) {
-            $flavor = new Flavor($flavor);
+        if (is_null($dialect)) {
+            $dialect = new Dialect;
         }
-        $this->flavor                             = $flavor;
-        $this->output                             = $output;
+        $this->setOutputStream($output)
+            ->setDialect($dialect);
     }
 
     /**
-     * Get the CSV flavor (or dialect) for this writer.
+     * Set the CSV dialect
      *
-     * @param void
+     * @param Dialect $dialect The *dialect* of CSV to use
      *
-     * @return Flavor
+     * @return self
      */
-    public function getFlavor()
+    public function setDialect(Dialect $dialect)
     {
-        return $this->flavor;
-    }
-
-    /**
-     * Sets the header row
-     * If any data has been written to the output, it is too late to write the
-     * header row and an exception will be thrown. Later implementations will
-     * likely buffer the output so that this may be called after writeRows().
-     *
-     * @param \Iterator|array A list of header values
-     * @param mixed $headers
-     *
-     * @throws Exception\WriterException
-     *
-     * @return $this
-     */
-    public function setHeaderRow($headers)
-    {
-        if ($this->written) {
-            throw new WriterException('Cannot set header row once data has already been written. ');
-        }
-        if (is_array($headers)) {
-            $headers = new ArrayIterator($headers);
-        }
-        $this->headers                   = $headers;
-
+        $this->dialect = $dialect;
         return $this;
     }
 
     /**
-     * Write a single row.
+     * Get dialect
      *
-     * @param \Iterator|array $row The row to write to source
-     *
-     * @return int The number or bytes written
+     * @return Dialect
      */
-    public function writeRow($row)
+    public function getDialect()
     {
-        $eol   = $this->getFlavor()->lineTerminator;
-        $delim = $this->getFlavor()->delimiter;
-        if (!$this->written && $this->headers) {
-            $headerRow = new HeaderRow((array) $this->headers);
-            $this->writeHeaderRow($headerRow);
-        }
-        if (is_array($row)) {
-            $row = new ArrayIterator($row);
-        }
-        $row                     = $this->prepareRow($row);
-        if ($count = $this->output->writeLine($row->join($delim), $eol)) {
-            $this->written++;
-
-            return $count;
-        }
-
-        return 0;
+        return $this->dialect;
     }
 
     /**
-     * Write multiple rows.
+     * Set output stream
      *
-     * @param \Iterator|array $rows List of \Iterable|array
+     * @param Streamable $stream The output stream to write to
      *
-     * @return int number of lines written
+     * @return self
      */
-    public function writeRows($rows)
+    protected function setOutputStream(Streamable $stream)
     {
-        if (is_array($rows)) {
-            $rows = new ArrayIterator($rows);
-        }
-        if (!($rows instanceof Iterator)) {
-            throw new InvalidArgumentException('First argument for ' . __METHOD__ . ' must be iterable');
-        }
-        $written = 0;
-        if ($rows instanceof Reader) {
-            $this->writeHeaderRow($rows->header());
-        }
-        foreach ($rows as $row) {
-            if ($this->writeRow($row)) {
-                $written++;
-            }
-        }
-
-        return $written;
+        $this->output = $stream;
+        return $this;
     }
 
     /**
-     * Write the header row.
+     * Insert a single record into CSV output
      *
-     * @param HeaderRow $row
+     * Returns total bytes written to the output stream.
      *
-     * @return int|false
+     * @param array|Traversable $data A row of data to write to the CSV output
+     *
+     * @return false|int
      */
-    protected function writeHeaderRow(HeaderRow $row)
+    public function insertRow($data)
     {
-        $eol   = $this->getFlavor()->lineTerminator;
-        $delim = $this->getFlavor()->delimiter;
-        $row   = $this->prepareRow($row);
+        $d = $this->getDialect();
+        $data = collect($data)
+            ->map(function($field) use ($d) {
+                if ($qstyle = $d->getQuoteStyle()) {
+                    $wrap = false;
+                    switch ($qstyle) {
+                        case Dialect::QUOTE_ALL:
+                            $wrap = true;
+                            break;
+                        case Dialect::QUOTE_MINIMAL:
+                            if (s($field)->containsAny([$d->getQuoteChar(), $d->getDelimiter(), $d->getLineTerminator()])) {
+                                $wrap = true;
+                            }
+                            break;
+                        case Dialect::QUOTE_NONNUMERIC:
+                            if (is_numeric((string) $field)) {
+                                $wrap = true;
+                            }
+                            break;
+                    }
+                    if ($wrap) {
+                        $field = s($field);
+                        if ($field->contains($d->getQuoteChar())) {
+                            $escapeChar = $d->isDoubleQuote() ? $d->getQuoteChar() : '\\' /*$d->getEscapeChar()*/;
+                            $field = $field->replace($d->getQuoteChar(), $d->getQuoteChar() . $d->getQuoteChar());
+                        }
+                        $field = $field->surround($d->getQuoteChar());
+                    }
+                }
+                return (string) $field;
+            });
+        $str = s($data->join($d->getDelimiter()))
+            ->append($d->getLineTerminator());
 
-        return $this->output->writeLine($row->join($delim), $eol);
+        return $this->output->write((string) $str);
     }
 
     /**
-     * Prepare a row of data to be written
-     * This means taking an array of data, and converting it to a Row object.
+     * Write multiple rows to CSV output
      *
-     * @param \Iterator $row of data items
+     * Returns total bytes written to the output stream.
      *
-     * @return AbstractRow
+     * @param array|Traversable $data An array of rows of data to write to the CSV output
+     *
+     * @return int
      */
-    protected function prepareRow(Iterator $row)
+    public function insertAll($data)
     {
-        $items = [];
-        foreach ($row as $data) {
-            $items []= $this->prepareData($data);
-        }
-        $row = new Row($items);
-
-        return $row;
-    }
-
-    /**
-     * Prepare a cell of data to be written (convert to Data object).
-     *
-     * @param string $data A string containing cell data
-     *
-     * @return string quoted string data
-     */
-    protected function prepareData($data)
-    {
-        // @todo This can't be properly implemented until I get Data and DataType right...
-        // it should be returning a Data object but until I get that working properly
-        // it's just going to have to return a string
-        return $this->quoteString($data);
-    }
-
-    /**
-     * Enclose a string in quotes.
-     *
-     * Accepts a string and returns it with quotes around it.
-     *
-     * @param string $str The string to wrap in quotes
-     *
-     * @return string
-     */
-    protected function quoteString($str)
-    {
-        $flvr = $this->getFlavor();
-        // Normally I would make this a method on the class, but I don't intend
-        // to use it for very long, in fact, once I finish writing the Data class
-        // it is gonezo!
-        $hasSpecialChars = function ($s) use ($flvr) {
-            $specialChars = preg_quote($flvr->lineTerminator . $flvr->quoteChar . $flvr->delimiter);
-            $pattern      = "/[{$specialChars}]/m";
-
-            return preg_match($pattern, $s);
-        };
-        switch ($flvr->quoteStyle) {
-            case Flavor::QUOTE_ALL:
-                $doQuote = true;
-                break;
-            case Flavor::QUOTE_NONNUMERIC:
-                $doQuote = !is_numeric($str);
-                break;
-            case Flavor::QUOTE_MINIMAL:
-                $doQuote = $hasSpecialChars($str);
-                break;
-            case Flavor::QUOTE_NONE:
-            default:
-                // @todo I think that if a cell is not quoted, newlines and delimiters should still be escaped by the escapeChar... no?
-                $doQuote = false;
-                break;
-        }
-        $quoteChar = ($doQuote) ? $flvr->quoteChar : '';
-
-        return sprintf('%s%s%s',
-            $quoteChar,
-            $this->escapeString($str, $doQuote),
-            $quoteChar
-        );
-    }
-
-    /**
-     * Escape a string.
-     *
-     * Return a string with all special characters escaped.
-     *
-     * @param string $str      The string to escape
-     * @param bool   $isQuoted True if string is quoted
-     *
-     * @return string
-     */
-    protected function escapeString($str, $isQuoted = true)
-    {
-        $flvr                       = $this->getFlavor();
-        $escapeQuote                = '';
-        if ($isQuoted) {
-            $escapeQuote = ($flvr->doubleQuote) ? $flvr->quoteChar : $flvr->escapeChar;
-        }
-        // @todo Not sure what else, if anything, I'm supposed to be escaping here..
-        return str_replace($flvr->quoteChar, $escapeQuote . $flvr->quoteChar, $str);
+        return collect($data)
+            ->map(function($row, $lineNo, $i) {
+                return $this->insertRow($row);
+            })
+            ->sum();
     }
 }

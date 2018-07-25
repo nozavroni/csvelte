@@ -1,22 +1,23 @@
 <?php
+/**
+ * CSVelte: Slender, elegant CSV for PHP
+ *
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
+ *
+ * @copyright Copyright (c) 2018 Luke Visinoni
+ * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @license   See LICENSE file (MIT license)
+ */
 namespace CSVelteTest\IO;
 
-use CSVelte\Exception\IOException;
 use CSVelte\IO\Stream;
 use CSVelte\IO\StreamResource;
+use function CSVelte\to_stream;
 use InvalidArgumentException;
 
-/**
- * CSVelte\IO\Stream Tests.
- * This tests the new IO\Stream class that will be replacing CSVelte\Input\Stream
- * and CSVelte\Output\Stream
- *
- * @package   CSVelte Unit Tests
- * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @coversDefaultClass CSVelte\IO\Stream
- */
-class ResourceTest extends IOTest
+class StreamResourceTest extends IOTest
 {
     public function testInstantiateStreamResource()
     {
@@ -150,8 +151,8 @@ class ResourceTest extends IOTest
         $sr->setIsPlus(true);
         $this->assertEquals("r+b", $sr->getMode());
         $sr->setBaseMode('x')
-           ->setIsPlus(true)
-           ->setIsText(true);
+            ->setIsPlus(true)
+            ->setIsText(true);
         $this->assertFalse($sr->isBinary());
         $this->assertTrue($sr->isText());
         $this->assertFalse($sr->isCursorPositionedAtEnd());
@@ -161,7 +162,7 @@ class ResourceTest extends IOTest
         $this->assertTrue($sr->rejectsExistingFiles());
         $this->assertFalse($sr->appendsWriteOps());
         $sr->setBaseMode('a')
-           ->connect();
+            ->connect();
         $this->assertEquals('a+t', $sr->getMode());
         $this->assertTrue($sr->isCursorPositionedAtEnd());
     }
@@ -296,5 +297,27 @@ class ResourceTest extends IOTest
         $this->assertTrue($resource->isCursorPositionedAtBeginning());
         $this->assertFalse($resource->isCursorPositionedAtEnd());
         $this->assertTrue($resource->isTruncated());
+    }
+
+    public function testToStreamAcceptsStreamResource()
+    {
+        $resource = fopen('php://temp', 'r+');
+        $stream = to_stream($resource);
+        $this->assertInstanceOf(Stream::class, $stream);
+    }
+
+    public function testToStreamAcceptsStreamResourceObject()
+    {
+        $resource = new StreamResource('php://temp', 'r+');
+        $stream = to_stream($resource);
+        $this->assertInstanceOf(Stream::class, $stream);
+    }
+
+    public function testStreamResourceAcceptsStringyObjectAsUri()
+    {
+        $stringy = Stream::open('php://temp', 'r+');
+        $stringy->write('php://temp');
+        $resource = new StreamResource($stringy, 'r+');
+        $this->assertEquals('php://temp', $resource->getUri());
     }
 }

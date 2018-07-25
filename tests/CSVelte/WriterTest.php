@@ -1,167 +1,86 @@
 <?php
+/**
+ * CSVelte: Slender, elegant CSV for PHP
+ *
+ * Inspired by Python's CSV module and Frictionless Data and the W3C's CSV
+ * standardization efforts, CSVelte was written in an effort to take all the
+ * suck out of working with CSV.
+ *
+ * @copyright Copyright (c) 2018 Luke Visinoni
+ * @author    Luke Visinoni <luke.visinoni@gmail.com>
+ * @license   See LICENSE file (MIT license)
+ */
 namespace CSVelteTest;
 
-use \ArrayIterator;
-use CSVelte\IO\Stream;
-use CSVelte\Writer;
+use CSVelte\Dialect;
 use CSVelte\Reader;
-use CSVelte\Flavor;
-use CSVelte\Table\Row;
+use CSVelte\Writer;
 
-/**
- * CSVelte\Writer Tests.
- * New Format for refactored tests -- see issue #11
- *
- * @package   CSVelte Unit Tests
- * @copyright (c) 2016, Luke Visinoni <luke.visinoni@gmail.com>
- * @author    Luke Visinoni <luke.visinoni@gmail.com>
- * @todo      Move all of the tests from OldReaderTest.php into this class
- * @coversDefaultClass CSVelte\Writer
- */
+use function CSVelte\to_stream;
+
 class WriterTest extends UnitTestCase
 {
-    protected $sampledata = [
-        ['1','luke','visinoni','luke.visinoni@gmail.com'],
-        ['2','bob','smith','bob.smith@yahoo.com'],
-        ['3','larry','johnson','ljh@johnsonhome.com'],
-    ];
-
-    public function testWriterCustomFlavor()
+    public function testInstantiateWriterWithNoDialectUsesDefault()
     {
-        $out = Stream::open('php://memory');
-        $writer = new Writer($out, $expectedFlavor = new Flavor(array('delimiter' => '|')));
-        $this->assertSame($expectedFlavor, $writer->getFlavor());
+        $stream = to_stream(fopen('php://temp', 'w+'));
+        $writer = new Writer($stream);
+        $this->assertInstanceOf(Dialect::class, $writer->getDialect());
     }
 
-    public function testWriterCanAcceptArrayForFlavor()
+    public function testInstantiateWriterWithDialectCanChangeDialectWithSetDialect()
     {
-        $flavorArr = (new Flavor())->toArray();
-        $flavorArr['delimiter'] = "\t";
-        $flavorArr['lineTerminator'] = "\n";
-        $flavorArr['quoteChar'] = "'";
-        $flavorArr['quoteStyle'] = Flavor::QUOTE_ALL;
-        $writer = new Writer(Stream::open($this->getFilePathFor('veryShort'), 'a+'), $flavorArr);
-        $this->assertEquals($flavorArr, $writer->getFlavor()->toArray());
+        $stream = to_stream(fopen('php://temp', 'w+'));
+        $dialect = new Dialect(['delimiter' => "\t"]);
+        $writer = new Writer($stream);
+        $this->assertNotSame($dialect, $writer->getDialect());
+        $this->assertSame($writer, $writer->setDialect($dialect));
+        $this->assertSame($dialect, $writer->getDialect());
+        $this->assertEquals("\t", $writer->getDialect()->getDelimiter());
     }
 
-    public function testWriterWriteWriteSingleRowUsingArray()
+    public function testWriterWritesToOutputStreamAccordingToDialect()
     {
-        $out = Stream::open('php://memory');
-        $writer = new Writer($out);
-        $data = array('one','two', 'three');
-        $this->assertEquals(strlen(implode(',', $data)) + strlen("\r\n"), $writer->writeRow($data));
+        $stream = to_stream(fopen('php://temp', 'w+'));
+        $dialect = new Dialect(['header' => false]);
+        $writer = new Writer($stream, $dialect);
+        $this->assertEquals(12, $writer->insertRow([
+            'foo',
+            'bar',
+            'baz'
+        ]));
+        $this->assertEquals("foo,bar,baz\n", (string) $stream);
+        $this->assertEquals(71, $writer->insertRow([
+            'test',
+            'this is a test, with a comma in it',
+            'this is a "quoted" field'
+        ]));
+        $this->assertEquals("foo,bar,baz\ntest,\"this is a test, with a comma in it\",\"this is a \"\"quoted\"\" field\"\n", (string) $stream);
+        $this->assertEquals(11, $writer->insertRow([
+            1,
+            '2',
+            '3.5556'
+        ]));
+        $this->assertEquals("foo,bar,baz\ntest,\"this is a test, with a comma in it\",\"this is a \"\"quoted\"\" field\"\n1,2,3.5556\n", (string) $stream);
+        $this->assertEquals(103, $writer->insertRow([
+            "this field\nhas\nline breaks",
+            'this field has a \' single quote',
+            'this has? weird^*& characters!! ,.:?!2@'
+        ]));
+        $this->assertEquals("foo,bar,baz\ntest,\"this is a test, with a comma in it\",\"this is a \"\"quoted\"\" field\"\n1,2,3.5556\n\"this field\nhas\nline breaks\",this field has a ' single quote,\"this has? weird^*& characters!! ,.:?!2@\"\n", (string) $stream);
     }
 
-    public function testWriterWriteWriteSingleRowUsingIterator()
+    public function testInsertAllWritesMultipleRowsAndReturnsTotalWrittenBytes()
     {
-        $out = Stream::open('php://memory');
-        $writer = new Writer($out);
-        $data = new ArrayIterator(array('one','two', 'three'));
-        $this->assertEquals(strlen(implode(',', $data->getArrayCopy())) + strlen("\r\n"), $writer->writeRow($data));
-    }
-
-    public function testWriterWritesHeaderRow()
-    {
-        $temp = Stream::open('php://temp');
-        $writer = new Writer($temp);
-        $writer->setHeaderRow(['id','firstname','lastname','email']);
-        $writer->writeRows($this->sampledata);
-        $temp->seek(0);
-        $this->assertEquals("id,firstname,lastname,email\r\n1,luke,visinoni,luke.visinoni@gmail.com\r\n2,bob,smith,bob.smith@yahoo.com\r\n3,larry,johnson,ljh@johnsonhome.com\r\n", $temp->read(200));
-    }
-
-    /**
-     * @expectedException CSVelte\Exception\WriterException
-     */
-    public function testWriterThrowsExceptionIfUserAttemptsToSetHeaderAfterRowsHaveBeenWritten()
-    {
-        $writer = new Writer(Stream::open('php://temp'));
-        $writer->writeRow(array('foo','bar','baz'));
-        $writer->setHeaderRow(array('this','shouldnt','work'));
-    }
-
-    public function testWriterWriteWriteSingleRowUsingCSVReader()
-    {
-        $reader = new Reader(Stream::open($this->getFilePathFor('veryShort')));
-        $writer = new Writer($stream = Stream::open('php://temp'));
-        $writer->writeRow($reader->current());
-        $stream->rewind();
-        $this->assertEquals("foo,bar,baz\r\n", $stream->read(15));
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testWriterWriteRowsThrowsExceptionIfPassedNonIterable()
-    {
-        $out = Stream::open('php://temp');
-        $writer = new Writer($out);
-        $writer->writeRows('foo');
-    }
-
-    public function testWriterWriteMultipleRows()
-    {
-        $out = Stream::open('php://temp');
-        $writer = new Writer($out);
-        $reader = new Reader(Stream::open($this->getFilePathFor('commaNewlineHeader')));
-        $data = array();
-        $i = 0;
-        foreach ($reader as $row) {
-            if ($i == 10) break;
-            $data []= $row->toArray();
-            $i++;
-        }
-        $written_rows = $writer->writeRows($data);
-        $this->assertEquals(10, $written_rows);
-    }
-
-    public function testWriterWriteRowsAcceptsReader()
-    {
-        $out = Stream::open($fname = $this->root->url() . '/reader2writer.csv', 'w');
-        $writer = new Writer($out, ['lineTerminator' => "\n"]);
-        $in = Stream::open($this->getFilePathFor('headerDoubleQuote'), 'r+b');
-        $reader = new Reader($in, ['lineTerminator' => "\n"]);
-        $this->assertEquals(29, $writer->writeRows($reader));
-        $this->assertEquals($this->getFileContentFor('headerDoubleQuote'), file_get_contents($fname));
-    }
-
-    public function testWriterWriteRowsAcceptsReaderToReformat()
-    {
-        $out = Stream::open($fname = $this->root->url() . '/reformatme.csv', 'w');
-        $in = Stream::open($this->getFilePathFor('headerDoubleQuote'));
-        $writer = new Writer($out, [
-            'delimiter' => '|',
-            'quoteStyle' => Flavor::QUOTE_NONNUMERIC,
-            'lineTerminator' => "\r\n",
-            'doubleQuote' => false,
-            'escapeChar' => '\\'
-        ]);
-        $reader = new Reader($in, ['lineTerminator' => "\n"]);
-        $writer->writeRows($reader);
-        $lines = file($fname);
-        $this->assertEquals("\"Bank Name\"|\"City\"|\"ST\"|\"CERT\"|\"Acquiring Institution\"|\"Closing Date\"|\"Updated Date\"\r\n", $lines[0]);
-        $this->assertEquals("\"First CornerStone Bank\"|\"King of\n\\\"Prussia\\\"\"|\"PA\"|35312|\"First-Citizens Bank & Trust Company\"|\"6-May-16\"|\"25-May-16\"\r\n", $lines[1] . $lines[2]);
-        $out->close();
-        unlink($fname);
-    }
-
-    public function testWriterWritesCorrectOutputForFlavorWithQuoteAll()
-    {
-        $stream = Stream::open('php://temp');
-        $writer = new Writer($stream, ['quoteStyle' => Flavor::QUOTE_ALL]);
-        $this->assertEquals(24, $writer->writeRow(['bacon','cheese','ham']));
-        $this->assertEquals(3, $writer->writeRows([['monkey','lettuce','spam'],['table','hair','blam'],['chalk','talk','caulk']]));
-        $stream->rewind();
-        $this->assertEquals("\"bacon\",\"cheese\",\"ha", $stream->read(20));
-    }
-
-    public function testWriterWritesCorrectOutputForFlavorWithQuoteNone()
-    {
-        $stream = Stream::open('php://temp');
-        $writer = new Writer($stream, ['quoteStyle' => Flavor::QUOTE_NONE]);
-        $this->assertEquals(18, $writer->writeRow(['bacon','cheese','ham']));
-        $this->assertEquals(3, $writer->writeRows([['monkey','lettuce','spam'],['table','hair','blam'],['chalk','talk','caulk']]));
-        $stream->rewind();
-        $this->assertEquals("bacon,cheese,ham\r\nmo", $stream->read(20));
+        $stream = to_stream(fopen('php://temp', 'w+'));
+        $dialect = new Dialect(['header' => false]);
+        $writer = new Writer($stream, $dialect);
+        $data = [
+            ['1', 'luke@example.com', 'A short description', 'ON'],
+            ['2', 'bob@example.com', 'What about "bob"?', 'OFF'],
+            ['3', 'steve@example.com', 'The problem with steve, is steve.', 'ON'],
+            ['4', 'joe@example.com', 'Hey Joe, where you goin\' with that gun in yo hand?', 'ON'],
+        ];
+        $this->assertEquals(219, $writer->insertAll($data));
+        $this->assertEquals("1,luke@example.com,A short description,ON\n2,bob@example.com,\"What about \"\"bob\"\"?\",OFF\n3,steve@example.com,\"The problem with steve, is steve.\",ON\n4,joe@example.com,\"Hey Joe, where you goin' with that gun in yo hand?\",ON\n", (string) $stream);
     }
 }
