@@ -825,7 +825,7 @@ class Taster
             }
             if (preg_match("/^{$date}$/i", $data)) {
                 return self::TYPE_DATE;
-            } elseif (preg_match("/^{$date} {$time}$/i")) {
+            } elseif (preg_match("/^{$date} {$time}$/i", $data)) {
                 return self::TYPE_DATETIME;
             }
         } catch (\Exception $e) {
